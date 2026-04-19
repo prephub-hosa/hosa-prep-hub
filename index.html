@@ -1109,9 +1109,10 @@ document.getElementById('notify-btn').onclick = function() {
   var user = firebase.auth().currentUser;
   if (!user)  { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
   if (!email) { msg.textContent = 'Please enter your email.'; msg.style.color = 'var(--accent)'; return; }
-  firebase.database().ref('users/' + user.uid + '/subscribed').set({
-    email: email, subscribedAt: new Date().toISOString()
-  }).then(function() {
+  var data = { email: email, uid: user.uid, subscribedAt: new Date().toISOString() };
+  var p1 = firebase.database().ref('users/' + user.uid + '/subscribed').set(data);
+  var p2 = firebase.database().ref('subscribers/' + user.uid).set(data);
+  Promise.all([p1, p2]).then(function() {
     msg.textContent = "You're on the list — I'll email you when the next event goes live.";
     msg.style.color = 'var(--success)';
   }).catch(function(err) {
@@ -1129,9 +1130,11 @@ document.getElementById('request-btn').onclick = function() {
   var user = firebase.auth().currentUser;
   if (!user)      { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
   if (!eventName) { msg.textContent = 'Please describe the event you want.'; msg.style.color = 'var(--accent)'; return; }
-  firebase.database().ref('users/' + user.uid + '/requests/' + Date.now()).set({
-    event: eventName, email: email || null, requestedAt: new Date().toISOString()
-  }).then(function() {
+  var key  = Date.now();
+  var data = { event: eventName, email: email || null, uid: user.uid, requestedAt: new Date().toISOString() };
+  var p1 = firebase.database().ref('users/' + user.uid + '/requests/' + key).set(data);
+  var p2 = firebase.database().ref('requests/' + key).set(data);
+  Promise.all([p1, p2]).then(function() {
     msg.textContent = "Request received — thank you. I'll look into it.";
     msg.style.color = 'var(--success)';
     document.getElementById('request-event').value = '';

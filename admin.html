@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Admin</title>
+<style>
+  /* ── set your admin email below ── */
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #666;
+    --bg: #fafaf8;
+    --surface: #fff;
+    --border: #e8e4de;
+    --accent: #c0392b;
+    --success: #27ae60;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+  #loading, #not-auth, #not-admin {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; font-size: 16px; color: var(--ink-soft);
+  }
+  #app { display: none; max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1 { font-size: 28px; font-weight: 400; margin-bottom: 6px; }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin-bottom: 40px; }
+  section { margin-bottom: 48px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .badge { background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; font-family: monospace; }
+  .empty { color: var(--ink-soft); font-size: 14px; padding: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); padding: 8px 12px; background: #f4f2ee; border: 1px solid var(--border); }
+  td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: #faf8f4; }
+  .email-cell { font-family: monospace; font-size: 13px; }
+  .date-cell { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+  .event-cell { }
+  .bcc-btn {
+    display: inline-block; margin-top: 12px;
+    background: var(--ink); color: #fff;
+    padding: 10px 20px; border-radius: 6px;
+    font-family: Georgia, serif; font-size: 14px;
+    text-decoration: none; cursor: pointer;
+  }
+  .bcc-btn:hover { background: #333; }
+  .signout { float: right; font-size: 13px; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; background: none; border: none; font-family: Georgia, serif; }
+</style>
+</head>
+<body>
+
+<div id="loading">Loading…</div>
+<div id="not-auth" style="display:none">You must be signed in to view this page. <a href="index.html" style="margin-left:8px;color:var(--accent)">Sign in →</a></div>
+<div id="not-admin" style="display:none">This page is restricted to the site administrator.</div>
+
+<div id="app">
+  <h1>✢ Admin Dashboard <button class="signout" id="signout-btn">Sign out</button></h1>
+  <p class="subtitle" id="admin-email-label"></p>
+
+  <section id="section-subscribers">
+    <h2>Subscribers <span class="badge" id="sub-count">0</span></h2>
+    <div id="sub-body"><p class="empty">No subscribers yet.</p></div>
+  </section>
+
+  <section id="section-requests">
+    <h2>Event Requests <span class="badge" id="req-count">0</span></h2>
+    <div id="req-body"><p class="empty">No requests yet.</p></div>
+  </section>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ─── Set your admin email here ───────────────────────────────────────────────
+var ADMIN_EMAIL = 'YOUR_EMAIL@example.com';
+// ─────────────────────────────────────────────────────────────────────────────
+
+var db   = firebase.database();
+var auth = firebase.auth();
+
+function fmt(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+       + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
+function loadSubscribers() {
+  db.ref('subscribers').once('value').then(function(snap) {
+    var data = snap.val();
+    var body = document.getElementById('sub-body');
+    if (!data) { body.innerHTML = '<p class="empty">No subscribers yet.</p>'; return; }
+    var rows = Object.values(data);
+    document.getElementById('sub-count').textContent = rows.length;
+    var emails = rows.map(function(r) { return r.email; }).filter(Boolean);
+    var bccLink = 'mailto:?bcc=' + emails.join(',')
+                + '&subject=HOSA%20Prep%20Hub%20Update'
+                + '&body=Hi%20everyone%2C%0A%0A';
+    var html = '<table><thead><tr><th>Email</th><th>Subscribed</th></tr></thead><tbody>';
+    rows.sort(function(a,b){ return (b.subscribedAt||'').localeCompare(a.subscribedAt||''); });
+    rows.forEach(function(r) {
+      html += '<tr>'
+            + '<td class="email-cell">' + (r.email || '—') + '</td>'
+            + '<td class="date-cell">' + fmt(r.subscribedAt) + '</td>'
+            + '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '<a class="bcc-btn" href="' + bccLink + '">Open Gmail / Mail with all ' + emails.length + ' addresses in BCC →</a>';
+    body.innerHTML = html;
+  });
+}
+
+function loadRequests() {
+  db.ref('requests').once('value').then(function(snap) {
+    var data = snap.val();
+    var body = document.getElementById('req-body');
+    if (!data) { body.innerHTML = '<p class="empty">No requests yet.</p>'; return; }
+    var rows = Object.values(data);
+    document.getElementById('req-count').textContent = rows.length;
+    var html = '<table><thead><tr><th>Event Requested</th><th>Email</th><th>Date</th></tr></thead><tbody>';
+    rows.sort(function(a,b){ return (b.requestedAt||'').localeCompare(a.requestedAt||''); });
+    rows.forEach(function(r) {
+      html += '<tr>'
+            + '<td class="event-cell">' + (r.event || '—') + '</td>'
+            + '<td class="email-cell">' + (r.email || '—') + '</td>'
+            + '<td class="date-cell">' + fmt(r.requestedAt) + '</td>'
+            + '</tr>';
+    });
+    html += '</tbody></table>';
+    body.innerHTML = html;
+  });
+}
+
+auth.onAuthStateChanged(function(user) {
+  document.getElementById('loading').style.display = 'none';
+  if (!user) {
+    document.getElementById('not-auth').style.display = 'flex';
+    return;
+  }
+  if (user.email !== ADMIN_EMAIL) {
+    document.getElementById('not-admin').style.display = 'flex';
+    return;
+  }
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('admin-email-label').textContent = 'Signed in as ' + user.email;
+  loadSubscribers();
+  loadRequests();
+});
+
+document.getElementById('signout-btn').onclick = function() {
+  auth.signOut().then(function() { window.location.href = 'index.html'; });
+};
+</script>
+</body>
+</html>
