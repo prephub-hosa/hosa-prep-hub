@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Biochemistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;        /* medical journal crimson */
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+    --error: #8b2a1f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,40,31,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(45,90,61,0.03) 0%, transparent 40%);
+  }
+
+  /* ——— Grain overlay ——— */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  /* ——— Header ——— */
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+
+  .brand-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .brand-link:hover { opacity: 0.65; }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+
+  .category-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ——— Main container ——— */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ——— Masthead ——— */
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .masthead h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .masthead .subtitle {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  /* ——— Nav tabs ——— */
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 48px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    width: fit-content;
+  }
+
+  nav.tabs button {
+    background: var(--bg);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  nav.tabs button:hover { background: var(--highlight); }
+  nav.tabs button.active { background: var(--ink); color: var(--bg); }
+
+  /* ——— Category chips ——— */
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-bar .label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-right: 12px;
+    align-self: center;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .chip:hover { background: var(--highlight); }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip .count {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+
+  /* ——— View containers ——— */
+  .view { display: none; animation: fade 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ——— FLASHCARDS ——— */
+  .flashcard-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .card-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-counter .type-badge {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+
+  .flashcard {
+    aspect-ratio: 8 / 5;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.04),
+      0 12px 32px -12px rgba(0,0,0,0.15);
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+    transition: opacity 0.25s ease;
+  }
+
+  .face.front { opacity: 1; }
+  .face.back { opacity: 0; pointer-events: none; background: var(--bg-card); }
+  .flashcard.flipped .face.front { opacity: 0; pointer-events: none; }
+  .flashcard.flipped .face.back { opacity: 1; pointer-events: auto; }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px;
+    right: 20px; bottom: 20px;
+    border: 1px solid var(--ink-faint);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .face .corner {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .face .corner.right { left: auto; right: 28px; }
+
+  .term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .term em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .definition {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 600px;
+    color: var(--ink);
+  }
+
+  .example {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink-faint);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .example-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Card controls ——— */
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-controls .nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 11px 22px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--highlight); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btns .btn { padding: 10px 16px; }
+  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+
+  /* ——— QUIZ ——— */
+  .quiz-stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+  }
+
+  .quiz-prompt {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .quiz-term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    line-height: 1.45;
+  }
+
+  .option:hover { background: var(--highlight); }
+
+  .option .letter {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 24px;
+    border-right: 1px solid var(--ink-faint);
+    padding-right: 16px;
+  }
+
+  .option.correct {
+    background: #e6efe0;
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .option.correct .letter { color: var(--success); border-color: var(--success); }
+
+  .option.incorrect {
+    background: #f5e4e0;
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .option.incorrect .letter { color: var(--error); border-color: var(--error); }
+
+  .option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: var(--bg-card);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fade 0.3s ease; }
+
+  .quiz-feedback .verdict {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .quiz-feedback.correct { border-color: var(--success); }
+  .quiz-feedback.correct .verdict { color: var(--success); }
+  .quiz-feedback.incorrect { border-color: var(--error); }
+  .quiz-feedback.incorrect .verdict { color: var(--error); }
+
+  .quiz-feedback .explain {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ——— Quiz results ——— */
+  .results {
+    text-align: center;
+    padding: 60px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .results .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(80px, 14vw, 160px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+  }
+
+  .results .score-num .of {
+    color: var(--ink-faint);
+    font-size: 0.5em;
+    font-style: italic;
+  }
+
+  .results .label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin: 16px 0 32px;
+  }
+
+  .results .message {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  /* ——— TIMED TEST ——— */
+  .test-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .test-intro::before {
+    content: 'Examination';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .test-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .test-intro p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .test-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .spec-item .spec-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .spec-item .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .timer-bar {
+    position: sticky;
+    top: 61px;
+    background: var(--bg);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    margin-bottom: 40px;
+  }
+
+  .timer {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.warning { color: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    50% { opacity: 0.5; }
+  }
+
+  .timer-progress {
+    flex: 1;
+    margin: 0 32px;
+    height: 2px;
+    background: var(--ink-faint);
+    opacity: 0.2;
+    position: relative;
+  }
+
+  .timer-progress .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  /* ——— PROGRESS ——— */
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .stat-card .stat-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card .stat-val .unit {
+    font-size: 20px;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .stat-card.accent .stat-val { color: var(--accent); }
+
+  .mastery-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mastery-section .section-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+
+  .mastery-row .cat-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--ink-faint);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mastery-bar-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0.08;
+  }
+
+  .mastery-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  .mastery-pct {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    margin-top: 40px;
+    color: var(--ink-soft);
+  }
+
+
+
+  /* ——— Smart Review help ——— */
+  .sr-help {
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-left: 6px;
+    transition: all 0.15s;
+  }
+  .sr-help:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .sr-info {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 18px 22px;
+    max-width: 460px;
+    width: 90vw;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    z-index: 20;
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+  }
+  .sr-info.show { display: block; }
+  .sr-info strong {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .sr-toggle-label { position: relative; }
+
+  /* ——— Spaced Repetition UI ——— */
+  .flash-level-row {
+    margin-top: 28px;
+    text-align: center;
+  }
+  .flash-level {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.75;
+    user-select: none;
+  }
+  .sr-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sr-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .sr-toggle-label:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .sr-toggle-label { font-size: 13px; }
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 760px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 20px 60px; }
+    .masthead { grid-template-columns: 1fr; gap: 16px; }
+    .masthead .subtitle { text-align: left; }
+    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { white-space: nowrap; min-height: 44px; }
+    .test-specs { grid-template-columns: 1fr; gap: 12px; }
+    .mastery-row { grid-template-columns: 1fr; gap: 8px; }
+    .card-controls { flex-direction: column; gap: 12px; }
+    .card-controls > * { width: 100%; justify-content: center; }
+    .btn { min-height: 44px; }
+    .rating-btns .btn { flex: 1; min-height: 48px; }
+    .face { padding: 32px 24px; }
+    .results { padding: 40px 24px; }
+    .test-intro { padding: 32px 24px; }
+    .option { padding: 16px 18px; }
+    .progress-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 14px 48px; }
+    .face { padding: 20px 16px; }
+    .flashcard { aspect-ratio: unset; height: 320px; overflow: hidden; }
+    .term { font-size: clamp(26px, 7vw, 36px); }
+    .definition { font-size: 18px; }
+    .option { padding: 14px; font-size: 16px; }
+    .quiz-options { gap: 8px; }
+    .results { padding: 28px 16px; }
+    .test-intro { padding: 24px 16px; }
+    .progress-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-card .stat-val { font-size: 40px; }
+    .spec-item .spec-val { font-size: 22px; }
+    .quiz-question { margin-bottom: 20px; }
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+
+<main>
+  <div class="masthead">
+    <div>
+      <div class="category-eyebrow">Category 04 — Biochemistry</div>
+      <h1>The Chemistry<br>of <em>Life</em>.</h1>
+    </div>
+    <div class="subtitle">A study companion for proteins, nucleic acids, metabolism, and the molecular processes of life — built for HOSA competitors preparing for the Biochemistry ATC event.</div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="flashcards">Flashcards</button>
+    <button data-view="quiz">Practice Quiz</button>
+    <button data-view="test">Timed Test</button>
+    <button data-view="progress">Progress</button>
+  </nav>
+
+  <!-- FLASHCARDS VIEW -->
+  <section class="view active" id="view-flashcards">
+    <div class="category-bar" id="flash-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="flashcard-stage">
+      <div class="card-counter">
+        <span id="flash-progress">01 / 00</span>
+        <label class="sr-toggle-label">
+          <input type="checkbox" id="sr-toggle" checked>
+          <span>Smart Review</span>
+          <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
+        </label>
+        <span class="sr-info" id="sr-info" aria-hidden="true">
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level for each card — "Got it" fills one in, "Missed it" resets to zero. Turn this off to see every card in a single random pass instead.
+        </span>
+      </div>
+
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span class="corner">Concept</span>
+            <span class="corner right" id="flash-cat-front"></span>
+            <div class="term" id="flash-front-term"></div>
+            <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
+            <div class="flip-hint">↻ tap to reveal</div>
+          </div>
+          <div class="face back">
+            <span class="corner">Explanation</span>
+            <span class="corner right" id="flash-cat-back"></span>
+            <div class="definition" id="flash-back-def"></div>
+            <div class="example" id="flash-back-ex">
+              <span class="example-label">Example</span>
+              <span id="flash-back-ex-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="btn" id="flash-prev">← Previous</button>
+        <div class="rating-btns">
+          <button class="btn miss" id="flash-miss">Missed it</button>
+          <button class="btn got" id="flash-got">Got it</button>
+        </div>
+        <button class="btn primary" id="flash-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="category-bar" id="quiz-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="quiz-stage" id="quiz-stage">
+      <div class="quiz-header">
+        <span id="quiz-progress">Question 01 of 10</span>
+        <span id="quiz-score">Score: 0 / 0</span>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-term" id="quiz-term"></div>
+      </div>
+
+      <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="quiz-feedback" id="quiz-feedback">
+        <div class="verdict" id="quiz-verdict"></div>
+        <div class="explain" id="quiz-explain"></div>
+      </div>
+
+      <div class="card-controls" style="margin-top: 32px;">
+        <button class="btn" id="quiz-restart">↻ Restart</button>
+        <button class="btn primary" id="quiz-next" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <div class="results" id="quiz-results" style="display: none;">
+      <div class="score-num"><span id="final-score">0</span><span class="of">/<span id="final-total">10</span></span></div>
+      <div class="label">Practice Complete</div>
+      <div class="message" id="quiz-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="quiz-review-misses">Review My Misses</button>
+        <button class="btn primary" id="quiz-retry">Run It Back →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMED TEST VIEW -->
+  <section class="view" id="view-test">
+    <div class="test-intro" id="test-intro">
+      <h2>The HOSA Biochemistry Examination</h2>
+      <p>A timed assessment modeled on competition conditions. You'll be shown biochemistry concepts drawn from all test plan topics — proteins, carbohydrates, nucleic acids, lipids, membranes, and metabolism. Select the correct description. No retries, no feedback until the end.</p>
+      <p>Take a breath. Keep moving. Trust what you know.</p>
+
+      <div class="test-specs">
+        <div class="spec-item">
+          <div class="spec-label">Questions</div>
+          <div class="spec-val">25</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Time Limit</div>
+          <div class="spec-val">12:00</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Format</div>
+          <div class="spec-val">M/C</div>
+        </div>
+      </div>
+
+      <button class="btn accent" id="test-begin" style="width: 100%; padding: 16px;">Begin Examination</button>
+    </div>
+
+    <div id="test-active" style="display: none;">
+      <div class="timer-bar">
+        <div class="timer" id="test-timer">12:00</div>
+        <div class="timer-progress"><div class="fill" id="test-timer-fill" style="width: 100%"></div></div>
+        <div class="meta" id="test-progress">01 / 25</div>
+      </div>
+
+      <div class="quiz-stage">
+        <div class="quiz-question">
+          <div class="quiz-prompt">How would you define this?</div>
+          <div class="quiz-term" id="test-term"></div>
+        </div>
+        <div class="quiz-options" id="test-options"></div>
+      </div>
+    </div>
+
+    <div id="test-results" class="results" style="display: none;">
+      <div class="score-num"><span id="test-final-score">0</span><span class="of">/<span id="test-final-total">25</span></span></div>
+      <div class="label">Examination Complete</div>
+      <div class="message" id="test-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="test-review">Review Misses</button>
+        <button class="btn primary" id="test-again">Take Again →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS VIEW -->
+  <section class="view" id="view-progress">
+    <div class="progress-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cards Studied</div>
+        <div class="stat-val" id="stat-studied">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Mastered</div>
+        <div class="stat-val" id="stat-mastered">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Taken</div>
+        <div class="stat-val" id="stat-quizzes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Score</div>
+        <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="mastery-section">
+      <h3>Mastery by Category</h3>
+      <div class="section-sub">Percentage of terms marked "got it" at least once</div>
+      <div id="mastery-list"></div>
+    </div>
+
+    <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA — HOSA Medical Terminology by word part
+//  Easily extensible: add new categories/sets below
+// ══════════════════════════════════════════════════════════════
+const TERMS = [
+  // ——— WATER — 10% ———
+  { term: 'Hydrogen Bond', type: 'concept', category: 'water', meaning: 'A weak attraction between the hydrogen of one molecule and an electronegative atom (like O or N) of another.', example: 'Hydrogen bonds between water molecules give water high surface tension and boiling point.' },
+  { term: 'Polarity of Water', type: 'concept', category: 'water', meaning: 'Water molecules have partial positive and negative charges due to unequal electron sharing, making them excellent solvents.', example: 'The bent shape and polarity allow water to dissolve most ionic and polar substances.' },
+  { term: 'Cohesion', type: 'concept', category: 'water', meaning: 'The attraction of water molecules to each other through hydrogen bonding.', example: 'Cohesion creates surface tension and allows water to move up plant stems (capillary action).' },
+  { term: 'Adhesion', type: 'concept', category: 'water', meaning: 'The attraction of water molecules to other substances, especially polar surfaces.', example: 'Adhesion combined with cohesion enables capillary action in small tubes.' },
+  { term: 'Specific Heat of Water', type: 'concept', category: 'water', meaning: 'Water\'s ability to absorb large amounts of heat with only small temperature changes, due to hydrogen bonding.', example: 'This property helps regulate body temperature and stabilizes ocean climates.' },
+  { term: 'pH Scale', type: 'concept', category: 'water', meaning: 'A logarithmic scale from 0-14 measuring hydrogen ion concentration; 7 is neutral, below is acidic, above is basic.', example: 'Blood pH is tightly regulated near 7.4. Gastric acid pH is about 1-2.' },
+  { term: 'Buffer', type: 'concept', category: 'water', meaning: 'A solution that resists pH changes by neutralizing added acids or bases.', example: 'The bicarbonate buffer system is the main buffer in human blood.' },
+
+  // ——— PROTEINS, AMINO ACIDS, PEPTIDES, ENZYMES — 20% ———
+  { term: 'Amino Acid', type: 'concept', category: 'proteins', meaning: 'The building block of proteins, consisting of a central carbon bonded to an amino group, carboxyl group, hydrogen, and an R side chain.', example: 'There are 20 standard amino acids used to build proteins; 9 are essential in humans.' },
+  { term: 'Peptide Bond', type: 'concept', category: 'proteins', meaning: 'A covalent bond joining two amino acids, formed by dehydration synthesis between the carboxyl and amino groups.', example: 'A chain of amino acids joined by peptide bonds is called a polypeptide.' },
+  { term: 'Primary Structure', type: 'concept', category: 'proteins', meaning: 'The linear sequence of amino acids in a polypeptide chain, determined by genetic code.', example: 'A single change (like sickle cell: glutamate to valine) can cause major disease.' },
+  { term: 'Secondary Structure', type: 'concept', category: 'proteins', meaning: 'Local folding patterns within a protein — most commonly alpha helices and beta-pleated sheets.', example: 'Stabilized by hydrogen bonds between backbone atoms.' },
+  { term: 'Tertiary Structure', type: 'concept', category: 'proteins', meaning: 'The overall three-dimensional shape of a single polypeptide chain formed by R-group interactions.', example: 'Includes disulfide bridges, hydrogen bonds, and hydrophobic interactions.' },
+  { term: 'Quaternary Structure', type: 'concept', category: 'proteins', meaning: 'The arrangement of multiple polypeptide subunits into a functional protein complex.', example: 'Hemoglobin has four subunits — two alpha and two beta chains.' },
+  { term: 'Enzyme', type: 'concept', category: 'proteins', meaning: 'A protein catalyst that speeds up biochemical reactions by lowering activation energy, without being consumed.', example: 'Enzyme names typically end in "-ase" (amylase, lipase, protease).' },
+  { term: 'Active Site', type: 'concept', category: 'proteins', meaning: 'The specific region on an enzyme where substrate binds and the reaction occurs.', example: 'The lock-and-key model and induced fit model describe how substrates bind.' },
+  { term: 'Denaturation', type: 'concept', category: 'proteins', meaning: 'Loss of a protein\'s three-dimensional shape and function due to heat, pH changes, or chemicals.', example: 'Cooking an egg denatures its proteins; fever can denature enzymes.' },
+  { term: 'Enzyme Inhibitor', type: 'concept', category: 'proteins', meaning: 'A molecule that reduces enzyme activity, either by binding to the active site (competitive) or elsewhere (non-competitive).', example: 'Many drugs work as enzyme inhibitors — for example, statins inhibit HMG-CoA reductase.' },
+  { term: 'Essential Amino Acid', type: 'concept', category: 'proteins', meaning: 'An amino acid that the body cannot synthesize and must obtain from diet.', example: 'Nine are essential in humans, including lysine, tryptophan, and leucine.' },
+
+  // ——— CARBOHYDRATES — 20% ———
+  { term: 'Monosaccharide', type: 'concept', category: 'carbs', meaning: 'A single sugar unit, the simplest form of carbohydrate, typically with formula (CH₂O)ₙ.', example: 'Glucose, fructose, and galactose are the main dietary monosaccharides.' },
+  { term: 'Glucose', type: 'concept', category: 'carbs', meaning: 'A six-carbon monosaccharide (C₆H₁₂O₆) that is the primary energy source for cells.', example: 'Blood glucose is tightly regulated by insulin and glucagon.' },
+  { term: 'Fructose', type: 'concept', category: 'carbs', meaning: 'A six-carbon ketose sugar found in fruits and honey, metabolized primarily in the liver.', example: 'Sweetest of the common sugars; a component of sucrose.' },
+  { term: 'Disaccharide', type: 'concept', category: 'carbs', meaning: 'A carbohydrate formed by joining two monosaccharides through a glycosidic bond.', example: 'Sucrose (glucose + fructose), lactose (glucose + galactose), maltose (glucose + glucose).' },
+  { term: 'Glycosidic Bond', type: 'concept', category: 'carbs', meaning: 'The covalent bond linking two sugar molecules, formed by dehydration synthesis.', example: 'Broken during digestion by enzymes like sucrase, lactase, and maltase.' },
+  { term: 'Polysaccharide', type: 'concept', category: 'carbs', meaning: 'A long chain of monosaccharides linked by glycosidic bonds; serves as energy storage or structural material.', example: 'Starch and glycogen store energy; cellulose provides plant cell wall structure.' },
+  { term: 'Starch', type: 'concept', category: 'carbs', meaning: 'A plant storage polysaccharide made of glucose units, broken down by the enzyme amylase.', example: 'Found in potatoes, grains, and legumes. The main source of dietary carbs.' },
+  { term: 'Glycogen', type: 'concept', category: 'carbs', meaning: 'The animal storage form of glucose, highly branched and stored primarily in liver and muscle.', example: 'Liver glycogen maintains blood glucose; muscle glycogen powers contraction.' },
+  { term: 'Cellulose', type: 'concept', category: 'carbs', meaning: 'A structural polysaccharide forming plant cell walls; humans cannot digest it but it serves as dietary fiber.', example: 'Made of glucose linked by beta-glycosidic bonds, which humans lack the enzyme to break.' },
+  { term: 'Glycolysis', type: 'concept', category: 'carbs', meaning: 'The breakdown of one glucose molecule into two pyruvate molecules, producing a net 2 ATP and 2 NADH.', example: 'Occurs in the cytoplasm and does not require oxygen.' },
+
+  // ——— NUCLEIC ACIDS — 20% ———
+  { term: 'Nucleotide', type: 'concept', category: 'nucleic-acids', meaning: 'The building block of DNA and RNA, consisting of a sugar, a phosphate group, and a nitrogenous base.', example: 'DNA nucleotides contain deoxyribose; RNA nucleotides contain ribose.' },
+  { term: 'DNA', type: 'concept', category: 'nucleic-acids', meaning: 'Deoxyribonucleic acid — the double-stranded molecule storing genetic information in all known living organisms.', example: 'Consists of two antiparallel strands forming a double helix.' },
+  { term: 'RNA', type: 'concept', category: 'nucleic-acids', meaning: 'Ribonucleic acid — typically single-stranded; plays multiple roles in protein synthesis and gene regulation.', example: 'Three main types: mRNA (messenger), tRNA (transfer), rRNA (ribosomal).' },
+  { term: 'Nitrogenous Bases', type: 'concept', category: 'nucleic-acids', meaning: 'The four bases in DNA (A, T, G, C) and RNA (A, U, G, C) that form base pairs.', example: 'Purines: adenine, guanine. Pyrimidines: cytosine, thymine, uracil.' },
+  { term: 'Base Pairing Rules', type: 'concept', category: 'nucleic-acids', meaning: 'In DNA, adenine pairs with thymine (A-T) and guanine pairs with cytosine (G-C). In RNA, A pairs with U.', example: 'A-T pairs use 2 hydrogen bonds; G-C pairs use 3, making GC-rich DNA more stable.' },
+  { term: 'Double Helix', type: 'concept', category: 'nucleic-acids', meaning: 'The twisted ladder structure of DNA with two antiparallel strands held together by base pair hydrogen bonds.', example: 'Discovered by Watson and Crick in 1953, using data from Rosalind Franklin.' },
+  { term: 'DNA Replication', type: 'concept', category: 'nucleic-acids', meaning: 'The process of copying DNA before cell division, producing two identical molecules from one original.', example: 'Semi-conservative: each new molecule has one original strand and one new strand.' },
+  { term: 'Transcription', type: 'concept', category: 'nucleic-acids', meaning: 'The process of synthesizing mRNA from a DNA template, occurring in the nucleus.', example: 'RNA polymerase reads DNA and builds a complementary mRNA strand.' },
+  { term: 'Translation', type: 'concept', category: 'nucleic-acids', meaning: 'The process of building a protein from mRNA, occurring on ribosomes in the cytoplasm.', example: 'tRNA brings amino acids to the ribosome matching each three-base codon.' },
+  { term: 'Codon', type: 'concept', category: 'nucleic-acids', meaning: 'A sequence of three mRNA bases that specifies one amino acid (or a stop signal).', example: 'AUG codes for methionine and serves as the start codon. UAA, UAG, UGA are stop codons.' },
+  { term: 'Genetic Code', type: 'concept', category: 'nucleic-acids', meaning: 'The set of rules by which nucleotide sequences are translated into amino acid sequences in proteins.', example: 'Nearly universal across all life. 64 codons encode 20 amino acids plus start/stop signals.' },
+  { term: 'Mutation', type: 'concept', category: 'nucleic-acids', meaning: 'A change in the DNA sequence, which may be harmful, beneficial, or neutral.', example: 'Types include point mutations, insertions, deletions, and chromosomal abnormalities.' },
+
+  // ——— LIPIDS — 10% ———
+  { term: 'Triglyceride', type: 'concept', category: 'lipids', meaning: 'A lipid made of one glycerol molecule and three fatty acid chains; the main form of fat storage.', example: 'Fats and oils in food and in adipose tissue are primarily triglycerides.' },
+  { term: 'Fatty Acid', type: 'concept', category: 'lipids', meaning: 'A long hydrocarbon chain with a carboxyl group at one end; saturated if no double bonds, unsaturated if any double bonds.', example: 'Saturated: palmitic, stearic. Unsaturated: oleic, linoleic.' },
+  { term: 'Saturated Fat', type: 'concept', category: 'lipids', meaning: 'A fat whose fatty acids have no carbon-carbon double bonds, allowing tight packing. Solid at room temperature.', example: 'Raises LDL cholesterol. Found mainly in animal fats and tropical oils.' },
+  { term: 'Unsaturated Fat', type: 'concept', category: 'lipids', meaning: 'A fat with one (monounsaturated) or more (polyunsaturated) double bonds, typically liquid at room temperature.', example: 'Generally heart-healthy. Includes olive oil, fish oil, nuts, and seeds.' },
+  { term: 'Phospholipid', type: 'concept', category: 'lipids', meaning: 'A lipid with two fatty acid tails and a phosphate-containing head; the main structural component of cell membranes.', example: 'Amphipathic: hydrophobic tails and hydrophilic head, enabling bilayer formation.' },
+  { term: 'Steroid', type: 'concept', category: 'lipids', meaning: 'A lipid with a four-ring carbon structure, including cholesterol, sex hormones, and adrenal hormones.', example: 'Cholesterol is the precursor for testosterone, estrogen, cortisol, and vitamin D.' },
+  { term: 'Cholesterol', type: 'concept', category: 'lipids', meaning: 'A steroid lipid found in animal cell membranes and used to make hormones and bile acids.', example: 'Transported in blood by LDL ("bad") and HDL ("good") lipoproteins.' },
+
+  // ——— BIOLOGICAL MEMBRANES & CELL TRANSPORT — 6% ———
+  { term: 'Phospholipid Bilayer', type: 'concept', category: 'membranes', meaning: 'The double layer of phospholipids that forms cell membranes, with hydrophilic heads facing water and hydrophobic tails inside.', example: 'The basic structural framework of all biological membranes.' },
+  { term: 'Diffusion', type: 'concept', category: 'membranes', meaning: 'The passive movement of molecules from high to low concentration, requiring no energy.', example: 'Oxygen moves from lungs into blood by diffusion.' },
+  { term: 'Osmosis', type: 'concept', category: 'membranes', meaning: 'The diffusion of water across a semipermeable membrane from low solute to high solute concentration.', example: 'Red blood cells swell in hypotonic solutions and shrink in hypertonic ones.' },
+  { term: 'Active Transport', type: 'concept', category: 'membranes', meaning: 'The movement of substances against their concentration gradient, requiring energy (usually ATP).', example: 'The sodium-potassium pump maintains cell membrane potential via active transport.' },
+  { term: 'Facilitated Diffusion', type: 'concept', category: 'membranes', meaning: 'Passive transport through membrane proteins that help specific substances cross the membrane.', example: 'Glucose enters most cells through facilitated diffusion via GLUT transporters.' },
+
+  // ——— METABOLISM & ATP — 14% ———
+  { term: 'ATP', type: 'concept', category: 'metabolism', meaning: 'Adenosine triphosphate — the main energy currency of cells, releasing energy when its phosphate bonds are broken.', example: 'ATP → ADP + Pi + energy. Used for muscle contraction, active transport, and biosynthesis.' },
+  { term: 'Cellular Respiration', type: 'concept', category: 'metabolism', meaning: 'The process cells use to break down glucose and produce ATP, usually requiring oxygen.', example: 'Complete aerobic respiration produces about 36-38 ATP per glucose molecule.' },
+  { term: 'Glycolysis', type: 'concept', category: 'metabolism', meaning: 'The breakdown of glucose into two pyruvate molecules in the cytoplasm, producing a net 2 ATP and 2 NADH.', example: 'Does not require oxygen; the first stage of both aerobic and anaerobic respiration.' },
+  { term: 'Krebs Cycle', type: 'concept', category: 'metabolism', meaning: 'The citric acid cycle — a series of reactions in mitochondria that oxidizes acetyl-CoA to produce NADH, FADH₂, and some ATP.', example: 'Each acetyl-CoA produces 3 NADH, 1 FADH₂, and 1 ATP per turn.' },
+  { term: 'Electron Transport Chain', type: 'concept', category: 'metabolism', meaning: 'A series of protein complexes in the inner mitochondrial membrane that uses electrons from NADH and FADH₂ to make ATP.', example: 'Produces the majority of cellular ATP — about 32-34 of the 36-38 per glucose.' },
+  { term: 'Oxidative Phosphorylation', type: 'concept', category: 'metabolism', meaning: 'The production of ATP using energy from the electron transport chain, with oxygen as the final electron acceptor.', example: 'ATP synthase uses the proton gradient to phosphorylate ADP to ATP.' },
+  { term: 'Anaerobic Respiration', type: 'concept', category: 'metabolism', meaning: 'Energy production without oxygen, producing much less ATP than aerobic respiration.', example: 'In human muscle, pyruvate is converted to lactic acid when oxygen is limited.' },
+  { term: 'Fermentation', type: 'concept', category: 'metabolism', meaning: 'An anaerobic process that regenerates NAD+ so glycolysis can continue when oxygen is limited.', example: 'Lactic acid fermentation in muscles; alcoholic fermentation in yeast.' },
+  { term: 'Anabolism', type: 'concept', category: 'metabolism', meaning: 'The building phase of metabolism — synthesis of complex molecules from simpler ones, requiring energy.', example: 'Examples: protein synthesis, DNA replication, glycogen formation.' },
+  { term: 'Catabolism', type: 'concept', category: 'metabolism', meaning: 'The breakdown phase of metabolism — splitting complex molecules into simpler ones, releasing energy.', example: 'Examples: digestion, glycolysis, fatty acid breakdown.' },
+
+  // ——— ADDITIONAL WATER ———
+  { term: 'Acid', type: 'concept', category: 'water', meaning: 'A substance that donates hydrogen ions (protons) in solution, lowering pH below 7.', example: 'Hydrochloric acid in the stomach; acetic acid in vinegar.' },
+  { term: 'Base', type: 'concept', category: 'water', meaning: 'A substance that accepts hydrogen ions or donates hydroxide ions, raising pH above 7.', example: 'Sodium bicarbonate neutralizes stomach acid; household ammonia is a base.' },
+  { term: 'Solubility', type: 'concept', category: 'water', meaning: 'The ability of a substance to dissolve in another — determined by polarity and molecular interactions.', example: 'Polar substances dissolve in water; nonpolar substances dissolve in fats.' },
+  { term: 'Hydrophilic', type: 'concept', category: 'water', meaning: 'Literally "water-loving" — molecules or regions attracted to water, typically polar or charged.', example: 'Sugar, salt, and the "heads" of phospholipids are hydrophilic.' },
+  { term: 'Hydrophobic', type: 'concept', category: 'water', meaning: 'Literally "water-fearing" — molecules or regions that repel water, typically nonpolar.', example: 'Fats, oils, and the fatty acid "tails" of phospholipids are hydrophobic.' },
+
+  // ——— ADDITIONAL PROTEINS ———
+  { term: 'Hemoglobin', type: 'concept', category: 'proteins', meaning: 'A protein in red blood cells containing iron that binds and transports oxygen throughout the body.', example: 'Has quaternary structure with four subunits; each binds one oxygen molecule.' },
+  { term: 'Collagen', type: 'concept', category: 'proteins', meaning: 'The most abundant protein in the body — provides structural support for skin, bones, tendons, and cartilage.', example: 'Vitamin C is required for collagen synthesis; deficiency causes scurvy.' },
+  { term: 'Antibody', type: 'concept', category: 'proteins', meaning: 'A Y-shaped protein produced by immune cells that recognizes and neutralizes foreign substances.', example: 'Also called immunoglobulins. Five classes: IgG, IgA, IgM, IgD, IgE.' },
+  { term: 'Peptide', type: 'concept', category: 'proteins', meaning: 'A short chain of amino acids — fewer than ~50 — joined by peptide bonds.', example: 'Insulin is technically a peptide hormone with 51 amino acids.' },
+  { term: 'Dipeptide', type: 'concept', category: 'proteins', meaning: 'Two amino acids linked by a single peptide bond.', example: 'Aspartame (a sweetener) is a dipeptide of aspartic acid and phenylalanine.' },
+  { term: 'Substrate', type: 'concept', category: 'proteins', meaning: 'The molecule that an enzyme acts upon — binds to the active site and is converted to product.', example: 'Lactose is the substrate for the enzyme lactase.' },
+  { term: 'Cofactor', type: 'concept', category: 'proteins', meaning: 'A non-protein chemical (often a metal ion or vitamin derivative) required for enzyme activity.', example: 'Zinc, magnesium, and iron serve as cofactors for various enzymes.' },
+  { term: 'Coenzyme', type: 'concept', category: 'proteins', meaning: 'An organic cofactor, often derived from vitamins, that helps enzymes carry out reactions.', example: 'NAD+ and FAD are coenzymes essential in cellular metabolism.' },
+  { term: 'Polypeptide', type: 'concept', category: 'proteins', meaning: 'A long chain of amino acids linked by peptide bonds; one or more polypeptides make a protein.', example: 'Hemoglobin consists of four polypeptide chains.' },
+
+  // ——— ADDITIONAL CARBOHYDRATES ———
+  { term: 'Galactose', type: 'concept', category: 'carbs', meaning: 'A monosaccharide found as part of lactose (milk sugar); converted to glucose in the liver.', example: 'People with galactosemia cannot metabolize galactose and must avoid milk products.' },
+  { term: 'Sucrose', type: 'concept', category: 'carbs', meaning: 'Table sugar — a disaccharide made of glucose and fructose.', example: 'Broken down by sucrase in the small intestine into its two monosaccharide components.' },
+  { term: 'Lactose', type: 'concept', category: 'carbs', meaning: 'Milk sugar — a disaccharide of glucose and galactose, digested by lactase.', example: 'Many adults lose lactase activity, leading to lactose intolerance.' },
+  { term: 'Maltose', type: 'concept', category: 'carbs', meaning: 'A disaccharide of two glucose units, produced during starch digestion.', example: 'Found in grains and produced during beer brewing and germination.' },
+  { term: 'Dehydration Synthesis', type: 'concept', category: 'carbs', meaning: 'Joining two molecules by removing a water molecule — how glycosidic bonds form.', example: 'Also called condensation. Used to build all macromolecules from monomers.' },
+  { term: 'Hydrolysis', type: 'concept', category: 'carbs', meaning: 'Breaking a bond by adding a water molecule — how digestion breaks macromolecules apart.', example: 'Digestive enzymes hydrolyze starch, proteins, and fats into absorbable units.' },
+  { term: 'Fiber', type: 'concept', category: 'carbs', meaning: 'Indigestible plant carbohydrate that passes through the GI tract providing bulk and prebiotic effects.', example: 'Humans lack the enzyme cellulase needed to break beta-glycosidic bonds in cellulose.' },
+
+  // ——— ADDITIONAL NUCLEIC ACIDS ———
+  { term: 'Purine', type: 'concept', category: 'nucleic-acids', meaning: 'A two-ring nitrogenous base — adenine and guanine are the purines in DNA and RNA.', example: 'Remember: "Pure As Gold" — Purines are Adenine and Guanine.' },
+  { term: 'Pyrimidine', type: 'concept', category: 'nucleic-acids', meaning: 'A single-ring nitrogenous base — cytosine, thymine (DNA), and uracil (RNA).', example: 'Purines pair with pyrimidines: A-T (or A-U in RNA) and G-C.' },
+  { term: 'Deoxyribose', type: 'concept', category: 'nucleic-acids', meaning: 'The five-carbon sugar in DNA nucleotides — missing an oxygen compared to ribose.', example: 'The "deoxy" prefix refers to the missing OH group at the 2\' position.' },
+  { term: 'Ribose', type: 'concept', category: 'nucleic-acids', meaning: 'The five-carbon sugar in RNA nucleotides — has an OH group at the 2\' position.', example: 'The extra OH makes RNA less stable than DNA but more chemically reactive.' },
+  { term: 'Phosphodiester Bond', type: 'concept', category: 'nucleic-acids', meaning: 'The covalent bond linking nucleotides in DNA and RNA, forming the sugar-phosphate backbone.', example: 'Connects the 3\' carbon of one nucleotide to the 5\' carbon of the next.' },
+  { term: 'mRNA', type: 'concept', category: 'nucleic-acids', meaning: 'Messenger RNA — carries genetic information from DNA to ribosomes for protein synthesis.', example: 'Synthesized during transcription and read in three-base codons during translation.' },
+  { term: 'tRNA', type: 'concept', category: 'nucleic-acids', meaning: 'Transfer RNA — brings amino acids to the ribosome during translation, matching codons by anticodons.', example: 'Each tRNA carries a specific amino acid and has a three-base anticodon.' },
+  { term: 'rRNA', type: 'concept', category: 'nucleic-acids', meaning: 'Ribosomal RNA — a major structural and catalytic component of ribosomes.', example: 'The peptidyl transferase activity of ribosomes is an rRNA function, not a protein function.' },
+  { term: 'Chromosome', type: 'concept', category: 'nucleic-acids', meaning: 'A packaged, condensed DNA molecule wrapped around histone proteins.', example: 'Humans have 23 pairs (46 total) — 22 autosomes plus one pair of sex chromosomes.' },
+  { term: 'Gene', type: 'concept', category: 'nucleic-acids', meaning: 'A DNA sequence that codes for a specific protein or functional RNA molecule.', example: 'Humans have approximately 20,000-25,000 protein-coding genes.' },
+
+  // ——— ADDITIONAL LIPIDS ———
+  { term: 'Lipid', type: 'concept', category: 'lipids', meaning: 'A broad category of hydrophobic or amphipathic biological molecules including fats, oils, waxes, and steroids.', example: 'Lipids serve as energy storage, membrane structure, signaling, and insulation.' },
+  { term: 'Glycerol', type: 'concept', category: 'lipids', meaning: 'A three-carbon alcohol that serves as the backbone of triglycerides and phospholipids.', example: 'Each glycerol can bond with up to three fatty acids through ester bonds.' },
+  { term: 'Ester Bond', type: 'concept', category: 'lipids', meaning: 'The bond linking fatty acids to glycerol in triglycerides, formed by dehydration synthesis.', example: 'Broken by lipase during fat digestion to release fatty acids and glycerol.' },
+  { term: 'Lipoprotein', type: 'concept', category: 'lipids', meaning: 'A particle of fat and protein that transports lipids through the water-based bloodstream.', example: 'LDL, HDL, VLDL, and chylomicrons are the major lipoprotein classes.' },
+  { term: 'Wax', type: 'concept', category: 'lipids', meaning: 'A lipid made of a fatty acid and a long-chain alcohol; provides water-repellent coatings.', example: 'Earwax protects the ear canal; plant cuticles prevent water loss.' },
+
+  // ——— ADDITIONAL MEMBRANES ———
+  { term: 'Selective Permeability', type: 'concept', category: 'membranes', meaning: 'A membrane\'s ability to allow some substances to pass while blocking others.', example: 'Small, nonpolar molecules cross easily; large or charged ones need transport proteins.' },
+  { term: 'Passive Transport', type: 'concept', category: 'membranes', meaning: 'Movement of substances across a membrane without requiring cellular energy.', example: 'Includes simple diffusion, facilitated diffusion, and osmosis.' },
+  { term: 'Endocytosis', type: 'concept', category: 'membranes', meaning: 'The process of bringing large substances into a cell by engulfing them in membrane vesicles.', example: 'Phagocytosis ("cell eating") and pinocytosis ("cell drinking") are types of endocytosis.' },
+  { term: 'Exocytosis', type: 'concept', category: 'membranes', meaning: 'The process of releasing substances from a cell by fusing vesicles with the cell membrane.', example: 'How cells secrete hormones, neurotransmitters, and digestive enzymes.' },
+  { term: 'Sodium-Potassium Pump', type: 'concept', category: 'membranes', meaning: 'An active transport protein pumping 3 Na+ out and 2 K+ in per ATP, maintaining cell potential.', example: 'Consumes a significant fraction of resting cellular energy; essential for nerve and muscle function.' },
+
+  // ——— ADDITIONAL METABOLISM ———
+  { term: 'NADH', type: 'concept', category: 'metabolism', meaning: 'The reduced form of NAD+ — an electron carrier delivering electrons to the electron transport chain.', example: 'Each NADH produces about 2.5 ATP through oxidative phosphorylation.' },
+  { term: 'FADH2', type: 'concept', category: 'metabolism', meaning: 'The reduced form of FAD — another electron carrier feeding into the electron transport chain.', example: 'Each FADH2 produces about 1.5 ATP — less than NADH because it enters the chain later.' },
+  { term: 'Pyruvate', type: 'concept', category: 'metabolism', meaning: 'The three-carbon end product of glycolysis; enters the mitochondria for aerobic respiration.', example: 'In anaerobic conditions, converted to lactate in animals or ethanol in yeast.' },
+  { term: 'Acetyl-CoA', type: 'concept', category: 'metabolism', meaning: 'The two-carbon molecule that enters the Krebs cycle, formed from pyruvate or fatty acid breakdown.', example: 'A central metabolic intermediate connecting carb, fat, and protein metabolism.' },
+  { term: 'Mitochondria', type: 'concept', category: 'metabolism', meaning: 'The "powerhouse" organelles where the Krebs cycle and oxidative phosphorylation occur.', example: 'Have their own DNA and are inherited maternally. More numerous in high-energy cells.' },
+  { term: 'Beta Oxidation', type: 'concept', category: 'metabolism', meaning: 'The process breaking down fatty acids into acetyl-CoA units in the mitochondria.', example: 'Each round removes 2 carbons and produces 1 NADH and 1 FADH2.' },
+  { term: 'Gluconeogenesis', type: 'concept', category: 'metabolism', meaning: 'The creation of glucose from non-carbohydrate sources like amino acids and glycerol.', example: 'Occurs in the liver during fasting to maintain blood glucose levels.' },
+  { term: 'Glycogenolysis', type: 'concept', category: 'metabolism', meaning: 'The breakdown of glycogen to release glucose, primarily in the liver and muscle.', example: 'Stimulated by glucagon (liver) and epinephrine (muscle) to raise blood sugar.' },
+  { term: 'Enzyme Activation Energy', type: 'concept', category: 'metabolism', meaning: 'The energy barrier a reaction must overcome — enzymes lower this to speed up reactions.', example: 'Without enzymes, most metabolic reactions would be far too slow to sustain life.' },
+
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE (in-memory; resets on reload — progress kept per-session)
+// ══════════════════════════════════════════════════════════════
+const state = {
+  activeView: 'flashcards',
+  flash: {
+    filter: 'all',
+    index: 0,
+    deck: [],
+    srEnabled: true,
+  },
+  quiz: {
+    filter: 'all',
+    deck: [],
+    index: 0,
+    score: 0,
+    answered: false,
+  },
+  test: {
+    active: false,
+    deck: [],
+    index: 0,
+    answers: [],
+    timer: null,
+    timeLeft: 720,
+  },
+  progress: {
+    studied: new Set(),
+    mastered: new Set(),
+    quizzes: [],
+    byCategory: {},
+    lastMissed: [],
+    srLevels: {},
+  },
+};
+
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENCE (Firebase)
+// ══════════════════════════════════════════════════════════════
+const DB_PATH = 'biochemistry';
+
+function saveProgress() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const data = {
+    studied:    [...state.progress.studied],
+    mastered:   [...state.progress.mastered],
+    quizzes:    state.progress.quizzes,
+    lastMissed: state.progress.lastMissed || [],
+    srLevels:   state.progress.srLevels || {},
+  };
+  firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
+    .catch(e => console.warn('Could not save progress:', e));
+}
+
+async function loadProgress(uid) {
+  try {
+    const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
+    if (snap.exists()) {
+      const data = snap.val();
+      state.progress.studied    = new Set(data.studied    || []);
+      state.progress.mastered   = new Set(data.mastered   || []);
+      state.progress.quizzes    = data.quizzes    || [];
+      state.progress.lastMissed = data.lastMissed || [];
+      state.progress.srLevels   = data.srLevels   || {};
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SPACED REPETITION
+// ══════════════════════════════════════════════════════════════
+// Each term has a mastery level 0-5:
+//   0 = brand new / just missed    (weight 16 — shows very often)
+//   1 = shaky                       (weight 8)
+//   2 = learning                    (weight 4)
+//   3 = comfortable                 (weight 2)
+//   4 = solid                       (weight 1)
+//   5 = mastered                    (weight 0.5 — rarely appears)
+const SR_WEIGHTS = [16, 8, 4, 2, 1, 0.5];
+
+function getSRLevel(term) {
+  return state.progress.srLevels[term] || 0;
+}
+
+function setSRLevel(term, level) {
+  const clamped = Math.max(0, Math.min(5, level));
+  state.progress.srLevels[term] = clamped;
+}
+
+function bumpSRLevel(term, delta) {
+  const current = getSRLevel(term);
+  setSRLevel(term, current + delta);
+}
+
+// Build a weighted deck the SAME SIZE as the pool, but with weak cards
+// more likely to appear and mastered cards less likely.
+// Algorithm: for each slot, pick a random card from the pool using weights
+// derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
+// and avoid showing a card too recently seen.
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  
+  // Calculate weights for each card
+  const weighted = pool.map(card => ({
+    card,
+    weight: SR_WEIGHTS[getSRLevel(card.term)]
+  }));
+  const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
+  
+  // Pick cards weighted by level, deck size = pool size
+  const deckSize = pool.length;
+  const recentWindow = Math.min(5, Math.floor(pool.length / 3));
+  const deck = [];
+  const recentlyPicked = []; // circular buffer of last N card terms
+  
+  let attempts = 0;
+  while (deck.length < deckSize && attempts < deckSize * 20) {
+    attempts++;
+    // Weighted random pick
+    let r = Math.random() * totalWeight;
+    let picked = null;
+    for (const w of weighted) {
+      r -= w.weight;
+      if (r <= 0) { picked = w.card; break; }
+    }
+    if (!picked) picked = weighted[weighted.length - 1].card;
+    
+    // Skip if too recently picked
+    if (recentlyPicked.includes(picked.term)) continue;
+    
+    deck.push(picked);
+    recentlyPicked.push(picked.term);
+    if (recentlyPicked.length > recentWindow) recentlyPicked.shift();
+  }
+  
+  // Fallback if we couldn't fill (unusual): top off with random shuffle
+  if (deck.length < deckSize) {
+    const missing = pool.filter(c => !deck.includes(c));
+    deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
+  }
+  
+  return deck;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const pad = n => String(n).padStart(2, '0');
+
+const categories = [...new Set(TERMS.map(t => t.category))];
+const categoryLabel = c => ({
+  'water': 'Water',
+  'proteins': 'Proteins & Enzymes',
+  'carbs': 'Carbohydrates',
+  'nucleic-acids': 'Nucleic Acids',
+  'lipids': 'Lipids',
+  'membranes': 'Membranes & Transport',
+  'metabolism': 'Metabolism & ATP'
+})[c] || c;
+
+function filterDeck(filter) {
+  return filter === 'all' ? [...TERMS] : TERMS.filter(t => t.category === filter);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════
+$$('#tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-' + view).classList.add('active');
+    state.activeView = view;
+    if (view === 'progress') renderProgress();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  CATEGORY CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips(containerId, onSelect, currentFilter) {
+  const container = $(containerId);
+  container.innerHTML = '<span class="label">Filter</span>';
+  const all = document.createElement('button');
+  all.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+  all.innerHTML = `All <span class="count">${TERMS.length}</span>`;
+  all.onclick = () => onSelect('all');
+  container.appendChild(all);
+
+  categories.forEach(cat => {
+    const count = TERMS.filter(t => t.category === cat).length;
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentFilter === cat ? ' active' : '');
+    b.innerHTML = `${categoryLabel(cat)} <span class="count">${count}</span>`;
+    b.onclick = () => onSelect(cat);
+    container.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function initFlashcards() {
+  const onFlashFilter = (f) => {
+    state.flash.filter = f;
+    state.flash.deck = buildSmartDeck(filterDeck(f));
+    state.flash.index = 0;
+    renderChips('#flash-cats', onFlashFilter, f);
+    renderFlashcard();
+  };
+  renderChips('#flash-cats', onFlashFilter, state.flash.filter);
+
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  renderFlashcard();
+
+  // Wire the Smart Review toggle
+  const srToggle = document.getElementById('sr-toggle');
+  if (srToggle) {
+    srToggle.checked = state.flash.srEnabled;
+    srToggle.addEventListener('change', () => {
+      state.flash.srEnabled = srToggle.checked;
+      state.flash.deck = state.flash.srEnabled
+        ? buildSmartDeck(filterDeck(state.flash.filter))
+        : shuffle(filterDeck(state.flash.filter));
+      state.flash.index = 0;
+      renderFlashcard();
+    });
+  }
+
+  $('#flashcard').addEventListener('click', () => {
+    $('#flashcard').classList.toggle('flipped');
+  });
+
+  $('#flash-next').addEventListener('click', () => {
+    nextFlashcard(1);
+  });
+  $('#flash-prev').addEventListener('click', () => {
+    nextFlashcard(-1);
+  });
+  $('#flash-got').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.add(card.term);
+    bumpSRLevel(card.term, 1);
+    saveProgress();
+    renderFlashcard(); // update level indicator before leaving
+    nextFlashcard(1);
+  });
+  $('#flash-miss').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.delete(card.term);
+    setSRLevel(card.term, 0); // reset fully when missed
+    saveProgress();
+    renderFlashcard();
+    nextFlashcard(1);
+  });
+}
+
+function nextFlashcard(dir) {
+  const card = $('#flashcard');
+  card.style.transition = 'transform 0.13s ease-in, opacity 0.13s ease-in';
+  card.style.transform = dir > 0 ? 'translateX(-14px)' : 'translateX(14px)';
+  card.style.opacity = '0';
+  setTimeout(() => {
+    card.classList.remove('flipped');
+    const total = state.flash.deck.length;
+    state.flash.index = (state.flash.index + dir + total) % total;
+    renderFlashcard();
+    card.style.transition = 'none';
+    card.style.transform = dir > 0 ? 'translateX(14px)' : 'translateX(-14px)';
+    card.offsetHeight;
+    card.style.transition = 'transform 0.13s ease-out, opacity 0.13s ease-out';
+    card.style.transform = 'translateX(0)';
+    card.style.opacity = '1';
+  }, 140);
+}
+
+function renderFlashcard() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
+  $('#flash-cat-front').textContent = card.type;
+  $('#flash-cat-back').textContent = card.type;
+  $('#flash-front-term').textContent = card.term;
+  $('#flash-back-def').textContent = card.meaning;
+  $('#flash-back-ex-text').textContent = card.example;
+  // render mastery level indicator
+  const levelEl = document.getElementById('flash-level');
+  if (levelEl) {
+    const level = getSRLevel(card.term);
+    let dots = '';
+    for (let i = 1; i <= 5; i++) {
+      dots += i <= level ? '●' : '○';
+    }
+    levelEl.textContent = dots;
+    levelEl.title = `Mastery level: ${level} of 5`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+const QUIZ_LENGTH = 10;
+
+function initQuiz() {
+  const onQuizFilter = (f) => {
+    state.quiz.filter = f;
+    startQuiz();
+    renderChips('#quiz-cats', onQuizFilter, f);
+  };
+  renderChips('#quiz-cats', onQuizFilter, state.quiz.filter);
+
+  startQuiz();
+
+  $('#quiz-next').addEventListener('click', () => {
+    state.quiz.index++;
+    if (state.quiz.index >= state.quiz.deck.length) {
+      finishQuiz();
+    } else {
+      renderQuiz();
+    }
+  });
+  $('#quiz-restart').addEventListener('click', startQuiz);
+  $('#quiz-retry').addEventListener('click', startQuiz);
+  $('#quiz-review-misses').addEventListener('click', reviewMissesAsFlashcards);
+}
+
+function reviewMissesAsFlashcards() {
+  if (state.progress.lastMissed.length === 0) {
+    alert('No misses to review — nice work!');
+    return;
+  }
+  // switch to flashcards tab with a filtered deck
+  const missedDeck = TERMS.filter(t => state.progress.lastMissed.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  // switch tab
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  const pool = filterDeck(state.quiz.filter);
+  state.quiz.deck = shuffle(pool).slice(0, Math.min(QUIZ_LENGTH, pool.length));
+  state.quiz.index = 0;
+  state.quiz.score = 0;
+  state.quiz.answered = false;
+  $('#quiz-stage').style.display = 'block';
+  $('#quiz-results').style.display = 'none';
+  renderQuiz();
+}
+
+function buildOptions(correct, pool) {
+  const distractors = shuffle(pool.filter(t => t.term !== correct.term)).slice(0, 3);
+  return shuffle([correct, ...distractors]);
+}
+
+function renderQuiz() {
+  const card = state.quiz.deck[state.quiz.index];
+  const pool = filterDeck(state.quiz.filter);
+  const options = buildOptions(card, pool);
+
+  $('#quiz-progress').textContent = `Question ${pad(state.quiz.index + 1)} of ${pad(state.quiz.deck.length)}`;
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index}`;
+  $('#quiz-term').textContent = card.term;
+
+  const optsEl = $('#quiz-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerQuiz(b, opt, card, optsEl);
+    optsEl.appendChild(b);
+  });
+
+  $('#quiz-feedback').classList.remove('show', 'correct', 'incorrect');
+  $('#quiz-next').disabled = true;
+  state.quiz.answered = false;
+}
+
+function answerQuiz(btn, chosen, correct, optsEl) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const isCorrect = chosen.term === correct.term;
+
+  state.progress.studied.add(correct.term);
+  if (isCorrect) {
+    state.quiz.score++;
+    state.progress.mastered.add(correct.term);
+    btn.classList.add('correct');
+    bumpSRLevel(correct.term, 1);
+    // remove from missed list if previously missed
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  } else {
+    btn.classList.add('incorrect');
+    setSRLevel(correct.term, 0);
+    // track the miss
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+    // highlight correct
+    [...optsEl.children].forEach(c => {
+      if (c.textContent.includes(correct.meaning)) c.classList.add('correct');
+    });
+  }
+  [...optsEl.children].forEach(c => c.disabled = true);
+
+  const fb = $('#quiz-feedback');
+  fb.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+  $('#quiz-verdict').textContent = isCorrect ? '✓ Correct' : '✗ Not quite';
+  $('#quiz-explain').textContent = `"${correct.term}" means ${correct.meaning}. ${correct.example ? 'e.g., ' + correct.example : ''}`;
+
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
+  $('#quiz-next').disabled = false;
+  saveProgress();
+}
+
+function finishQuiz() {
+  state.progress.quizzes.push({
+    score: state.quiz.score,
+    total: state.quiz.deck.length,
+    date: Date.now(),
+  });
+  saveProgress();
+  $('#quiz-stage').style.display = 'none';
+  $('#quiz-results').style.display = 'block';
+  $('#final-score').textContent = state.quiz.score;
+  $('#final-total').textContent = state.quiz.deck.length;
+  const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
+  let msg;
+  if (pct === 100) msg = 'Flawless. The terminology bends to you.';
+  else if (pct >= 85) msg = 'Sharp work. You are nearly there.';
+  else if (pct >= 70) msg = 'Strong foundation. Keep drilling the edges.';
+  else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
+  else msg = 'Every expert begins here. Study, then return.';
+  $('#quiz-message').textContent = msg;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMED TEST
+// ══════════════════════════════════════════════════════════════
+const TEST_LENGTH = 25;
+const TEST_SECONDS = 720; // 12 minutes
+
+function initTest() {
+  $('#test-begin').addEventListener('click', startTest);
+  $('#test-again').addEventListener('click', () => {
+    $('#test-results').style.display = 'none';
+    $('#test-intro').style.display = 'block';
+  });
+  $('#test-review').addEventListener('click', reviewTest);
+}
+
+function startTest() {
+  const pool = [...TERMS];
+  state.test.deck = shuffle(pool).slice(0, TEST_LENGTH);
+  state.test.index = 0;
+  state.test.answers = [];
+  state.test.timeLeft = TEST_SECONDS;
+  state.test.active = true;
+
+  $('#test-intro').style.display = 'none';
+  $('#test-active').style.display = 'block';
+  $('#test-results').style.display = 'none';
+
+  renderTestQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+  state.test.timer = setInterval(() => {
+    state.test.timeLeft--;
+    updateTimerDisplay();
+    if (state.test.timeLeft <= 0) {
+      clearInterval(state.test.timer);
+      finishTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.test.timeLeft / 60);
+  const s = state.test.timeLeft % 60;
+  const el = $('#test-timer');
+  el.textContent = `${pad(m)}:${pad(s)}`;
+  if (state.test.timeLeft < 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+  const pct = (state.test.timeLeft / TEST_SECONDS) * 100;
+  $('#test-timer-fill').style.width = pct + '%';
+}
+
+function renderTestQuestion() {
+  const card = state.test.deck[state.test.index];
+  const options = buildOptions(card, TERMS);
+
+  $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
+  $('#test-term').textContent = card.term;
+
+  const optsEl = $('#test-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerTest(opt, card);
+    optsEl.appendChild(b);
+  });
+}
+
+function answerTest(chosen, correct) {
+  const isCorrect = chosen.term === correct.term;
+  state.test.answers.push({
+    term: correct.term,
+    correctMeaning: correct.meaning,
+    chosen: chosen.meaning,
+    isCorrect: isCorrect,
+    example: correct.example,
+  });
+  if (!isCorrect) {
+    setSRLevel(correct.term, 0);
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+  } else {
+    bumpSRLevel(correct.term, 1);
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  }
+  saveProgress();
+  state.test.index++;
+  if (state.test.index >= state.test.deck.length) {
+    clearInterval(state.test.timer);
+    finishTest();
+  } else {
+    renderTestQuestion();
+  }
+}
+
+function finishTest() {
+  state.test.active = false;
+  const correctCount = state.test.answers.filter(a => a.isCorrect).length;
+  const total = state.test.deck.length;
+  state.progress.quizzes.push({
+    score: correctCount,
+    total,
+    date: Date.now(),
+    timed: true,
+  });
+  // register studied terms
+  state.test.answers.forEach(a => {
+    state.progress.studied.add(a.term);
+    if (a.isCorrect) state.progress.mastered.add(a.term);
+  });
+
+  $('#test-active').style.display = 'none';
+  $('#test-results').style.display = 'block';
+  $('#test-final-score').textContent = correctCount;
+  $('#test-final-total').textContent = total;
+
+  const pct = Math.round((correctCount / total) * 100);
+  let msg;
+  if (pct >= 95) msg = 'Exceptional. Competition-ready.';
+  else if (pct >= 85) msg = 'Strong performance — well within medal range.';
+  else if (pct >= 75) msg = 'Solid. Polish the edges and go again.';
+  else if (pct >= 60) msg = 'You know the territory. Time to master it.';
+  else msg = 'The work is ahead. Use flashcards, then retest.';
+  $('#test-message').textContent = msg;
+}
+
+function reviewTest() {
+  const misses = state.test.answers.filter(a => !a.isCorrect);
+  if (misses.length === 0) {
+    alert('No misses to review — perfect score.');
+    return;
+  }
+  // switch to flashcards mode with only the missed terms
+  const missedTerms = misses.map(m => m.term);
+  const missedDeck = TERMS.filter(t => missedTerms.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  $('#stat-studied').textContent = state.progress.studied.size;
+  $('#stat-mastered').textContent = state.progress.mastered.size;
+  $('#stat-quizzes').textContent = state.progress.quizzes.length;
+
+  if (state.progress.quizzes.length > 0) {
+    const avg = state.progress.quizzes.reduce((a, q) => a + (q.score / q.total), 0) / state.progress.quizzes.length;
+    $('#stat-avg').innerHTML = Math.round(avg * 100) + '<span class="unit">%</span>';
+  } else {
+    $('#stat-avg').innerHTML = '—<span class="unit">%</span>';
+  }
+
+  const list = $('#mastery-list');
+  list.innerHTML = '';
+  categories.forEach(cat => {
+    const catTerms = TERMS.filter(t => t.category === cat);
+    const masteredCount = catTerms.filter(t => state.progress.mastered.has(t.term)).length;
+    const pct = Math.round((masteredCount / catTerms.length) * 100);
+
+    const row = document.createElement('div');
+    row.className = 'mastery-row';
+    row.innerHTML = `
+      <div class="cat-name">${categoryLabel(cat)}</div>
+      <div class="mastery-bar">
+        <div class="mastery-bar-bg"></div>
+        <div class="mastery-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="mastery-pct">${masteredCount}/${catTerms.length} · ${pct}%</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+$('#reset-progress').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {} };
+  const user = firebase.auth().currentUser;
+  if (user) firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  renderProgress();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'index.html'; return; }
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  loadProgress(user.uid).then(() => {
+    initFlashcards();
+    initQuiz();
+    initTest();
+  });
+});
+
+
+// Smart Review help popover
+(function() {
+  const helpBtn = document.getElementById('sr-help');
+  const infoBox = document.getElementById('sr-info');
+  if (helpBtn && infoBox) {
+    helpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoBox.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoBox.contains(e.target) && e.target !== helpBtn) {
+        infoBox.classList.remove('show');
+      }
+    });
+  }
+})();
+
+// keyboard shortcuts for flashcards
+document.addEventListener('keydown', (e) => {
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    $('#flashcard').classList.toggle('flipped');
+  } else if (e.key === 'ArrowRight') {
+    nextFlashcard(1);
+  } else if (e.key === 'ArrowLeft') {
+    nextFlashcard(-1);
+  }
+});
+</script>
+</body>
+</html>

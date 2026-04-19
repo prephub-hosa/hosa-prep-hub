@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Medical Terminology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;        /* medical journal crimson */
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+    --error: #8b2a1f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,40,31,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(45,90,61,0.03) 0%, transparent 40%);
+  }
+
+  /* ——— Grain overlay ——— */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  /* ——— Header ——— */
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+
+  .brand-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .brand-link:hover { opacity: 0.65; }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+
+  .category-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ——— Main container ——— */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ——— Masthead ——— */
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .masthead h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .masthead .subtitle {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  /* ——— Nav tabs ——— */
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 48px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    width: fit-content;
+  }
+
+  nav.tabs button {
+    background: var(--bg);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  nav.tabs button:hover { background: var(--highlight); }
+  nav.tabs button.active { background: var(--ink); color: var(--bg); }
+
+  /* ——— Category chips ——— */
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-bar .label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-right: 12px;
+    align-self: center;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .chip:hover { background: var(--highlight); }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip .count {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+
+  /* ——— View containers ——— */
+  .view { display: none; animation: fade 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ——— FLASHCARDS ——— */
+  .flashcard-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .card-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-counter .type-badge {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+
+  .flashcard {
+    aspect-ratio: 8 / 5;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.04),
+      0 12px 32px -12px rgba(0,0,0,0.15);
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+    transition: opacity 0.25s ease;
+  }
+
+  .face.front { opacity: 1; }
+  .face.back { opacity: 0; pointer-events: none; background: var(--bg-card); }
+  .flashcard.flipped .face.front { opacity: 0; pointer-events: none; }
+  .flashcard.flipped .face.back { opacity: 1; pointer-events: auto; }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px;
+    right: 20px; bottom: 20px;
+    border: 1px solid var(--ink-faint);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .face .corner {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .face .corner.right { left: auto; right: 28px; }
+
+  .term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .term em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .definition {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 600px;
+    color: var(--ink);
+  }
+
+  .example {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink-faint);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .example-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Card controls ——— */
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-controls .nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 11px 22px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--highlight); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btns .btn { padding: 10px 16px; }
+  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+
+  /* ——— QUIZ ——— */
+  .quiz-stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+  }
+
+  .quiz-prompt {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .quiz-term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    line-height: 1.45;
+  }
+
+  .option:hover { background: var(--highlight); }
+
+  .option .letter {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 24px;
+    border-right: 1px solid var(--ink-faint);
+    padding-right: 16px;
+  }
+
+  .option.correct {
+    background: #e6efe0;
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .option.correct .letter { color: var(--success); border-color: var(--success); }
+
+  .option.incorrect {
+    background: #f5e4e0;
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .option.incorrect .letter { color: var(--error); border-color: var(--error); }
+
+  .option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: var(--bg-card);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fade 0.3s ease; }
+
+  .quiz-feedback .verdict {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .quiz-feedback.correct { border-color: var(--success); }
+  .quiz-feedback.correct .verdict { color: var(--success); }
+  .quiz-feedback.incorrect { border-color: var(--error); }
+  .quiz-feedback.incorrect .verdict { color: var(--error); }
+
+  .quiz-feedback .explain {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ——— Quiz results ——— */
+  .results {
+    text-align: center;
+    padding: 60px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .results .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(80px, 14vw, 160px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+  }
+
+  .results .score-num .of {
+    color: var(--ink-faint);
+    font-size: 0.5em;
+    font-style: italic;
+  }
+
+  .results .label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin: 16px 0 32px;
+  }
+
+  .results .message {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  /* ——— TIMED TEST ——— */
+  .test-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .test-intro::before {
+    content: 'Examination';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .test-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .test-intro p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .test-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .spec-item .spec-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .spec-item .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .timer-bar {
+    position: sticky;
+    top: 61px;
+    background: var(--bg);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    margin-bottom: 40px;
+  }
+
+  .timer {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.warning { color: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    50% { opacity: 0.5; }
+  }
+
+  .timer-progress {
+    flex: 1;
+    margin: 0 32px;
+    height: 2px;
+    background: var(--ink-faint);
+    opacity: 0.2;
+    position: relative;
+  }
+
+  .timer-progress .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  /* ——— PROGRESS ——— */
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .stat-card .stat-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card .stat-val .unit {
+    font-size: 20px;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .stat-card.accent .stat-val { color: var(--accent); }
+
+  .mastery-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mastery-section .section-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+
+  .mastery-row .cat-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--ink-faint);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mastery-bar-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0.08;
+  }
+
+  .mastery-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  .mastery-pct {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    margin-top: 40px;
+    color: var(--ink-soft);
+  }
+
+
+
+  /* ——— Smart Review help ——— */
+  .sr-help {
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-left: 6px;
+    transition: all 0.15s;
+  }
+  .sr-help:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .sr-info {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 18px 22px;
+    max-width: 460px;
+    width: 90vw;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    z-index: 20;
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+  }
+  .sr-info.show { display: block; }
+  .sr-info strong {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .sr-toggle-label { position: relative; }
+
+  /* ——— Spaced Repetition UI ——— */
+  .flash-level-row {
+    margin-top: 28px;
+    text-align: center;
+  }
+  .flash-level {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.75;
+    user-select: none;
+  }
+  .sr-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sr-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .sr-toggle-label:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .sr-toggle-label { font-size: 13px; }
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 760px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 20px 60px; }
+    .masthead { grid-template-columns: 1fr; gap: 16px; }
+    .masthead .subtitle { text-align: left; }
+    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { white-space: nowrap; min-height: 44px; }
+    .test-specs { grid-template-columns: 1fr; gap: 12px; }
+    .mastery-row { grid-template-columns: 1fr; gap: 8px; }
+    .card-controls { flex-direction: column; gap: 12px; }
+    .card-controls > * { width: 100%; justify-content: center; }
+    .btn { min-height: 44px; }
+    .rating-btns .btn { flex: 1; min-height: 48px; }
+    .face { padding: 32px 24px; }
+    .results { padding: 40px 24px; }
+    .test-intro { padding: 32px 24px; }
+    .option { padding: 16px 18px; }
+    .progress-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 14px 48px; }
+    .face { padding: 20px 16px; }
+    .flashcard { aspect-ratio: unset; height: 320px; overflow: hidden; }
+    .term { font-size: clamp(26px, 7vw, 36px); }
+    .definition { font-size: 18px; }
+    .option { padding: 14px; font-size: 16px; }
+    .quiz-options { gap: 8px; }
+    .results { padding: 28px 16px; }
+    .test-intro { padding: 24px 16px; }
+    .progress-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-card .stat-val { font-size: 40px; }
+    .spec-item .spec-val { font-size: 22px; }
+    .quiz-question { margin-bottom: 20px; }
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+
+<main>
+  <div class="masthead">
+    <div>
+      <div class="category-eyebrow">Category 01 — Medical Terminology</div>
+      <h1>The Anatomy<br>of <em>Language</em>.</h1>
+    </div>
+    <div class="subtitle">A study companion for prefix, suffix, and root word mastery — built for HOSA competitors preparing for the Medical Terminology event.</div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="flashcards">Flashcards</button>
+    <button data-view="quiz">Practice Quiz</button>
+    <button data-view="test">Timed Test</button>
+    <button data-view="progress">Progress</button>
+  </nav>
+
+  <!-- FLASHCARDS VIEW -->
+  <section class="view active" id="view-flashcards">
+    <div class="category-bar" id="flash-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="flashcard-stage">
+      <div class="card-counter">
+        <span id="flash-progress">01 / 00</span>
+        <label class="sr-toggle-label">
+          <input type="checkbox" id="sr-toggle" checked>
+          <span>Smart Review</span>
+          <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
+        </label>
+        <span class="sr-info" id="sr-info" aria-hidden="true">
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level for each card — "Got it" fills one in, "Missed it" resets to zero. Turn this off to see every card in a single random pass instead.
+        </span>
+      </div>
+
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span class="corner">TERM</span>
+            <span class="corner right" id="flash-cat-front"></span>
+            <div class="term" id="flash-front-term"></div>
+            <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
+            <div class="flip-hint">↻ tap to reveal</div>
+          </div>
+          <div class="face back">
+            <span class="corner">MEANING</span>
+            <span class="corner right" id="flash-cat-back"></span>
+            <div class="definition" id="flash-back-def"></div>
+            <div class="example" id="flash-back-ex">
+              <span class="example-label">Example</span>
+              <span id="flash-back-ex-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="btn" id="flash-prev">← Previous</button>
+        <div class="rating-btns">
+          <button class="btn miss" id="flash-miss">Missed it</button>
+          <button class="btn got" id="flash-got">Got it</button>
+        </div>
+        <button class="btn primary" id="flash-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="category-bar" id="quiz-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="quiz-stage" id="quiz-stage">
+      <div class="quiz-header">
+        <span id="quiz-progress">Question 01 of 10</span>
+        <span id="quiz-score">Score: 0 / 0</span>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">What does this mean?</div>
+        <div class="quiz-term" id="quiz-term"></div>
+      </div>
+
+      <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="quiz-feedback" id="quiz-feedback">
+        <div class="verdict" id="quiz-verdict"></div>
+        <div class="explain" id="quiz-explain"></div>
+      </div>
+
+      <div class="card-controls" style="margin-top: 32px;">
+        <button class="btn" id="quiz-restart">↻ Restart</button>
+        <button class="btn primary" id="quiz-next" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <div class="results" id="quiz-results" style="display: none;">
+      <div class="score-num"><span id="final-score">0</span><span class="of">/<span id="final-total">10</span></span></div>
+      <div class="label">Practice Complete</div>
+      <div class="message" id="quiz-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="quiz-review-misses">Review My Misses</button>
+        <button class="btn primary" id="quiz-retry">Run It Back →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMED TEST VIEW -->
+  <section class="view" id="view-test">
+    <div class="test-intro" id="test-intro">
+      <h2>The HOSA Medical Terminology Examination</h2>
+      <p>A timed assessment modeled on competition conditions. You'll be shown medical terms drawn from prefixes, suffixes, and word roots — and must select the correct meaning. No retries, no feedback until the end.</p>
+      <p>Take a breath. Keep moving. Trust what you know.</p>
+
+      <div class="test-specs">
+        <div class="spec-item">
+          <div class="spec-label">Questions</div>
+          <div class="spec-val">25</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Time Limit</div>
+          <div class="spec-val">12:00</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Format</div>
+          <div class="spec-val">M/C</div>
+        </div>
+      </div>
+
+      <button class="btn accent" id="test-begin" style="width: 100%; padding: 16px;">Begin Examination</button>
+    </div>
+
+    <div id="test-active" style="display: none;">
+      <div class="timer-bar">
+        <div class="timer" id="test-timer">12:00</div>
+        <div class="timer-progress"><div class="fill" id="test-timer-fill" style="width: 100%"></div></div>
+        <div class="meta" id="test-progress">01 / 25</div>
+      </div>
+
+      <div class="quiz-stage">
+        <div class="quiz-question">
+          <div class="quiz-prompt">What does this mean?</div>
+          <div class="quiz-term" id="test-term"></div>
+        </div>
+        <div class="quiz-options" id="test-options"></div>
+      </div>
+    </div>
+
+    <div id="test-results" class="results" style="display: none;">
+      <div class="score-num"><span id="test-final-score">0</span><span class="of">/<span id="test-final-total">25</span></span></div>
+      <div class="label">Examination Complete</div>
+      <div class="message" id="test-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="test-review">Review Misses</button>
+        <button class="btn primary" id="test-again">Take Again →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS VIEW -->
+  <section class="view" id="view-progress">
+    <div class="progress-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cards Studied</div>
+        <div class="stat-val" id="stat-studied">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Mastered</div>
+        <div class="stat-val" id="stat-mastered">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Taken</div>
+        <div class="stat-val" id="stat-quizzes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Score</div>
+        <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="mastery-section">
+      <h3>Mastery by Category</h3>
+      <div class="section-sub">Percentage of terms marked "got it" at least once</div>
+      <div id="mastery-list"></div>
+    </div>
+
+    <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA — HOSA Medical Terminology by word part
+//  Easily extensible: add new categories/sets below
+// ══════════════════════════════════════════════════════════════
+const TERMS = [
+  // ——— PREFIXES ———
+  { term: 'a-, an-', type: 'prefix', category: 'prefix', meaning: 'without, absence of', example: 'apnea (without breathing)' },
+  { term: 'ab-', type: 'prefix', category: 'prefix', meaning: 'away from', example: 'abduct (move away from midline)' },
+  { term: 'ad-', type: 'prefix', category: 'prefix', meaning: 'toward, near', example: 'adduct (move toward midline)' },
+  { term: 'ante-', type: 'prefix', category: 'prefix', meaning: 'before, in front of', example: 'antepartum (before birth)' },
+  { term: 'anti-', type: 'prefix', category: 'prefix', meaning: 'against', example: 'antibiotic (against life/bacteria)' },
+  { term: 'bi-', type: 'prefix', category: 'prefix', meaning: 'two, both', example: 'bilateral (both sides)' },
+  { term: 'brady-', type: 'prefix', category: 'prefix', meaning: 'slow', example: 'bradycardia (slow heart rate)' },
+  { term: 'circum-', type: 'prefix', category: 'prefix', meaning: 'around', example: 'circumcision (cut around)' },
+  { term: 'contra-', type: 'prefix', category: 'prefix', meaning: 'against, opposite', example: 'contraindication' },
+  { term: 'dys-', type: 'prefix', category: 'prefix', meaning: 'bad, painful, difficult', example: 'dyspnea (difficult breathing)' },
+  { term: 'endo-', type: 'prefix', category: 'prefix', meaning: 'within, inside', example: 'endoscopy (look inside)' },
+  { term: 'epi-', type: 'prefix', category: 'prefix', meaning: 'above, upon', example: 'epidermis (upon the skin)' },
+  { term: 'eu-', type: 'prefix', category: 'prefix', meaning: 'good, normal', example: 'eupnea (normal breathing)' },
+  { term: 'ex-, exo-', type: 'prefix', category: 'prefix', meaning: 'out, away from', example: 'excision (cut out)' },
+  { term: 'hemi-', type: 'prefix', category: 'prefix', meaning: 'half', example: 'hemiplegia (paralysis of one side)' },
+  { term: 'hyper-', type: 'prefix', category: 'prefix', meaning: 'above, excessive', example: 'hypertension (high blood pressure)' },
+  { term: 'hypo-', type: 'prefix', category: 'prefix', meaning: 'below, deficient', example: 'hypoglycemia (low blood sugar)' },
+  { term: 'infra-', type: 'prefix', category: 'prefix', meaning: 'beneath, below', example: 'infrared (below red)' },
+  { term: 'inter-', type: 'prefix', category: 'prefix', meaning: 'between', example: 'intercostal (between ribs)' },
+  { term: 'intra-', type: 'prefix', category: 'prefix', meaning: 'within', example: 'intravenous (within a vein)' },
+  { term: 'macro-', type: 'prefix', category: 'prefix', meaning: 'large', example: 'macrocyte (large cell)' },
+  { term: 'micro-', type: 'prefix', category: 'prefix', meaning: 'small', example: 'microscope (view small things)' },
+  { term: 'mono-', type: 'prefix', category: 'prefix', meaning: 'one', example: 'mononucleosis (one nucleus)' },
+  { term: 'neo-', type: 'prefix', category: 'prefix', meaning: 'new', example: 'neonatal (newborn)' },
+  { term: 'oligo-', type: 'prefix', category: 'prefix', meaning: 'few, scanty', example: 'oliguria (scant urine)' },
+  { term: 'pan-', type: 'prefix', category: 'prefix', meaning: 'all', example: 'pandemic (affecting all)' },
+  { term: 'para-', type: 'prefix', category: 'prefix', meaning: 'beside, near, abnormal', example: 'paralysis' },
+  { term: 'peri-', type: 'prefix', category: 'prefix', meaning: 'around, surrounding', example: 'pericardium (around heart)' },
+  { term: 'poly-', type: 'prefix', category: 'prefix', meaning: 'many, much', example: 'polyuria (excessive urine)' },
+  { term: 'post-', type: 'prefix', category: 'prefix', meaning: 'after, behind', example: 'postoperative (after surgery)' },
+  { term: 'pre-', type: 'prefix', category: 'prefix', meaning: 'before, in front of', example: 'prenatal (before birth)' },
+  { term: 'quadri-', type: 'prefix', category: 'prefix', meaning: 'four', example: 'quadriplegia (paralysis of 4 limbs)' },
+  { term: 'retro-', type: 'prefix', category: 'prefix', meaning: 'backward, behind', example: 'retrograde (moving backward)' },
+  { term: 'sub-', type: 'prefix', category: 'prefix', meaning: 'under, beneath', example: 'subcutaneous (under the skin)' },
+  { term: 'super-, supra-', type: 'prefix', category: 'prefix', meaning: 'above, excessive', example: 'supraorbital (above eye socket)' },
+  { term: 'tachy-', type: 'prefix', category: 'prefix', meaning: 'fast, rapid', example: 'tachycardia (fast heart rate)' },
+  { term: 'trans-', type: 'prefix', category: 'prefix', meaning: 'across, through', example: 'transdermal (across the skin)' },
+  { term: 'tri-', type: 'prefix', category: 'prefix', meaning: 'three', example: 'tricuspid (three cusps)' },
+  { term: 'uni-', type: 'prefix', category: 'prefix', meaning: 'one', example: 'unilateral (one side)' },
+
+  // ——— SUFFIXES ———
+  { term: '-algia', type: 'suffix', category: 'suffix', meaning: 'pain', example: 'neuralgia (nerve pain)' },
+  { term: '-centesis', type: 'suffix', category: 'suffix', meaning: 'surgical puncture to remove fluid', example: 'thoracentesis' },
+  { term: '-cyte', type: 'suffix', category: 'suffix', meaning: 'cell', example: 'leukocyte (white blood cell)' },
+  { term: '-ectomy', type: 'suffix', category: 'suffix', meaning: 'surgical removal, excision', example: 'appendectomy' },
+  { term: '-emia', type: 'suffix', category: 'suffix', meaning: 'blood condition', example: 'anemia (lack of blood)' },
+  { term: '-genesis', type: 'suffix', category: 'suffix', meaning: 'production, formation', example: 'pathogenesis' },
+  { term: '-gram', type: 'suffix', category: 'suffix', meaning: 'record, image', example: 'electrocardiogram' },
+  { term: '-graph', type: 'suffix', category: 'suffix', meaning: 'instrument for recording', example: 'electrocardiograph' },
+  { term: '-graphy', type: 'suffix', category: 'suffix', meaning: 'process of recording', example: 'angiography' },
+  { term: '-iasis', type: 'suffix', category: 'suffix', meaning: 'abnormal condition', example: 'cholelithiasis (gallstones)' },
+  { term: '-ia', type: 'suffix', category: 'suffix', meaning: 'condition, state', example: 'pneumonia' },
+  { term: '-itis', type: 'suffix', category: 'suffix', meaning: 'inflammation', example: 'arthritis (joint inflammation)' },
+  { term: '-logy', type: 'suffix', category: 'suffix', meaning: 'study of', example: 'cardiology (study of heart)' },
+  { term: '-lysis', type: 'suffix', category: 'suffix', meaning: 'destruction, breakdown', example: 'hemolysis' },
+  { term: '-malacia', type: 'suffix', category: 'suffix', meaning: 'softening', example: 'osteomalacia (bone softening)' },
+  { term: '-megaly', type: 'suffix', category: 'suffix', meaning: 'enlargement', example: 'cardiomegaly' },
+  { term: '-oma', type: 'suffix', category: 'suffix', meaning: 'tumor, mass', example: 'carcinoma' },
+  { term: '-osis', type: 'suffix', category: 'suffix', meaning: 'abnormal condition', example: 'cyanosis (bluish condition)' },
+  { term: '-ostomy', type: 'suffix', category: 'suffix', meaning: 'creating an opening', example: 'colostomy' },
+  { term: '-otomy', type: 'suffix', category: 'suffix', meaning: 'surgical incision, cutting into', example: 'tracheotomy' },
+  { term: '-pathy', type: 'suffix', category: 'suffix', meaning: 'disease', example: 'neuropathy (nerve disease)' },
+  { term: '-penia', type: 'suffix', category: 'suffix', meaning: 'deficiency, decrease', example: 'leukopenia' },
+  { term: '-phobia', type: 'suffix', category: 'suffix', meaning: 'fear', example: 'claustrophobia' },
+  { term: '-plasty', type: 'suffix', category: 'suffix', meaning: 'surgical repair', example: 'rhinoplasty (nose repair)' },
+  { term: '-plegia', type: 'suffix', category: 'suffix', meaning: 'paralysis', example: 'paraplegia' },
+  { term: '-pnea', type: 'suffix', category: 'suffix', meaning: 'breathing', example: 'dyspnea (difficult breathing)' },
+  { term: '-rrhage', type: 'suffix', category: 'suffix', meaning: 'bursting forth, excessive flow', example: 'hemorrhage' },
+  { term: '-rrhea', type: 'suffix', category: 'suffix', meaning: 'discharge, flow', example: 'diarrhea' },
+  { term: '-sclerosis', type: 'suffix', category: 'suffix', meaning: 'hardening', example: 'arteriosclerosis' },
+  { term: '-scope', type: 'suffix', category: 'suffix', meaning: 'instrument for viewing', example: 'stethoscope' },
+  { term: '-scopy', type: 'suffix', category: 'suffix', meaning: 'visual examination', example: 'colonoscopy' },
+  { term: '-stasis', type: 'suffix', category: 'suffix', meaning: 'stopping, controlling', example: 'hemostasis' },
+  { term: '-stenosis', type: 'suffix', category: 'suffix', meaning: 'narrowing, stricture', example: 'arterial stenosis' },
+  { term: '-therapy', type: 'suffix', category: 'suffix', meaning: 'treatment', example: 'chemotherapy' },
+  { term: '-uria', type: 'suffix', category: 'suffix', meaning: 'urine condition', example: 'hematuria (blood in urine)' },
+
+  // ——— ROOTS: BODY SYSTEMS ———
+  { term: 'angi/o', type: 'root', category: 'root', meaning: 'vessel', example: 'angiogram (image of vessels)' },
+  { term: 'arthr/o', type: 'root', category: 'root', meaning: 'joint', example: 'arthritis (joint inflammation)' },
+  { term: 'cardi/o', type: 'root', category: 'root', meaning: 'heart', example: 'cardiologist' },
+  { term: 'cephal/o', type: 'root', category: 'root', meaning: 'head', example: 'cephalgia (headache)' },
+  { term: 'chol/e', type: 'root', category: 'root', meaning: 'bile, gall', example: 'cholecystitis (gallbladder inflammation)' },
+  { term: 'chondr/o', type: 'root', category: 'root', meaning: 'cartilage', example: 'chondroma' },
+  { term: 'col/o', type: 'root', category: 'root', meaning: 'colon, large intestine', example: 'colonoscopy' },
+  { term: 'cost/o', type: 'root', category: 'root', meaning: 'rib', example: 'intercostal (between ribs)' },
+  { term: 'crani/o', type: 'root', category: 'root', meaning: 'skull', example: 'craniotomy' },
+  { term: 'cyan/o', type: 'root', category: 'root', meaning: 'blue', example: 'cyanosis' },
+  { term: 'cyst/o', type: 'root', category: 'root', meaning: 'bladder, sac', example: 'cystitis' },
+  { term: 'cyt/o', type: 'root', category: 'root', meaning: 'cell', example: 'cytology' },
+  { term: 'derm/o, dermat/o', type: 'root', category: 'root', meaning: 'skin', example: 'dermatitis' },
+  { term: 'encephal/o', type: 'root', category: 'root', meaning: 'brain', example: 'encephalitis' },
+  { term: 'enter/o', type: 'root', category: 'root', meaning: 'intestines (small)', example: 'enteritis' },
+  { term: 'erythr/o', type: 'root', category: 'root', meaning: 'red', example: 'erythrocyte (red blood cell)' },
+  { term: 'gastr/o', type: 'root', category: 'root', meaning: 'stomach', example: 'gastritis' },
+  { term: 'glyc/o', type: 'root', category: 'root', meaning: 'sugar, sweet', example: 'hypoglycemia' },
+  { term: 'hem/o, hemat/o', type: 'root', category: 'root', meaning: 'blood', example: 'hematology' },
+  { term: 'hepat/o', type: 'root', category: 'root', meaning: 'liver', example: 'hepatitis' },
+  { term: 'hyster/o', type: 'root', category: 'root', meaning: 'uterus', example: 'hysterectomy' },
+  { term: 'lapar/o', type: 'root', category: 'root', meaning: 'abdomen', example: 'laparoscopy' },
+  { term: 'laryng/o', type: 'root', category: 'root', meaning: 'larynx, voice box', example: 'laryngitis' },
+  { term: 'leuk/o', type: 'root', category: 'root', meaning: 'white', example: 'leukocyte' },
+  { term: 'lip/o', type: 'root', category: 'root', meaning: 'fat, lipid', example: 'liposuction' },
+  { term: 'lith/o', type: 'root', category: 'root', meaning: 'stone, calculus', example: 'lithotripsy' },
+  { term: 'mamm/o, mast/o', type: 'root', category: 'root', meaning: 'breast', example: 'mammogram' },
+  { term: 'melan/o', type: 'root', category: 'root', meaning: 'black', example: 'melanoma' },
+  { term: 'my/o', type: 'root', category: 'root', meaning: 'muscle', example: 'myalgia (muscle pain)' },
+  { term: 'myel/o', type: 'root', category: 'root', meaning: 'bone marrow, spinal cord', example: 'myelogram' },
+  { term: 'nephr/o, ren/o', type: 'root', category: 'root', meaning: 'kidney', example: 'nephrology' },
+  { term: 'neur/o', type: 'root', category: 'root', meaning: 'nerve', example: 'neurology' },
+  { term: 'ocul/o, ophthalm/o', type: 'root', category: 'root', meaning: 'eye', example: 'ophthalmology' },
+  { term: 'onc/o', type: 'root', category: 'root', meaning: 'tumor', example: 'oncology' },
+  { term: 'oste/o', type: 'root', category: 'root', meaning: 'bone', example: 'osteoporosis' },
+  { term: 'ot/o', type: 'root', category: 'root', meaning: 'ear', example: 'otoscope' },
+  { term: 'path/o', type: 'root', category: 'root', meaning: 'disease', example: 'pathology' },
+  { term: 'ped/o', type: 'root', category: 'root', meaning: 'child, foot', example: 'pediatrics' },
+  { term: 'phleb/o, ven/o', type: 'root', category: 'root', meaning: 'vein', example: 'phlebotomy' },
+  { term: 'pneum/o, pulmon/o', type: 'root', category: 'root', meaning: 'lung, air', example: 'pneumonia' },
+  { term: 'proct/o', type: 'root', category: 'root', meaning: 'rectum, anus', example: 'proctology' },
+  { term: 'psych/o', type: 'root', category: 'root', meaning: 'mind', example: 'psychology' },
+  { term: 'pyel/o', type: 'root', category: 'root', meaning: 'renal pelvis', example: 'pyelonephritis' },
+  { term: 'rhin/o', type: 'root', category: 'root', meaning: 'nose', example: 'rhinoplasty' },
+  { term: 'thorac/o', type: 'root', category: 'root', meaning: 'chest', example: 'thoracotomy' },
+  { term: 'thromb/o', type: 'root', category: 'root', meaning: 'clot', example: 'thrombosis' },
+  { term: 'trache/o', type: 'root', category: 'root', meaning: 'trachea, windpipe', example: 'tracheotomy' },
+  { term: 'ur/o', type: 'root', category: 'root', meaning: 'urine, urinary tract', example: 'urology' },
+
+  // ——— ADDITIONAL PREFIXES ———
+  { term: 'auto-', type: 'prefix', category: 'prefix', meaning: 'self', example: 'autoimmune (immunity against self)' },
+  { term: 'dia-', type: 'prefix', category: 'prefix', meaning: 'through, across, complete', example: 'diarrhea (flow through)' },
+  { term: 'dis-', type: 'prefix', category: 'prefix', meaning: 'apart from, separation', example: 'dislocation' },
+  { term: 'ecto-', type: 'prefix', category: 'prefix', meaning: 'outside', example: 'ectopic (out of place)' },
+  { term: 'hyp-', type: 'prefix', category: 'prefix', meaning: 'under, below', example: 'hypodermic' },
+  { term: 'iso-', type: 'prefix', category: 'prefix', meaning: 'equal, same', example: 'isotonic (equal tone)' },
+  { term: 'mal-', type: 'prefix', category: 'prefix', meaning: 'bad, abnormal', example: 'malignant (bad, harmful)' },
+  { term: 'meta-', type: 'prefix', category: 'prefix', meaning: 'change, beyond', example: 'metastasis (change of place)' },
+  { term: 'multi-', type: 'prefix', category: 'prefix', meaning: 'many', example: 'multipara (many births)' },
+  { term: 'nulli-', type: 'prefix', category: 'prefix', meaning: 'none', example: 'nullipara (no births)' },
+  { term: 'pseudo-', type: 'prefix', category: 'prefix', meaning: 'false', example: 'pseudocyesis (false pregnancy)' },
+  { term: 'semi-', type: 'prefix', category: 'prefix', meaning: 'half, partial', example: 'semipermeable' },
+  { term: 'syn-, sym-', type: 'prefix', category: 'prefix', meaning: 'together, with, joined', example: 'symbiosis (living together)' },
+  { term: 'ultra-', type: 'prefix', category: 'prefix', meaning: 'beyond, excess', example: 'ultrasound (beyond sound)' },
+  { term: 'xeno-', type: 'prefix', category: 'prefix', meaning: 'foreign', example: 'xenograft (tissue from different species)' },
+
+  // ——— ADDITIONAL SUFFIXES ———
+  { term: '-ac, -al, -ar, -ary', type: 'suffix', category: 'suffix', meaning: 'pertaining to', example: 'cardiac (pertaining to the heart)' },
+  { term: '-cele', type: 'suffix', category: 'suffix', meaning: 'hernia, protrusion', example: 'cystocele (bladder hernia)' },
+  { term: '-cide', type: 'suffix', category: 'suffix', meaning: 'killing, destroying', example: 'bactericide' },
+  { term: '-crine', type: 'suffix', category: 'suffix', meaning: 'to secrete', example: 'endocrine' },
+  { term: '-desis', type: 'suffix', category: 'suffix', meaning: 'binding, fixation', example: 'arthrodesis (joint fusion)' },
+  { term: '-dynia', type: 'suffix', category: 'suffix', meaning: 'pain', example: 'mastodynia (breast pain)' },
+  { term: '-ectasis', type: 'suffix', category: 'suffix', meaning: 'dilation, expansion', example: 'bronchiectasis' },
+  { term: '-esis', type: 'suffix', category: 'suffix', meaning: 'condition, state', example: 'enuresis' },
+  { term: '-ist', type: 'suffix', category: 'suffix', meaning: 'specialist', example: 'cardiologist' },
+  { term: '-lysis', type: 'suffix', category: 'suffix', meaning: 'breakdown, destruction', example: 'dialysis (breakdown across membrane)' },
+  { term: '-mania', type: 'suffix', category: 'suffix', meaning: 'obsessive preoccupation', example: 'kleptomania' },
+  { term: '-opia', type: 'suffix', category: 'suffix', meaning: 'vision condition', example: 'myopia (near-sightedness)' },
+  { term: '-phagia', type: 'suffix', category: 'suffix', meaning: 'eating, swallowing', example: 'dysphagia (difficulty swallowing)' },
+  { term: '-phasia', type: 'suffix', category: 'suffix', meaning: 'speech', example: 'aphasia (without speech)' },
+  { term: '-phoria', type: 'suffix', category: 'suffix', meaning: 'feeling, mental state', example: 'euphoria' },
+  { term: '-plasia', type: 'suffix', category: 'suffix', meaning: 'formation, development', example: 'hyperplasia (overgrowth)' },
+  { term: '-poiesis', type: 'suffix', category: 'suffix', meaning: 'formation, production', example: 'hematopoiesis (blood formation)' },
+  { term: '-ptosis', type: 'suffix', category: 'suffix', meaning: 'drooping, falling', example: 'nephroptosis' },
+  { term: '-rrhaphy', type: 'suffix', category: 'suffix', meaning: 'surgical suturing', example: 'herniorrhaphy' },
+  { term: '-rrhexis', type: 'suffix', category: 'suffix', meaning: 'rupture', example: 'hysterorrhexis' },
+  { term: '-spasm', type: 'suffix', category: 'suffix', meaning: 'sudden involuntary contraction', example: 'bronchospasm' },
+  { term: '-tropic', type: 'suffix', category: 'suffix', meaning: 'influencing, acting upon', example: 'gonadotropic' },
+
+  // ——— ADDITIONAL ROOTS ———
+  { term: 'aden/o', type: 'root', category: 'root', meaning: 'gland', example: 'adenopathy (gland disease)' },
+  { term: 'aer/o', type: 'root', category: 'root', meaning: 'air, gas', example: 'aerobic' },
+  { term: 'alveol/o', type: 'root', category: 'root', meaning: 'alveolus, air sac', example: 'alveolitis' },
+  { term: 'bronch/o, bronchi/o', type: 'root', category: 'root', meaning: 'bronchus, airway', example: 'bronchitis' },
+  { term: 'carcin/o', type: 'root', category: 'root', meaning: 'cancer', example: 'carcinoma' },
+  { term: 'cervic/o', type: 'root', category: 'root', meaning: 'neck, cervix', example: 'cervical' },
+  { term: 'chrom/o', type: 'root', category: 'root', meaning: 'color', example: 'chromatin' },
+  { term: 'cor/o, core/o', type: 'root', category: 'root', meaning: 'pupil', example: 'coreoplasty' },
+  { term: 'cutane/o', type: 'root', category: 'root', meaning: 'skin', example: 'subcutaneous' },
+  { term: 'dent/o, odont/o', type: 'root', category: 'root', meaning: 'tooth', example: 'orthodontics' },
+  { term: 'duoden/o', type: 'root', category: 'root', meaning: 'duodenum (first part of small intestine)', example: 'duodenal ulcer' },
+  { term: 'electr/o', type: 'root', category: 'root', meaning: 'electricity', example: 'electrocardiogram' },
+  { term: 'esophag/o', type: 'root', category: 'root', meaning: 'esophagus', example: 'esophageal' },
+  { term: 'fibr/o', type: 'root', category: 'root', meaning: 'fiber, fibrous tissue', example: 'fibroma' },
+  { term: 'gloss/o, lingu/o', type: 'root', category: 'root', meaning: 'tongue', example: 'glossitis' },
+  { term: 'gluc/o, glyc/o', type: 'root', category: 'root', meaning: 'sugar, glucose', example: 'glucose' },
+  { term: 'gynec/o', type: 'root', category: 'root', meaning: 'woman, female', example: 'gynecology' },
+  { term: 'hidr/o', type: 'root', category: 'root', meaning: 'sweat', example: 'hidrosis' },
+  { term: 'hydr/o', type: 'root', category: 'root', meaning: 'water', example: 'hydrocephalus' },
+  { term: 'ile/o', type: 'root', category: 'root', meaning: 'ileum (part of small intestine)', example: 'ileostomy' },
+  { term: 'ili/o', type: 'root', category: 'root', meaning: 'ilium (hip bone)', example: 'iliac' },
+  { term: 'irid/o', type: 'root', category: 'root', meaning: 'iris (of the eye)', example: 'iridectomy' },
+  { term: 'kerat/o', type: 'root', category: 'root', meaning: 'cornea, hard tissue', example: 'keratitis' },
+  { term: 'lact/o', type: 'root', category: 'root', meaning: 'milk', example: 'lactation' },
+  { term: 'lymph/o', type: 'root', category: 'root', meaning: 'lymph, lymphatic system', example: 'lymphoma' },
+  { term: 'mening/o', type: 'root', category: 'root', meaning: 'meninges (membranes of CNS)', example: 'meningitis' },
+  { term: 'morph/o', type: 'root', category: 'root', meaning: 'form, shape', example: 'morphology' },
+  { term: 'muscul/o, my/o', type: 'root', category: 'root', meaning: 'muscle', example: 'musculoskeletal' },
+  { term: 'nas/o', type: 'root', category: 'root', meaning: 'nose', example: 'nasogastric' },
+  { term: 'nat/o', type: 'root', category: 'root', meaning: 'birth', example: 'neonatal' },
+  { term: 'necr/o', type: 'root', category: 'root', meaning: 'death (of cells/tissue)', example: 'necrosis' },
+  { term: 'olig/o', type: 'root', category: 'root', meaning: 'few, scanty', example: 'oliguria' },
+  { term: 'onych/o', type: 'root', category: 'root', meaning: 'nail', example: 'onychomycosis' },
+  { term: 'oophor/o', type: 'root', category: 'root', meaning: 'ovary', example: 'oophorectomy' },
+  { term: 'or/o', type: 'root', category: 'root', meaning: 'mouth', example: 'oral' },
+  { term: 'orchid/o, orchi/o', type: 'root', category: 'root', meaning: 'testicle', example: 'orchiectomy' },
+  { term: 'oste/o', type: 'root', category: 'root', meaning: 'bone', example: 'osteoarthritis' },
+  { term: 'phag/o', type: 'root', category: 'root', meaning: 'eating, swallowing', example: 'phagocyte' },
+  { term: 'pharmac/o', type: 'root', category: 'root', meaning: 'drug', example: 'pharmacology' },
+  { term: 'pharyng/o', type: 'root', category: 'root', meaning: 'pharynx, throat', example: 'pharyngitis' },
+  { term: 'phas/o', type: 'root', category: 'root', meaning: 'speech', example: 'aphasia' },
+  { term: 'phob/o', type: 'root', category: 'root', meaning: 'fear', example: 'phobia' },
+  { term: 'phot/o', type: 'root', category: 'root', meaning: 'light', example: 'photophobia' },
+  { term: 'py/o', type: 'root', category: 'root', meaning: 'pus', example: 'pyuria' },
+  { term: 'pyr/o', type: 'root', category: 'root', meaning: 'fever, heat, fire', example: 'pyrexia (fever)' },
+  { term: 'salping/o', type: 'root', category: 'root', meaning: 'fallopian tube, eustachian tube', example: 'salpingectomy' },
+  { term: 'scler/o', type: 'root', category: 'root', meaning: 'hardening, sclera', example: 'sclerosis' },
+  { term: 'spir/o', type: 'root', category: 'root', meaning: 'breathing', example: 'spirometer' },
+  { term: 'splen/o', type: 'root', category: 'root', meaning: 'spleen', example: 'splenomegaly' },
+  { term: 'spondyl/o, vertebr/o', type: 'root', category: 'root', meaning: 'vertebra, spine', example: 'spondylosis' },
+  { term: 'stomat/o', type: 'root', category: 'root', meaning: 'mouth', example: 'stomatitis' },
+  { term: 'ten/o, tend/o', type: 'root', category: 'root', meaning: 'tendon', example: 'tendonitis' },
+  { term: 'therm/o', type: 'root', category: 'root', meaning: 'heat, temperature', example: 'hypothermia' },
+  { term: 'toxic/o', type: 'root', category: 'root', meaning: 'poison', example: 'toxicology' },
+  { term: 'vas/o', type: 'root', category: 'root', meaning: 'vessel, duct', example: 'vasoconstriction' },
+  { term: 'xanth/o', type: 'root', category: 'root', meaning: 'yellow', example: 'xanthoma' },
+  { term: 'xer/o', type: 'root', category: 'root', meaning: 'dry', example: 'xerostomia (dry mouth)' },
+
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE (in-memory; resets on reload — progress kept per-session)
+// ══════════════════════════════════════════════════════════════
+const state = {
+  activeView: 'flashcards',
+  flash: {
+    filter: 'all',
+    index: 0,
+    deck: [],
+    srEnabled: true,
+  },
+  quiz: {
+    filter: 'all',
+    deck: [],
+    index: 0,
+    score: 0,
+    answered: false,
+  },
+  test: {
+    active: false,
+    deck: [],
+    index: 0,
+    answers: [],
+    timer: null,
+    timeLeft: 720,
+  },
+  progress: {
+    studied: new Set(),
+    mastered: new Set(),
+    quizzes: [],
+    byCategory: {},
+    lastMissed: [],
+    srLevels: {},
+  },
+};
+
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENCE (Firebase)
+// ══════════════════════════════════════════════════════════════
+const DB_PATH = 'medical-terminology';
+
+function saveProgress() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const data = {
+    studied:    [...state.progress.studied],
+    mastered:   [...state.progress.mastered],
+    quizzes:    state.progress.quizzes,
+    lastMissed: state.progress.lastMissed || [],
+    srLevels:   state.progress.srLevels || {},
+  };
+  firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
+    .catch(e => console.warn('Could not save progress:', e));
+}
+
+async function loadProgress(uid) {
+  try {
+    const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
+    if (snap.exists()) {
+      const data = snap.val();
+      state.progress.studied    = new Set(data.studied    || []);
+      state.progress.mastered   = new Set(data.mastered   || []);
+      state.progress.quizzes    = data.quizzes    || [];
+      state.progress.lastMissed = data.lastMissed || [];
+      state.progress.srLevels   = data.srLevels   || {};
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SPACED REPETITION
+// ══════════════════════════════════════════════════════════════
+// Each term has a mastery level 0-5:
+//   0 = brand new / just missed    (weight 16 — shows very often)
+//   1 = shaky                       (weight 8)
+//   2 = learning                    (weight 4)
+//   3 = comfortable                 (weight 2)
+//   4 = solid                       (weight 1)
+//   5 = mastered                    (weight 0.5 — rarely appears)
+const SR_WEIGHTS = [16, 8, 4, 2, 1, 0.5];
+
+function getSRLevel(term) {
+  return state.progress.srLevels[term] || 0;
+}
+
+function setSRLevel(term, level) {
+  const clamped = Math.max(0, Math.min(5, level));
+  state.progress.srLevels[term] = clamped;
+}
+
+function bumpSRLevel(term, delta) {
+  const current = getSRLevel(term);
+  setSRLevel(term, current + delta);
+}
+
+// Build a weighted deck the SAME SIZE as the pool, but with weak cards
+// more likely to appear and mastered cards less likely.
+// Algorithm: for each slot, pick a random card from the pool using weights
+// derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
+// and avoid showing a card too recently seen.
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  
+  // Calculate weights for each card
+  const weighted = pool.map(card => ({
+    card,
+    weight: SR_WEIGHTS[getSRLevel(card.term)]
+  }));
+  const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
+  
+  // Pick cards weighted by level, deck size = pool size
+  const deckSize = pool.length;
+  const recentWindow = Math.min(5, Math.floor(pool.length / 3));
+  const deck = [];
+  const recentlyPicked = []; // circular buffer of last N card terms
+  
+  let attempts = 0;
+  while (deck.length < deckSize && attempts < deckSize * 20) {
+    attempts++;
+    // Weighted random pick
+    let r = Math.random() * totalWeight;
+    let picked = null;
+    for (const w of weighted) {
+      r -= w.weight;
+      if (r <= 0) { picked = w.card; break; }
+    }
+    if (!picked) picked = weighted[weighted.length - 1].card;
+    
+    // Skip if too recently picked
+    if (recentlyPicked.includes(picked.term)) continue;
+    
+    deck.push(picked);
+    recentlyPicked.push(picked.term);
+    if (recentlyPicked.length > recentWindow) recentlyPicked.shift();
+  }
+  
+  // Fallback if we couldn't fill (unusual): top off with random shuffle
+  if (deck.length < deckSize) {
+    const missing = pool.filter(c => !deck.includes(c));
+    deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
+  }
+  
+  return deck;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const pad = n => String(n).padStart(2, '0');
+
+const categories = [...new Set(TERMS.map(t => t.category))];
+const categoryLabel = c => ({ prefix: 'Prefixes', suffix: 'Suffixes', root: 'Word Roots' })[c] || c;
+
+function filterDeck(filter) {
+  return filter === 'all' ? [...TERMS] : TERMS.filter(t => t.category === filter);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════
+$$('#tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-' + view).classList.add('active');
+    state.activeView = view;
+    if (view === 'progress') renderProgress();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  CATEGORY CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips(containerId, onSelect, currentFilter) {
+  const container = $(containerId);
+  container.innerHTML = '<span class="label">Filter</span>';
+  const all = document.createElement('button');
+  all.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+  all.innerHTML = `All <span class="count">${TERMS.length}</span>`;
+  all.onclick = () => onSelect('all');
+  container.appendChild(all);
+
+  categories.forEach(cat => {
+    const count = TERMS.filter(t => t.category === cat).length;
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentFilter === cat ? ' active' : '');
+    b.innerHTML = `${categoryLabel(cat)} <span class="count">${count}</span>`;
+    b.onclick = () => onSelect(cat);
+    container.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function initFlashcards() {
+  const onFlashFilter = (f) => {
+    state.flash.filter = f;
+    state.flash.deck = buildSmartDeck(filterDeck(f));
+    state.flash.index = 0;
+    renderChips('#flash-cats', onFlashFilter, f);
+    renderFlashcard();
+  };
+  renderChips('#flash-cats', onFlashFilter, state.flash.filter);
+
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  renderFlashcard();
+
+  // Wire the Smart Review toggle
+  const srToggle = document.getElementById('sr-toggle');
+  if (srToggle) {
+    srToggle.checked = state.flash.srEnabled;
+    srToggle.addEventListener('change', () => {
+      state.flash.srEnabled = srToggle.checked;
+      state.flash.deck = state.flash.srEnabled
+        ? buildSmartDeck(filterDeck(state.flash.filter))
+        : shuffle(filterDeck(state.flash.filter));
+      state.flash.index = 0;
+      renderFlashcard();
+    });
+  }
+
+  $('#flashcard').addEventListener('click', () => {
+    $('#flashcard').classList.toggle('flipped');
+  });
+
+  $('#flash-next').addEventListener('click', () => {
+    nextFlashcard(1);
+  });
+  $('#flash-prev').addEventListener('click', () => {
+    nextFlashcard(-1);
+  });
+  $('#flash-got').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.add(card.term);
+    bumpSRLevel(card.term, 1);
+    saveProgress();
+    renderFlashcard(); // update level indicator before leaving
+    nextFlashcard(1);
+  });
+  $('#flash-miss').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.delete(card.term);
+    setSRLevel(card.term, 0); // reset fully when missed
+    saveProgress();
+    renderFlashcard();
+    nextFlashcard(1);
+  });
+}
+
+function nextFlashcard(dir) {
+  const card = $('#flashcard');
+  card.style.transition = 'transform 0.13s ease-in, opacity 0.13s ease-in';
+  card.style.transform = dir > 0 ? 'translateX(-14px)' : 'translateX(14px)';
+  card.style.opacity = '0';
+  setTimeout(() => {
+    card.classList.remove('flipped');
+    const total = state.flash.deck.length;
+    state.flash.index = (state.flash.index + dir + total) % total;
+    renderFlashcard();
+    card.style.transition = 'none';
+    card.style.transform = dir > 0 ? 'translateX(14px)' : 'translateX(-14px)';
+    card.offsetHeight;
+    card.style.transition = 'transform 0.13s ease-out, opacity 0.13s ease-out';
+    card.style.transform = 'translateX(0)';
+    card.style.opacity = '1';
+  }, 140);
+}
+
+function renderFlashcard() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
+  $('#flash-cat-front').textContent = card.type;
+  $('#flash-cat-back').textContent = card.type;
+  $('#flash-front-term').textContent = card.term;
+  $('#flash-back-def').textContent = card.meaning;
+  $('#flash-back-ex-text').textContent = card.example;
+  // render mastery level indicator
+  const levelEl = document.getElementById('flash-level');
+  if (levelEl) {
+    const level = getSRLevel(card.term);
+    let dots = '';
+    for (let i = 1; i <= 5; i++) {
+      dots += i <= level ? '●' : '○';
+    }
+    levelEl.textContent = dots;
+    levelEl.title = `Mastery level: ${level} of 5`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+const QUIZ_LENGTH = 10;
+
+function initQuiz() {
+  const onQuizFilter = (f) => {
+    state.quiz.filter = f;
+    startQuiz();
+    renderChips('#quiz-cats', onQuizFilter, f);
+  };
+  renderChips('#quiz-cats', onQuizFilter, state.quiz.filter);
+
+  startQuiz();
+
+  $('#quiz-next').addEventListener('click', () => {
+    state.quiz.index++;
+    if (state.quiz.index >= state.quiz.deck.length) {
+      finishQuiz();
+    } else {
+      renderQuiz();
+    }
+  });
+  $('#quiz-restart').addEventListener('click', startQuiz);
+  $('#quiz-retry').addEventListener('click', startQuiz);
+  $('#quiz-review-misses').addEventListener('click', reviewMissesAsFlashcards);
+}
+
+function reviewMissesAsFlashcards() {
+  if (state.progress.lastMissed.length === 0) {
+    alert('No misses to review — nice work!');
+    return;
+  }
+  // switch to flashcards tab with a filtered deck
+  const missedDeck = TERMS.filter(t => state.progress.lastMissed.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  // switch tab
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  const pool = filterDeck(state.quiz.filter);
+  state.quiz.deck = shuffle(pool).slice(0, Math.min(QUIZ_LENGTH, pool.length));
+  state.quiz.index = 0;
+  state.quiz.score = 0;
+  state.quiz.answered = false;
+  $('#quiz-stage').style.display = 'block';
+  $('#quiz-results').style.display = 'none';
+  renderQuiz();
+}
+
+function buildOptions(correct, pool) {
+  const distractors = shuffle(pool.filter(t => t.term !== correct.term)).slice(0, 3);
+  return shuffle([correct, ...distractors]);
+}
+
+function renderQuiz() {
+  const card = state.quiz.deck[state.quiz.index];
+  const pool = filterDeck(state.quiz.filter);
+  const options = buildOptions(card, pool);
+
+  $('#quiz-progress').textContent = `Question ${pad(state.quiz.index + 1)} of ${pad(state.quiz.deck.length)}`;
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index}`;
+  $('#quiz-term').textContent = card.term;
+
+  const optsEl = $('#quiz-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerQuiz(b, opt, card, optsEl);
+    optsEl.appendChild(b);
+  });
+
+  $('#quiz-feedback').classList.remove('show', 'correct', 'incorrect');
+  $('#quiz-next').disabled = true;
+  state.quiz.answered = false;
+}
+
+function answerQuiz(btn, chosen, correct, optsEl) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const isCorrect = chosen.term === correct.term;
+
+  state.progress.studied.add(correct.term);
+  if (isCorrect) {
+    state.quiz.score++;
+    state.progress.mastered.add(correct.term);
+    btn.classList.add('correct');
+    bumpSRLevel(correct.term, 1);
+    // remove from missed list if previously missed
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  } else {
+    btn.classList.add('incorrect');
+    setSRLevel(correct.term, 0);
+    // track the miss
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+    // highlight correct
+    [...optsEl.children].forEach(c => {
+      if (c.textContent.includes(correct.meaning)) c.classList.add('correct');
+    });
+  }
+  [...optsEl.children].forEach(c => c.disabled = true);
+
+  const fb = $('#quiz-feedback');
+  fb.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+  $('#quiz-verdict').textContent = isCorrect ? '✓ Correct' : '✗ Not quite';
+  $('#quiz-explain').textContent = `"${correct.term}" means ${correct.meaning}. ${correct.example ? 'e.g., ' + correct.example : ''}`;
+
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
+  $('#quiz-next').disabled = false;
+  saveProgress();
+}
+
+function finishQuiz() {
+  state.progress.quizzes.push({
+    score: state.quiz.score,
+    total: state.quiz.deck.length,
+    date: Date.now(),
+  });
+  saveProgress();
+  $('#quiz-stage').style.display = 'none';
+  $('#quiz-results').style.display = 'block';
+  $('#final-score').textContent = state.quiz.score;
+  $('#final-total').textContent = state.quiz.deck.length;
+  const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
+  let msg;
+  if (pct === 100) msg = 'Flawless. The terminology bends to you.';
+  else if (pct >= 85) msg = 'Sharp work. You are nearly there.';
+  else if (pct >= 70) msg = 'Strong foundation. Keep drilling the edges.';
+  else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
+  else msg = 'Every expert begins here. Study, then return.';
+  $('#quiz-message').textContent = msg;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMED TEST
+// ══════════════════════════════════════════════════════════════
+const TEST_LENGTH = 25;
+const TEST_SECONDS = 720; // 12 minutes
+
+function initTest() {
+  $('#test-begin').addEventListener('click', startTest);
+  $('#test-again').addEventListener('click', () => {
+    $('#test-results').style.display = 'none';
+    $('#test-intro').style.display = 'block';
+  });
+  $('#test-review').addEventListener('click', reviewTest);
+}
+
+function startTest() {
+  const pool = [...TERMS];
+  state.test.deck = shuffle(pool).slice(0, TEST_LENGTH);
+  state.test.index = 0;
+  state.test.answers = [];
+  state.test.timeLeft = TEST_SECONDS;
+  state.test.active = true;
+
+  $('#test-intro').style.display = 'none';
+  $('#test-active').style.display = 'block';
+  $('#test-results').style.display = 'none';
+
+  renderTestQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+  state.test.timer = setInterval(() => {
+    state.test.timeLeft--;
+    updateTimerDisplay();
+    if (state.test.timeLeft <= 0) {
+      clearInterval(state.test.timer);
+      finishTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.test.timeLeft / 60);
+  const s = state.test.timeLeft % 60;
+  const el = $('#test-timer');
+  el.textContent = `${pad(m)}:${pad(s)}`;
+  if (state.test.timeLeft < 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+  const pct = (state.test.timeLeft / TEST_SECONDS) * 100;
+  $('#test-timer-fill').style.width = pct + '%';
+}
+
+function renderTestQuestion() {
+  const card = state.test.deck[state.test.index];
+  const options = buildOptions(card, TERMS);
+
+  $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
+  $('#test-term').textContent = card.term;
+
+  const optsEl = $('#test-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerTest(opt, card);
+    optsEl.appendChild(b);
+  });
+}
+
+function answerTest(chosen, correct) {
+  const isCorrect = chosen.term === correct.term;
+  state.test.answers.push({
+    term: correct.term,
+    correctMeaning: correct.meaning,
+    chosen: chosen.meaning,
+    isCorrect: isCorrect,
+    example: correct.example,
+  });
+  if (!isCorrect) {
+    setSRLevel(correct.term, 0);
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+  } else {
+    bumpSRLevel(correct.term, 1);
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  }
+  saveProgress();
+  state.test.index++;
+  if (state.test.index >= state.test.deck.length) {
+    clearInterval(state.test.timer);
+    finishTest();
+  } else {
+    renderTestQuestion();
+  }
+}
+
+function finishTest() {
+  state.test.active = false;
+  const correctCount = state.test.answers.filter(a => a.isCorrect).length;
+  const total = state.test.deck.length;
+  state.progress.quizzes.push({
+    score: correctCount,
+    total,
+    date: Date.now(),
+    timed: true,
+  });
+  // register studied terms
+  state.test.answers.forEach(a => {
+    state.progress.studied.add(a.term);
+    if (a.isCorrect) state.progress.mastered.add(a.term);
+  });
+
+  $('#test-active').style.display = 'none';
+  $('#test-results').style.display = 'block';
+  $('#test-final-score').textContent = correctCount;
+  $('#test-final-total').textContent = total;
+
+  const pct = Math.round((correctCount / total) * 100);
+  let msg;
+  if (pct >= 95) msg = 'Exceptional. Competition-ready.';
+  else if (pct >= 85) msg = 'Strong performance — well within medal range.';
+  else if (pct >= 75) msg = 'Solid. Polish the edges and go again.';
+  else if (pct >= 60) msg = 'You know the territory. Time to master it.';
+  else msg = 'The work is ahead. Use flashcards, then retest.';
+  $('#test-message').textContent = msg;
+}
+
+function reviewTest() {
+  const misses = state.test.answers.filter(a => !a.isCorrect);
+  if (misses.length === 0) {
+    alert('No misses to review — perfect score.');
+    return;
+  }
+  // switch to flashcards mode with only the missed terms
+  const missedTerms = misses.map(m => m.term);
+  const missedDeck = TERMS.filter(t => missedTerms.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  $('#stat-studied').textContent = state.progress.studied.size;
+  $('#stat-mastered').textContent = state.progress.mastered.size;
+  $('#stat-quizzes').textContent = state.progress.quizzes.length;
+
+  if (state.progress.quizzes.length > 0) {
+    const avg = state.progress.quizzes.reduce((a, q) => a + (q.score / q.total), 0) / state.progress.quizzes.length;
+    $('#stat-avg').innerHTML = Math.round(avg * 100) + '<span class="unit">%</span>';
+  } else {
+    $('#stat-avg').innerHTML = '—<span class="unit">%</span>';
+  }
+
+  const list = $('#mastery-list');
+  list.innerHTML = '';
+  categories.forEach(cat => {
+    const catTerms = TERMS.filter(t => t.category === cat);
+    const masteredCount = catTerms.filter(t => state.progress.mastered.has(t.term)).length;
+    const pct = Math.round((masteredCount / catTerms.length) * 100);
+
+    const row = document.createElement('div');
+    row.className = 'mastery-row';
+    row.innerHTML = `
+      <div class="cat-name">${categoryLabel(cat)}</div>
+      <div class="mastery-bar">
+        <div class="mastery-bar-bg"></div>
+        <div class="mastery-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="mastery-pct">${masteredCount}/${catTerms.length} · ${pct}%</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+$('#reset-progress').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {} };
+  const user = firebase.auth().currentUser;
+  if (user) firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  renderProgress();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'index.html'; return; }
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  loadProgress(user.uid).then(() => {
+    initFlashcards();
+    initQuiz();
+    initTest();
+  });
+});
+
+
+// Smart Review help popover
+(function() {
+  const helpBtn = document.getElementById('sr-help');
+  const infoBox = document.getElementById('sr-info');
+  if (helpBtn && infoBox) {
+    helpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoBox.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoBox.contains(e.target) && e.target !== helpBtn) {
+        infoBox.classList.remove('show');
+      }
+    });
+  }
+})();
+
+// keyboard shortcuts for flashcards
+document.addEventListener('keydown', (e) => {
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    $('#flashcard').classList.toggle('flipped');
+  } else if (e.key === 'ArrowRight') {
+    nextFlashcard(1);
+  } else if (e.key === 'ArrowLeft') {
+    nextFlashcard(-1);
+  }
+});
+</script>
+</body>
+</html>

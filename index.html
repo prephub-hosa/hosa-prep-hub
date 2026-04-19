@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — A Study Companion for HOSA Competitors</title>
+<meta name="description" content="A focused study companion for HOSA competitive events. Flashcards, practice quizzes, and timed examinations for Medical Terminology, Pathophysiology, Nutrition, and Biochemistry.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(168,40,31,0.04) 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(45,90,61,0.035) 0%, transparent 45%);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background: var(--bg);
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 40px 80px;
+  }
+
+  /* ——— Hero ——— */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-bottom: 64px;
+    padding-bottom: 56px;
+    border-bottom: 2px solid var(--rule);
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 0;
+    width: 80px;
+    height: 12px;
+    background: var(--bg);
+    border-left: 2px solid var(--rule);
+    border-right: 2px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  h1.hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(56px, 8vw, 104px);
+    font-weight: 400;
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+    margin-bottom: 28px;
+  }
+
+  h1.hero-title em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .hero-lede {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+
+  .hero-tagline {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hero-tagline span {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--ink);
+    background: var(--bg-card);
+  }
+
+  .hero-tagline span strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .hero-aside {
+    border-left: 1px solid var(--ink);
+    padding-left: 40px;
+  }
+
+  .hero-aside .aside-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+  }
+
+  .hero-aside p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+
+  .hero-aside p:last-child { margin-bottom: 0; }
+
+  /* ——— Stats band ——— */
+  .stats-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 96px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+  }
+
+  .stat-item {
+    padding: 32px 24px;
+    text-align: center;
+    border-right: 1px solid rgba(26,26,26,0.15);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-big {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Section header ——— */
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .section-head h2 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .section-head .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+  }
+
+  /* ——— Categories ——— */
+  .categories {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 96px;
+  }
+
+  .category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 40px 36px 36px;
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 420px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -16px rgba(0,0,0,0.15);
+  }
+
+  .category-card:hover .card-arrow {
+    transform: translateX(6px);
+    color: var(--accent);
+  }
+
+  .card-number {
+    font-family: 'Fraunces', serif;
+    font-size: 68px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 12px;
+    opacity: 0.85;
+  }
+
+  .card-meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .category-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  .category-card h3 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .card-desc {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    flex: 1;
+  }
+
+  .card-stats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(26,26,26,0.12);
+  }
+
+  .card-stat .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .card-stat .stat-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+
+  .card-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+
+  .card-arrow {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-style: italic;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--ink);
+  }
+
+  .category-card.coming-soon {
+    background: transparent;
+    border: 1px dashed var(--ink-faint);
+    cursor: default;
+  }
+  .category-card.coming-soon:hover { transform: none; box-shadow: none; }
+  .category-card.coming-soon .card-number,
+  .category-card.coming-soon h3,
+  .category-card.coming-soon .card-meta,
+  .category-card.coming-soon .card-desc { opacity: 0.45; }
+  .category-card.coming-soon .card-cta { color: var(--ink-faint); font-style: italic; }
+
+  /* ——— Testimonials ——— */
+  .testimonials {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 96px;
+  }
+
+  .testimonial {
+    border-left: 3px solid var(--accent);
+    padding: 8px 0 8px 32px;
+  }
+
+  .testimonial blockquote {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .testimonial blockquote::before {
+    content: '"';
+    color: var(--accent);
+    font-size: 1.3em;
+    font-weight: 500;
+    margin-right: 2px;
+  }
+  .testimonial blockquote::after {
+    content: '"';
+    color: var(--accent);
+    font-size: 1.3em;
+    font-weight: 500;
+    margin-left: 2px;
+  }
+
+  .testimonial .attribution {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .testimonial .attribution::before {
+    content: '— ';
+    color: var(--accent);
+  }
+
+  /* ——— How it works ——— */
+  .how {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 96px;
+  }
+
+  .how-item {
+    padding-top: 24px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .how-num {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .how-item h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .how-item p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Email capture ——— */
+  .newsletter {
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 48px 40px;
+    margin-bottom: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .newsletter-copy h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .newsletter-copy h3 em {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .newsletter-copy p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .newsletter-form input[type="email"] {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 14px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    color: var(--ink);
+    width: 100%;
+  }
+
+  .newsletter-form input[type="email"]:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+
+  .newsletter-form button {
+    background: var(--ink);
+    color: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 14px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .newsletter-form button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .newsletter-msg {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: var(--success);
+    font-weight: 600;
+    min-height: 20px;
+  }
+
+  /* ——— Footer ——— */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+
+  footer .footer-mark {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
+    .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
+    .stats-band { grid-template-columns: 1fr 1fr; }
+    .stat-item { border-right: none; border-bottom: 1px solid rgba(26,26,26,0.15); }
+    .stat-item:nth-child(odd) { border-right: 1px solid rgba(26,26,26,0.15); }
+    .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: none; }
+    .categories { grid-template-columns: 1fr; }
+    .testimonials { grid-template-columns: 1fr; }
+    .how { grid-template-columns: 1fr; gap: 32px; }
+    .newsletter { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
+    main { padding: 48px 24px; }
+    header { padding: 16px 24px; }
+    footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 32px 16px; }
+    .category-card { padding: 28px 20px 20px; min-height: auto; }
+    .category-card h3 { font-size: 32px; }
+    .card-number { font-size: 48px; }
+    .stats-band { grid-template-columns: 1fr; }
+    .stat-item:nth-child(odd) { border-right: none; }
+    .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: 1px solid rgba(26,26,26,0.15); }
+    .stat-item:last-child { border-bottom: none; }
+    .newsletter { padding: 24px 16px; }
+    .auth-card { padding: 36px 20px; }
+    footer { padding: 20px 16px; }
+  }
+  /* ——— Auth ——— */
+  #auth-loading {
+    position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+    display: flex; justify-content: center; align-items: center;
+    font-family: 'Fraunces', serif; font-size: 20px; font-style: italic; color: var(--ink-soft);
+  }
+  #auth-gate {
+    position: fixed; inset: 0; background: var(--bg); z-index: 999;
+    display: none; justify-content: center; align-items: center; padding: 40px;
+  }
+  .auth-card {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    padding: 52px 48px; width: 100%; max-width: 440px;
+    box-shadow: 0 8px 32px -8px rgba(0,0,0,0.1);
+  }
+  .auth-brand {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; font-style: italic;
+    margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--rule);
+  }
+  .auth-brand span { color: var(--accent); font-style: normal; }
+  .auth-tabs { display: flex; margin-bottom: 28px; border: 1px solid var(--rule); background: var(--rule); gap: 1px; }
+  .auth-tab {
+    flex: 1; background: var(--bg); border: none; padding: 11px 20px;
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; color: var(--ink); transition: all 0.15s;
+  }
+  .auth-tab.active { background: var(--ink); color: var(--bg); }
+  .field-group { margin-bottom: 18px; }
+  .field-label {
+    display: block; font-family: 'Cormorant Garamond', serif; font-size: 13px;
+    font-weight: 500; font-variant: small-caps; letter-spacing: 0.1em;
+    color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .field-input {
+    display: block; width: 100%; background: var(--bg); border: 1px solid var(--rule);
+    padding: 11px 14px; font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px; color: var(--ink); outline: none; transition: border-color 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  .auth-btn {
+    display: block; width: 100%; background: var(--ink); border: 1px solid var(--rule);
+    padding: 14px 24px; font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px; font-weight: 600; cursor: pointer; color: var(--bg);
+    transition: all 0.15s; margin-top: 24px;
+  }
+  .auth-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .auth-error { font-family: 'Source Serif 4', serif; font-size: 14px; color: var(--accent); margin-top: 10px; min-height: 18px; }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout {
+    background: none; border: 1px solid var(--rule); padding: 5px 14px;
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; color: var(--ink); transition: all 0.15s;
+  }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  #main-content { display: none; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<div id="auth-loading">Loading…</div>
+
+<div id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand"><span>✢</span> HOSA Prep Hub</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-signin">Sign In</button>
+      <button class="auth-tab" id="tab-signup">Create Account</button>
+    </div>
+    <form id="form-signin">
+      <div class="field-group">
+        <label class="field-label" for="signin-email">Email</label>
+        <input id="signin-email" type="email" class="field-input" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="signin-password">Password</label>
+        <input id="signin-password" type="password" class="field-input" placeholder="••••••••" required>
+      </div>
+      <div id="signin-error" class="auth-error"></div>
+      <button type="submit" class="auth-btn">Sign In →</button>
+      <button type="button" id="btn-forgot" style="background:none;border:none;padding:10px 0 0;font-family:'Source Serif 4',serif;font-size:13px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Forgot password?</button>
+      <div id="reset-msg" style="font-family:'Source Serif 4',serif;font-size:13px;color:var(--success);margin-top:6px;min-height:18px;"></div>
+    </form>
+    <form id="form-signup" style="display:none">
+      <div class="field-group">
+        <label class="field-label" for="signup-email">Email</label>
+        <input id="signup-email" type="email" class="field-input" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="signup-password">Password</label>
+        <input id="signup-password" type="password" class="field-input" placeholder="••••••••" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="signup-confirm">Confirm Password</label>
+        <input id="signup-confirm" type="password" class="field-input" placeholder="••••••••" required>
+      </div>
+      <div id="signup-error" class="auth-error"></div>
+      <button type="submit" class="auth-btn">Create Account →</button>
+    </form>
+  </div>
+</div>
+
+<div id="main-content">
+
+<header>
+  <div class="brand">HOSA Prep Hub</div>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">A Study Companion for HOSA</div>
+      <h1 class="hero-title">Train like <em>competition day.</em></h1>
+      <p class="hero-lede">Flashcards. Timed tests. Spaced-repetition study that surfaces your weak spots so you stop panicking on test day and start hitting marks.</p>
+      <div class="hero-tagline">
+        <span>Track <strong>weak areas.</strong></span>
+        <span>Review <strong>misses.</strong></span>
+        <span>Improve <strong>faster.</strong></span>
+      </div>
+    </div>
+    <aside class="hero-aside">
+      <div class="aside-label">The Method</div>
+      <p>Each HOSA event gets its own curated study deck aligned to the official test plan. Learn with flashcards, confirm with practice quizzes, then pressure-test with timed examinations modeled on real competition conditions.</p>
+      <p>Smart Review uses spaced repetition to keep pushing cards you're weak on — so your study time goes to what you actually need.</p>
+    </aside>
+  </section>
+
+  <!-- STATS BAND -->
+  <section class="stats-band">
+    <div class="stat-item">
+      <div class="stat-big">602</div>
+      <div class="stat-caption">Terms &amp; Concepts</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">4</div>
+      <div class="stat-caption">HOSA Events</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">3</div>
+      <div class="stat-caption">Study Modes</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">12</div>
+      <div class="stat-caption">Min. Mock Exams</div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section>
+    <div class="section-head">
+      <h2>Choose your <em>event.</em></h2>
+      <div class="section-label">Four events available</div>
+    </div>
+
+    <div class="categories">
+
+      <a href="medical-terminology.html" class="category-card">
+        <div class="card-number">01</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3>Medical <em>Terminology</em></h3>
+        <p class="card-desc">Master the language of medicine through prefixes, suffixes, and word roots — the vocabulary foundation every healthcare field depends on.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">216</div>
+            <div class="stat-label">Terms</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Word Parts</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pathophysiology.html" class="category-card">
+        <div class="card-number">02</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3><em>Patho</em>physiology</h3>
+        <p class="card-desc">Study diseases and disorders across every major body system — cardiovascular, endocrine, neurological, and more.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">147</div>
+            <div class="stat-label">Conditions</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">9</div>
+            <div class="stat-label">Body Systems</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="nutrition.html" class="category-card">
+        <div class="card-number">03</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3><em>Nutrition</em></h3>
+        <p class="card-desc">Macronutrients, vitamins, fluid balance, medical nutrition therapy — the full HOSA Nutrition test plan, built to scope.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">127</div>
+            <div class="stat-label">Concepts</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">8</div>
+            <div class="stat-label">Topic Areas</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="biochemistry.html" class="category-card">
+        <div class="card-number">04</div>
+        <div class="card-meta">HOSA ATC Event</div>
+        <h3><em>Bio</em>chemistry</h3>
+        <p class="card-desc">Proteins, nucleic acids, carbohydrates, lipids, membranes, and metabolism — the molecular foundations of life.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">112</div>
+            <div class="stat-label">Concepts</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">7</div>
+            <div class="stat-label">Topic Areas</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <div class="section-head">
+      <h2>What early users <em>are saying.</em></h2>
+      <div class="section-label">Feedback from HOSA competitors</div>
+    </div>
+    <div class="testimonials">
+      <div class="testimonial">
+        <blockquote>The timed tests helped me stop panicking. I walked into my regional feeling calm because the practice felt exactly like the real thing.</blockquote>
+        <div class="attribution">HOSA Competitor, Medical Terminology</div>
+      </div>
+      <div class="testimonial">
+        <blockquote>Smart Review actually made studying feel efficient. The cards I kept missing showed up more, and the ones I knew just faded away.</blockquote>
+        <div class="attribution">HOSA Competitor, Pathophysiology</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="section-head">
+      <h2>How each event <em>works.</em></h2>
+      <div class="section-label">Three modes of study</div>
+    </div>
+
+    <div class="how">
+      <div class="how-item">
+        <div class="how-num">i. Learn</div>
+        <h4>Flashcards</h4>
+        <p>Clean, focused cards with term on one side and explanation on the other. Smart Review tracks what you know and prioritizes what you don't.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-num">ii. Confirm</div>
+        <h4>Practice Quizzes</h4>
+        <p>Ten-question sets with multiple choice and immediate feedback. Finish and jump straight into reviewing your misses as flashcards.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-num">iii. Perform</div>
+        <h4>Timed Examinations</h4>
+        <p>Twenty-five questions in twelve minutes — no feedback until the end. Modeled on HOSA competition conditions so you're ready when it counts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMAIL CAPTURE -->
+  <section class="newsletter">
+    <div class="newsletter-copy">
+      <h3>Get notified when <em>new events</em> drop.</h3>
+      <p>Anatomy &amp; Physiology and Medical Math are on the way. Drop your email and I'll let you know the moment they're live. No spam — one email per launch, nothing else.</p>
+    </div>
+    <form class="newsletter-form" id="newsletter-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="newsletter">
+      <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+      <input type="email" name="email" placeholder="your.email@school.edu" required>
+      <button type="submit">Notify me when new events launch</button>
+      <div class="newsletter-msg" id="newsletter-msg"></div>
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  <div>HOSA Prep Hub — <span class="footer-mark">✢</span> A study companion, not an official HOSA publication.</div>
+  <div>Built for competitors, by a competitor.</div>
+</footer>
+
+<script>
+(function() {
+  const form = document.getElementById('newsletter-form');
+  const msg = document.getElementById('newsletter-msg');
+  if (!form) return;
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    }).then(() => {
+      msg.textContent = "Thanks! You'll hear from me when the next event is live.";
+      form.querySelector('input[type="email"]').value = '';
+    }).catch(() => {
+      msg.textContent = 'Something went wrong — please try again.';
+      msg.style.color = 'var(--accent)';
+    });
+  });
+})();
+</script>
+
+</div><!-- /main-content -->
+
+<script>
+const auth = firebase.auth();
+const authLoadingEl = document.getElementById('auth-loading');
+const authGateEl    = document.getElementById('auth-gate');
+const mainEl        = document.getElementById('main-content');
+const userEmailEl   = document.getElementById('user-email');
+
+auth.onAuthStateChanged(user => {
+  authLoadingEl.style.display = 'none';
+  if (user) {
+    userEmailEl.textContent = user.email;
+    authGateEl.style.display = 'none';
+    mainEl.style.display = 'block';
+  } else {
+    authGateEl.style.display = 'flex';
+  }
+});
+
+document.getElementById('btn-signout').addEventListener('click', () => auth.signOut());
+
+document.getElementById('tab-signin').addEventListener('click', () => {
+  document.getElementById('tab-signin').classList.add('active');
+  document.getElementById('tab-signup').classList.remove('active');
+  document.getElementById('form-signin').style.display = 'block';
+  document.getElementById('form-signup').style.display = 'none';
+});
+document.getElementById('tab-signup').addEventListener('click', () => {
+  document.getElementById('tab-signup').classList.add('active');
+  document.getElementById('tab-signin').classList.remove('active');
+  document.getElementById('form-signup').style.display = 'block';
+  document.getElementById('form-signin').style.display = 'none';
+});
+
+document.getElementById('btn-forgot').addEventListener('click', async () => {
+  const email = document.getElementById('signin-email').value.trim();
+  const resetMsg = document.getElementById('reset-msg');
+  const errorEl = document.getElementById('signin-error');
+  errorEl.textContent = '';
+  if (!email) { errorEl.textContent = 'Enter your email above first.'; return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    resetMsg.textContent = 'Reset email sent — check your inbox.';
+  } catch (err) { errorEl.textContent = friendlyError(err.code); }
+});
+
+document.getElementById('form-signin').addEventListener('submit', async e => {
+  e.preventDefault();
+  const errorEl = document.getElementById('signin-error');
+  errorEl.textContent = '';
+  try {
+    await auth.signInWithEmailAndPassword(
+      document.getElementById('signin-email').value,
+      document.getElementById('signin-password').value
+    );
+  } catch (err) { errorEl.textContent = friendlyError(err.code); }
+});
+
+document.getElementById('form-signup').addEventListener('submit', async e => {
+  e.preventDefault();
+  const password = document.getElementById('signup-password').value;
+  const confirm  = document.getElementById('signup-confirm').value;
+  const errorEl  = document.getElementById('signup-error');
+  errorEl.textContent = '';
+  if (password !== confirm) { errorEl.textContent = 'Passwords do not match.'; return; }
+  if (password.length < 6)  { errorEl.textContent = 'Password must be at least 6 characters.'; return; }
+  try {
+    await auth.createUserWithEmailAndPassword(
+      document.getElementById('signup-email').value, password
+    );
+  } catch (err) { errorEl.textContent = friendlyError(err.code); }
+});
+
+function friendlyError(code) {
+  return ({
+    'auth/user-not-found':       'No account found with that email.',
+    'auth/wrong-password':       'Incorrect password.',
+    'auth/invalid-credential':   'Invalid email or password.',
+    'auth/email-already-in-use': 'An account with that email already exists.',
+    'auth/weak-password':        'Password must be at least 6 characters.',
+    'auth/invalid-email':        'Please enter a valid email address.',
+    'auth/too-many-requests':    'Too many attempts. Please try again later.',
+  })[code] || 'Something went wrong. Please try again.';
+}
+</script>
+
+</body>
+</html>

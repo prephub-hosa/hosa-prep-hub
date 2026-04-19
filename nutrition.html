@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Nutrition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;        /* medical journal crimson */
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+    --error: #8b2a1f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,40,31,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(45,90,61,0.03) 0%, transparent 40%);
+  }
+
+  /* ——— Grain overlay ——— */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  /* ——— Header ——— */
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+
+  .brand-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .brand-link:hover { opacity: 0.65; }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+
+  .category-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ——— Main container ——— */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ——— Masthead ——— */
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .masthead h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .masthead .subtitle {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  /* ——— Nav tabs ——— */
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 48px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    width: fit-content;
+  }
+
+  nav.tabs button {
+    background: var(--bg);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  nav.tabs button:hover { background: var(--highlight); }
+  nav.tabs button.active { background: var(--ink); color: var(--bg); }
+
+  /* ——— Category chips ——— */
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-bar .label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-right: 12px;
+    align-self: center;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .chip:hover { background: var(--highlight); }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip .count {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+
+  /* ——— View containers ——— */
+  .view { display: none; animation: fade 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ——— FLASHCARDS ——— */
+  .flashcard-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .card-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-counter .type-badge {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+
+  .flashcard {
+    aspect-ratio: 8 / 5;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.04),
+      0 12px 32px -12px rgba(0,0,0,0.15);
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+    transition: opacity 0.25s ease;
+  }
+
+  .face.front { opacity: 1; }
+  .face.back { opacity: 0; pointer-events: none; background: var(--bg-card); }
+  .flashcard.flipped .face.front { opacity: 0; pointer-events: none; }
+  .flashcard.flipped .face.back { opacity: 1; pointer-events: auto; }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px;
+    right: 20px; bottom: 20px;
+    border: 1px solid var(--ink-faint);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .face .corner {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .face .corner.right { left: auto; right: 28px; }
+
+  .term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .term em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .definition {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 600px;
+    color: var(--ink);
+  }
+
+  .example {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink-faint);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .example-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Card controls ——— */
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-controls .nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 11px 22px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--highlight); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btns .btn { padding: 10px 16px; }
+  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+
+  /* ——— QUIZ ——— */
+  .quiz-stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+  }
+
+  .quiz-prompt {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .quiz-term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    line-height: 1.45;
+  }
+
+  .option:hover { background: var(--highlight); }
+
+  .option .letter {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 24px;
+    border-right: 1px solid var(--ink-faint);
+    padding-right: 16px;
+  }
+
+  .option.correct {
+    background: #e6efe0;
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .option.correct .letter { color: var(--success); border-color: var(--success); }
+
+  .option.incorrect {
+    background: #f5e4e0;
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .option.incorrect .letter { color: var(--error); border-color: var(--error); }
+
+  .option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: var(--bg-card);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fade 0.3s ease; }
+
+  .quiz-feedback .verdict {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .quiz-feedback.correct { border-color: var(--success); }
+  .quiz-feedback.correct .verdict { color: var(--success); }
+  .quiz-feedback.incorrect { border-color: var(--error); }
+  .quiz-feedback.incorrect .verdict { color: var(--error); }
+
+  .quiz-feedback .explain {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ——— Quiz results ——— */
+  .results {
+    text-align: center;
+    padding: 60px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .results .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(80px, 14vw, 160px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+  }
+
+  .results .score-num .of {
+    color: var(--ink-faint);
+    font-size: 0.5em;
+    font-style: italic;
+  }
+
+  .results .label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin: 16px 0 32px;
+  }
+
+  .results .message {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  /* ——— TIMED TEST ——— */
+  .test-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .test-intro::before {
+    content: 'Examination';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .test-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .test-intro p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .test-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .spec-item .spec-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .spec-item .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .timer-bar {
+    position: sticky;
+    top: 61px;
+    background: var(--bg);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    margin-bottom: 40px;
+  }
+
+  .timer {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.warning { color: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    50% { opacity: 0.5; }
+  }
+
+  .timer-progress {
+    flex: 1;
+    margin: 0 32px;
+    height: 2px;
+    background: var(--ink-faint);
+    opacity: 0.2;
+    position: relative;
+  }
+
+  .timer-progress .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  /* ——— PROGRESS ——— */
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .stat-card .stat-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card .stat-val .unit {
+    font-size: 20px;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .stat-card.accent .stat-val { color: var(--accent); }
+
+  .mastery-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mastery-section .section-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+
+  .mastery-row .cat-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--ink-faint);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mastery-bar-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0.08;
+  }
+
+  .mastery-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  .mastery-pct {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    margin-top: 40px;
+    color: var(--ink-soft);
+  }
+
+
+
+  /* ——— Smart Review help ——— */
+  .sr-help {
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-left: 6px;
+    transition: all 0.15s;
+  }
+  .sr-help:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .sr-info {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 18px 22px;
+    max-width: 460px;
+    width: 90vw;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    z-index: 20;
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+  }
+  .sr-info.show { display: block; }
+  .sr-info strong {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .sr-toggle-label { position: relative; }
+
+  /* ——— Spaced Repetition UI ——— */
+  .flash-level-row {
+    margin-top: 28px;
+    text-align: center;
+  }
+  .flash-level {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.75;
+    user-select: none;
+  }
+  .sr-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sr-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .sr-toggle-label:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .sr-toggle-label { font-size: 13px; }
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 760px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 20px 60px; }
+    .masthead { grid-template-columns: 1fr; gap: 16px; }
+    .masthead .subtitle { text-align: left; }
+    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { white-space: nowrap; min-height: 44px; }
+    .test-specs { grid-template-columns: 1fr; gap: 12px; }
+    .mastery-row { grid-template-columns: 1fr; gap: 8px; }
+    .card-controls { flex-direction: column; gap: 12px; }
+    .card-controls > * { width: 100%; justify-content: center; }
+    .btn { min-height: 44px; }
+    .rating-btns .btn { flex: 1; min-height: 48px; }
+    .face { padding: 32px 24px; }
+    .results { padding: 40px 24px; }
+    .test-intro { padding: 32px 24px; }
+    .option { padding: 16px 18px; }
+    .progress-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 14px 48px; }
+    .face { padding: 20px 16px; }
+    .flashcard { aspect-ratio: unset; height: 320px; overflow: hidden; }
+    .term { font-size: clamp(26px, 7vw, 36px); }
+    .definition { font-size: 18px; }
+    .option { padding: 14px; font-size: 16px; }
+    .quiz-options { gap: 8px; }
+    .results { padding: 28px 16px; }
+    .test-intro { padding: 24px 16px; }
+    .progress-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-card .stat-val { font-size: 40px; }
+    .spec-item .spec-val { font-size: 22px; }
+    .quiz-question { margin-bottom: 20px; }
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+
+<main>
+  <div class="masthead">
+    <div>
+      <div class="category-eyebrow">Category 03 — Nutrition</div>
+      <h1>The Science<br>of <em>Nourishment</em>.</h1>
+    </div>
+    <div class="subtitle">A study companion for macronutrients, vitamins, medical nutrition therapy, and more — built for HOSA competitors preparing for the Nutrition event.</div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="flashcards">Flashcards</button>
+    <button data-view="quiz">Practice Quiz</button>
+    <button data-view="test">Timed Test</button>
+    <button data-view="progress">Progress</button>
+  </nav>
+
+  <!-- FLASHCARDS VIEW -->
+  <section class="view active" id="view-flashcards">
+    <div class="category-bar" id="flash-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="flashcard-stage">
+      <div class="card-counter">
+        <span id="flash-progress">01 / 00</span>
+        <label class="sr-toggle-label">
+          <input type="checkbox" id="sr-toggle" checked>
+          <span>Smart Review</span>
+          <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
+        </label>
+        <span class="sr-info" id="sr-info" aria-hidden="true">
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level for each card — "Got it" fills one in, "Missed it" resets to zero. Turn this off to see every card in a single random pass instead.
+        </span>
+      </div>
+
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span class="corner">Concept</span>
+            <span class="corner right" id="flash-cat-front"></span>
+            <div class="term" id="flash-front-term"></div>
+            <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
+            <div class="flip-hint">↻ tap to reveal</div>
+          </div>
+          <div class="face back">
+            <span class="corner">Explanation</span>
+            <span class="corner right" id="flash-cat-back"></span>
+            <div class="definition" id="flash-back-def"></div>
+            <div class="example" id="flash-back-ex">
+              <span class="example-label">Example</span>
+              <span id="flash-back-ex-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="btn" id="flash-prev">← Previous</button>
+        <div class="rating-btns">
+          <button class="btn miss" id="flash-miss">Missed it</button>
+          <button class="btn got" id="flash-got">Got it</button>
+        </div>
+        <button class="btn primary" id="flash-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="category-bar" id="quiz-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="quiz-stage" id="quiz-stage">
+      <div class="quiz-header">
+        <span id="quiz-progress">Question 01 of 10</span>
+        <span id="quiz-score">Score: 0 / 0</span>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-term" id="quiz-term"></div>
+      </div>
+
+      <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="quiz-feedback" id="quiz-feedback">
+        <div class="verdict" id="quiz-verdict"></div>
+        <div class="explain" id="quiz-explain"></div>
+      </div>
+
+      <div class="card-controls" style="margin-top: 32px;">
+        <button class="btn" id="quiz-restart">↻ Restart</button>
+        <button class="btn primary" id="quiz-next" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <div class="results" id="quiz-results" style="display: none;">
+      <div class="score-num"><span id="final-score">0</span><span class="of">/<span id="final-total">10</span></span></div>
+      <div class="label">Practice Complete</div>
+      <div class="message" id="quiz-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="quiz-review-misses">Review My Misses</button>
+        <button class="btn primary" id="quiz-retry">Run It Back →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMED TEST VIEW -->
+  <section class="view" id="view-test">
+    <div class="test-intro" id="test-intro">
+      <h2>The HOSA Nutrition Examination</h2>
+      <p>A timed assessment modeled on competition conditions. You'll be shown nutrition concepts drawn from all test plan categories — macronutrients, vitamins, medical nutrition therapy, and more. Select the correct description. No retries, no feedback until the end.</p>
+      <p>Take a breath. Keep moving. Trust what you know.</p>
+
+      <div class="test-specs">
+        <div class="spec-item">
+          <div class="spec-label">Questions</div>
+          <div class="spec-val">25</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Time Limit</div>
+          <div class="spec-val">12:00</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Format</div>
+          <div class="spec-val">M/C</div>
+        </div>
+      </div>
+
+      <button class="btn accent" id="test-begin" style="width: 100%; padding: 16px;">Begin Examination</button>
+    </div>
+
+    <div id="test-active" style="display: none;">
+      <div class="timer-bar">
+        <div class="timer" id="test-timer">12:00</div>
+        <div class="timer-progress"><div class="fill" id="test-timer-fill" style="width: 100%"></div></div>
+        <div class="meta" id="test-progress">01 / 25</div>
+      </div>
+
+      <div class="quiz-stage">
+        <div class="quiz-question">
+          <div class="quiz-prompt">How would you define this?</div>
+          <div class="quiz-term" id="test-term"></div>
+        </div>
+        <div class="quiz-options" id="test-options"></div>
+      </div>
+    </div>
+
+    <div id="test-results" class="results" style="display: none;">
+      <div class="score-num"><span id="test-final-score">0</span><span class="of">/<span id="test-final-total">25</span></span></div>
+      <div class="label">Examination Complete</div>
+      <div class="message" id="test-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="test-review">Review Misses</button>
+        <button class="btn primary" id="test-again">Take Again →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS VIEW -->
+  <section class="view" id="view-progress">
+    <div class="progress-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cards Studied</div>
+        <div class="stat-val" id="stat-studied">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Mastered</div>
+        <div class="stat-val" id="stat-mastered">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Taken</div>
+        <div class="stat-val" id="stat-quizzes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Score</div>
+        <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="mastery-section">
+      <h3>Mastery by Category</h3>
+      <div class="section-sub">Percentage of terms marked "got it" at least once</div>
+      <div id="mastery-list"></div>
+    </div>
+
+    <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA — HOSA Medical Terminology by word part
+//  Easily extensible: add new categories/sets below
+// ══════════════════════════════════════════════════════════════
+const TERMS = [
+  // ——— MACRONUTRIENTS (Carbohydrates, Fats, Proteins) — 15% ———
+  { term: 'Monosaccharide', type: 'concept', category: 'macronutrients', meaning: 'A simple sugar made of a single sugar unit — the basic building block of all carbohydrates.', example: 'Glucose, fructose (fruit sugar), and galactose are the three main dietary monosaccharides.' },
+  { term: 'Disaccharide', type: 'concept', category: 'macronutrients', meaning: 'A carbohydrate formed from two monosaccharides joined together.', example: 'Sucrose (table sugar), lactose (milk sugar), and maltose are the three dietary disaccharides.' },
+  { term: 'Polysaccharide', type: 'concept', category: 'macronutrients', meaning: 'A complex carbohydrate made of many sugar units linked in chains.', example: 'Starch, glycogen, and fiber are the main dietary polysaccharides.' },
+  { term: 'Glycogen', type: 'concept', category: 'macronutrients', meaning: 'The storage form of glucose in animals, kept primarily in the liver and muscles.', example: 'The liver releases glycogen to maintain blood glucose between meals.' },
+  { term: 'Dietary Fiber', type: 'concept', category: 'macronutrients', meaning: 'Indigestible plant carbohydrate that supports bowel health, cholesterol control, and blood sugar regulation.', example: 'Soluble fiber lowers cholesterol; insoluble fiber adds bulk to stool and prevents constipation.' },
+  { term: 'Saturated Fat', type: 'concept', category: 'macronutrients', meaning: 'A fat with no double bonds between carbons; solid at room temperature and raises LDL cholesterol.', example: 'Found in butter, red meat, and full-fat dairy. Limited to under 10% of daily calories.' },
+  { term: 'Unsaturated Fat', type: 'concept', category: 'macronutrients', meaning: 'A fat with one or more double bonds; typically liquid at room temperature and heart-healthy.', example: 'Includes monounsaturated (olive oil) and polyunsaturated (fish, nuts, seeds) fats.' },
+  { term: 'Trans Fat', type: 'concept', category: 'macronutrients', meaning: 'An artificially hydrogenated fat that raises LDL (bad) cholesterol and lowers HDL (good) cholesterol.', example: 'Found in some fried and processed foods. Banned from many food supplies due to heart disease risk.' },
+  { term: 'Omega-3 Fatty Acid', type: 'concept', category: 'macronutrients', meaning: 'An essential polyunsaturated fat the body cannot make, critical for heart and brain health.', example: 'Found in fatty fish (salmon, mackerel), flaxseed, walnuts, and chia seeds.' },
+  { term: 'Cholesterol', type: 'concept', category: 'macronutrients', meaning: 'A waxy lipid found in animal foods and made by the liver; used for cell membranes and hormones.', example: 'High LDL levels contribute to atherosclerosis; HDL helps remove excess cholesterol.' },
+  { term: 'Complete Protein', type: 'concept', category: 'macronutrients', meaning: 'A protein containing all nine essential amino acids in adequate amounts.', example: 'Animal foods (meat, eggs, dairy) and soy are complete protein sources.' },
+  { term: 'Essential Amino Acids', type: 'concept', category: 'macronutrients', meaning: 'The nine amino acids the body cannot produce and must obtain from food.', example: 'Include leucine, lysine, methionine, and tryptophan, among others.' },
+  { term: 'Kilocalorie', type: 'concept', category: 'macronutrients', meaning: 'The unit measuring food energy: carbs and protein provide 4 kcal/g, fat provides 9 kcal/g, alcohol provides 7 kcal/g.', example: 'Total daily caloric needs vary by age, size, and activity level.' },
+
+  // ——— VITAMINS & MINERALS — 15% ———
+  { term: 'Vitamin A', type: 'concept', category: 'vitamins-minerals', meaning: 'A fat-soluble vitamin essential for vision, immune function, and cell growth.', example: 'Found in liver, dairy, carrots, and leafy greens. Deficiency causes night blindness.' },
+  { term: 'Vitamin C', type: 'concept', category: 'vitamins-minerals', meaning: 'A water-soluble vitamin needed for collagen formation, immune function, and iron absorption.', example: 'Found in citrus, bell peppers, and strawberries. Deficiency causes scurvy.' },
+  { term: 'Vitamin D', type: 'concept', category: 'vitamins-minerals', meaning: 'A fat-soluble vitamin that regulates calcium absorption and bone health; produced in skin with sun exposure.', example: 'Deficiency causes rickets in children and osteomalacia in adults.' },
+  { term: 'Vitamin K', type: 'concept', category: 'vitamins-minerals', meaning: 'A fat-soluble vitamin essential for blood clotting and bone health.', example: 'Found in leafy greens. Patients on warfarin (blood thinner) must keep intake consistent.' },
+  { term: 'Vitamin B12', type: 'concept', category: 'vitamins-minerals', meaning: 'A water-soluble vitamin essential for red blood cell formation and nerve function.', example: 'Found only in animal foods. Vegans need supplementation. Deficiency causes pernicious anemia.' },
+  { term: 'Folate (Folic Acid)', type: 'concept', category: 'vitamins-minerals', meaning: 'A B vitamin critical for DNA synthesis and preventing neural tube defects during pregnancy.', example: 'Pregnant women need 600 mcg daily. Found in leafy greens, legumes, and fortified grains.' },
+  { term: 'Calcium', type: 'concept', category: 'vitamins-minerals', meaning: 'The most abundant mineral in the body; essential for bone structure, muscle contraction, and nerve function.', example: 'Found in dairy, leafy greens, and fortified foods. Vitamin D aids absorption.' },
+  { term: 'Iron', type: 'concept', category: 'vitamins-minerals', meaning: 'A mineral essential for hemoglobin, which carries oxygen in red blood cells.', example: 'Deficiency causes iron-deficiency anemia, the most common nutrient deficiency worldwide.' },
+  { term: 'Potassium', type: 'concept', category: 'vitamins-minerals', meaning: 'A major electrolyte that regulates fluid balance, muscle contractions, and nerve signals.', example: 'Found in bananas, potatoes, and beans. Helps counter the effects of sodium on blood pressure.' },
+  { term: 'Sodium', type: 'concept', category: 'vitamins-minerals', meaning: 'A mineral essential for fluid balance and nerve function, but often overconsumed.', example: 'Recommended limit: under 2,300 mg/day. Excess intake raises blood pressure.' },
+  { term: 'Iodine', type: 'concept', category: 'vitamins-minerals', meaning: 'A trace mineral needed to produce thyroid hormones that regulate metabolism.', example: 'Deficiency causes goiter. Iodized salt is the most common source in many countries.' },
+  { term: 'Zinc', type: 'concept', category: 'vitamins-minerals', meaning: 'A trace mineral essential for immune function, wound healing, and DNA synthesis.', example: 'Found in meat, shellfish, and legumes. Deficiency impairs growth and immunity.' },
+
+  // ——— WATER & ELECTROLYTE BALANCE — 10% ———
+  { term: 'Dehydration', type: 'concept', category: 'water', meaning: 'A state of water loss exceeding intake, reducing blood volume and impairing organ function.', example: 'Early signs: thirst, dark urine, fatigue. Severe cases cause confusion and shock.' },
+  { term: 'Electrolyte', type: 'concept', category: 'water', meaning: 'A mineral that carries an electrical charge when dissolved in body fluids, critical for nerve and muscle function.', example: 'Main electrolytes: sodium, potassium, chloride, calcium, magnesium, phosphate.' },
+  { term: 'Edema', type: 'concept', category: 'water', meaning: 'Abnormal fluid accumulation in body tissues, causing swelling.', example: 'Common causes: heart failure, kidney disease, low protein intake, pregnancy.' },
+  { term: 'Fluid Requirement', type: 'concept', category: 'water', meaning: 'The total daily water intake needed from beverages and food, typically 2-3 liters for adults.', example: 'Needs increase with exercise, heat, illness, pregnancy, and breastfeeding.' },
+  { term: 'Osmosis', type: 'concept', category: 'water', meaning: 'The movement of water across a membrane from low solute to high solute concentration.', example: 'Drives fluid balance between blood vessels, cells, and tissues.' },
+  { term: 'Thirst Mechanism', type: 'concept', category: 'water', meaning: 'The hypothalamic signal triggered by dehydration or high blood osmolarity prompting fluid intake.', example: 'The thirst response is blunted in older adults, increasing dehydration risk.' },
+
+  // ——— NUTRITION THROUGH THE LIFE SPAN — 15% ———
+  { term: 'Infant Nutrition', type: 'concept', category: 'lifespan', meaning: 'Breast milk or formula is the sole food source for the first 4-6 months; solids introduced gradually afterward.', example: 'Breast milk is preferred: it provides antibodies and optimal nutrient composition.' },
+  { term: 'Weaning', type: 'concept', category: 'lifespan', meaning: 'The gradual transition from breast milk or formula to solid foods, typically starting around 6 months.', example: 'Iron-fortified cereals and pureed vegetables are common first foods.' },
+  { term: 'Adolescent Nutrition', type: 'concept', category: 'lifespan', meaning: 'Increased calorie, protein, calcium, and iron needs due to rapid growth and hormonal changes.', example: 'Girls especially need iron during menstruation; both sexes need calcium for bone density.' },
+  { term: 'Pregnancy Nutrition', type: 'concept', category: 'lifespan', meaning: 'Increased needs for folate, iron, calcium, protein, and approximately 300 extra calories per day in the 2nd/3rd trimester.', example: 'Folic acid before and during early pregnancy prevents neural tube defects.' },
+  { term: 'Lactation Nutrition', type: 'concept', category: 'lifespan', meaning: 'Nursing mothers need about 500 extra calories per day plus increased fluids, protein, and calcium.', example: 'Certain foods/drugs (alcohol, some medications) can pass into breast milk.' },
+  { term: 'Geriatric Nutrition', type: 'concept', category: 'lifespan', meaning: 'Older adults often need fewer calories but more protein, calcium, vitamin D, and vitamin B12.', example: 'Reduced appetite, medication interactions, and absorption issues increase malnutrition risk.' },
+  { term: 'Growth Spurt', type: 'concept', category: 'lifespan', meaning: 'A period of rapid physical growth requiring increased calorie and nutrient intake, notably in infancy and puberty.', example: 'During puberty, boys may need up to 2,800 calories daily and girls up to 2,200.' },
+  { term: 'Failure to Thrive', type: 'concept', category: 'lifespan', meaning: 'Inadequate growth in infants and children from insufficient caloric intake or absorption problems.', example: 'Defined by weight or height falling below the 5th percentile for age.' },
+
+  // ——— DIGESTION, ABSORPTION, METABOLISM — 10% ———
+  { term: 'Digestion', type: 'concept', category: 'digestion', meaning: 'The mechanical and chemical breakdown of food into absorbable nutrient molecules.', example: 'Begins in the mouth with chewing and saliva (amylase), continues in stomach and small intestine.' },
+  { term: 'Peristalsis', type: 'concept', category: 'digestion', meaning: 'The rhythmic wave-like muscle contractions that move food through the digestive tract.', example: 'Occurs throughout the GI tract from esophagus to colon.' },
+  { term: 'Absorption', type: 'concept', category: 'digestion', meaning: 'The uptake of nutrients into blood or lymph, primarily through the small intestine lining.', example: 'Villi and microvilli vastly increase surface area for nutrient absorption.' },
+  { term: 'Metabolism', type: 'concept', category: 'digestion', meaning: 'All chemical reactions in the body that convert food into energy and build/break down tissues.', example: 'Includes catabolism (breakdown) and anabolism (building up).' },
+  { term: 'Basal Metabolic Rate', type: 'concept', category: 'digestion', meaning: 'The energy your body uses at complete rest to maintain basic functions like breathing and circulation.', example: 'Typically accounts for 60-70% of total daily calorie expenditure.' },
+  { term: 'Enzyme', type: 'concept', category: 'digestion', meaning: 'A protein that speeds up digestion and metabolism of nutrients without being consumed.', example: 'Amylase breaks down starch; lipase breaks down fats; protease breaks down proteins.' },
+  { term: 'Bile', type: 'concept', category: 'digestion', meaning: 'A liver-produced fluid stored in the gallbladder that emulsifies fats in the small intestine.', example: 'Bile is released after fat-containing meals to aid digestion.' },
+
+  // ——— CULTURAL PATTERNS & FOOD HABITS — 5% ———
+  { term: 'Mediterranean Diet', type: 'concept', category: 'cultural', meaning: 'An eating pattern rich in fruits, vegetables, whole grains, olive oil, and fish; associated with reduced heart disease risk.', example: 'Emphasizes plant foods and healthy fats; limits red meat and processed foods.' },
+  { term: 'Kosher Diet', type: 'concept', category: 'cultural', meaning: 'A Jewish dietary law excluding pork and shellfish and prohibiting mixing meat and dairy.', example: 'Animals must be slaughtered according to specific religious rules.' },
+  { term: 'Halal Diet', type: 'concept', category: 'cultural', meaning: 'An Islamic dietary law excluding pork and alcohol; meat must be slaughtered per religious practice.', example: 'Similar to kosher in some respects, but with distinct religious requirements.' },
+  { term: 'Vegan Diet', type: 'concept', category: 'cultural', meaning: 'A plant-based diet excluding all animal products, including meat, dairy, eggs, and honey.', example: 'Requires careful planning for vitamin B12, iron, calcium, and omega-3 intake.' },
+  { term: 'Lacto-Ovo Vegetarian', type: 'concept', category: 'cultural', meaning: 'A diet excluding meat but including dairy products and eggs.', example: 'Generally meets protein needs more easily than vegan diets.' },
+
+  // ——— FOOD-RELATED ILLNESSES, INTOLERANCES, ALLERGIES — 10% ———
+  { term: 'Food Allergy', type: 'concept', category: 'illness', meaning: 'An immune system reaction to a food protein, potentially causing hives, swelling, or anaphylaxis.', example: 'Top 9 allergens: milk, eggs, peanuts, tree nuts, fish, shellfish, soy, wheat, sesame.' },
+  { term: 'Food Intolerance', type: 'concept', category: 'illness', meaning: 'A non-immune digestive response to food, typically causing GI symptoms but not life-threatening.', example: 'Unlike allergies, intolerances do not involve IgE antibodies or anaphylaxis.' },
+  { term: 'Lactose Intolerance', type: 'concept', category: 'illness', meaning: 'Inability to digest milk sugar (lactose) due to insufficient lactase enzyme.', example: 'Causes bloating, gas, and diarrhea after consuming dairy. Common after early childhood.' },
+  { term: 'Celiac Disease', type: 'concept', category: 'illness', meaning: 'An autoimmune reaction to gluten that damages the small intestine and impairs nutrient absorption.', example: 'Treatment: strict lifelong gluten-free diet. Different from gluten sensitivity.' },
+  { term: 'Anaphylaxis', type: 'concept', category: 'illness', meaning: 'A severe, potentially fatal allergic reaction causing airway swelling, hypotension, and shock.', example: 'Treated with epinephrine (EpiPen) immediately, followed by emergency care.' },
+  { term: 'Foodborne Illness', type: 'concept', category: 'illness', meaning: 'Disease caused by eating food contaminated with bacteria, viruses, parasites, or toxins.', example: 'Common culprits: Salmonella, E. coli, Listeria, norovirus. Often called "food poisoning."' },
+  { term: 'Botulism', type: 'concept', category: 'illness', meaning: 'A potentially fatal illness from Clostridium botulinum toxin, typically from improperly canned foods.', example: 'Causes muscle paralysis; infants should not have honey due to spore risk.' },
+  { term: 'Salmonella', type: 'concept', category: 'illness', meaning: 'A bacterial pathogen commonly found in undercooked poultry, eggs, and raw produce.', example: 'Causes diarrhea, fever, and abdominal cramps 6 hours to 6 days after infection.' },
+
+  // ——— MEDICAL NUTRITION THERAPY — 20% ———
+  { term: 'Medical Nutrition Therapy', type: 'concept', category: 'mnt', meaning: 'The therapeutic approach using diet and nutrition to manage medical conditions, provided by registered dietitians.', example: 'Evidence-based; prescribed like medication for conditions like diabetes and kidney disease.' },
+  { term: 'Diabetic Diet', type: 'concept', category: 'mnt', meaning: 'A meal plan emphasizing carbohydrate counting, consistent meal timing, and balanced macronutrients to manage blood glucose.', example: 'Aim for consistent carb intake at meals; limit refined sugars and emphasize fiber.' },
+  { term: 'Carbohydrate Counting', type: 'concept', category: 'mnt', meaning: 'A meal planning method where people with diabetes track grams of carbs to manage insulin dosing and blood sugar.', example: 'Standard serving: 15 grams of carbs. Insulin is matched to carb intake at meals.' },
+  { term: 'Glycemic Index', type: 'concept', category: 'mnt', meaning: 'A ranking of how quickly a food raises blood glucose compared to pure glucose.', example: 'Low-GI foods (beans, oats) produce slower glucose rise than high-GI foods (white bread).' },
+  { term: 'Renal Diet', type: 'concept', category: 'mnt', meaning: 'A diet for kidney disease patients restricting protein, potassium, phosphorus, and sodium.', example: 'Goals vary by stage; dialysis patients have different needs than pre-dialysis patients.' },
+  { term: 'Cardiac Diet', type: 'concept', category: 'mnt', meaning: 'A heart-healthy eating plan low in saturated fat, trans fat, sodium, and added sugars.', example: 'DASH and Mediterranean diets are evidence-based examples.' },
+  { term: 'DASH Diet', type: 'concept', category: 'mnt', meaning: 'Dietary Approaches to Stop Hypertension — emphasizes fruits, vegetables, whole grains, and low-fat dairy.', example: 'Proven to lower blood pressure; typically limits sodium to 1,500-2,300 mg/day.' },
+  { term: 'Low-Sodium Diet', type: 'concept', category: 'mnt', meaning: 'Restricts sodium intake to manage hypertension, heart failure, kidney disease, or liver disease.', example: 'Typical restrictions: 2,000 mg/day (moderate) to under 1,500 mg/day (strict).' },
+  { term: 'Clear Liquid Diet', type: 'concept', category: 'mnt', meaning: 'A diet of transparent liquids (broth, clear juices, gelatin) used before procedures or during GI recovery.', example: 'Provides minimal nutrition; used short-term only.' },
+  { term: 'Full Liquid Diet', type: 'concept', category: 'mnt', meaning: 'A diet of liquids and foods that become liquid at body temperature, including milk, ice cream, and cream soups.', example: 'Used as a transition between clear liquids and soft/regular foods.' },
+  { term: 'Soft Diet', type: 'concept', category: 'mnt', meaning: 'A diet of easy-to-chew, easy-to-digest foods used for GI disorders or after dental surgery.', example: 'Includes mashed potatoes, eggs, yogurt, and tender meats.' },
+  { term: 'Enteral Nutrition', type: 'concept', category: 'mnt', meaning: 'Delivery of nutrition directly to the GI tract through a feeding tube for patients who cannot eat normally.', example: 'Used when digestive system works but oral intake isn\'t possible.' },
+  { term: 'Parenteral Nutrition', type: 'concept', category: 'mnt', meaning: 'Delivery of nutrition directly into the bloodstream through an IV when the GI tract cannot be used.', example: 'Also called TPN (total parenteral nutrition). Used for severe GI disease.' },
+  { term: 'Cancer Cachexia', type: 'concept', category: 'mnt', meaning: 'Severe weight loss and muscle wasting in cancer patients, often requiring high-protein, calorie-dense foods.', example: 'Occurs in up to 80% of advanced cancer patients; worsens prognosis.' },
+  { term: 'Dysphagia Diet', type: 'concept', category: 'mnt', meaning: 'A modified-texture diet for patients with swallowing difficulties, using thickened liquids and pureed foods.', example: 'Common after stroke or in advanced neurological disease to prevent aspiration.' },
+  { term: 'High-Protein Diet', type: 'concept', category: 'mnt', meaning: 'A diet increasing protein intake to support wound healing, muscle preservation, or recovery from surgery/illness.', example: 'Commonly prescribed for burn patients, cancer patients, and post-surgical recovery.' },
+
+  // ——— ADDITIONAL MACRONUTRIENTS ———
+  { term: 'Simple Carbohydrate', type: 'concept', category: 'macronutrients', meaning: 'A carbohydrate that is quickly digested and absorbed — mono- and disaccharides, including sugars.', example: 'Found in fruits, milk, and added sugars. Raises blood glucose rapidly.' },
+  { term: 'Complex Carbohydrate', type: 'concept', category: 'macronutrients', meaning: 'A carbohydrate made of long chains of sugars — starches and fiber — digested more slowly.', example: 'Found in whole grains, legumes, and vegetables. Provides sustained energy and fiber.' },
+  { term: 'Glycemic Response', type: 'concept', category: 'macronutrients', meaning: 'The effect a food has on blood sugar levels after eating.', example: 'Low-glycemic foods like oats produce a gradual rise; high-glycemic foods like white bread spike glucose.' },
+  { term: 'Essential Fatty Acid', type: 'concept', category: 'macronutrients', meaning: 'A fatty acid the body cannot produce and must obtain from food — linoleic (omega-6) and alpha-linolenic (omega-3).', example: 'Found in vegetable oils, fatty fish, flaxseeds, and walnuts.' },
+  { term: 'Monounsaturated Fat', type: 'concept', category: 'macronutrients', meaning: 'A heart-healthy fat with one carbon-carbon double bond, typically liquid at room temperature.', example: 'Olive oil, avocado, and nuts are major sources.' },
+  { term: 'Polyunsaturated Fat', type: 'concept', category: 'macronutrients', meaning: 'A fat with multiple double bonds, including omega-3 and omega-6 fatty acids.', example: 'Found in fish, seeds, and vegetable oils like soybean and corn.' },
+  { term: 'HDL Cholesterol', type: 'concept', category: 'macronutrients', meaning: '"Good" cholesterol — high-density lipoprotein that carries cholesterol away from arteries to the liver.', example: 'Higher HDL levels are associated with reduced cardiovascular disease risk.' },
+  { term: 'LDL Cholesterol', type: 'concept', category: 'macronutrients', meaning: '"Bad" cholesterol — low-density lipoprotein that can deposit cholesterol in artery walls.', example: 'Elevated LDL is a major risk factor for heart disease and stroke.' },
+  { term: 'Incomplete Protein', type: 'concept', category: 'macronutrients', meaning: 'A protein lacking one or more essential amino acids in adequate amounts.', example: 'Most plant proteins are incomplete; combining grains and legumes provides all essentials.' },
+  { term: 'Protein Complementation', type: 'concept', category: 'macronutrients', meaning: 'Combining incomplete proteins to provide all essential amino acids.', example: 'Rice and beans, peanut butter and bread, hummus and pita.' },
+  { term: 'Nitrogen Balance', type: 'concept', category: 'macronutrients', meaning: 'The balance between nitrogen intake (from protein) and nitrogen loss from the body.', example: 'Positive balance: growth, pregnancy, recovery. Negative: illness, starvation, burns.' },
+  { term: 'Empty Calories', type: 'concept', category: 'macronutrients', meaning: 'Calories from foods providing energy but few essential nutrients, like added sugars and solid fats.', example: 'Sodas, candy, and many processed snacks are primarily empty calories.' },
+
+  // ——— ADDITIONAL VITAMINS & MINERALS ———
+  { term: 'Vitamin E', type: 'concept', category: 'vitamins-minerals', meaning: 'A fat-soluble antioxidant vitamin protecting cell membranes from oxidative damage.', example: 'Found in vegetable oils, nuts, seeds, and leafy greens.' },
+  { term: 'Thiamine (B1)', type: 'concept', category: 'vitamins-minerals', meaning: 'A water-soluble B vitamin essential for carbohydrate metabolism and nerve function.', example: 'Deficiency causes beriberi. Found in whole grains, pork, and legumes.' },
+  { term: 'Riboflavin (B2)', type: 'concept', category: 'vitamins-minerals', meaning: 'A B vitamin essential for energy production and cellular function.', example: 'Found in milk, eggs, and enriched grains. Deficiency causes cracked lips and skin issues.' },
+  { term: 'Niacin (B3)', type: 'concept', category: 'vitamins-minerals', meaning: 'A B vitamin involved in energy metabolism and DNA repair.', example: 'Deficiency causes pellagra (dermatitis, diarrhea, dementia). Found in meat, poultry, fish, and peanuts.' },
+  { term: 'Vitamin B6', type: 'concept', category: 'vitamins-minerals', meaning: 'A B vitamin important for protein metabolism, neurotransmitter production, and immune function.', example: 'Found in poultry, fish, potatoes, and bananas.' },
+  { term: 'Magnesium', type: 'concept', category: 'vitamins-minerals', meaning: 'A mineral essential for muscle and nerve function, blood pressure regulation, and over 300 enzyme reactions.', example: 'Found in nuts, seeds, whole grains, and leafy greens.' },
+  { term: 'Phosphorus', type: 'concept', category: 'vitamins-minerals', meaning: 'A mineral essential for bones, teeth, and energy metabolism (part of ATP and DNA).', example: 'Found in dairy, meat, fish, and nuts. Restricted in kidney disease.' },
+  { term: 'Selenium', type: 'concept', category: 'vitamins-minerals', meaning: 'A trace mineral with antioxidant properties, supporting thyroid function and immunity.', example: 'Brazil nuts are a particularly rich source.' },
+  { term: 'Fluoride', type: 'concept', category: 'vitamins-minerals', meaning: 'A trace mineral that strengthens tooth enamel and prevents dental caries.', example: 'Added to many public water supplies and used in toothpaste.' },
+  { term: 'Fat-Soluble Vitamin', type: 'concept', category: 'vitamins-minerals', meaning: 'Vitamins (A, D, E, K) absorbed with dietary fat and stored in body fat and liver.', example: 'Can reach toxic levels with over-supplementation, unlike water-soluble vitamins.' },
+  { term: 'Water-Soluble Vitamin', type: 'concept', category: 'vitamins-minerals', meaning: 'Vitamins (B-complex and C) that dissolve in water, are not stored, and must be replenished regularly.', example: 'Excess amounts are excreted in urine rather than stored.' },
+
+  // ——— ADDITIONAL WATER & ELECTROLYTES ———
+  { term: 'Hypernatremia', type: 'concept', category: 'water', meaning: 'Abnormally high sodium levels in the blood, usually from water loss or inadequate water intake.', example: 'Symptoms: thirst, confusion, muscle twitching. Common in older adults and dehydrated patients.' },
+  { term: 'Hyponatremia', type: 'concept', category: 'water', meaning: 'Abnormally low sodium levels in the blood, often from excess water intake or fluid retention.', example: 'Can occur in endurance athletes who drink too much plain water. Symptoms: nausea, headache, confusion.' },
+  { term: 'Hypokalemia', type: 'concept', category: 'water', meaning: 'Low blood potassium, potentially causing muscle weakness, cramps, and irregular heartbeat.', example: 'Common causes: diuretics, vomiting, diarrhea, inadequate intake.' },
+
+  // ——— ADDITIONAL LIFESPAN ———
+  { term: 'Childhood Obesity', type: 'concept', category: 'lifespan', meaning: 'Excess body fat in children that increases risk for diabetes, heart disease, and psychological problems.', example: 'Defined as BMI at or above the 95th percentile for age and sex.' },
+  { term: 'Gestational Diabetes', type: 'concept', category: 'lifespan', meaning: 'Diabetes that develops during pregnancy and usually resolves after delivery.', example: 'Managed with diet, exercise, and sometimes insulin. Increases risk of type 2 diabetes later.' },
+  { term: 'MyPlate', type: 'concept', category: 'lifespan', meaning: 'The USDA food guide replacing the food pyramid, showing proportions of food groups on a plate.', example: 'Fruits and vegetables should fill half the plate; grains and proteins the other half.' },
+  { term: 'Dietary Reference Intakes', type: 'concept', category: 'lifespan', meaning: 'Recommended nutrient intake values set by the National Academy of Sciences.', example: 'Includes RDA (recommended daily allowance), AI (adequate intake), and UL (upper limit).' },
+  { term: 'BMI', type: 'concept', category: 'lifespan', meaning: 'Body Mass Index — weight in kg divided by height in meters squared; screens for over- or underweight.', example: 'Under 18.5: underweight. 18.5-24.9: normal. 25-29.9: overweight. 30+: obese.' },
+
+  // ——— ADDITIONAL DIGESTION ———
+  { term: 'Villi', type: 'concept', category: 'digestion', meaning: 'Finger-like projections lining the small intestine that vastly increase surface area for nutrient absorption.', example: 'Each villus has microvilli, further multiplying absorptive surface area.' },
+  { term: 'Gastric Juice', type: 'concept', category: 'digestion', meaning: 'A stomach secretion containing HCl and pepsin that begins protein digestion and kills microbes.', example: 'The stomach lining is protected from its own acid by a thick mucus layer.' },
+  { term: 'Pancreatic Enzymes', type: 'concept', category: 'digestion', meaning: 'Digestive enzymes released into the small intestine to break down carbs, fats, and proteins.', example: 'Includes amylase (carbs), lipase (fats), and trypsin/chymotrypsin (proteins).' },
+  { term: 'Large Intestine Function', type: 'concept', category: 'digestion', meaning: 'The colon absorbs water and electrolytes, houses gut bacteria, and forms and eliminates stool.', example: 'Bacteria produce some vitamin K and ferment fibers into short-chain fatty acids.' },
+
+  // ——— ADDITIONAL CULTURAL ———
+  { term: 'Food Insecurity', type: 'concept', category: 'cultural', meaning: 'Limited or uncertain access to adequate food due to economic or social conditions.', example: 'Associated with poor nutrition, health outcomes, and child development issues.' },
+  { term: 'Organic Foods', type: 'concept', category: 'cultural', meaning: 'Foods produced without synthetic pesticides, fertilizers, GMOs, or routine antibiotics.', example: 'USDA-certified organic label requires meeting specific production standards.' },
+
+  // ——— ADDITIONAL ILLNESS ———
+  { term: 'E. coli O157:H7', type: 'concept', category: 'illness', meaning: 'A dangerous strain of E. coli producing Shiga toxin, causing severe bloody diarrhea and kidney damage.', example: 'Outbreaks linked to undercooked ground beef, raw produce, and unpasteurized dairy.' },
+  { term: 'Listeria', type: 'concept', category: 'illness', meaning: 'A bacteria that grows even in refrigerated foods, particularly dangerous for pregnant women.', example: 'Found in soft cheeses, deli meats, and raw milk. Can cause miscarriage.' },
+  { term: 'Norovirus', type: 'concept', category: 'illness', meaning: 'The most common cause of foodborne illness in the US, causing sudden vomiting and diarrhea.', example: 'Highly contagious; spreads in cruise ships, schools, and restaurants.' },
+  { term: 'Gluten Sensitivity', type: 'concept', category: 'illness', meaning: 'Non-celiac gluten-related symptoms without the autoimmune damage of celiac disease.', example: 'Symptoms similar to celiac but negative celiac tests and no intestinal damage.' },
+  { term: 'Peanut Allergy', type: 'concept', category: 'illness', meaning: 'One of the most common severe food allergies, with high risk of life-threatening anaphylaxis.', example: 'Often lifelong, unlike most childhood allergies. Requires strict avoidance and epinephrine access.' },
+
+  // ——— ADDITIONAL MNT ———
+  { term: 'Type 1 Diabetes Diet', type: 'concept', category: 'mnt', meaning: 'A diet coordinated with insulin doses, emphasizing consistent carbohydrate intake at meals.', example: 'Carb counting allows flexible eating matched to rapid-acting insulin doses.' },
+  { term: 'Type 2 Diabetes Diet', type: 'concept', category: 'mnt', meaning: 'A diet focused on weight management, portion control, and limiting refined carbs and added sugars.', example: 'Weight loss of 5-10% can significantly improve blood sugar control.' },
+  { term: 'Renal Failure Diet', type: 'concept', category: 'mnt', meaning: 'A diet for advanced kidney disease restricting potassium, phosphorus, sodium, and often fluid.', example: 'Protein needs increase on dialysis to replace losses during treatment.' },
+  { term: 'Heart-Healthy Diet', type: 'concept', category: 'mnt', meaning: 'Low in saturated fat, trans fat, sodium, and added sugars; rich in fruits, vegetables, whole grains, and lean proteins.', example: 'The American Heart Association recommends saturated fat under 6% of daily calories.' },
+  { term: 'Celiac Diet', type: 'concept', category: 'mnt', meaning: 'A strict lifelong gluten-free diet — no wheat, barley, rye, or foods contaminated with them.', example: 'Even small amounts of gluten can damage the small intestine in celiac patients.' },
+  { term: 'Low-FODMAP Diet', type: 'concept', category: 'mnt', meaning: 'A diet limiting fermentable carbohydrates that trigger IBS symptoms in sensitive people.', example: 'Avoids certain fruits, vegetables, dairy, and grains in an elimination phase.' },
+  { term: 'Ketogenic Diet', type: 'concept', category: 'mnt', meaning: 'A very-low-carb, high-fat diet shifting metabolism to burn fat for energy via ketone production.', example: 'Used medically for refractory epilepsy in children; popular for weight loss with mixed evidence.' },
+  { term: 'Cancer Nutrition', type: 'concept', category: 'mnt', meaning: 'Nutrition therapy focused on preventing weight loss, preserving muscle, and managing treatment side effects.', example: 'Protein needs are elevated; texture modifications help with mucositis and chewing issues.' },
+  { term: 'Crohn Disease Diet', type: 'concept', category: 'mnt', meaning: 'A flexible approach identifying personal trigger foods; may restrict fiber during flares.', example: 'Many patients benefit from smaller, more frequent meals and tracking food symptoms.' },
+  { term: 'Food Allergen Labeling', type: 'concept', category: 'mnt', meaning: 'Federal law requiring clear labeling of the top 9 allergens on packaged foods in the US.', example: 'The Food Allergen Labeling and Consumer Protection Act of 2004 (updated for sesame in 2023).' },
+
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE (in-memory; resets on reload — progress kept per-session)
+// ══════════════════════════════════════════════════════════════
+const state = {
+  activeView: 'flashcards',
+  flash: {
+    filter: 'all',
+    index: 0,
+    deck: [],
+    srEnabled: true,
+  },
+  quiz: {
+    filter: 'all',
+    deck: [],
+    index: 0,
+    score: 0,
+    answered: false,
+  },
+  test: {
+    active: false,
+    deck: [],
+    index: 0,
+    answers: [],
+    timer: null,
+    timeLeft: 720,
+  },
+  progress: {
+    studied: new Set(),
+    mastered: new Set(),
+    quizzes: [],
+    byCategory: {},
+    lastMissed: [],
+    srLevels: {},
+  },
+};
+
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENCE (Firebase)
+// ══════════════════════════════════════════════════════════════
+const DB_PATH = 'nutrition';
+
+function saveProgress() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const data = {
+    studied:    [...state.progress.studied],
+    mastered:   [...state.progress.mastered],
+    quizzes:    state.progress.quizzes,
+    lastMissed: state.progress.lastMissed || [],
+    srLevels:   state.progress.srLevels || {},
+  };
+  firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
+    .catch(e => console.warn('Could not save progress:', e));
+}
+
+async function loadProgress(uid) {
+  try {
+    const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
+    if (snap.exists()) {
+      const data = snap.val();
+      state.progress.studied    = new Set(data.studied    || []);
+      state.progress.mastered   = new Set(data.mastered   || []);
+      state.progress.quizzes    = data.quizzes    || [];
+      state.progress.lastMissed = data.lastMissed || [];
+      state.progress.srLevels   = data.srLevels   || {};
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SPACED REPETITION
+// ══════════════════════════════════════════════════════════════
+// Each term has a mastery level 0-5:
+//   0 = brand new / just missed    (weight 16 — shows very often)
+//   1 = shaky                       (weight 8)
+//   2 = learning                    (weight 4)
+//   3 = comfortable                 (weight 2)
+//   4 = solid                       (weight 1)
+//   5 = mastered                    (weight 0.5 — rarely appears)
+const SR_WEIGHTS = [16, 8, 4, 2, 1, 0.5];
+
+function getSRLevel(term) {
+  return state.progress.srLevels[term] || 0;
+}
+
+function setSRLevel(term, level) {
+  const clamped = Math.max(0, Math.min(5, level));
+  state.progress.srLevels[term] = clamped;
+}
+
+function bumpSRLevel(term, delta) {
+  const current = getSRLevel(term);
+  setSRLevel(term, current + delta);
+}
+
+// Build a weighted deck the SAME SIZE as the pool, but with weak cards
+// more likely to appear and mastered cards less likely.
+// Algorithm: for each slot, pick a random card from the pool using weights
+// derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
+// and avoid showing a card too recently seen.
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  
+  // Calculate weights for each card
+  const weighted = pool.map(card => ({
+    card,
+    weight: SR_WEIGHTS[getSRLevel(card.term)]
+  }));
+  const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
+  
+  // Pick cards weighted by level, deck size = pool size
+  const deckSize = pool.length;
+  const recentWindow = Math.min(5, Math.floor(pool.length / 3));
+  const deck = [];
+  const recentlyPicked = []; // circular buffer of last N card terms
+  
+  let attempts = 0;
+  while (deck.length < deckSize && attempts < deckSize * 20) {
+    attempts++;
+    // Weighted random pick
+    let r = Math.random() * totalWeight;
+    let picked = null;
+    for (const w of weighted) {
+      r -= w.weight;
+      if (r <= 0) { picked = w.card; break; }
+    }
+    if (!picked) picked = weighted[weighted.length - 1].card;
+    
+    // Skip if too recently picked
+    if (recentlyPicked.includes(picked.term)) continue;
+    
+    deck.push(picked);
+    recentlyPicked.push(picked.term);
+    if (recentlyPicked.length > recentWindow) recentlyPicked.shift();
+  }
+  
+  // Fallback if we couldn't fill (unusual): top off with random shuffle
+  if (deck.length < deckSize) {
+    const missing = pool.filter(c => !deck.includes(c));
+    deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
+  }
+  
+  return deck;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const pad = n => String(n).padStart(2, '0');
+
+const categories = [...new Set(TERMS.map(t => t.category))];
+const categoryLabel = c => ({
+  'macronutrients': 'Macronutrients',
+  'vitamins-minerals': 'Vitamins & Minerals',
+  'water': 'Water & Electrolytes',
+  'lifespan': 'Life Span',
+  'digestion': 'Digestion & Metabolism',
+  'cultural': 'Cultural & Dietary Patterns',
+  'illness': 'Food Illness & Allergies',
+  'mnt': 'Medical Nutrition Therapy'
+})[c] || c;
+
+function filterDeck(filter) {
+  return filter === 'all' ? [...TERMS] : TERMS.filter(t => t.category === filter);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════
+$$('#tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-' + view).classList.add('active');
+    state.activeView = view;
+    if (view === 'progress') renderProgress();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  CATEGORY CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips(containerId, onSelect, currentFilter) {
+  const container = $(containerId);
+  container.innerHTML = '<span class="label">Filter</span>';
+  const all = document.createElement('button');
+  all.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+  all.innerHTML = `All <span class="count">${TERMS.length}</span>`;
+  all.onclick = () => onSelect('all');
+  container.appendChild(all);
+
+  categories.forEach(cat => {
+    const count = TERMS.filter(t => t.category === cat).length;
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentFilter === cat ? ' active' : '');
+    b.innerHTML = `${categoryLabel(cat)} <span class="count">${count}</span>`;
+    b.onclick = () => onSelect(cat);
+    container.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function initFlashcards() {
+  const onFlashFilter = (f) => {
+    state.flash.filter = f;
+    state.flash.deck = buildSmartDeck(filterDeck(f));
+    state.flash.index = 0;
+    renderChips('#flash-cats', onFlashFilter, f);
+    renderFlashcard();
+  };
+  renderChips('#flash-cats', onFlashFilter, state.flash.filter);
+
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  renderFlashcard();
+
+  // Wire the Smart Review toggle
+  const srToggle = document.getElementById('sr-toggle');
+  if (srToggle) {
+    srToggle.checked = state.flash.srEnabled;
+    srToggle.addEventListener('change', () => {
+      state.flash.srEnabled = srToggle.checked;
+      state.flash.deck = state.flash.srEnabled
+        ? buildSmartDeck(filterDeck(state.flash.filter))
+        : shuffle(filterDeck(state.flash.filter));
+      state.flash.index = 0;
+      renderFlashcard();
+    });
+  }
+
+  $('#flashcard').addEventListener('click', () => {
+    $('#flashcard').classList.toggle('flipped');
+  });
+
+  $('#flash-next').addEventListener('click', () => {
+    nextFlashcard(1);
+  });
+  $('#flash-prev').addEventListener('click', () => {
+    nextFlashcard(-1);
+  });
+  $('#flash-got').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.add(card.term);
+    bumpSRLevel(card.term, 1);
+    saveProgress();
+    renderFlashcard(); // update level indicator before leaving
+    nextFlashcard(1);
+  });
+  $('#flash-miss').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.delete(card.term);
+    setSRLevel(card.term, 0); // reset fully when missed
+    saveProgress();
+    renderFlashcard();
+    nextFlashcard(1);
+  });
+}
+
+function nextFlashcard(dir) {
+  const card = $('#flashcard');
+  card.style.transition = 'transform 0.13s ease-in, opacity 0.13s ease-in';
+  card.style.transform = dir > 0 ? 'translateX(-14px)' : 'translateX(14px)';
+  card.style.opacity = '0';
+  setTimeout(() => {
+    card.classList.remove('flipped');
+    const total = state.flash.deck.length;
+    state.flash.index = (state.flash.index + dir + total) % total;
+    renderFlashcard();
+    card.style.transition = 'none';
+    card.style.transform = dir > 0 ? 'translateX(14px)' : 'translateX(-14px)';
+    card.offsetHeight;
+    card.style.transition = 'transform 0.13s ease-out, opacity 0.13s ease-out';
+    card.style.transform = 'translateX(0)';
+    card.style.opacity = '1';
+  }, 140);
+}
+
+function renderFlashcard() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
+  $('#flash-cat-front').textContent = card.type;
+  $('#flash-cat-back').textContent = card.type;
+  $('#flash-front-term').textContent = card.term;
+  $('#flash-back-def').textContent = card.meaning;
+  $('#flash-back-ex-text').textContent = card.example;
+  // render mastery level indicator
+  const levelEl = document.getElementById('flash-level');
+  if (levelEl) {
+    const level = getSRLevel(card.term);
+    let dots = '';
+    for (let i = 1; i <= 5; i++) {
+      dots += i <= level ? '●' : '○';
+    }
+    levelEl.textContent = dots;
+    levelEl.title = `Mastery level: ${level} of 5`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+const QUIZ_LENGTH = 10;
+
+function initQuiz() {
+  const onQuizFilter = (f) => {
+    state.quiz.filter = f;
+    startQuiz();
+    renderChips('#quiz-cats', onQuizFilter, f);
+  };
+  renderChips('#quiz-cats', onQuizFilter, state.quiz.filter);
+
+  startQuiz();
+
+  $('#quiz-next').addEventListener('click', () => {
+    state.quiz.index++;
+    if (state.quiz.index >= state.quiz.deck.length) {
+      finishQuiz();
+    } else {
+      renderQuiz();
+    }
+  });
+  $('#quiz-restart').addEventListener('click', startQuiz);
+  $('#quiz-retry').addEventListener('click', startQuiz);
+  $('#quiz-review-misses').addEventListener('click', reviewMissesAsFlashcards);
+}
+
+function reviewMissesAsFlashcards() {
+  if (state.progress.lastMissed.length === 0) {
+    alert('No misses to review — nice work!');
+    return;
+  }
+  // switch to flashcards tab with a filtered deck
+  const missedDeck = TERMS.filter(t => state.progress.lastMissed.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  // switch tab
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  const pool = filterDeck(state.quiz.filter);
+  state.quiz.deck = shuffle(pool).slice(0, Math.min(QUIZ_LENGTH, pool.length));
+  state.quiz.index = 0;
+  state.quiz.score = 0;
+  state.quiz.answered = false;
+  $('#quiz-stage').style.display = 'block';
+  $('#quiz-results').style.display = 'none';
+  renderQuiz();
+}
+
+function buildOptions(correct, pool) {
+  const distractors = shuffle(pool.filter(t => t.term !== correct.term)).slice(0, 3);
+  return shuffle([correct, ...distractors]);
+}
+
+function renderQuiz() {
+  const card = state.quiz.deck[state.quiz.index];
+  const pool = filterDeck(state.quiz.filter);
+  const options = buildOptions(card, pool);
+
+  $('#quiz-progress').textContent = `Question ${pad(state.quiz.index + 1)} of ${pad(state.quiz.deck.length)}`;
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index}`;
+  $('#quiz-term').textContent = card.term;
+
+  const optsEl = $('#quiz-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerQuiz(b, opt, card, optsEl);
+    optsEl.appendChild(b);
+  });
+
+  $('#quiz-feedback').classList.remove('show', 'correct', 'incorrect');
+  $('#quiz-next').disabled = true;
+  state.quiz.answered = false;
+}
+
+function answerQuiz(btn, chosen, correct, optsEl) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const isCorrect = chosen.term === correct.term;
+
+  state.progress.studied.add(correct.term);
+  if (isCorrect) {
+    state.quiz.score++;
+    state.progress.mastered.add(correct.term);
+    btn.classList.add('correct');
+    bumpSRLevel(correct.term, 1);
+    // remove from missed list if previously missed
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  } else {
+    btn.classList.add('incorrect');
+    setSRLevel(correct.term, 0);
+    // track the miss
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+    // highlight correct
+    [...optsEl.children].forEach(c => {
+      if (c.textContent.includes(correct.meaning)) c.classList.add('correct');
+    });
+  }
+  [...optsEl.children].forEach(c => c.disabled = true);
+
+  const fb = $('#quiz-feedback');
+  fb.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+  $('#quiz-verdict').textContent = isCorrect ? '✓ Correct' : '✗ Not quite';
+  $('#quiz-explain').textContent = `"${correct.term}" means ${correct.meaning}. ${correct.example ? 'e.g., ' + correct.example : ''}`;
+
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
+  $('#quiz-next').disabled = false;
+  saveProgress();
+}
+
+function finishQuiz() {
+  state.progress.quizzes.push({
+    score: state.quiz.score,
+    total: state.quiz.deck.length,
+    date: Date.now(),
+  });
+  saveProgress();
+  $('#quiz-stage').style.display = 'none';
+  $('#quiz-results').style.display = 'block';
+  $('#final-score').textContent = state.quiz.score;
+  $('#final-total').textContent = state.quiz.deck.length;
+  const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
+  let msg;
+  if (pct === 100) msg = 'Flawless. The terminology bends to you.';
+  else if (pct >= 85) msg = 'Sharp work. You are nearly there.';
+  else if (pct >= 70) msg = 'Strong foundation. Keep drilling the edges.';
+  else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
+  else msg = 'Every expert begins here. Study, then return.';
+  $('#quiz-message').textContent = msg;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMED TEST
+// ══════════════════════════════════════════════════════════════
+const TEST_LENGTH = 25;
+const TEST_SECONDS = 720; // 12 minutes
+
+function initTest() {
+  $('#test-begin').addEventListener('click', startTest);
+  $('#test-again').addEventListener('click', () => {
+    $('#test-results').style.display = 'none';
+    $('#test-intro').style.display = 'block';
+  });
+  $('#test-review').addEventListener('click', reviewTest);
+}
+
+function startTest() {
+  const pool = [...TERMS];
+  state.test.deck = shuffle(pool).slice(0, TEST_LENGTH);
+  state.test.index = 0;
+  state.test.answers = [];
+  state.test.timeLeft = TEST_SECONDS;
+  state.test.active = true;
+
+  $('#test-intro').style.display = 'none';
+  $('#test-active').style.display = 'block';
+  $('#test-results').style.display = 'none';
+
+  renderTestQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+  state.test.timer = setInterval(() => {
+    state.test.timeLeft--;
+    updateTimerDisplay();
+    if (state.test.timeLeft <= 0) {
+      clearInterval(state.test.timer);
+      finishTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.test.timeLeft / 60);
+  const s = state.test.timeLeft % 60;
+  const el = $('#test-timer');
+  el.textContent = `${pad(m)}:${pad(s)}`;
+  if (state.test.timeLeft < 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+  const pct = (state.test.timeLeft / TEST_SECONDS) * 100;
+  $('#test-timer-fill').style.width = pct + '%';
+}
+
+function renderTestQuestion() {
+  const card = state.test.deck[state.test.index];
+  const options = buildOptions(card, TERMS);
+
+  $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
+  $('#test-term').textContent = card.term;
+
+  const optsEl = $('#test-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerTest(opt, card);
+    optsEl.appendChild(b);
+  });
+}
+
+function answerTest(chosen, correct) {
+  const isCorrect = chosen.term === correct.term;
+  state.test.answers.push({
+    term: correct.term,
+    correctMeaning: correct.meaning,
+    chosen: chosen.meaning,
+    isCorrect: isCorrect,
+    example: correct.example,
+  });
+  if (!isCorrect) {
+    setSRLevel(correct.term, 0);
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+  } else {
+    bumpSRLevel(correct.term, 1);
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  }
+  saveProgress();
+  state.test.index++;
+  if (state.test.index >= state.test.deck.length) {
+    clearInterval(state.test.timer);
+    finishTest();
+  } else {
+    renderTestQuestion();
+  }
+}
+
+function finishTest() {
+  state.test.active = false;
+  const correctCount = state.test.answers.filter(a => a.isCorrect).length;
+  const total = state.test.deck.length;
+  state.progress.quizzes.push({
+    score: correctCount,
+    total,
+    date: Date.now(),
+    timed: true,
+  });
+  // register studied terms
+  state.test.answers.forEach(a => {
+    state.progress.studied.add(a.term);
+    if (a.isCorrect) state.progress.mastered.add(a.term);
+  });
+
+  $('#test-active').style.display = 'none';
+  $('#test-results').style.display = 'block';
+  $('#test-final-score').textContent = correctCount;
+  $('#test-final-total').textContent = total;
+
+  const pct = Math.round((correctCount / total) * 100);
+  let msg;
+  if (pct >= 95) msg = 'Exceptional. Competition-ready.';
+  else if (pct >= 85) msg = 'Strong performance — well within medal range.';
+  else if (pct >= 75) msg = 'Solid. Polish the edges and go again.';
+  else if (pct >= 60) msg = 'You know the territory. Time to master it.';
+  else msg = 'The work is ahead. Use flashcards, then retest.';
+  $('#test-message').textContent = msg;
+}
+
+function reviewTest() {
+  const misses = state.test.answers.filter(a => !a.isCorrect);
+  if (misses.length === 0) {
+    alert('No misses to review — perfect score.');
+    return;
+  }
+  // switch to flashcards mode with only the missed terms
+  const missedTerms = misses.map(m => m.term);
+  const missedDeck = TERMS.filter(t => missedTerms.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  $('#stat-studied').textContent = state.progress.studied.size;
+  $('#stat-mastered').textContent = state.progress.mastered.size;
+  $('#stat-quizzes').textContent = state.progress.quizzes.length;
+
+  if (state.progress.quizzes.length > 0) {
+    const avg = state.progress.quizzes.reduce((a, q) => a + (q.score / q.total), 0) / state.progress.quizzes.length;
+    $('#stat-avg').innerHTML = Math.round(avg * 100) + '<span class="unit">%</span>';
+  } else {
+    $('#stat-avg').innerHTML = '—<span class="unit">%</span>';
+  }
+
+  const list = $('#mastery-list');
+  list.innerHTML = '';
+  categories.forEach(cat => {
+    const catTerms = TERMS.filter(t => t.category === cat);
+    const masteredCount = catTerms.filter(t => state.progress.mastered.has(t.term)).length;
+    const pct = Math.round((masteredCount / catTerms.length) * 100);
+
+    const row = document.createElement('div');
+    row.className = 'mastery-row';
+    row.innerHTML = `
+      <div class="cat-name">${categoryLabel(cat)}</div>
+      <div class="mastery-bar">
+        <div class="mastery-bar-bg"></div>
+        <div class="mastery-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="mastery-pct">${masteredCount}/${catTerms.length} · ${pct}%</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+$('#reset-progress').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {} };
+  const user = firebase.auth().currentUser;
+  if (user) firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  renderProgress();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'index.html'; return; }
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  loadProgress(user.uid).then(() => {
+    initFlashcards();
+    initQuiz();
+    initTest();
+  });
+});
+
+
+// Smart Review help popover
+(function() {
+  const helpBtn = document.getElementById('sr-help');
+  const infoBox = document.getElementById('sr-info');
+  if (helpBtn && infoBox) {
+    helpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoBox.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoBox.contains(e.target) && e.target !== helpBtn) {
+        infoBox.classList.remove('show');
+      }
+    });
+  }
+})();
+
+// keyboard shortcuts for flashcards
+document.addEventListener('keydown', (e) => {
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    $('#flashcard').classList.toggle('flipped');
+  } else if (e.key === 'ArrowRight') {
+    nextFlashcard(1);
+  } else if (e.key === 'ArrowLeft') {
+    nextFlashcard(-1);
+  }
+});
+</script>
+</body>
+</html>
