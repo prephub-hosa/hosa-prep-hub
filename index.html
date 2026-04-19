@@ -545,7 +545,8 @@
     gap: 12px;
   }
 
-  .newsletter-form input[type="email"] {
+  .newsletter-form input[type="email"],
+  .newsletter-form input[type="text"] {
     background: var(--bg);
     border: 1px solid var(--ink);
     padding: 14px 18px;
@@ -973,18 +974,29 @@
     </div>
   </section>
 
-  <!-- EMAIL CAPTURE -->
+  <!-- EMAIL CAPTURE + EVENT REQUEST -->
   <section class="newsletter">
     <div class="newsletter-copy">
       <h3>Get notified when <em>new events</em> drop.</h3>
-      <p>Anatomy &amp; Physiology and Medical Math are on the way. Drop your email and I'll let you know the moment they're live. No spam — one email per launch, nothing else.</p>
+      <p>More study modules are on the way. Drop your email and I'll let you know the moment a new one goes live. One email per launch, nothing else.</p>
     </div>
-    <form class="newsletter-form" id="newsletter-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="newsletter">
-      <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
-      <input type="email" name="email" placeholder="your.email@school.edu" required>
+    <form class="newsletter-form" id="newsletter-form">
+      <input type="email" id="notify-email" placeholder="your.email@school.edu" required>
       <button type="submit">Notify me when new events launch</button>
       <div class="newsletter-msg" id="newsletter-msg"></div>
+    </form>
+  </section>
+
+  <section class="newsletter" style="margin-top: 16px;">
+    <div class="newsletter-copy">
+      <h3>Want a specific <em>event?</em></h3>
+      <p>Request a HOSA competitive event and I'll prioritize building it. Tell me exactly what you need — I read every submission.</p>
+    </div>
+    <form class="newsletter-form" id="request-form">
+      <input type="text" id="request-event" placeholder="e.g. Medical Math, Health Career Display…" required>
+      <input type="email" id="request-email" placeholder="your.email@school.edu (optional)">
+      <button type="submit">Submit request →</button>
+      <div class="newsletter-msg" id="request-msg"></div>
     </form>
   </section>
 
@@ -997,21 +1009,45 @@
 
 <script>
 (function() {
-  const form = document.getElementById('newsletter-form');
-  const msg = document.getElementById('newsletter-msg');
-  if (!form) return;
+  // Pre-fill emails from logged-in user
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) return;
+    document.getElementById('notify-email').value = user.email;
+    document.getElementById('request-email').value = user.email;
+  });
 
-  form.addEventListener('submit', function(e) {
+  // Notification sign-up → saved to Firebase /subscribers/
+  document.getElementById('newsletter-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    const formData = new FormData(form);
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(formData).toString()
-    }).then(() => {
-      msg.textContent = "Thanks! You'll hear from me when the next event is live.";
-      form.querySelector('input[type="email"]').value = '';
-    }).catch(() => {
+    const email = document.getElementById('notify-email').value.trim();
+    const msg   = document.getElementById('newsletter-msg');
+    firebase.database().ref('subscribers/' + Date.now()).set({
+      email: email,
+      subscribedAt: new Date().toISOString()
+    }).then(function() {
+      msg.textContent = "You're on the list — I'll email you when the next event goes live.";
+      msg.style.color = 'var(--success)';
+    }).catch(function() {
+      msg.textContent = 'Something went wrong — please try again.';
+      msg.style.color = 'var(--accent)';
+    });
+  });
+
+  // Event request → saved to Firebase /requests/
+  document.getElementById('request-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const event = document.getElementById('request-event').value.trim();
+    const email = document.getElementById('request-email').value.trim();
+    const msg   = document.getElementById('request-msg');
+    firebase.database().ref('requests/' + Date.now()).set({
+      event: event,
+      email: email || null,
+      requestedAt: new Date().toISOString()
+    }).then(function() {
+      msg.textContent = "Request received — thank you. I'll look into it.";
+      msg.style.color = 'var(--success)';
+      document.getElementById('request-event').value = '';
+    }).catch(function() {
       msg.textContent = 'Something went wrong — please try again.';
       msg.style.color = 'var(--accent)';
     });
