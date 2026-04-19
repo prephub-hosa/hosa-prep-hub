@@ -980,11 +980,11 @@
       <h3>Get notified when <em>new events</em> drop.</h3>
       <p>More study modules are on the way. Drop your email and I'll let you know the moment a new one goes live. One email per launch, nothing else.</p>
     </div>
-    <form class="newsletter-form" id="newsletter-form">
-      <input type="email" id="notify-email" placeholder="your.email@school.edu" required>
-      <button type="submit">Notify me when new events launch</button>
+    <div class="newsletter-form">
+      <input type="email" id="notify-email" placeholder="your.email@school.edu">
+      <button type="button" id="notify-btn">Notify me when new events launch</button>
       <div class="newsletter-msg" id="newsletter-msg"></div>
-    </form>
+    </div>
   </section>
 
   <section class="newsletter" style="margin-top: 16px;">
@@ -992,12 +992,12 @@
       <h3>Want a specific <em>event?</em></h3>
       <p>Request a HOSA competitive event and I'll prioritize building it. Tell me exactly what you need — I read every submission.</p>
     </div>
-    <form class="newsletter-form" id="request-form">
-      <input type="text" id="request-event" placeholder="e.g. Medical Math, Health Career Display…" required>
+    <div class="newsletter-form">
+      <input type="text" id="request-event" placeholder="e.g. Medical Math, Health Career Display…">
       <input type="email" id="request-email" placeholder="your.email@school.edu (optional)">
-      <button type="submit">Submit request →</button>
+      <button type="button" id="request-btn">Submit request →</button>
       <div class="newsletter-msg" id="request-msg"></div>
-    </form>
+    </div>
   </section>
 
 </main>
@@ -1100,50 +1100,45 @@ function friendlyError(code) {
 </script>
 
 <script>
-(function() {
-  var notifyForm  = document.getElementById('newsletter-form');
-  var requestForm = document.getElementById('request-form');
+document.getElementById('notify-btn').onclick = function() {
+  var msg   = document.getElementById('newsletter-msg');
+  var email = document.getElementById('notify-email').value.trim();
+  msg.textContent = 'Saving…';
+  msg.style.color = 'var(--ink-soft)';
+  var user = firebase.auth().currentUser;
+  if (!user)  { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
+  if (!email) { msg.textContent = 'Please enter your email.'; msg.style.color = 'var(--accent)'; return; }
+  firebase.database().ref('users/' + user.uid + '/subscribed').set({
+    email: email, subscribedAt: new Date().toISOString()
+  }).then(function() {
+    msg.textContent = "You're on the list — I'll email you when the next event goes live.";
+    msg.style.color = 'var(--success)';
+  }).catch(function(err) {
+    msg.textContent = 'Error: ' + err.message;
+    msg.style.color = 'var(--accent)';
+  });
+};
 
-  if (notifyForm) {
-    notifyForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var user  = firebase.auth().currentUser;
-      var msg   = document.getElementById('newsletter-msg');
-      var email = document.getElementById('notify-email').value.trim();
-      if (!user) { msg.textContent = 'Sign in to subscribe.'; msg.style.color = 'var(--accent)'; return; }
-      firebase.database().ref('users/' + user.uid + '/subscribed').set({
-        email: email, subscribedAt: new Date().toISOString()
-      }).then(function() {
-        msg.textContent = "You're on the list — I'll email you when the next event goes live.";
-        msg.style.color = 'var(--success)';
-      }).catch(function(err) {
-        msg.textContent = 'Error: ' + err.message;
-        msg.style.color = 'var(--accent)';
-      });
-    });
-  }
-
-  if (requestForm) {
-    requestForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var user      = firebase.auth().currentUser;
-      var msg       = document.getElementById('request-msg');
-      var eventName = document.getElementById('request-event').value.trim();
-      var email     = document.getElementById('request-email').value.trim();
-      if (!user) { msg.textContent = 'Sign in to submit a request.'; msg.style.color = 'var(--accent)'; return; }
-      firebase.database().ref('users/' + user.uid + '/requests/' + Date.now()).set({
-        event: eventName, email: email || null, requestedAt: new Date().toISOString()
-      }).then(function() {
-        msg.textContent = "Request received — thank you. I'll look into it.";
-        msg.style.color = 'var(--success)';
-        document.getElementById('request-event').value = '';
-      }).catch(function(err) {
-        msg.textContent = 'Error: ' + err.message;
-        msg.style.color = 'var(--accent)';
-      });
-    });
-  }
-})();
+document.getElementById('request-btn').onclick = function() {
+  var msg       = document.getElementById('request-msg');
+  var eventName = document.getElementById('request-event').value.trim();
+  var email     = document.getElementById('request-email').value.trim();
+  msg.textContent = 'Saving…';
+  msg.style.color = 'var(--ink-soft)';
+  var user = firebase.auth().currentUser;
+  if (!user)      { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
+  if (!eventName) { msg.textContent = 'Please describe the event you want.'; msg.style.color = 'var(--accent)'; return; }
+  firebase.database().ref('users/' + user.uid + '/requests/' + Date.now()).set({
+    event: eventName, email: email || null, requestedAt: new Date().toISOString()
+  }).then(function() {
+    msg.textContent = "Request received — thank you. I'll look into it.";
+    msg.style.color = 'var(--success)';
+    document.getElementById('request-event').value = '';
+  }).catch(function(err) {
+    msg.textContent = 'Error: ' + err.message;
+    msg.style.color = 'var(--accent)';
+  });
+};
 </script>
 
 </body>
