@@ -941,6 +941,30 @@
     .spec-item .spec-val { font-size: 22px; }
     .quiz-question { margin-bottom: 20px; }
   }
+  .streak-badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .streak-badge strong {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: -0.02em;
+  }
+  .resume-banner {
+    background: var(--highlight);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    animation: fade 0.3s ease;
+  }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -979,9 +1003,11 @@
       <span class="label">Filter</span>
     </div>
 
+    <div id="resume-banner" class="resume-banner" style="display:none"></div>
     <div class="flashcard-stage">
       <div class="card-counter">
         <span id="flash-progress">01 / 00</span>
+        <span class="streak-badge" id="streak-badge" style="display:none"><strong id="streak-num">0</strong> day streak</span>
         <label class="sr-toggle-label">
           <input type="checkbox" id="sr-toggle" checked>
           <span>Smart Review</span>
@@ -1127,6 +1153,10 @@
       <div class="stat-card accent">
         <div class="stat-label">Mastered</div>
         <div class="stat-val" id="stat-mastered">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Day Streak</div>
+        <div class="stat-val" id="stat-streak"><span id="stat-streak-val">0</span><span class="unit">d</span></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Quizzes Taken</div>
@@ -1349,6 +1379,9 @@ const state = {
     byCategory: {},
     lastMissed: [],
     srLevels: {},
+    streak: 0,
+    lastStudyDate: null,
+    lastFilter: 'all',
   },
 };
 
@@ -1362,11 +1395,14 @@ function saveProgress() {
   const user = firebase.auth().currentUser;
   if (!user) return;
   const data = {
-    studied:    [...state.progress.studied],
-    mastered:   [...state.progress.mastered],
-    quizzes:    state.progress.quizzes,
-    lastMissed: state.progress.lastMissed || [],
-    srLevels:   state.progress.srLevels || {},
+    studied:       [...state.progress.studied],
+    mastered:      [...state.progress.mastered],
+    quizzes:       state.progress.quizzes,
+    lastMissed:    state.progress.lastMissed || [],
+    srLevels:      state.progress.srLevels || {},
+    streak:        state.progress.streak || 0,
+    lastStudyDate: state.progress.lastStudyDate || null,
+    lastFilter:    state.flash.filter || 'all',
   };
   firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
     .catch(e => console.warn('Could not save progress:', e));
@@ -1377,14 +1413,37 @@ async function loadProgress(uid) {
     const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
     if (snap.exists()) {
       const data = snap.val();
-      state.progress.studied    = new Set(data.studied    || []);
-      state.progress.mastered   = new Set(data.mastered   || []);
-      state.progress.quizzes    = data.quizzes    || [];
-      state.progress.lastMissed = data.lastMissed || [];
-      state.progress.srLevels   = data.srLevels   || {};
+      state.progress.studied       = new Set(data.studied    || []);
+      state.progress.mastered      = new Set(data.mastered   || []);
+      state.progress.quizzes       = data.quizzes    || [];
+      state.progress.lastMissed    = data.lastMissed || [];
+      state.progress.srLevels      = data.srLevels   || {};
+      state.progress.streak        = data.streak        || 0;
+      state.progress.lastStudyDate = data.lastStudyDate || null;
+      state.progress.lastFilter    = data.lastFilter    || 'all';
     }
   } catch (e) {
     console.warn('Could not load progress:', e);
+  }
+}
+
+function checkAndUpdateStreak() {
+  const today = new Date().toISOString().split('T')[0];
+  const last  = state.progress.lastStudyDate;
+  if (last === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  state.progress.streak = (last === yesterday) ? (state.progress.streak || 0) + 1 : 1;
+  state.progress.lastStudyDate = today;
+  updateStreakBadge();
+}
+
+function updateStreakBadge() {
+  const badge = document.getElementById('streak-badge');
+  const num   = document.getElementById('streak-num');
+  if (!badge || !num) return;
+  if (state.progress.streak > 0) {
+    num.textContent = state.progress.streak;
+    badge.style.display = '';
   }
 }
 
@@ -1529,6 +1588,8 @@ function renderChips(containerId, onSelect, currentFilter) {
 //  FLASHCARDS
 // ══════════════════════════════════════════════════════════════
 function initFlashcards() {
+  updateStreakBadge();
+  state.flash.filter = state.progress.lastFilter || 'all';
   const onFlashFilter = (f) => {
     state.flash.filter = f;
     state.flash.deck = buildSmartDeck(filterDeck(f));
@@ -1540,6 +1601,21 @@ function initFlashcards() {
 
   state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
   renderFlashcard();
+
+  const savedFilter = state.progress.lastFilter || 'all';
+  if (savedFilter !== 'all') {
+    const banner = document.getElementById('resume-banner');
+    if (banner) {
+      banner.style.display = '';
+      const label = savedFilter.charAt(0).toUpperCase() + savedFilter.slice(1);
+      banner.innerHTML = `Continue where you left off: <strong>${label}</strong> cards &nbsp;&middot;&nbsp; <a href="#" id="resume-all-link" style="color:var(--accent);text-decoration:none">Study all</a>`;
+      document.getElementById('resume-all-link').addEventListener('click', e => {
+        e.preventDefault();
+        onFlashFilter('all');
+        banner.style.display = 'none';
+      });
+    }
+  }
 
   // Wire the Smart Review toggle
   const srToggle = document.getElementById('sr-toggle');
@@ -1570,6 +1646,7 @@ function initFlashcards() {
     state.progress.studied.add(card.term);
     state.progress.mastered.add(card.term);
     bumpSRLevel(card.term, 1);
+    checkAndUpdateStreak();
     saveProgress();
     renderFlashcard(); // update level indicator before leaving
     nextFlashcard(1);
@@ -1579,6 +1656,7 @@ function initFlashcards() {
     state.progress.studied.add(card.term);
     state.progress.mastered.delete(card.term);
     setSRLevel(card.term, 0); // reset fully when missed
+    checkAndUpdateStreak();
     saveProgress();
     renderFlashcard();
     nextFlashcard(1);
@@ -1934,6 +2012,7 @@ function renderProgress() {
   $('#stat-studied').textContent = state.progress.studied.size;
   $('#stat-mastered').textContent = state.progress.mastered.size;
   $('#stat-quizzes').textContent = state.progress.quizzes.length;
+  $('#stat-streak-val').textContent = state.progress.streak || 0;
 
   if (state.progress.quizzes.length > 0) {
     const avg = state.progress.quizzes.reduce((a, q) => a + (q.score / q.total), 0) / state.progress.quizzes.length;
@@ -1965,9 +2044,11 @@ function renderProgress() {
 
 $('#reset-progress').addEventListener('click', () => {
   if (!confirm('Reset all progress? This cannot be undone.')) return;
-  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {} };
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {}, streak: 0, lastStudyDate: null, lastFilter: 'all' };
   const user = firebase.auth().currentUser;
   if (user) firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  document.getElementById('streak-badge').style.display = 'none';
+  document.getElementById('resume-banner').style.display = 'none';
   renderProgress();
 });
 
