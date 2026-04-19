@@ -1007,58 +1007,6 @@
   <div>Built for competitors, by a competitor.</div>
 </footer>
 
-<script>
-(function() {
-  let currentUser = null;
-
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (!user) return;
-    currentUser = user;
-    document.getElementById('notify-email').value = user.email;
-    document.getElementById('request-email').value = user.email;
-  });
-
-  // Notification sign-up → saved under user's own path (always allowed by rules)
-  document.getElementById('newsletter-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('notify-email').value.trim();
-    const msg   = document.getElementById('newsletter-msg');
-    if (!currentUser) { msg.textContent = 'Please sign in first.'; return; }
-    firebase.database().ref('users/' + currentUser.uid + '/subscribed').set({
-      email: email,
-      subscribedAt: new Date().toISOString()
-    }).then(function() {
-      msg.textContent = "You're on the list — I'll email you when the next event goes live.";
-      msg.style.color = 'var(--success)';
-    }).catch(function(err) {
-      msg.textContent = 'Something went wrong — please try again.';
-      msg.style.color = 'var(--accent)';
-      console.error(err);
-    });
-  });
-
-  // Event request → saved under user's own path
-  document.getElementById('request-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const event = document.getElementById('request-event').value.trim();
-    const email = document.getElementById('request-email').value.trim();
-    const msg   = document.getElementById('request-msg');
-    if (!currentUser) { msg.textContent = 'Please sign in first.'; return; }
-    firebase.database().ref('users/' + currentUser.uid + '/requests/' + Date.now()).set({
-      event: event,
-      email: email || null,
-      requestedAt: new Date().toISOString()
-    }).then(function() {
-      msg.textContent = "Request received — thank you. I'll look into it.";
-      msg.style.color = 'var(--success)';
-      document.getElementById('request-event').value = '';
-    }).catch(function() {
-      msg.textContent = 'Something went wrong — please try again.';
-      msg.style.color = 'var(--accent)';
-    });
-  });
-})();
-</script>
 
 </div><!-- /main-content -->
 
@@ -1075,6 +1023,10 @@ auth.onAuthStateChanged(user => {
     userEmailEl.textContent = user.email;
     authGateEl.style.display = 'none';
     mainEl.style.display = 'block';
+    const notifyEl = document.getElementById('notify-email');
+    const requestEl = document.getElementById('request-email');
+    if (notifyEl) notifyEl.value = user.email;
+    if (requestEl) requestEl.value = user.email;
   } else {
     authGateEl.style.display = 'flex';
   }
@@ -1145,6 +1097,53 @@ function friendlyError(code) {
     'auth/too-many-requests':    'Too many attempts. Please try again later.',
   })[code] || 'Something went wrong. Please try again.';
 }
+</script>
+
+<script>
+(function() {
+  var notifyForm  = document.getElementById('newsletter-form');
+  var requestForm = document.getElementById('request-form');
+
+  if (notifyForm) {
+    notifyForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var user  = firebase.auth().currentUser;
+      var msg   = document.getElementById('newsletter-msg');
+      var email = document.getElementById('notify-email').value.trim();
+      if (!user) { msg.textContent = 'Sign in to subscribe.'; msg.style.color = 'var(--accent)'; return; }
+      firebase.database().ref('users/' + user.uid + '/subscribed').set({
+        email: email, subscribedAt: new Date().toISOString()
+      }).then(function() {
+        msg.textContent = "You're on the list — I'll email you when the next event goes live.";
+        msg.style.color = 'var(--success)';
+      }).catch(function(err) {
+        msg.textContent = 'Error: ' + err.message;
+        msg.style.color = 'var(--accent)';
+      });
+    });
+  }
+
+  if (requestForm) {
+    requestForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var user      = firebase.auth().currentUser;
+      var msg       = document.getElementById('request-msg');
+      var eventName = document.getElementById('request-event').value.trim();
+      var email     = document.getElementById('request-email').value.trim();
+      if (!user) { msg.textContent = 'Sign in to submit a request.'; msg.style.color = 'var(--accent)'; return; }
+      firebase.database().ref('users/' + user.uid + '/requests/' + Date.now()).set({
+        event: eventName, email: email || null, requestedAt: new Date().toISOString()
+      }).then(function() {
+        msg.textContent = "Request received — thank you. I'll look into it.";
+        msg.style.color = 'var(--success)';
+        document.getElementById('request-event').value = '';
+      }).catch(function(err) {
+        msg.textContent = 'Error: ' + err.message;
+        msg.style.color = 'var(--accent)';
+      });
+    });
+  }
+})();
 </script>
 
 </body>
