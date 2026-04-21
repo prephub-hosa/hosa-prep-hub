@@ -698,27 +698,12 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <style id="enhancements-v2">
-  /* Site-wide motion polish — keeps things fast and subtle */
   html { scroll-behavior: smooth; }
-
-  body {
-    opacity: 0;
-    animation: pageReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  @keyframes pageReveal {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Buttons feel more alive */
-  button, a { transition: color 0.22s ease, background-color 0.22s ease,
-              border-color 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.22s ease, opacity 0.22s ease; }
-  button:not(:disabled):active { transform: scale(0.98); }
-
-  /* Respect reduced-motion users */
+  /* Subtle button/link feedback — no transforms on body/containers (prevents blur) */
+  button, a { transition: color 0.18s ease, background-color 0.18s ease,
+              border-color 0.18s ease, box-shadow 0.2s ease, opacity 0.18s ease; }
+  button:not(:disabled):active { transform: scale(0.985); }
   @media (prefers-reduced-motion: reduce) {
-    body { animation: none; opacity: 1; transform: none; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
@@ -728,68 +713,17 @@
   }
 </style>
 <style id="enhancements-v2-index">
-  /* Scroll-reveal — sections fade & slide as they enter view */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
-  }
-  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal { opacity: 0; transition: opacity 0.5s ease-out; }
+  .reveal.in { opacity: 1; }
 
-  /* Category cards feel more tactile */
-  .category-card {
-    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.25s ease !important;
-  }
-  .category-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.18), 0 4px 8px -4px rgba(0,0,0,0.06);
-  }
-  .category-card .card-arrow { transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
-  .category-card:hover .card-arrow { transform: translateX(6px); }
+  .category-card { transition: box-shadow 0.28s ease, border-color 0.2s ease !important; }
+  .category-card:hover { box-shadow: 0 12px 28px -14px rgba(0,0,0,0.18), 0 3px 6px -3px rgba(0,0,0,0.05); }
+  .category-card .card-arrow { transition: transform 0.22s ease; }
+  .category-card:hover .card-arrow { transform: translateX(4px); }
 
-  /* Auth card drifts in on first view */
-  .auth-card { animation: authSlide 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes authSlide {
-    from { opacity: 0; transform: translateY(18px) scale(0.985); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  /* Main content fades in when you enter from the auth gate */
-  #main-content[style*="block"] > header,
-  #main-content[style*="block"] > main { animation: mainFade 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes mainFade {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Staggered entrance for stats + category cards */
-  .stats-band.reveal.in .stat-item { animation: stagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-  .stats-band.reveal.in .stat-item:nth-child(1) { animation-delay: 0.05s; }
-  .stats-band.reveal.in .stat-item:nth-child(2) { animation-delay: 0.12s; }
-  .stats-band.reveal.in .stat-item:nth-child(3) { animation-delay: 0.19s; }
-  .stats-band.reveal.in .stat-item:nth-child(4) { animation-delay: 0.26s; }
-  @keyframes stagger {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Testimonials & how-items also get a gentle lift */
-  .testimonial { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease; }
-  .testimonial:hover { transform: translateY(-3px); }
-
-  .how-item { transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
-  .how-item:hover { transform: translateY(-3px); }
-
-  /* Newsletter buttons */
-  .newsletter-form button { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-  .newsletter-form button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(0,0,0,0.25); }
-
-  /* Hero title tightens subtly on hover for a living feel — optional, very subtle */
-  .hero-title em { transition: color 0.3s ease; }
+  .testimonial { transition: box-shadow 0.25s ease; }
+  .newsletter-form button { transition: background-color 0.2s ease, box-shadow 0.2s ease; }
+  .newsletter-form button:hover:not(:disabled) { box-shadow: 0 6px 14px -6px rgba(0,0,0,0.2); }
 </style>
 </head>
 <body>
@@ -1358,41 +1292,15 @@ document.getElementById('request-btn').onclick = function() {
 
 <script id="scroll-reveal">
 (function() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
-    return;
-  }
-  const targets = document.querySelectorAll('.hero, .stats-band, .section-head, .categories, .testimonials, .how, .newsletter');
-  targets.forEach(el => el.classList.add('reveal'));
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var targets = document.querySelectorAll('.hero, .stats-band, .section-head, .categories, .testimonials, .how, .newsletter');
+  targets.forEach(function(el){ el.classList.add('reveal'); });
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-  targets.forEach(el => io.observe(el));
-
-  // Gentle staggered entrance for the category cards
-  const cards = document.querySelectorAll('.categories .category-card');
-  cards.forEach((card, i) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (i * 0.06) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (i * 0.06) + 's';
-  });
-  const catObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-        catObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
-  cards.forEach(c => catObserver.observe(c));
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+  targets.forEach(function(el){ io.observe(el); });
 })();
 </script>
 </body>
