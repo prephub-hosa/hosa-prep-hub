@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>try{if(localStorage.getItem("hosa-theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Clinical Nursing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;        /* medical journal crimson */
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+    --error: #8b2a1f;
+  }
+  /* ── Dark mode ── */
+  [data-theme="dark"] {
+    --bg: #161411;
+    --bg-card: #1e1b17;
+    --ink: #e4dfd5;
+    --ink-soft: #9a948c;
+    --ink-faint: #6a6560;
+    --rule: #302d28;
+    --accent: #c9372d;
+    --accent-soft: #5a2820;
+    --highlight: #252218;
+    --success: #3d7a52;
+    --error: #c04a3f;
+  }
+  [data-theme="dark"] body {
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(168,40,31,0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(45,90,61,0.06) 0%, transparent 45%);
+  }
+  [data-theme="dark"] body::before { mix-blend-mode: screen; opacity: 0.1; }
+
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,40,31,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(45,90,61,0.03) 0%, transparent 40%);
+  }
+
+  /* ——— Grain overlay ——— */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  /* ——— Header ——— */
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+
+  .brand-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .brand-link:hover { opacity: 0.65; }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+
+  .category-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ——— Main container ——— */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ——— Masthead ——— */
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .masthead h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .masthead .subtitle {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  /* ——— Nav tabs ——— */
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 48px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    width: fit-content;
+  }
+
+  nav.tabs button {
+    background: var(--bg);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  nav.tabs button:hover { background: var(--highlight); }
+  nav.tabs button.active { background: var(--ink); color: var(--bg); }
+
+  /* ——— Category chips ——— */
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-bar .label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-right: 12px;
+    align-self: center;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .chip:hover { background: var(--highlight); }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip .count {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+
+  /* ——— View containers ——— */
+  .view { display: none; animation: fade 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ——— FLASHCARDS ——— */
+  .flashcard-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .card-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-counter .type-badge {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+
+  .flashcard {
+    aspect-ratio: 8 / 5;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.04),
+      0 12px 32px -12px rgba(0,0,0,0.15);
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+    transition: opacity 0.25s ease;
+  }
+
+  .face.front { opacity: 1; }
+  .face.back { opacity: 0; pointer-events: none; background: var(--bg-card); }
+  .flashcard.flipped .face.front { opacity: 0; pointer-events: none; }
+  .flashcard.flipped .face.back { opacity: 1; pointer-events: auto; }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px;
+    right: 20px; bottom: 20px;
+    border: 1px solid var(--ink-faint);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .face .corner {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .face .corner.right { left: auto; right: 28px; }
+
+  .term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .term em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .definition {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 600px;
+    color: var(--ink);
+  }
+
+  .example {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink-faint);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .example-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  /* ——— Card controls ——— */
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-controls .nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 11px 22px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--highlight); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btns .btn { padding: 10px 16px; }
+  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+
+  /* ——— QUIZ ——— */
+  .quiz-stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+  }
+
+  .quiz-prompt {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .quiz-term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    line-height: 1.45;
+  }
+
+  .option:hover { background: var(--highlight); }
+
+  .option .letter {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 24px;
+    border-right: 1px solid var(--ink-faint);
+    padding-right: 16px;
+  }
+
+  .option.correct {
+    background: #e6efe0;
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .option.correct .letter { color: var(--success); border-color: var(--success); }
+
+  .option.incorrect {
+    background: #f5e4e0;
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .option.incorrect .letter { color: var(--error); border-color: var(--error); }
+
+  .option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: var(--bg-card);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fade 0.3s ease; }
+
+  .quiz-feedback .verdict {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .quiz-feedback.correct { border-color: var(--success); }
+  .quiz-feedback.correct .verdict { color: var(--success); }
+  .quiz-feedback.incorrect { border-color: var(--error); }
+  .quiz-feedback.incorrect .verdict { color: var(--error); }
+
+  .quiz-feedback .explain {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ——— Quiz results ——— */
+  .results {
+    text-align: center;
+    padding: 60px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .results .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(80px, 14vw, 160px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+  }
+
+  .results .score-num .of {
+    color: var(--ink-faint);
+    font-size: 0.5em;
+    font-style: italic;
+  }
+
+  .results .label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin: 16px 0 32px;
+  }
+
+  .results .message {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  /* ——— TIMED TEST ——— */
+  .test-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .test-intro::before {
+    content: 'Examination';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .test-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .test-intro p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .test-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .spec-item .spec-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .spec-item .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .timer-bar {
+    position: sticky;
+    top: 61px;
+    background: var(--bg);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    margin-bottom: 40px;
+  }
+
+  .timer {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.warning { color: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    50% { opacity: 0.5; }
+  }
+
+  .timer-progress {
+    flex: 1;
+    margin: 0 32px;
+    height: 2px;
+    background: var(--ink-faint);
+    opacity: 0.2;
+    position: relative;
+  }
+
+  .timer-progress .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  /* ——— PROGRESS ——— */
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .stat-card .stat-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card .stat-val .unit {
+    font-size: 20px;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .stat-card.accent .stat-val { color: var(--accent); }
+
+  .mastery-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mastery-section .section-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+
+  .mastery-row .cat-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--ink-faint);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mastery-bar-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0.08;
+  }
+
+  .mastery-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  .mastery-pct {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    margin-top: 40px;
+    color: var(--ink-soft);
+  }
+
+
+
+  /* ——— Smart Review help ——— */
+  .sr-help {
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-left: 6px;
+    transition: all 0.15s;
+  }
+  .sr-help:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .sr-info {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 18px 22px;
+    max-width: 460px;
+    width: 90vw;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    z-index: 20;
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+  }
+  .sr-info.show { display: block; }
+  .sr-info strong {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .sr-toggle-label { position: relative; }
+
+  /* ——— Spaced Repetition UI ——— */
+  .flash-level-row {
+    margin-top: 28px;
+    text-align: center;
+  }
+  .flash-level {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.75;
+    user-select: none;
+  }
+  .sr-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sr-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .sr-toggle-label:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .sr-toggle-label { font-size: 13px; }
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 760px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 20px 60px; }
+    .masthead { grid-template-columns: 1fr; gap: 16px; }
+    .masthead .subtitle { text-align: left; }
+    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { white-space: nowrap; min-height: 44px; }
+    .test-specs { grid-template-columns: 1fr; gap: 12px; }
+    .mastery-row { grid-template-columns: 1fr; gap: 8px; }
+    .card-controls { flex-direction: column; gap: 12px; }
+    .card-controls > * { width: 100%; justify-content: center; }
+    .btn { min-height: 44px; }
+    .rating-btns .btn { flex: 1; min-height: 48px; }
+    .face { padding: 32px 24px; }
+    .results { padding: 40px 24px; }
+    .test-intro { padding: 32px 24px; }
+    .option { padding: 16px 18px; }
+    .progress-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 14px 48px; }
+    .face { padding: 20px 16px; }
+    .flashcard { aspect-ratio: unset; min-height: 260px; height: auto; overflow: visible; }
+    .term { font-size: clamp(20px, 5.5vw, 28px); }
+    .definition { font-size: 15px; line-height: 1.45; }
+    .option { padding: 14px; font-size: 16px; }
+    .quiz-options { gap: 8px; }
+    .results { padding: 28px 16px; }
+    .test-intro { padding: 24px 16px; }
+    .progress-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-card .stat-val { font-size: 40px; }
+    .spec-item .spec-val { font-size: 22px; }
+    .quiz-question { margin-bottom: 20px; }
+  }
+  .streak-badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .streak-badge strong {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: -0.02em;
+  }
+  .resume-banner {
+    background: var(--highlight);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    animation: fade 0.3s ease;
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style id="enhancements-v2">
+  html { scroll-behavior: smooth; }
+  /* Subtle button/link feedback — no transforms on body/containers (prevents blur) */
+  button, a { transition: color 0.18s ease, background-color 0.18s ease,
+              border-color 0.18s ease, box-shadow 0.2s ease, opacity 0.18s ease; }
+  button:not(:disabled):active { transform: scale(0.985); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+<style id="enhancements-v2-study">
+  nav.tabs button { transition: background 0.18s ease, color 0.18s ease; }
+  .category-bar button { transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+  .option { transition: border-color 0.18s ease, background 0.18s ease; }
+  .stat-card { transition: box-shadow 0.22s ease; }
+  .btn { transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; }
+  .btn-primary:hover:not(:disabled), .btn.primary:hover:not(:disabled) {
+    box-shadow: 0 6px 14px -6px rgba(0,0,0,0.25);
+  }
+  /* Do NOT touch flashcards */
+  .flashcard, .flashcard *, .face, .face * { animation: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+<div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
+  ⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
+  <a href="index.html" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
+</div>
+
+<main>
+  <div class="masthead">
+    <div>
+      <div class="category-eyebrow">Category 11 — Clinical Nursing</div>
+      <h1>Patient Care &amp;<br><em>Nursing</em>.</h1>
+    </div>
+    <div class="subtitle">A study companion for vital signs, patient care, clinical procedures, medications, infection control, and nursing equipment — built for HOSA competitors preparing for the Clinical Nursing competitive event.</div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="flashcards">Flashcards</button>
+    <button data-view="quiz">Practice Quiz</button>
+    <button data-view="test">Timed Test</button>
+    <button data-view="progress">Progress</button>
+  </nav>
+
+  <!-- FLASHCARDS VIEW -->
+  <section class="view active" id="view-flashcards">
+    <div class="category-bar" id="flash-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div id="resume-banner" class="resume-banner" style="display:none"></div>
+    <div class="flashcard-stage">
+      <div class="card-counter">
+        <span id="flash-progress">01 / 00</span>
+        <span class="streak-badge" id="streak-badge" style="display:none"><strong id="streak-num">0</strong> day streak</span>
+        <label class="sr-toggle-label">
+          <input type="checkbox" id="sr-toggle" checked>
+          <span>Smart Review</span>
+          <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
+        </label>
+        <span class="sr-info" id="sr-info" aria-hidden="true">
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level for each card — "Got it" fills one in, "Missed it" resets to zero. Turn this off to see every card in a single random pass instead.
+        </span>
+      </div>
+
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span class="corner">Concept</span>
+            <span class="corner right" id="flash-cat-front"></span>
+            <div class="term" id="flash-front-term"></div>
+            <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
+            <div class="flip-hint">↻ tap to reveal</div>
+          </div>
+          <div class="face back">
+            <span class="corner">Explanation</span>
+            <span class="corner right" id="flash-cat-back"></span>
+            <div class="definition" id="flash-back-def"></div>
+            <div class="example" id="flash-back-ex">
+              <span class="example-label">Example</span>
+              <span id="flash-back-ex-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="btn" id="flash-prev">← Previous</button>
+        <div class="rating-btns">
+          <button class="btn miss" id="flash-miss">Missed it</button>
+          <button class="btn got" id="flash-got">Got it</button>
+        </div>
+        <button class="btn primary" id="flash-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="category-bar" id="quiz-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="quiz-stage" id="quiz-stage">
+      <div class="quiz-header">
+        <span id="quiz-progress">Question 01 of 10</span>
+        <span id="quiz-score">Score: 0 / 0</span>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-term" id="quiz-term"></div>
+      </div>
+
+      <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="quiz-feedback" id="quiz-feedback">
+        <div class="verdict" id="quiz-verdict"></div>
+        <div class="explain" id="quiz-explain"></div>
+      </div>
+
+      <div class="card-controls" style="margin-top: 32px;">
+        <button class="btn" id="quiz-restart">↻ Restart</button>
+        <button class="btn primary" id="quiz-next" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <div class="results" id="quiz-results" style="display: none;">
+      <div class="score-num"><span id="final-score">0</span><span class="of">/<span id="final-total">10</span></span></div>
+      <div class="label">Practice Complete</div>
+      <div class="message" id="quiz-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="quiz-review-misses">Review My Misses</button>
+        <button class="btn primary" id="quiz-retry">Run It Back →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMED TEST VIEW -->
+  <section class="view" id="view-test">
+    <div class="test-intro" id="test-intro">
+      <h2>The HOSA Clinical Nursing Examination</h2>
+      <p>A timed assessment modeled on competition conditions. You'll be shown clinical nursing concepts drawn from all topic areas — vital signs, patient care procedures, medications, infection control, and medical equipment. Select the correct definition. No retries, no feedback until the end.</p>
+      <p>Take a breath. Keep moving. Trust what you know.</p>
+
+      <div class="test-specs">
+        <div class="spec-item">
+          <div class="spec-label">Questions</div>
+          <div class="spec-val">25</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Time Limit</div>
+          <div class="spec-val">12:00</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Format</div>
+          <div class="spec-val">M/C</div>
+        </div>
+      </div>
+
+      <button class="btn accent" id="test-begin" style="width: 100%; padding: 16px;">Begin Examination</button>
+    </div>
+
+    <div id="test-active" style="display: none;">
+      <div class="timer-bar">
+        <div class="timer" id="test-timer">12:00</div>
+        <div class="timer-progress"><div class="fill" id="test-timer-fill" style="width: 100%"></div></div>
+        <div class="meta" id="test-progress">01 / 25</div>
+      </div>
+
+      <div class="quiz-stage">
+        <div class="quiz-question">
+          <div class="quiz-prompt">How would you define this?</div>
+          <div class="quiz-term" id="test-term"></div>
+        </div>
+        <div class="quiz-options" id="test-options"></div>
+      </div>
+    </div>
+
+    <div id="test-results" class="results" style="display: none;">
+      <div class="score-num"><span id="test-final-score">0</span><span class="of">/<span id="test-final-total">25</span></span></div>
+      <div class="label">Examination Complete</div>
+      <div class="message" id="test-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="test-review">Review Misses</button>
+        <button class="btn primary" id="test-again">Take Again →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS VIEW -->
+  <section class="view" id="view-progress">
+    <div class="progress-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cards Studied</div>
+        <div class="stat-val" id="stat-studied">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Mastered</div>
+        <div class="stat-val" id="stat-mastered">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Day Streak</div>
+        <div class="stat-val" id="stat-streak"><span id="stat-streak-val">0</span><span class="unit">d</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Taken</div>
+        <div class="stat-val" id="stat-quizzes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Score</div>
+        <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="mastery-section">
+      <h3>Mastery by Category</h3>
+      <div class="section-sub">Percentage of terms marked "got it" at least once</div>
+      <div id="mastery-list"></div>
+    </div>
+
+    <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA — HOSA Medical Terminology by word part
+//  Easily extensible: add new categories/sets below
+// ══════════════════════════════════════════════════════════════
+const TERMS = [
+  { term: "Vital Signs", type: "concept", category: "assessment", meaning: "The four primary measurements reflecting body function: temperature, pulse, respiratory rate, and blood pressure; oxygen saturation is often called the fifth vital sign.", example: "A nurse assesses all four vital signs at the start of every shift." },
+  { term: "Blood Pressure", type: "concept", category: "assessment", meaning: "The force of circulating blood against arterial walls, measured in mmHg and recorded as systolic over diastolic; normal adult value is less than 120/80.", example: "A reading of 118/76 mmHg is within the normal range for an adult." },
+  { term: "Systolic Pressure", type: "concept", category: "assessment", meaning: "The upper number in a blood pressure reading, representing the pressure in arteries when the heart contracts and pumps blood.", example: "A systolic pressure above 130 mmHg indicates Stage 1 hypertension." },
+  { term: "Diastolic Pressure", type: "concept", category: "assessment", meaning: "The lower number in a blood pressure reading, representing arterial pressure when the heart is at rest between beats.", example: "A diastolic pressure above 80 mmHg is considered elevated." },
+  { term: "Hypertension", type: "condition", category: "assessment", meaning: "Persistently elevated blood pressure at or above 130/80 mmHg; a major risk factor for heart disease, stroke, and kidney failure.", example: "Hypertension is managed with lifestyle changes, diet, and antihypertensive medications." },
+  { term: "Hypotension", type: "condition", category: "assessment", meaning: "Abnormally low blood pressure below 90/60 mmHg; can cause dizziness, fainting, and inadequate organ perfusion.", example: "Postural hypotension causes dizziness when a patient stands up too quickly." },
+  { term: "Pulse Rate", type: "concept", category: "assessment", meaning: "The number of heartbeats per minute, assessed by palpating an artery; normal adult range is 60 to 100 beats per minute.", example: "The radial pulse at the wrist is the most common site for routine pulse assessment." },
+  { term: "Tachycardia", type: "condition", category: "assessment", meaning: "A heart rate faster than 100 beats per minute; can result from fever, pain, dehydration, anxiety, or cardiac conditions.", example: "A patient with a temperature of 103 degrees Fahrenheit presents with a pulse of 112 bpm." },
+  { term: "Bradycardia", type: "condition", category: "assessment", meaning: "A heart rate slower than 60 beats per minute; common in conditioned athletes; may cause fatigue or syncope when symptomatic.", example: "A symptomatic bradycardia of 42 bpm may require a pacemaker." },
+  { term: "Respiratory Rate", type: "concept", category: "assessment", meaning: "The number of breaths per minute; normal adult range is 12 to 20; assessed by observing chest rise for 60 seconds.", example: "A respiratory rate of 28 in a post-surgical patient warrants immediate reassessment." },
+  { term: "Oxygen Saturation (SpO2)", type: "concept", category: "assessment", meaning: "The percentage of hemoglobin binding sites occupied by oxygen, measured non-invasively by pulse oximetry; normal range is 95 to 100 percent.", example: "An SpO2 of 91 percent indicates hypoxemia and requires supplemental oxygen." },
+  { term: "Pulse Oximetry", type: "concept", category: "assessment", meaning: "A non-invasive device clipped to the finger or earlobe that uses light absorption to estimate oxygen saturation and pulse rate.", example: "Pulse oximetry provides continuous monitoring without drawing blood." },
+  { term: "Body Temperature", type: "concept", category: "assessment", meaning: "A measure of the body's heat production and regulation; normal oral temperature is 98.6 degrees Fahrenheit (37 degrees Celsius).", example: "Rectal temperature is the most accurate route for measuring core body temperature." },
+  { term: "Febrile", type: "condition", category: "assessment", meaning: "Having a fever; defined as a temperature above 100.4 degrees Fahrenheit (38 degrees Celsius).", example: "A febrile patient should be assessed for source of infection and given antipyretics if appropriate." },
+  { term: "Afebrile", type: "concept", category: "assessment", meaning: "Without fever; body temperature within normal range.", example: "The patient was afebrile throughout the post-operative period." },
+  { term: "ADPIE", type: "concept", category: "assessment", meaning: "The five-step nursing process: Assessment, Diagnosis, Planning, Implementation, and Evaluation; the systematic framework guiding all nursing care.", example: "A nurse uses ADPIE to develop and monitor an individualized care plan for each patient." },
+  { term: "Nursing Assessment", type: "concept", category: "assessment", meaning: "The systematic collection of health data through patient history, physical examination, and review of diagnostic results.", example: "A head-to-toe assessment is performed on admission to establish a baseline." },
+  { term: "Subjective Data", type: "concept", category: "assessment", meaning: "Information reported by the patient through verbal description, such as pain, nausea, or anxiety; also called symptoms.", example: "A patient reporting chest tightness is providing subjective data." },
+  { term: "Objective Data", type: "concept", category: "assessment", meaning: "Observable, measurable information gathered through physical examination, vital signs, or diagnostic tests; also called signs.", example: "A blood pressure of 160/95 is objective data." },
+  { term: "Glasgow Coma Scale (GCS)", type: "concept", category: "assessment", meaning: "A neurological scoring tool rating eye opening, verbal response, and motor response; maximum score is 15, indicating full consciousness.", example: "A GCS of 8 or below indicates severe brain injury and risk of airway compromise." },
+
+  { term: "Body Mechanics", type: "concept", category: "patient-care", meaning: "The correct use of body alignment, balance, and movement when lifting or repositioning patients to prevent musculoskeletal injury.", example: "Using a wide base of support and bending at the knees protects the nurse's lower back." },
+  { term: "Fowler Position", type: "concept", category: "patient-care", meaning: "A semi-sitting position with the head of the bed elevated 45 to 60 degrees; improves breathing, reduces aspiration risk, and aids swallowing.", example: "Patients receiving enteral tube feedings are kept in Fowler position." },
+  { term: "Semi-Fowler Position", type: "concept", category: "patient-care", meaning: "Head of bed elevated 15 to 30 degrees; used post-operatively, for patients with respiratory difficulty, and during rest.", example: "Semi-Fowler is the default resting position for most hospitalized patients." },
+  { term: "Supine Position", type: "concept", category: "patient-care", meaning: "Lying flat on the back; also called dorsal recumbent; used for many examinations, surgeries, and procedures.", example: "CPR is performed with the patient in the supine position on a firm surface." },
+  { term: "Prone Position", type: "concept", category: "patient-care", meaning: "Lying face down on the abdomen; used in respiratory therapy for ARDS patients to improve oxygenation by expanding posterior lung segments.", example: "Prone positioning is a non-invasive intervention for severe ARDS." },
+  { term: "Lateral Position", type: "concept", category: "patient-care", meaning: "Side-lying position that reduces pressure on the sacrum and heels; patients are repositioned every two hours to prevent pressure injuries.", example: "A lateral position is used for patients with sacral pressure injuries." },
+  { term: "Log Rolling", type: "concept", category: "patient-care", meaning: "A technique to turn a patient as one rigid unit, maintaining spinal alignment; required after spinal surgery or suspected spinal cord injury.", example: "Three nurses log-roll a trauma patient to inspect the back for injuries." },
+  { term: "Range of Motion (ROM)", type: "concept", category: "patient-care", meaning: "The extent of movement possible at a joint; ROM exercises maintain flexibility, prevent contractures, and promote circulation in immobile patients.", example: "Passive ROM is performed by the nurse when a patient cannot move independently." },
+  { term: "Pressure Injury", type: "condition", category: "patient-care", meaning: "Localized skin and soft tissue damage caused by sustained pressure, shear, or friction, often over a bony prominence; staged I through IV.", example: "A Stage II pressure injury presents as a shallow, open wound with a red-pink wound bed." },
+  { term: "Braden Scale", type: "concept", category: "patient-care", meaning: "A validated six-category tool assessing pressure injury risk based on sensory perception, moisture, activity, mobility, nutrition, and friction and shear.", example: "A Braden score of 12 indicates high risk and triggers preventive interventions." },
+  { term: "Ambulation", type: "concept", category: "patient-care", meaning: "The act of walking; encouraging early post-operative ambulation reduces complications including pneumonia, DVT, and muscle deconditioning.", example: "A patient is assisted to ambulate in the hallway six hours after hip replacement surgery." },
+  { term: "Fall Prevention", type: "concept", category: "patient-care", meaning: "Nursing interventions including bed alarms, non-slip footwear, hourly rounding, and keeping call bells within reach to prevent patient falls.", example: "Yellow non-slip socks indicate a high fall-risk patient." },
+  { term: "Activities of Daily Living (ADLs)", type: "concept", category: "patient-care", meaning: "Basic self-care tasks including bathing, dressing, grooming, eating, transferring, and toileting; used to measure functional independence.", example: "A patient requiring assistance with all ADLs receives maximum nursing support." },
+  { term: "Restraints", type: "concept", category: "patient-care", meaning: "Physical or chemical devices limiting patient movement; require a physician order, informed consent, documented rationale, and regular monitoring.", example: "Wrist restraints may be used to prevent a confused patient from removing a breathing tube." },
+  { term: "Sequential Compression Device (SCD)", type: "concept", category: "patient-care", meaning: "Inflatable sleeves applied to the lower legs that intermittently compress to promote venous return and prevent deep vein thrombosis.", example: "SCDs are applied to surgical patients before they are allowed out of bed." },
+
+  { term: "Sterile Technique", type: "concept", category: "procedures", meaning: "A set of practices that maintain complete absence of microorganisms to prevent infection during invasive procedures; requires sterile gloves, drapes, and a sterile field.", example: "Sterile technique is required when inserting a urinary catheter or changing a central line dressing." },
+  { term: "Medical Asepsis", type: "concept", category: "procedures", meaning: "Clean technique that reduces the number and spread of microorganisms; includes handwashing, glove use, and routine environmental cleaning.", example: "Washing hands before and after patient contact is a foundational medical asepsis practice." },
+  { term: "Wound Assessment", type: "concept", category: "procedures", meaning: "Systematic evaluation of a wound including size, depth, tissue type, exudate, surrounding skin, and signs of infection.", example: "A nurse documents wound dimensions and drainage character with each dressing change." },
+  { term: "Wound Irrigation", type: "procedure", category: "procedures", meaning: "Flushing a wound with saline or prescribed solution to remove debris, bacteria, and exudate and promote healing.", example: "A 35 mL syringe with an 18-gauge angiocatheter delivers irrigation at optimal pressure." },
+  { term: "Dressing Change", type: "procedure", category: "procedures", meaning: "Replacing a wound covering using sterile or clean technique, with assessment of wound progress and peri-wound skin condition.", example: "A moist wound dressing is changed every 24 to 48 hours to promote healing." },
+  { term: "Urinary Catheterization", type: "procedure", category: "procedures", meaning: "Insertion of a tube into the bladder through the urethra to drain urine; requires strict sterile technique to prevent infection.", example: "Straight catheterization obtains a sterile urine specimen without leaving a catheter in place." },
+  { term: "Foley Catheter", type: "concept", category: "procedures", meaning: "An indwelling urinary catheter held in place inside the bladder by an inflated balloon; drains urine continuously into a closed collection bag.", example: "Foley catheters are used post-operatively when patients cannot ambulate to the bathroom." },
+  { term: "CAUTI", type: "condition", category: "procedures", meaning: "Catheter-Associated Urinary Tract Infection; one of the most common healthcare-associated infections; prevented by aseptic insertion and prompt catheter removal.", example: "Daily assessment of catheter necessity is the most effective way to prevent CAUTI." },
+  { term: "Nasogastric (NG) Tube", type: "concept", category: "procedures", meaning: "A tube inserted through the nose, down the esophagus, into the stomach; used for feeding, medication administration, or gastric decompression.", example: "Tube placement is confirmed by X-ray before the first feeding is administered." },
+  { term: "Intravenous (IV) Therapy", type: "concept", category: "procedures", meaning: "The delivery of fluids, electrolytes, blood products, or medications directly into a vein via a catheter for rapid systemic effect.", example: "Normal saline 0.9% is the most commonly used IV fluid for volume replacement." },
+  { term: "IV Infiltration", type: "condition", category: "procedures", meaning: "Leakage of IV fluid or non-vesicant medication into the surrounding tissue due to catheter dislodgement; causes swelling, pallor, and pain.", example: "The IV site is assessed every hour for signs of infiltration, including puffiness and discomfort." },
+  { term: "Phlebotomy", type: "procedure", category: "procedures", meaning: "The practice of drawing blood from a vein for laboratory testing or therapeutic purposes; requires proper site selection and technique.", example: "The antecubital fossa is the most common site for routine phlebotomy." },
+  { term: "Suctioning", type: "procedure", category: "procedures", meaning: "Removal of secretions from the airway or a wound using negative pressure; types include oropharyngeal, nasopharyngeal, and endotracheal.", example: "Endotracheal suctioning is performed when a ventilated patient cannot clear secretions independently." },
+  { term: "Oxygen Therapy", type: "concept", category: "procedures", meaning: "Supplemental delivery of oxygen to treat or prevent hypoxemia; devices range from nasal cannula for low-flow needs to non-rebreather masks for emergencies.", example: "Oxygen therapy is titrated to maintain SpO2 at 94 to 98 percent in most patients." },
+  { term: "Nasal Cannula", type: "concept", category: "procedures", meaning: "A low-flow oxygen delivery device with two small prongs placed in the nostrils; delivers 24 to 44 percent oxygen at flow rates of 1 to 6 L/min.", example: "A patient with mild respiratory distress receives 2 L/min via nasal cannula." },
+  { term: "Non-Rebreather Mask", type: "concept", category: "procedures", meaning: "A high-flow oxygen mask with a one-way valve and reservoir bag that delivers up to 90 percent oxygen; used in respiratory emergencies.", example: "A trauma patient with altered mental status is placed on a non-rebreather mask at 15 L/min." },
+  { term: "Incentive Spirometer", type: "concept", category: "procedures", meaning: "A handheld breathing device that encourages maximal deep inhalation by providing visual feedback; prevents post-operative atelectasis.", example: "Patients are instructed to use the incentive spirometer ten times per hour after surgery." },
+
+  { term: "Six Rights of Medication Administration", type: "concept", category: "medications", meaning: "Right patient, right drug, right dose, right route, right time, and right documentation; a safety framework to prevent medication errors.", example: "Scanning the patient wristband and medication barcode verifies the six rights." },
+  { term: "Oral Route (PO)", type: "concept", category: "medications", meaning: "Medication taken by mouth and swallowed; the most common and convenient route; slower onset than parenteral administration.", example: "Most antibiotics and antihypertensives are administered by the oral route." },
+  { term: "Sublingual Route (SL)", type: "concept", category: "medications", meaning: "Medication placed under the tongue for rapid absorption directly into the bloodstream, bypassing first-pass metabolism.", example: "Nitroglycerin is given sublingually for rapid relief of angina." },
+  { term: "Intramuscular (IM) Route", type: "concept", category: "medications", meaning: "Injection of medication into muscle tissue for faster absorption than subcutaneous; common sites are deltoid, vastus lateralis, and ventrogluteal.", example: "Influenza vaccine is administered as an intramuscular injection into the deltoid." },
+  { term: "Subcutaneous (SC) Route", type: "concept", category: "medications", meaning: "Injection into the fatty tissue just beneath the skin; used for insulin, heparin, and other medications requiring slow, sustained absorption.", example: "Insulin is injected subcutaneously into the abdomen, thigh, or upper arm." },
+  { term: "Intravenous (IV) Route", type: "concept", category: "medications", meaning: "Medication delivered directly into a vein for immediate systemic distribution; the fastest route of administration and used in emergencies.", example: "IV morphine provides faster pain relief than oral or intramuscular routes." },
+  { term: "Topical Route", type: "concept", category: "medications", meaning: "Medication applied directly to the skin or mucous membranes for local effect; includes creams, ointments, patches, and eye or ear drops.", example: "A nitroglycerin transdermal patch delivers medication through the skin over 24 hours." },
+  { term: "Medication Reconciliation", type: "concept", category: "medications", meaning: "The process of comparing a patient's current medication orders to all medications previously taken to prevent omissions, duplications, and harmful interactions.", example: "Medication reconciliation is performed at admission, transfer, and discharge." },
+  { term: "Adverse Drug Reaction (ADR)", type: "concept", category: "medications", meaning: "An unintended, harmful response to a medication given at a normal therapeutic dose; ranges from mild rash to life-threatening anaphylaxis.", example: "A patient develops a rash after the first dose of penicillin, indicating an adverse drug reaction." },
+  { term: "Contraindication", type: "concept", category: "medications", meaning: "A specific condition or factor that makes a particular drug or treatment inadvisable or dangerous for a patient.", example: "Aspirin is contraindicated in children with viral illness due to the risk of Reye syndrome." },
+  { term: "PRN Medication", type: "concept", category: "medications", meaning: "A medication ordered as needed (pro re nata) and administered based on nursing assessment and defined clinical parameters.", example: "A PRN order for acetaminophen allows the nurse to give it when pain is assessed above 4/10." },
+  { term: "Anaphylaxis", type: "condition", category: "medications", meaning: "A severe, life-threatening systemic allergic reaction characterized by urticaria, hypotension, and bronchospasm; treated immediately with epinephrine.", example: "A patient receiving IV contrast develops throat swelling and hives, indicating anaphylaxis." },
+  { term: "Polypharmacy", type: "concept", category: "medications", meaning: "The concurrent use of five or more medications by one patient; increases risk of drug-drug interactions, adverse effects, and non-adherence.", example: "An elderly patient taking 12 medications is reviewed for polypharmacy during medication reconciliation." },
+
+  { term: "Standard Precautions", type: "concept", category: "infection-control", meaning: "Infection prevention practices applied to all patients regardless of diagnosis, including hand hygiene, PPE use, respiratory hygiene, and safe injection practices.", example: "Gloves are worn when drawing blood from any patient as part of standard precautions." },
+  { term: "Transmission-Based Precautions", type: "concept", category: "infection-control", meaning: "Additional precautions used alongside standard precautions based on the route by which a specific pathogen is transmitted.", example: "A patient admitted with suspected tuberculosis is immediately placed under transmission-based precautions." },
+  { term: "Contact Precautions", type: "concept", category: "infection-control", meaning: "Require gloves and gown for all patient contact or contact with the patient environment; used for infections spread by direct or indirect physical touch.", example: "Patients with MRSA, C. difficile, or wound infections require contact precautions." },
+  { term: "Droplet Precautions", type: "concept", category: "infection-control", meaning: "Require a surgical mask and eye protection when within three feet of the patient; used for pathogens spread through large respiratory droplets.", example: "Patients with influenza, pertussis, or meningitis are placed on droplet precautions." },
+  { term: "Airborne Precautions", type: "concept", category: "infection-control", meaning: "Require an N95 respirator and placement in a negative-pressure room; used for pathogens transmitted through small airborne particles over long distances.", example: "Tuberculosis, measles, and varicella require airborne precautions." },
+  { term: "Personal Protective Equipment (PPE)", type: "concept", category: "infection-control", meaning: "Gloves, gown, mask, and eye protection used to protect the healthcare worker from exposure to infectious material or hazardous substances.", example: "Full PPE including face shield is donned before entering the room of a patient on droplet precautions." },
+  { term: "Hand Hygiene", type: "concept", category: "infection-control", meaning: "The single most effective infection prevention measure; performed with soap and water or alcohol-based sanitizer before and after every patient contact.", example: "Alcohol-based hand rub is effective against most pathogens but NOT against C. difficile spores." },
+  { term: "Healthcare-Associated Infection (HAI)", type: "condition", category: "infection-control", meaning: "An infection that develops during the course of receiving medical care and was not present or incubating at the time of admission.", example: "Ventilator-associated pneumonia and CAUTI are among the most common HAIs." },
+  { term: "MRSA", type: "condition", category: "infection-control", meaning: "Methicillin-Resistant Staphylococcus aureus; a gram-positive bacterium resistant to most beta-lactam antibiotics; requires contact precautions.", example: "MRSA colonization is screened on admission to prevent hospital spread." },
+  { term: "C. difficile (C. diff)", type: "condition", category: "infection-control", meaning: "A spore-forming bacterium causing severe, potentially life-threatening diarrhea; alcohol sanitizer is ineffective against spores; requires soap, water, and contact precautions.", example: "Prolonged antibiotic use disrupts gut flora and increases risk of C. difficile infection." },
+  { term: "Chain of Infection", type: "concept", category: "infection-control", meaning: "A six-link model showing how infection spreads: infectious agent, reservoir, portal of exit, mode of transmission, portal of entry, and susceptible host.", example: "Breaking any link in the chain of infection prevents disease transmission." },
+  { term: "Sharps Safety", type: "concept", category: "infection-control", meaning: "Practices to prevent needlestick injuries, including never recapping needles by hand and immediately discarding sharps in puncture-resistant containers.", example: "A nurse disposes of an insulin syringe directly into the sharps container at the bedside." },
+
+  { term: "Stethoscope", type: "equipment", category: "equipment", meaning: "An acoustic instrument with a chest piece (diaphragm and bell), tubing, and earpieces used to auscultate heart, lung, and bowel sounds.", example: "A nurse uses the diaphragm of the stethoscope to auscultate breath sounds bilaterally." },
+  { term: "Sphygmomanometer", type: "equipment", category: "equipment", meaning: "A blood pressure measuring device consisting of an inflatable cuff, pressure gauge, and valve; used with a stethoscope or automated sensor.", example: "The cuff of the sphygmomanometer should cover 80 percent of the upper arm circumference." },
+  { term: "Thermometer", type: "equipment", category: "equipment", meaning: "An instrument used to measure body temperature; types include oral, rectal, tympanic (ear canal), axillary, and temporal artery thermometers.", example: "A tympanic thermometer provides a rapid, non-invasive temperature reading in 1 to 2 seconds." },
+  { term: "Glucometer", type: "equipment", category: "equipment", meaning: "A handheld device that measures blood glucose concentration from a small fingertip capillary blood sample; essential for monitoring diabetic patients.", example: "A pre-meal glucometer reading of 58 mg/dL indicates hypoglycemia requiring immediate treatment." },
+  { term: "Electrocardiogram (ECG/EKG)", type: "equipment", category: "equipment", meaning: "A diagnostic test recording the electrical activity of the heart through electrodes placed on the chest and limbs; identifies arrhythmias and ischemia.", example: "ST-segment elevation on an ECG is a hallmark finding of acute myocardial infarction." },
+  { term: "Automated External Defibrillator (AED)", type: "equipment", category: "equipment", meaning: "A portable device that analyzes heart rhythm and delivers an electrical shock to restore normal rhythm in ventricular fibrillation or pulseless ventricular tachycardia.", example: "AEDs in public spaces allow bystanders to provide early defibrillation during cardiac arrest." },
+  { term: "Infusion Pump", type: "equipment", category: "equipment", meaning: "An electronic device that controls the precise rate and volume of IV fluid or medication delivered to a patient, reducing the risk of under- or over-infusion.", example: "High-alert medications such as insulin and heparin are administered via infusion pump." },
+  { term: "Suction Machine", type: "equipment", category: "equipment", meaning: "A device generating negative pressure to remove secretions from the oral cavity, airway, or wound, maintaining airway patency.", example: "A portable suction machine is used at the bedside for patients with impaired swallowing." },
+  { term: "Crash Cart", type: "equipment", category: "equipment", meaning: "A mobile emergency unit stocked with medications (epinephrine, atropine), airway equipment, and a defibrillator for use during cardiac or respiratory arrest.", example: "The crash cart is checked and restocked at the start of every nursing shift." },
+  { term: "Bedpan and Urinal", type: "equipment", category: "equipment", meaning: "Toileting devices used for patients who cannot ambulate to the bathroom; offer dignified elimination assistance and enable output measurement.", example: "A 24-hour urine collection is measured using a calibrated bedpan." },
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE (in-memory; resets on reload — progress kept per-session)
+// ══════════════════════════════════════════════════════════════
+const state = {
+  activeView: 'flashcards',
+  flash: {
+    filter: 'all',
+    index: 0,
+    deck: [],
+    srEnabled: true,
+  },
+  quiz: {
+    filter: 'all',
+    deck: [],
+    index: 0,
+    score: 0,
+    answered: false,
+  },
+  test: {
+    active: false,
+    deck: [],
+    index: 0,
+    answers: [],
+    timer: null,
+    timeLeft: 720,
+  },
+  progress: {
+    studied: new Set(),
+    mastered: new Set(),
+    quizzes: [],
+    byCategory: {},
+    lastMissed: [],
+    srLevels: {},
+    streak: 0,
+    lastStudyDate: null,
+    lastFilter: 'all',
+  },
+};
+
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENCE (Firebase)
+// ══════════════════════════════════════════════════════════════
+const DB_PATH = 'clinical-nursing';
+
+function saveProgress() {
+  const user = firebase.auth().currentUser;
+  const data = {
+    studied:       [...state.progress.studied],
+    mastered:      [...state.progress.mastered],
+    quizzes:       state.progress.quizzes,
+    lastMissed:    state.progress.lastMissed || [],
+    srLevels:      state.progress.srLevels || {},
+    streak:        state.progress.streak || 0,
+    lastStudyDate: state.progress.lastStudyDate || null,
+    lastFilter:    state.flash.filter || 'all',
+  };
+  if (user) {
+    firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
+      .catch(e => console.warn('Could not save progress:', e));
+  } else {
+    try { localStorage.setItem('hosa::' + DB_PATH, JSON.stringify(data)); } catch(e) {}
+  }
+}
+
+async function loadProgress(uid) {
+  try {
+    if (uid) {
+      const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
+      if (snap.exists()) {
+        const data = snap.val();
+        state.progress.studied       = new Set(data.studied    || []);
+        state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.lastMissed    = data.lastMissed || [];
+        state.progress.srLevels      = data.srLevels   || {};
+        state.progress.streak        = data.streak        || 0;
+        state.progress.lastStudyDate = data.lastStudyDate || null;
+        state.progress.lastFilter    = data.lastFilter    || 'all';
+      }
+    } else {
+      const raw = localStorage.getItem('hosa::' + DB_PATH);
+      if (raw) {
+        const data = JSON.parse(raw);
+        state.progress.studied       = new Set(data.studied    || []);
+        state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.lastMissed    = data.lastMissed || [];
+        state.progress.srLevels      = data.srLevels   || {};
+        state.progress.streak        = data.streak        || 0;
+        state.progress.lastStudyDate = data.lastStudyDate || null;
+        state.progress.lastFilter    = data.lastFilter    || 'all';
+      }
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+function checkAndUpdateStreak() {
+  const today = new Date().toISOString().split('T')[0];
+  const last  = state.progress.lastStudyDate;
+  if (last === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  state.progress.streak = (last === yesterday) ? (state.progress.streak || 0) + 1 : 1;
+  state.progress.lastStudyDate = today;
+  updateStreakBadge();
+}
+
+function updateStreakBadge() {
+  const badge = document.getElementById('streak-badge');
+  const num   = document.getElementById('streak-num');
+  if (!badge || !num) return;
+  if (state.progress.streak > 0) {
+    num.textContent = state.progress.streak;
+    badge.style.display = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SPACED REPETITION
+// ══════════════════════════════════════════════════════════════
+// Each term has a mastery level 0-5:
+//   0 = brand new / just missed    (weight 16 — shows very often)
+//   1 = shaky                       (weight 8)
+//   2 = learning                    (weight 4)
+//   3 = comfortable                 (weight 2)
+//   4 = solid                       (weight 1)
+//   5 = mastered                    (weight 0.5 — rarely appears)
+const SR_WEIGHTS = [16, 8, 4, 2, 1, 0.5];
+
+function getSRLevel(term) {
+  return state.progress.srLevels[term] || 0;
+}
+
+function setSRLevel(term, level) {
+  const clamped = Math.max(0, Math.min(5, level));
+  state.progress.srLevels[term] = clamped;
+}
+
+function bumpSRLevel(term, delta) {
+  const current = getSRLevel(term);
+  setSRLevel(term, current + delta);
+}
+
+// Build a weighted deck the SAME SIZE as the pool, but with weak cards
+// more likely to appear and mastered cards less likely.
+// Algorithm: for each slot, pick a random card from the pool using weights
+// derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
+// and avoid showing a card too recently seen.
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  
+  // Calculate weights for each card
+  const weighted = pool.map(card => ({
+    card,
+    weight: SR_WEIGHTS[getSRLevel(card.term)]
+  }));
+  const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
+  
+  // Pick cards weighted by level, deck size = pool size
+  const deckSize = pool.length;
+  const recentWindow = Math.min(5, Math.floor(pool.length / 3));
+  const deck = [];
+  const recentlyPicked = []; // circular buffer of last N card terms
+  
+  let attempts = 0;
+  while (deck.length < deckSize && attempts < deckSize * 20) {
+    attempts++;
+    // Weighted random pick
+    let r = Math.random() * totalWeight;
+    let picked = null;
+    for (const w of weighted) {
+      r -= w.weight;
+      if (r <= 0) { picked = w.card; break; }
+    }
+    if (!picked) picked = weighted[weighted.length - 1].card;
+    
+    // Skip if too recently picked
+    if (recentlyPicked.includes(picked.term)) continue;
+    
+    deck.push(picked);
+    recentlyPicked.push(picked.term);
+    if (recentlyPicked.length > recentWindow) recentlyPicked.shift();
+  }
+  
+  // Fallback if we couldn't fill (unusual): top off with random shuffle
+  if (deck.length < deckSize) {
+    const missing = pool.filter(c => !deck.includes(c));
+    deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
+  }
+  
+  return deck;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const pad = n => String(n).padStart(2, '0');
+
+const categories = [...new Set(TERMS.map(t => t.category))];
+const categoryLabel = c => ({
+  'assessment': 'Vital Signs & Assessment',
+  'patient-care': 'Patient Care',
+  'procedures': 'Clinical Procedures',
+  'medications': 'Medication Administration',
+  'infection-control': 'Infection Control',
+  'equipment': 'Medical Equipment',
+})[c] || c;
+
+function filterDeck(filter) {
+  return filter === 'all' ? [...TERMS] : TERMS.filter(t => t.category === filter);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════
+$$('#tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-' + view).classList.add('active');
+    state.activeView = view;
+    if (view === 'progress') renderProgress();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  CATEGORY CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips(containerId, onSelect, currentFilter) {
+  const container = $(containerId);
+  container.innerHTML = '<span class="label">Filter</span>';
+  const all = document.createElement('button');
+  all.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+  all.innerHTML = `All <span class="count">${TERMS.length}</span>`;
+  all.onclick = () => onSelect('all');
+  container.appendChild(all);
+
+  categories.forEach(cat => {
+    const count = TERMS.filter(t => t.category === cat).length;
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentFilter === cat ? ' active' : '');
+    b.innerHTML = `${categoryLabel(cat)} <span class="count">${count}</span>`;
+    b.onclick = () => onSelect(cat);
+    container.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function initFlashcards() {
+  updateStreakBadge();
+  state.flash.filter = state.progress.lastFilter || 'all';
+  const onFlashFilter = (f) => {
+    state.flash.filter = f;
+    state.flash.deck = buildSmartDeck(filterDeck(f));
+    state.flash.index = 0;
+    renderChips('#flash-cats', onFlashFilter, f);
+    renderFlashcard();
+  };
+  renderChips('#flash-cats', onFlashFilter, state.flash.filter);
+
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  renderFlashcard();
+
+  const savedFilter = state.progress.lastFilter || 'all';
+  if (savedFilter !== 'all') {
+    const banner = document.getElementById('resume-banner');
+    if (banner) {
+      banner.style.display = '';
+      const label = savedFilter.charAt(0).toUpperCase() + savedFilter.slice(1);
+      banner.innerHTML = `Continue where you left off: <strong>${label}</strong> cards &nbsp;&middot;&nbsp; <a href="#" id="resume-all-link" style="color:var(--accent);text-decoration:none">Study all</a>`;
+      document.getElementById('resume-all-link').addEventListener('click', e => {
+        e.preventDefault();
+        onFlashFilter('all');
+        banner.style.display = 'none';
+      });
+    }
+  }
+
+  // Wire the Smart Review toggle
+  const srToggle = document.getElementById('sr-toggle');
+  if (srToggle) {
+    srToggle.checked = state.flash.srEnabled;
+    srToggle.addEventListener('change', () => {
+      state.flash.srEnabled = srToggle.checked;
+      state.flash.deck = state.flash.srEnabled
+        ? buildSmartDeck(filterDeck(state.flash.filter))
+        : shuffle(filterDeck(state.flash.filter));
+      state.flash.index = 0;
+      renderFlashcard();
+    });
+  }
+
+  $('#flashcard').addEventListener('click', () => {
+    $('#flashcard').classList.toggle('flipped');
+  });
+
+  $('#flash-next').addEventListener('click', () => {
+    nextFlashcard(1);
+  });
+  $('#flash-prev').addEventListener('click', () => {
+    nextFlashcard(-1);
+  });
+  $('#flash-got').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.add(card.term);
+    bumpSRLevel(card.term, 1);
+    checkAndUpdateStreak();
+    saveProgress();
+    renderFlashcard(); // update level indicator before leaving
+    nextFlashcard(1);
+  });
+  $('#flash-miss').addEventListener('click', () => {
+    const card = state.flash.deck[state.flash.index];
+    state.progress.studied.add(card.term);
+    state.progress.mastered.delete(card.term);
+    setSRLevel(card.term, 0); // reset fully when missed
+    checkAndUpdateStreak();
+    saveProgress();
+    renderFlashcard();
+    nextFlashcard(1);
+  });
+}
+
+function nextFlashcard(dir) {
+  const card = $('#flashcard');
+  card.style.transition = 'transform 0.13s ease-in, opacity 0.13s ease-in';
+  card.style.transform = dir > 0 ? 'translateX(-14px)' : 'translateX(14px)';
+  card.style.opacity = '0';
+  setTimeout(() => {
+    card.classList.remove('flipped');
+    const total = state.flash.deck.length;
+    state.flash.index = (state.flash.index + dir + total) % total;
+    renderFlashcard();
+    card.style.transition = 'none';
+    card.style.transform = dir > 0 ? 'translateX(14px)' : 'translateX(-14px)';
+    card.offsetHeight;
+    card.style.transition = 'transform 0.13s ease-out, opacity 0.13s ease-out';
+    card.style.transform = 'translateX(0)';
+    card.style.opacity = '1';
+  }, 140);
+}
+
+function renderFlashcard() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
+  $('#flash-cat-front').textContent = card.type;
+  $('#flash-cat-back').textContent = card.type;
+  $('#flash-front-term').textContent = card.term;
+  $('#flash-back-def').textContent = card.meaning;
+  $('#flash-back-ex-text').textContent = card.example;
+  // render mastery level indicator
+  const levelEl = document.getElementById('flash-level');
+  if (levelEl) {
+    const level = getSRLevel(card.term);
+    let dots = '';
+    for (let i = 1; i <= 5; i++) {
+      dots += i <= level ? '●' : '○';
+    }
+    levelEl.textContent = dots;
+    levelEl.title = `Mastery level: ${level} of 5`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+const QUIZ_LENGTH = 10;
+
+function initQuiz() {
+  const onQuizFilter = (f) => {
+    state.quiz.filter = f;
+    startQuiz();
+    renderChips('#quiz-cats', onQuizFilter, f);
+  };
+  renderChips('#quiz-cats', onQuizFilter, state.quiz.filter);
+
+  startQuiz();
+
+  $('#quiz-next').addEventListener('click', () => {
+    state.quiz.index++;
+    if (state.quiz.index >= state.quiz.deck.length) {
+      finishQuiz();
+    } else {
+      renderQuiz();
+    }
+  });
+  $('#quiz-restart').addEventListener('click', startQuiz);
+  $('#quiz-retry').addEventListener('click', startQuiz);
+  $('#quiz-review-misses').addEventListener('click', reviewMissesAsFlashcards);
+}
+
+function reviewMissesAsFlashcards() {
+  if (state.progress.lastMissed.length === 0) {
+    alert('No misses to review — nice work!');
+    return;
+  }
+  // switch to flashcards tab with a filtered deck
+  const missedDeck = TERMS.filter(t => state.progress.lastMissed.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  // switch tab
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  const pool = filterDeck(state.quiz.filter);
+  state.quiz.deck = shuffle(pool).slice(0, Math.min(QUIZ_LENGTH, pool.length));
+  state.quiz.index = 0;
+  state.quiz.score = 0;
+  state.quiz.answered = false;
+  $('#quiz-stage').style.display = 'block';
+  $('#quiz-results').style.display = 'none';
+  renderQuiz();
+}
+
+function buildOptions(correct, pool) {
+  const distractors = shuffle(pool.filter(t => t.term !== correct.term)).slice(0, 3);
+  return shuffle([correct, ...distractors]);
+}
+
+function renderQuiz() {
+  const card = state.quiz.deck[state.quiz.index];
+  const pool = filterDeck(state.quiz.filter);
+  const options = buildOptions(card, pool);
+
+  $('#quiz-progress').textContent = `Question ${pad(state.quiz.index + 1)} of ${pad(state.quiz.deck.length)}`;
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index}`;
+  $('#quiz-term').textContent = card.term;
+
+  const optsEl = $('#quiz-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerQuiz(b, opt, card, optsEl);
+    optsEl.appendChild(b);
+  });
+
+  $('#quiz-feedback').classList.remove('show', 'correct', 'incorrect');
+  $('#quiz-next').disabled = true;
+  state.quiz.answered = false;
+}
+
+function answerQuiz(btn, chosen, correct, optsEl) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const isCorrect = chosen.term === correct.term;
+
+  state.progress.studied.add(correct.term);
+  if (isCorrect) {
+    state.quiz.score++;
+    state.progress.mastered.add(correct.term);
+    btn.classList.add('correct');
+    bumpSRLevel(correct.term, 1);
+    // remove from missed list if previously missed
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  } else {
+    btn.classList.add('incorrect');
+    setSRLevel(correct.term, 0);
+    // track the miss
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+    // highlight correct
+    [...optsEl.children].forEach(c => {
+      if (c.textContent.includes(correct.meaning)) c.classList.add('correct');
+    });
+  }
+  [...optsEl.children].forEach(c => c.disabled = true);
+
+  const fb = $('#quiz-feedback');
+  fb.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+  $('#quiz-verdict').textContent = isCorrect ? '✓ Correct' : '✗ Not quite';
+  $('#quiz-explain').textContent = `"${correct.term}" means ${correct.meaning}. ${correct.example ? 'e.g., ' + correct.example : ''}`;
+
+  $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
+  $('#quiz-next').disabled = false;
+  saveProgress();
+}
+
+function finishQuiz() {
+  state.progress.quizzes.push({
+    score: state.quiz.score,
+    total: state.quiz.deck.length,
+    date: Date.now(),
+  });
+  saveProgress();
+  $('#quiz-stage').style.display = 'none';
+  $('#quiz-results').style.display = 'block';
+  $('#final-score').textContent = state.quiz.score;
+  $('#final-total').textContent = state.quiz.deck.length;
+  const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
+  let msg;
+  if (pct === 100) msg = 'Flawless. The terminology bends to you.';
+  else if (pct >= 85) msg = 'Sharp work. You are nearly there.';
+  else if (pct >= 70) msg = 'Strong foundation. Keep drilling the edges.';
+  else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
+  else msg = 'Every expert begins here. Study, then return.';
+  $('#quiz-message').textContent = msg;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMED TEST
+// ══════════════════════════════════════════════════════════════
+const TEST_LENGTH = 25;
+const TEST_SECONDS = 720; // 12 minutes
+
+function initTest() {
+  $('#test-begin').addEventListener('click', startTest);
+  $('#test-again').addEventListener('click', () => {
+    $('#test-results').style.display = 'none';
+    $('#test-intro').style.display = 'block';
+  });
+  $('#test-review').addEventListener('click', reviewTest);
+}
+
+function startTest() {
+  const pool = [...TERMS];
+  state.test.deck = shuffle(pool).slice(0, TEST_LENGTH);
+  state.test.index = 0;
+  state.test.answers = [];
+  state.test.timeLeft = TEST_SECONDS;
+  state.test.active = true;
+
+  $('#test-intro').style.display = 'none';
+  $('#test-active').style.display = 'block';
+  $('#test-results').style.display = 'none';
+
+  renderTestQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+  state.test.timer = setInterval(() => {
+    state.test.timeLeft--;
+    updateTimerDisplay();
+    if (state.test.timeLeft <= 0) {
+      clearInterval(state.test.timer);
+      finishTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.test.timeLeft / 60);
+  const s = state.test.timeLeft % 60;
+  const el = $('#test-timer');
+  el.textContent = `${pad(m)}:${pad(s)}`;
+  if (state.test.timeLeft < 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+  const pct = (state.test.timeLeft / TEST_SECONDS) * 100;
+  $('#test-timer-fill').style.width = pct + '%';
+}
+
+function renderTestQuestion() {
+  const card = state.test.deck[state.test.index];
+  const options = buildOptions(card, TERMS);
+
+  $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
+  $('#test-term').textContent = card.term;
+
+  const optsEl = $('#test-options');
+  optsEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.meaning}</span>`;
+    b.onclick = () => answerTest(opt, card);
+    optsEl.appendChild(b);
+  });
+}
+
+function answerTest(chosen, correct) {
+  const isCorrect = chosen.term === correct.term;
+  state.test.answers.push({
+    term: correct.term,
+    correctMeaning: correct.meaning,
+    chosen: chosen.meaning,
+    isCorrect: isCorrect,
+    example: correct.example,
+  });
+  if (!isCorrect) {
+    setSRLevel(correct.term, 0);
+    if (!state.progress.lastMissed.includes(correct.term)) {
+      state.progress.lastMissed.push(correct.term);
+    }
+  } else {
+    bumpSRLevel(correct.term, 1);
+    state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
+  }
+  saveProgress();
+  state.test.index++;
+  if (state.test.index >= state.test.deck.length) {
+    clearInterval(state.test.timer);
+    finishTest();
+  } else {
+    renderTestQuestion();
+  }
+}
+
+function finishTest() {
+  state.test.active = false;
+  const correctCount = state.test.answers.filter(a => a.isCorrect).length;
+  const total = state.test.deck.length;
+  state.progress.quizzes.push({
+    score: correctCount,
+    total,
+    date: Date.now(),
+    timed: true,
+  });
+  // register studied terms
+  state.test.answers.forEach(a => {
+    state.progress.studied.add(a.term);
+    if (a.isCorrect) state.progress.mastered.add(a.term);
+  });
+
+  $('#test-active').style.display = 'none';
+  $('#test-results').style.display = 'block';
+  $('#test-final-score').textContent = correctCount;
+  $('#test-final-total').textContent = total;
+
+  const pct = Math.round((correctCount / total) * 100);
+  let msg;
+  if (pct >= 95) msg = 'Exceptional. Competition-ready.';
+  else if (pct >= 85) msg = 'Strong performance — well within medal range.';
+  else if (pct >= 75) msg = 'Solid. Polish the edges and go again.';
+  else if (pct >= 60) msg = 'You know the territory. Time to master it.';
+  else msg = 'The work is ahead. Use flashcards, then retest.';
+  $('#test-message').textContent = msg;
+}
+
+function reviewTest() {
+  const misses = state.test.answers.filter(a => !a.isCorrect);
+  if (misses.length === 0) {
+    alert('No misses to review — perfect score.');
+    return;
+  }
+  // switch to flashcards mode with only the missed terms
+  const missedTerms = misses.map(m => m.term);
+  const missedDeck = TERMS.filter(t => missedTerms.includes(t.term));
+  state.flash.filter = 'all';
+  state.flash.deck = missedDeck;
+  state.flash.index = 0;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#tabs button[data-view="flashcards"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('#view-flashcards').classList.add('active');
+  state.activeView = 'flashcards';
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  $('#stat-studied').textContent = state.progress.studied.size;
+  $('#stat-mastered').textContent = state.progress.mastered.size;
+  $('#stat-quizzes').textContent = state.progress.quizzes.length;
+  $('#stat-streak-val').textContent = state.progress.streak || 0;
+
+  if (state.progress.quizzes.length > 0) {
+    const avg = state.progress.quizzes.reduce((a, q) => a + (q.score / q.total), 0) / state.progress.quizzes.length;
+    $('#stat-avg').innerHTML = Math.round(avg * 100) + '<span class="unit">%</span>';
+  } else {
+    $('#stat-avg').innerHTML = '—<span class="unit">%</span>';
+  }
+
+  const list = $('#mastery-list');
+  list.innerHTML = '';
+  categories.forEach(cat => {
+    const catTerms = TERMS.filter(t => t.category === cat);
+    const masteredCount = catTerms.filter(t => state.progress.mastered.has(t.term)).length;
+    const pct = Math.round((masteredCount / catTerms.length) * 100);
+
+    const row = document.createElement('div');
+    row.className = 'mastery-row';
+    row.innerHTML = `
+      <div class="cat-name">${categoryLabel(cat)}</div>
+      <div class="mastery-bar">
+        <div class="mastery-bar-bg"></div>
+        <div class="mastery-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="mastery-pct">${masteredCount}/${catTerms.length} · ${pct}%</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+$('#reset-progress').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {}, streak: 0, lastStudyDate: null, lastFilter: 'all' };
+  const user = firebase.auth().currentUser;
+  if (user) {
+    firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  } else {
+    localStorage.removeItem('hosa::' + DB_PATH);
+  }
+  document.getElementById('streak-badge').style.display = 'none';
+  document.getElementById('resume-banner').style.display = 'none';
+  renderProgress();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    // Guest mode — use localStorage, no redirect
+    const emailEl = document.getElementById('user-email');
+    const signoutBtn = document.getElementById('btn-signout');
+    if (emailEl) emailEl.textContent = 'Guest';
+    if (signoutBtn) {
+      signoutBtn.textContent = 'Sign In';
+      signoutBtn.style.cssText += ';background:var(--accent);color:#fff;border-color:var(--accent);';
+      signoutBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+    }
+    const guestBanner = document.getElementById('guest-banner');
+    if (guestBanner) guestBanner.style.display = '';
+    loadProgress(null).then(() => {
+      initFlashcards();
+      initQuiz();
+      initTest();
+    });
+    return;
+  }
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  loadProgress(user.uid).then(() => {
+    initFlashcards();
+    initQuiz();
+    initTest();
+  });
+});
+
+
+// Smart Review help popover
+(function() {
+  const helpBtn = document.getElementById('sr-help');
+  const infoBox = document.getElementById('sr-info');
+  if (helpBtn && infoBox) {
+    helpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoBox.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoBox.contains(e.target) && e.target !== helpBtn) {
+        infoBox.classList.remove('show');
+      }
+    });
+  }
+})();
+
+// keyboard shortcuts for flashcards
+document.addEventListener('keydown', (e) => {
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    $('#flashcard').classList.toggle('flipped');
+  } else if (e.key === 'ArrowRight') {
+    nextFlashcard(1);
+  } else if (e.key === 'ArrowLeft') {
+    nextFlashcard(-1);
+  }
+});
+</script>
+<script id="dark-mode-toggle">
+(function(){
+  var SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>';
+  var MOON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  function isDark(){ return document.documentElement.getAttribute('data-theme')==='dark'; }
+
+  function mount(){
+    if(document.getElementById('theme-toggle')) return;
+    var btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.setAttribute('aria-label','Toggle dark mode');
+    btn.style.cssText = [
+      'background:none',
+      'border:1px solid var(--rule)',
+      'width:34px','height:34px','padding:0',
+      'display:inline-flex','align-items:center','justify-content:center',
+      'cursor:pointer','color:var(--ink)','flex-shrink:0',
+      'border-radius:3px','margin-left:10px','vertical-align:middle'
+    ].join(';');
+    btn.innerHTML = isDark() ? SUN : MOON;
+
+    btn.onclick = function(){
+      if(isDark()){
+        document.documentElement.removeAttribute('data-theme');
+        try{localStorage.setItem('hosa-theme','light');}catch(e){}
+        btn.innerHTML = MOON;
+      } else {
+        document.documentElement.setAttribute('data-theme','dark');
+        try{localStorage.setItem('hosa-theme','dark');}catch(e){}
+        btn.innerHTML = SUN;
+      }
+    };
+
+    var target = document.querySelector('.user-pill') || document.querySelector('header');
+    if(target) target.appendChild(btn);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();
+</script>
+</body>
+</html>
