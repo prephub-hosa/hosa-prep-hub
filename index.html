@@ -226,24 +226,52 @@
 
   .hero-aside p:last-child { margin-bottom: 0; }
 
-  /* ——— Stats band ——— */
-  .stats-band {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin-bottom: 96px;
-    border: 1px solid var(--rule);
+  /* ——— Event search bar ——— */
+  .event-search-wrap {
+    margin-bottom: 72px;
+  }
+  .event-search-box {
+    position: relative;
+    max-width: 560px;
+  }
+  .event-search-box svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  #event-search {
+    width: 100%;
+    padding: 16px 20px 16px 50px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    color: var(--ink);
     background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none;
   }
-
-  .stat-item {
-    padding: 32px 24px;
+  #event-search::placeholder { color: var(--ink-soft); opacity: 0.7; }
+  #event-search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(168,40,31,0.08);
+  }
+  .search-no-results {
+    display: none;
+    padding: 48px 0;
     text-align: center;
-    border-right: 1px solid rgba(26,26,26,0.15);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--ink-soft);
   }
 
-  .stat-item:last-child { border-right: none; }
-
+  /* ——— (stats band removed) ——— */
   .stat-big {
     font-family: 'Fraunces', serif;
     font-size: 52px;
@@ -631,10 +659,6 @@
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
     .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
-    .stats-band { grid-template-columns: 1fr 1fr; }
-    .stat-item { border-right: none; border-bottom: 1px solid rgba(26,26,26,0.15); }
-    .stat-item:nth-child(odd) { border-right: 1px solid rgba(26,26,26,0.15); }
-    .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: none; }
     .categories { grid-template-columns: 1fr; }
     .testimonials { grid-template-columns: 1fr; }
     .how { grid-template-columns: 1fr; gap: 32px; }
@@ -650,11 +674,9 @@
     .category-card { padding: 28px 20px 20px; min-height: auto; }
     .category-card h3 { font-size: 32px; }
     .card-number { font-size: 48px; }
-    .stats-band { grid-template-columns: 1fr; }
-    .stat-item:nth-child(odd) { border-right: none; }
-    .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: 1px solid rgba(26,26,26,0.15); }
-    .stat-item:last-child { border-bottom: none; }
     .newsletter { padding: 24px 16px; }
+    .event-search-wrap { margin-bottom: 48px; }
+    #event-search { font-size: 16px; padding: 14px 16px 14px 46px; }
     .auth-card { padding: 36px 20px; }
     footer { padding: 20px 16px; }
   }
@@ -832,31 +854,18 @@
     </aside>
   </section>
 
-  <!-- STATS BAND -->
-  <section class="stats-band">
-    <div class="stat-item">
-      <div class="stat-big">1,401</div>
-      <div class="stat-caption">Terms &amp; Concepts</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-big">14</div>
-      <div class="stat-caption">HOSA Events</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-big">3</div>
-      <div class="stat-caption">Study Modes</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-big">12</div>
-      <div class="stat-caption">Min. Mock Exams</div>
-    </div>
-  </section>
-
   <!-- CATEGORIES -->
   <section>
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
-      <div class="section-label">Fourteen events available</div>
+      <div class="section-label" id="events-count-label">Fourteen events available</div>
+    </div>
+
+    <div class="event-search-wrap">
+      <div class="event-search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="event-search" placeholder="Search events — try &ldquo;nursing&rdquo; or &ldquo;path&rdquo;&hellip;" autocomplete="off" spellcheck="false">
+      </div>
     </div>
 
     <div class="categories">
@@ -1156,6 +1165,7 @@
       </a>
 
     </div>
+    <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
   </section>
 
   <!-- TESTIMONIALS -->
@@ -1399,7 +1409,7 @@ document.getElementById('request-btn').onclick = function() {
 <script id="scroll-reveal">
 (function() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var targets = document.querySelectorAll('.hero, .stats-band, .section-head, .categories, .testimonials, .how, .newsletter');
+  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter');
   targets.forEach(function(el){ el.classList.add('reveal'); });
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
@@ -1449,6 +1459,55 @@ document.getElementById('request-btn').onclick = function() {
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
   else mount();
+})();
+</script>
+
+<script id="event-search-js">
+(function(){
+  var input    = document.getElementById('event-search');
+  var cards    = document.querySelectorAll('.categories .category-card');
+  var noRes    = document.getElementById('search-no-results');
+  var queryEl  = document.getElementById('search-query-display');
+  var label    = document.getElementById('events-count-label');
+  var total    = cards.length;
+
+  // Build searchable text per card once
+  var cardData = Array.from(cards).map(function(card) {
+    return {
+      el: card,
+      text: card.textContent.toLowerCase()
+    };
+  });
+
+  function search(raw) {
+    var q = raw.trim().toLowerCase();
+    var visible = 0;
+
+    cardData.forEach(function(c) {
+      var show = !q || c.text.indexOf(q) !== -1;
+      c.el.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    if (!q) {
+      noRes.style.display = 'none';
+      label.textContent = total + ' events available';
+    } else if (visible === 0) {
+      queryEl.textContent = raw.trim();
+      noRes.style.display = 'block';
+      label.textContent = 'No matches';
+    } else {
+      noRes.style.display = 'none';
+      label.textContent = visible + (visible === 1 ? ' event found' : ' events found');
+    }
+  }
+
+  input.addEventListener('input', function(){ search(input.value); });
+
+  // Clear on ESC
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { input.value = ''; search(''); input.blur(); }
+  });
 })();
 </script>
 </body>
