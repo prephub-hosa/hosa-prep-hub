@@ -1502,56 +1502,61 @@ function bumpSRLevel(term, delta) {
   const current = getSRLevel(term);
   setSRLevel(term, current + delta);
 }
-
-// Build a weighted deck the SAME SIZE as the pool, but with weak cards
-// more likely to appear and mastered cards less likely.
-// Algorithm: for each slot, pick a random card from the pool using weights
-// derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
-// and avoid showing a card too recently seen.
+// buildSmartDeck — new/review split so users progress through the full deck.
+//   Unseen cards (never rated) always get priority slots so every term is
+//   eventually seen. Review cards fill remaining slots, weighted by SR level.
 function buildSmartDeck(pool) {
-  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
-  
-  // Calculate weights for each card
-  const weighted = pool.map(card => ({
-    card,
-    weight: SR_WEIGHTS[getSRLevel(card.term)]
-  }));
-  const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
-  
-  // Pick cards weighted by level, deck size = pool size
-  const deckSize = pool.length;
-  const recentWindow = Math.min(5, Math.floor(pool.length / 3));
-  const deck = [];
-  const recentlyPicked = []; // circular buffer of last N card terms
-  
-  let attempts = 0;
-  while (deck.length < deckSize && attempts < deckSize * 20) {
-    attempts++;
-    // Weighted random pick
-    let r = Math.random() * totalWeight;
-    let picked = null;
-    for (const w of weighted) {
-      r -= w.weight;
-      if (r <= 0) { picked = w.card; break; }
+  if (!state.flash.srEnabled || pool.length === 0)
+    return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
+
+  // ── Split pool into unseen and previously-seen cards ──────────────────────
+  const unseen = pool.filter(c => !state.progress.studied.has(c.term));
+  const seen   = pool.filter(c =>  state.progress.studied.has(c.term));
+
+  // Up to half the session is new cards; rest is SR-weighted review
+  const newSlots    = Math.min(Math.ceil(SESSION_SIZE / 2), unseen.length);
+  const reviewSlots = Math.min(SESSION_SIZE - newSlots, seen.length);
+
+  // New cards — plain shuffle (all unseen cards are equal priority)
+  const newCards = shuffle(unseen).slice(0, newSlots);
+
+  // Review cards — SR-weighted pick (struggles first, mastered rarely)
+  function weightedPick(candidates, count) {
+    if (!candidates.length || count <= 0) return [];
+    const w     = candidates.map(c => ({ card: c, w: SR_WEIGHTS[getSRLevel(c.term)] }));
+    const total = w.reduce((s, x) => s + x.w, 0);
+    const win   = Math.min(5, Math.floor(candidates.length / 3));
+    const result = [], recent = [];
+    let att = 0;
+    while (result.length < count && att < count * 20) {
+      att++;
+      let r = Math.random() * total, picked = null;
+      for (const x of w) { r -= x.w; if (r <= 0) { picked = x.card; break; } }
+      if (!picked) picked = w[w.length - 1].card;
+      if (recent.includes(picked.term)) continue;
+      result.push(picked);
+      recent.push(picked.term);
+      if (recent.length > win) recent.shift();
     }
-    if (!picked) picked = weighted[weighted.length - 1].card;
-    
-    // Skip if too recently picked
-    if (recentlyPicked.includes(picked.term)) continue;
-    
-    deck.push(picked);
-    recentlyPicked.push(picked.term);
-    if (recentlyPicked.length > recentWindow) recentlyPicked.shift();
+    // top-off if weighted loop didn't fill all slots
+    const used = new Set(result.map(c => c.term));
+    const leftover = shuffle(candidates.filter(c => !used.has(c.term)));
+    result.push(...leftover.slice(0, count - result.length));
+    return result;
   }
-  
-  // Fallback if we couldn't fill (unusual): top off with random shuffle
-  if (deck.length < deckSize) {
-    const missing = pool.filter(c => !deck.includes(c));
-    deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
+  const reviewCards = weightedPick(seen, reviewSlots);
+
+  // Interleave: new card, review card, new card, review card …
+  // so users don't get all new cards in a block then all reviews
+  const deck = [];
+  let ni = 0, ri = 0;
+  while (ni < newCards.length || ri < reviewCards.length) {
+    if (ni < newCards.length)    deck.push(newCards[ni++]);
+    if (ri < reviewCards.length) deck.push(reviewCards[ri++]);
   }
-  
-  return deck.slice(0, Math.min(SESSION_SIZE, deck.length));
+  return deck.slice(0, SESSION_SIZE);
 }
+
 
 // ══════════════════════════════════════════════════════════════
 //  HELPERS
