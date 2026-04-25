@@ -2236,7 +2236,47 @@ document.addEventListener('keydown', (e) => {
 </script>
 <script id="onboarding">
 (function(){
+  // Build overlay (hidden until we confirm this is a first visit)
+  var s=document.createElement('style');
+  s.textContent=[
+    '#ob-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}',
+    '#ob-box{background:var(--bg);border:1px solid var(--border);max-width:420px;width:100%;padding:36px 32px 28px;}',
+    '#ob-box h2{font-size:19px;font-weight:400;margin-bottom:22px;letter-spacing:-0.01em;}',
+    '.ob-step{display:flex;gap:14px;margin-bottom:15px;align-items:flex-start;}',
+    '.ob-icon{font-size:20px;flex-shrink:0;width:26px;text-align:center;margin-top:1px;}',
+    '.ob-text{font-size:13px;line-height:1.55;color:var(--ink-soft);}',
+    '.ob-text strong{color:var(--ink);}',
+    '#ob-start{margin-top:26px;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;font-family:Georgia,serif;font-size:15px;cursor:pointer;letter-spacing:0.01em;}',
+    '#ob-start:hover{opacity:0.88;}',
+  ].join('');
+  document.head.appendChild(s);
+  var el=document.createElement('div');
+  el.id='ob-overlay';
+  el.style.display='none';
+  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You'll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
+  document.body.appendChild(el);
+
+  function dismiss(){
+    el.remove();
+    localStorage.setItem('hosa-onboarded-v1','1');
+    try{
+      var u=firebase.auth().currentUser;
+      if(u) firebase.database().ref('users/'+u.uid+'/onboarded').set(true).catch(function(){});
+    }catch(e){}
+  }
+  document.getElementById('ob-start').addEventListener('click',dismiss);
+
+  // Guests: localStorage flag is enough
   if(localStorage.getItem('hosa-onboarded-v1')) return;
+
+  // Wait for auth to resolve before showing — check Firebase for logged-in users
+  firebase.auth().onAuthStateChanged(function(user){
+    if(!user){ el.style.display=''; return; } // guest — show it
+    firebase.database().ref('users/'+user.uid+'/onboarded').get().then(function(snap){
+      if(snap.val()){ el.remove(); } // already seen on another device
+      else { el.style.display=''; } // first time on this account
+    }).catch(function(){ el.style.display=''; }); // on error, show it
+  });
   var s=document.createElement('style');
   s.textContent=[
     '#ob-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}',
