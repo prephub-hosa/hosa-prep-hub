@@ -132,6 +132,7 @@
     <div class="stat-strip">
       <div class="stat-card"><div class="sc-num" id="su-users">—</div><div class="sc-lbl">Registered users</div></div>
       <div class="stat-card"><div class="sc-num" id="su-active">—</div><div class="sc-lbl">Users with activity</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-guests">—</div><div class="sc-lbl">Guest sessions</div></div>
       <div class="stat-card"><div class="sc-num" id="su-studied">—</div><div class="sc-lbl">Cards studied (total)</div></div>
       <div class="stat-card"><div class="sc-num" id="su-mastered">—</div><div class="sc-lbl">Cards mastered</div></div>
       <div class="stat-card"><div class="sc-num" id="su-questions">—</div><div class="sc-lbl">Quiz questions answered</div></div>
@@ -241,40 +242,41 @@ var ALL_EVENTS = [
 ];
 
 function loadUsage() {
-  db.ref('users').once('value').then(function(snap) {
-    var data = snap.val();
-    if (!data) {
-      document.getElementById('usage-badge').textContent = '0 users';
-      document.getElementById('usage-events').innerHTML = '<p class="empty">No user data yet.</p>';
-      document.getElementById('usage-users').innerHTML = '<p class="empty">No user data yet.</p>';
-      return;
-    }
+  Promise.all([
+    db.ref('users').once('value'),
+    db.ref('guest-stats').once('value'),
+  ]).then(function(snaps) {
+    var usersData  = snaps[0].val() || {};
+    var guestData  = snaps[1].val() || {};
 
-    var userKeys = Object.keys(data);
-    var totalUsers = userKeys.length;
+    var userKeys  = Object.keys(usersData);
+    var guestKeys = Object.keys(guestData);
+    var totalUsers   = userKeys.length;
+    var totalGuests  = guestKeys.length;
     var totalStudied = 0, totalMastered = 0, totalQuestions = 0, totalQuizzes = 0, activeUsers = 0;
 
-    // Per-event aggregates
+    // Per-event aggregates (registered + guest combined)
     var eventMap = {};
     ALL_EVENTS.forEach(function(e) {
       eventMap[e.key] = { studied: 0, mastered: 0, questions: 0, quizzes: 0, users: 0 };
     });
 
-    // Per-user summary
+    // Per-user/guest rows
     var userRows = [];
 
+    // ── Registered users ──────────────────────────────────────────
     userKeys.forEach(function(uid) {
-      var user = data[uid];
+      var user = usersData[uid];
       var prog = user.progress || {};
       var userStudied = 0, userQuestions = 0, userQuizzes = 0, userEvents = 0;
       var lastDate = null;
 
       Object.keys(prog).forEach(function(evtKey) {
         var cat = prog[evtKey];
-        var s = (cat.studied  || []).length;
-        var m = (cat.mastered || []).length;
-        var qs = (cat.quizzes || []).reduce(function(acc, q) { return acc + (q.total || 0); }, 0);
-        var qz = (cat.quizzes || []).length;
+        var s  = (cat.studied  || []).length;
+        var m  = (cat.mastered || []).length;
+        var qs = (cat.quizzes  || []).reduce(function(acc, q) { return acc + (q.total || 0); }, 0);
+        var qz = (cat.quizzes  || []).length;
 
         totalStudied   += s;
         totalMastered  += m;
@@ -293,7 +295,6 @@ function loadUsage() {
           if (s > 0 || qs > 0) eventMap[evtKey].users++;
         }
 
-        // Track most recent activity date
         (cat.quizzes || []).forEach(function(q) {
           if (q.date && (!lastDate || q.date > lastDate)) lastDate = q.date;
         });
@@ -303,8 +304,8 @@ function loadUsage() {
       if (userStudied > 0 || userQuestions > 0) {
         activeUsers++;
         userRows.push({
-          email:     (user.subscribed && user.subscribed.email) || uid.slice(0, 12) + '…',
-          uid:       uid,
+          label:     (user.subscribed && user.subscribed.email) || uid.slice(0, 12) + '…',
+          type:      'user',
           events:    userEvents,
           studied:   userStudied,
           questions: userQuestions,
@@ -314,10 +315,58 @@ function loadUsage() {
       }
     });
 
+    // ── Guest sessions ────────────────────────────────────────────
+    guestKeys.forEach(function(gid) {
+      var cats = guestData[gid] || {};
+      var gStudied = 0, gMastered = 0, gQuestions = 0, gQuizzes = 0, gEvents = 0;
+      var lastDate = null;
+
+      Object.keys(cats).forEach(function(evtKey) {
+        var cat = cats[evtKey];
+        var s  = cat.studied   || 0;
+        var m  = cat.mastered  || 0;
+        var qs = cat.questions || 0;
+        var qz = cat.quizzes   || 0;
+
+        totalStudied   += s;
+        totalMastered  += m;
+        totalQuestions += qs;
+        totalQuizzes   += qz;
+        gStudied    += s;
+        gMastered   += m;
+        gQuestions  += qs;
+        gQuizzes    += qz;
+        if (s > 0 || qs > 0) gEvents++;
+
+        if (eventMap[evtKey]) {
+          eventMap[evtKey].studied   += s;
+          eventMap[evtKey].mastered  += m;
+          eventMap[evtKey].questions += qs;
+          eventMap[evtKey].quizzes   += qz;
+          if (s > 0 || qs > 0) eventMap[evtKey].users++;
+        }
+
+        if (cat.lastActive && (!lastDate || cat.lastActive > lastDate)) lastDate = cat.lastActive;
+      });
+
+      if (gStudied > 0 || gQuestions > 0) {
+        userRows.push({
+          label:     'Guest · ' + gid.slice(0, 14),
+          type:      'guest',
+          events:    gEvents,
+          studied:   gStudied,
+          questions: gQuestions,
+          quizzes:   gQuizzes,
+          lastActive: lastDate,
+        });
+      }
+    });
+
     // ── Top-line stats ──────────────────────────────────────────
-    document.getElementById('usage-badge').textContent   = totalUsers + ' users';
+    document.getElementById('usage-badge').textContent   = totalUsers + ' users · ' + totalGuests + ' guests';
     document.getElementById('su-users').textContent      = totalUsers.toLocaleString();
     document.getElementById('su-active').textContent     = activeUsers.toLocaleString();
+    document.getElementById('su-guests').textContent     = totalGuests.toLocaleString();
     document.getElementById('su-studied').textContent    = totalStudied.toLocaleString();
     document.getElementById('su-mastered').textContent   = totalMastered.toLocaleString();
     document.getElementById('su-questions').textContent  = totalQuestions.toLocaleString();
@@ -326,7 +375,7 @@ function loadUsage() {
     // ── Per-event table ─────────────────────────────────────────
     var maxStudied = Math.max(1, Math.max.apply(null, ALL_EVENTS.map(function(e) { return eventMap[e.key].studied; })));
     var evHtml = '<table><thead><tr>'
-      + '<th>Event</th><th>Users</th><th>Cards Studied</th><th>Mastered</th><th>Quiz Qs</th><th>Quizzes</th>'
+      + '<th>Event</th><th>Sessions</th><th>Cards Studied</th><th>Mastered</th><th>Quiz Qs</th><th>Quizzes</th>'
       + '</tr></thead><tbody>';
     ALL_EVENTS.slice().sort(function(a, b) {
       return eventMap[b.key].studied - eventMap[a.key].studied;
@@ -344,19 +393,20 @@ function loadUsage() {
         + '</tr>';
     });
     evHtml += '</tbody></table>';
-    document.getElementById('usage-events').innerHTML = evHtml || '<p class="empty">No activity yet.</p>';
+    document.getElementById('usage-events').innerHTML = evHtml;
 
     // ── Per-user table ───────────────────────────────────────────
     userRows.sort(function(a, b) { return b.studied - a.studied; });
     if (userRows.length === 0) {
-      document.getElementById('usage-users').innerHTML = '<p class="empty">No active users yet.</p>';
+      document.getElementById('usage-users').innerHTML = '<p class="empty">No active users or guests yet.</p>';
     } else {
       var uHtml = '<table><thead><tr>'
-        + '<th>User</th><th>Events</th><th>Cards Studied</th><th>Quiz Qs</th><th>Quizzes</th><th>Last Active</th>'
+        + '<th>User / Guest</th><th>Events</th><th>Cards Studied</th><th>Quiz Qs</th><th>Quizzes</th><th>Last Active</th>'
         + '</tr></thead><tbody>';
       userRows.forEach(function(u) {
+        var labelStyle = u.type === 'guest' ? ' style="color:var(--ink-soft)"' : '';
         uHtml += '<tr>'
-          + '<td class="email-cell">' + u.email + '</td>'
+          + '<td class="email-cell"' + labelStyle + '>' + u.label + '</td>'
           + '<td class="num-cell">' + u.events + '</td>'
           + '<td class="num-cell">' + u.studied.toLocaleString() + '</td>'
           + '<td class="num-cell">' + u.questions.toLocaleString() + '</td>'

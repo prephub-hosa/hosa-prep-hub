@@ -1396,6 +1396,21 @@ function saveProgress() {
       .catch(e => console.warn('Could not save progress:', e));
   } else {
     try { localStorage.setItem('hosa::' + DB_PATH, JSON.stringify(data)); } catch(e) {}
+    // Mirror a lightweight summary to Firebase so admin can track guest activity
+    try {
+      let gid = localStorage.getItem('hosa-guest-id');
+      if (!gid) {
+        gid = 'g-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+        localStorage.setItem('hosa-guest-id', gid);
+      }
+      firebase.database().ref('guest-stats/' + gid + '/' + DB_PATH).set({
+        studied:    data.studied.length,
+        mastered:   data.mastered.length,
+        questions:  (data.quizzes || []).reduce((s, q) => s + (q.total || 0), 0),
+        quizzes:    (data.quizzes || []).length,
+        lastActive: new Date().toISOString(),
+      }).catch(() => {});
+    } catch(e) {}
   }
 }
 
