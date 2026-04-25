@@ -260,6 +260,36 @@
     color: var(--ink-soft);
   }
 
+  /* ——— Hero stats (global progress summary) ——— */
+  .hero-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 20px;
+    margin-top: 4px;
+  }
+  .hero-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .hero-stat-lbl {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-top: 5px;
+  }
+  .hero-stats-empty {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
   /* ——— (stats band removed) ——— */
   .stat-big {
     font-family: 'Fraunces', serif;
@@ -837,6 +867,31 @@
       </div>
     </div>
     <aside class="hero-aside">
+      <div id="hero-stats" style="display:none;">
+        <div class="aside-label">Your Progress</div>
+        <div class="hero-stat-grid">
+          <div class="hero-stat">
+            <div class="hero-stat-num" id="hs-studied">0</div>
+            <div class="hero-stat-lbl">Cards studied</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" id="hs-mastered">0</div>
+            <div class="hero-stat-lbl">Mastered</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" id="hs-questions">0</div>
+            <div class="hero-stat-lbl">Quiz questions</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" id="hs-events">0</div>
+            <div class="hero-stat-lbl">Events started</div>
+          </div>
+        </div>
+      </div>
+      <div id="hero-stats-empty" style="display:none;">
+        <div class="aside-label">Your Progress</div>
+        <p class="hero-stats-empty">Study any event to see your stats here.</p>
+      </div>
     </aside>
   </section>
 
@@ -1297,6 +1352,8 @@ function showGuestMode() {
   var requestMsg = document.getElementById('request-msg');
   if (notifyMsg) { notifyMsg.textContent = 'Sign in to subscribe.'; notifyMsg.style.color = 'var(--ink-soft)'; }
   if (requestMsg) { requestMsg.textContent = 'Sign in to submit a request.'; requestMsg.style.color = 'var(--ink-soft)'; }
+  // Load cross-page progress stats from localStorage
+  renderHeroStats(loadLocalStats());
 }
 
 auth.onAuthStateChanged(user => {
@@ -1310,6 +1367,8 @@ auth.onAuthStateChanged(user => {
     const requestEl = document.getElementById('request-email');
     if (notifyEl) notifyEl.value = user.email;
     if (requestEl) requestEl.value = user.email;
+    // Load cross-page progress stats
+    loadFirebaseStats(user.uid).then(renderHeroStats);
   } else {
     authGateEl.style.display = 'flex';
   }
@@ -1386,6 +1445,79 @@ function friendlyError(code) {
     'auth/invalid-email':        'Please enter a valid email address.',
     'auth/too-many-requests':    'Too many attempts. Please try again later.',
   })[code] || 'Something went wrong. Please try again.';
+}
+
+// ── Global progress stats ─────────────────────────────────────────────────────
+const ALL_DB_PATHS = [
+  'medical-terminology','pathophysiology','nutrition','biochemistry',
+  'anatomy-physiology','pharmacology','medical-math','medical-law-ethics',
+  'human-growth-development','behavioral-health','clinical-nursing','public-health',
+  'sports-medicine','biomedical-lab-science','biotechnology','emergency-medical-science',
+];
+
+function countUp(el, target, duration) {
+  if (!el || target === 0) { if (el) el.textContent = '0'; return; }
+  const start = performance.now();
+  const from = 0;
+  function step(now) {
+    const pct = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - pct, 3);
+    el.textContent = Math.round(from + ease * (target - from)).toLocaleString();
+    if (pct < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderHeroStats(stats) {
+  const { studied, mastered, questions, eventsTouched } = stats;
+  const hasAny = studied > 0 || mastered > 0 || questions > 0;
+  document.getElementById('hero-stats-empty').style.display = hasAny ? 'none' : '';
+  document.getElementById('hero-stats').style.display = hasAny ? '' : 'none';
+  if (hasAny) {
+    countUp(document.getElementById('hs-studied'),   studied,       800);
+    countUp(document.getElementById('hs-mastered'),  mastered,      800);
+    countUp(document.getElementById('hs-questions'), questions,     800);
+    countUp(document.getElementById('hs-events'),    eventsTouched, 600);
+  }
+}
+
+async function loadFirebaseStats(uid) {
+  try {
+    const snap = await firebase.database().ref('users/' + uid + '/progress').get();
+    if (!snap.exists()) return { studied: 0, mastered: 0, questions: 0, eventsTouched: 0 };
+    const data = snap.val();
+    let studied = 0, mastered = 0, questions = 0, eventsTouched = 0;
+    for (const key of Object.keys(data)) {
+      const cat = data[key];
+      const s = (cat.studied  || []).length;
+      const m = (cat.mastered || []).length;
+      const q = (cat.quizzes  || []).reduce((sum, qz) => sum + (qz.total || 0), 0);
+      if (s > 0 || q > 0) eventsTouched++;
+      studied   += s;
+      mastered  += m;
+      questions += q;
+    }
+    return { studied, mastered, questions, eventsTouched };
+  } catch(e) { return { studied: 0, mastered: 0, questions: 0, eventsTouched: 0 }; }
+}
+
+function loadLocalStats() {
+  let studied = 0, mastered = 0, questions = 0, eventsTouched = 0;
+  for (const path of ALL_DB_PATHS) {
+    try {
+      const raw = localStorage.getItem('hosa::' + path);
+      if (!raw) continue;
+      const cat = JSON.parse(raw);
+      const s = (cat.studied  || []).length;
+      const m = (cat.mastered || []).length;
+      const q = (cat.quizzes  || []).reduce((sum, qz) => sum + (qz.total || 0), 0);
+      if (s > 0 || q > 0) eventsTouched++;
+      studied   += s;
+      mastered  += m;
+      questions += q;
+    } catch(e) {}
+  }
+  return { studied, mastered, questions, eventsTouched };
 }
 </script>
 
