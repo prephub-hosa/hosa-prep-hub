@@ -448,6 +448,7 @@
   .know-it-btn:hover { border-color: var(--success); color: var(--success); }
   /* ── Rating hint ── */
   .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
+  .next-review-badge { text-align: center; font-size: 12px; color: var(--accent); letter-spacing: 0.02em; min-height: 16px; margin: 6px 0 0; opacity: 0; transition: opacity 0.5s ease; }
   /* ── Session complete ── */
   #session-complete { text-align: center; padding: 48px 20px 32px; }
   #session-complete .sc-icon { font-size: 44px; color: var(--success); margin-bottom: 12px; }
@@ -1057,12 +1058,14 @@
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
+      <p id="next-review-badge" class="next-review-badge"></p>
       <p class="rating-hint">Tap a card to reveal &middot; "Got it" / "Missed it" train Smart Review &middot; your progress is saved automatically</p>
       <div id="session-complete" style="display:none">
         <div class="sc-icon">✓</div>
         <h3 class="sc-title">Session complete!</h3>
         <p id="sc-stats" class="sc-sub"></p>
         <p id="sc-deck-progress" class="sc-sub" style="margin-top:0;opacity:0.75;font-size:13px;"></p>
+        <p id="sc-srs-schedule" class="sc-sub" style="margin-top:0;opacity:0.6;font-size:12px;letter-spacing:0.01em;"></p>
         <div class="sc-btns">
           <button class="btn primary" id="sc-more">Study 20 more →</button>
           <button class="btn" id="sc-quiz">Switch to quiz →</button>
@@ -1592,6 +1595,29 @@ function showSessionComplete() {
       : `Continue (${pool.length - introduced} new terms left) →`;
   } catch(e) {}
 
+  try {
+    const _today2 = getTodayStr();
+    const _pool2  = filterDeck(state.flash.filter);
+    const _tom = new Date(); _tom.setDate(_tom.getDate()+1);
+    const _tomStr = _tom.toISOString().slice(0,10);
+    const _in4 = new Date(); _in4.setDate(_in4.getDate()+4);
+    const _in4Str = _in4.toISOString().slice(0,10);
+    let _dueTom=0, _due4=0, _later=0;
+    _pool2.forEach(c => {
+      if (!state.progress.studied.has(c.term)) return;
+      const _d = getSRData(c.term);
+      if (_d.due <= _today2) return;
+      if (_d.due <= _tomStr)  _dueTom++;
+      else if (_d.due <= _in4Str) _due4++;
+      else _later++;
+    });
+    const _parts = [];
+    if (_dueTom > 0) _parts.push(_dueTom + ' due tomorrow');
+    if (_due4  > 0)  _parts.push(_due4  + ' due within 4 days');
+    if (_later > 0)  _parts.push(_later + ' well spaced');
+    const _schedEl = document.getElementById('sc-srs-schedule');
+    if (_schedEl && _parts.length) _schedEl.textContent = _parts.join(' · ');
+  } catch(e) {}
   $('#flashcard').style.display = 'none';
   document.querySelector('.card-controls').style.display = 'none';
   document.getElementById('session-complete').style.display = '';
@@ -1678,6 +1704,7 @@ document.getElementById('flash-got').addEventListener('click', () => {
   state.progress.studied.add(card.term);
   state.progress.mastered.add(card.term);
   updateSR(card.term, true);
+  showNextReview((state.progress.srData||{})[card.term]?.interval||1);
   updateStreak();
   saveProgress();
   _sessGot++;
@@ -1690,6 +1717,7 @@ document.getElementById('flash-miss').addEventListener('click', () => {
   state.progress.studied.add(card.term);
   state.progress.mastered.delete(card.term);
   updateSR(card.term, false);
+  showNextReview(1);
   if (!state.progress.lastMissed) state.progress.lastMissed = [];
   if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
   updateStreak();
@@ -2092,6 +2120,20 @@ function buildSmartDeck(pool) {
 
   // Light shuffle so due + new cards interleave naturally
   return shuffle(session).slice(0, SESSION_SIZE);
+}
+
+// Show a brief "next review" hint after rating a card
+function showNextReview(interval) {
+  const el = document.getElementById('next-review-badge');
+  if (!el) return;
+  el.textContent = interval <= 1 ? '↻ Review again tomorrow'
+    : interval <= 3              ? `↻ See you in ${interval} days`
+    : interval <= 10             ? `↻ Next review in ${interval} days`
+    : interval <= 20             ? `↻ Well spaced — back in ${interval} days`
+    :                              `↻ Mastered! Returning in ${interval} days`;
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
 }
 </script>
 <script id="onboarding">
