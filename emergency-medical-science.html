@@ -432,6 +432,14 @@
   .rating-btns .btn { padding: 10px 16px; }
   .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+  /* ── Rating hint ── */
+  .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
+  /* ── Session complete ── */
+  #session-complete { text-align: center; padding: 48px 20px 32px; }
+  #session-complete .sc-icon { font-size: 44px; color: var(--success); margin-bottom: 12px; }
+  #session-complete .sc-title { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+  #session-complete .sc-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; line-height: 1.6; max-width: 340px; margin-left: auto; margin-right: auto; }
+  #session-complete .sc-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
   .quiz-stage {
     max-width: 780px;
@@ -1033,6 +1041,16 @@
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
+      <p class="rating-hint">Tap a card to reveal &middot; "Got it" / "Missed it" train Smart Review &middot; your progress is saved automatically</p>
+      <div id="session-complete" style="display:none">
+        <div class="sc-icon">✓</div>
+        <h3 class="sc-title">Session complete!</h3>
+        <p id="sc-stats" class="sc-sub"></p>
+        <div class="sc-btns">
+          <button class="btn primary" id="sc-more">Study 20 more →</button>
+          <button class="btn" id="sc-quiz">Switch to quiz →</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1398,7 +1416,7 @@ function setSRLevel(term, level) { state.progress.srLevels[term] = Math.max(0, M
 function bumpSRLevel(term, delta) { setSRLevel(term, getSRLevel(term) + delta); }
 
 function buildSmartDeck(pool) {
-  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
   const weighted = pool.map(card => ({ card, weight: SR_WEIGHTS[getSRLevel(card.term)] }));
   const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
   const deckSize = pool.length;
@@ -1421,7 +1439,7 @@ function buildSmartDeck(pool) {
     const missing = pool.filter(c => !deck.includes(c));
     deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
   }
-  return deck;
+  return deck.slice(0, Math.min(SESSION_SIZE, deck.length));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1490,6 +1508,21 @@ function srDots(level) {
   return '●'.repeat(filled) + '○'.repeat(5 - filled);
 }
 
+let _sessGot = 0, _sessMissed = 0;
+
+function showSessionComplete() {
+  const rated = _sessGot + _sessMissed;
+  let msg = rated > 0
+    ? `You rated ${rated} card${rated !== 1 ? 's' : ''} — ${_sessGot} got it, ${_sessMissed} missed.`
+    : 'You reached the end of this session.';
+  if (_sessGot > _sessMissed && rated > 0) msg += ' Great work!';
+  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it — practice makes perfect.';
+  document.getElementById('sc-stats').textContent = msg;
+  $('#flashcard').style.display = 'none';
+  document.querySelector('.card-controls').style.display = 'none';
+  document.getElementById('session-complete').style.display = '';
+}
+
 function initFlashcards() {
   const srToggle = document.getElementById('sr-toggle');
   state.flash.srEnabled = srToggle.checked;
@@ -1548,8 +1581,12 @@ function renderFlashcard() {
   document.getElementById('flashcard').classList.remove('flipped');
 }
 
+const SESSION_SIZE = 20;
+
 function nextFlashcard(dir) {
-  state.flash.index = ((state.flash.index + dir) % state.flash.deck.length + state.flash.deck.length) % state.flash.deck.length;
+  const total = state.flash.deck.length;
+  if (dir > 0 && state.flash.index >= total - 1) { showSessionComplete(); return; }
+  state.flash.index = Math.max(0, Math.min(state.flash.index + dir, total - 1));
   renderFlashcard();
 }
 
@@ -1567,6 +1604,7 @@ document.getElementById('flash-got').addEventListener('click', () => {
   bumpSRLevel(card.term, 1);
   updateStreak();
   saveProgress();
+  _sessGot++;
   nextFlashcard(1);
 });
 
@@ -1580,7 +1618,25 @@ document.getElementById('flash-miss').addEventListener('click', () => {
   if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
   updateStreak();
   saveProgress();
+  _sessMissed++;
   nextFlashcard(1);
+});
+
+document.getElementById('sc-more').addEventListener('click', () => {
+  _sessGot = 0; _sessMissed = 0;
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  state.flash.index = 0;
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.getElementById('session-complete').style.display = 'none';
+  renderFlashcard();
+});
+document.getElementById('sc-quiz').addEventListener('click', () => {
+  _sessGot = 0; _sessMissed = 0;
+  document.getElementById('session-complete').style.display = 'none';
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.querySelector('#tabs button[data-view="quiz"]').click();
 });
 
 // ══════════════════════════════════════════════════════════════

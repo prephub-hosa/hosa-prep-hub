@@ -443,6 +443,14 @@
   .rating-btns .btn { padding: 10px 16px; }
   .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+  /* ── Rating hint ── */
+  .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
+  /* ── Session complete ── */
+  #session-complete { text-align: center; padding: 48px 20px 32px; }
+  #session-complete .sc-icon { font-size: 44px; color: var(--success); margin-bottom: 12px; }
+  #session-complete .sc-title { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+  #session-complete .sc-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; line-height: 1.6; max-width: 340px; margin-left: auto; margin-right: auto; }
+  #session-complete .sc-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
   /* ——— QUIZ ——— */
   .quiz-stage {
@@ -1111,6 +1119,16 @@
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
+      <p class="rating-hint">Tap a card to reveal &middot; "Got it" / "Missed it" train Smart Review &middot; your progress is saved automatically</p>
+      <div id="session-complete" style="display:none">
+        <div class="sc-icon">✓</div>
+        <h3 class="sc-title">Session complete!</h3>
+        <p id="sc-stats" class="sc-sub"></p>
+        <div class="sc-btns">
+          <button class="btn primary" id="sc-more">Study 20 more →</button>
+          <button class="btn" id="sc-quiz">Switch to quiz →</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1491,7 +1509,7 @@ function bumpSRLevel(term, delta) {
 // derived from the SR level. De-duplicate neighbors (no back-to-back repeats)
 // and avoid showing a card too recently seen.
 function buildSmartDeck(pool) {
-  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool);
+  if (!state.flash.srEnabled || pool.length === 0) return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
   
   // Calculate weights for each card
   const weighted = pool.map(card => ({
@@ -1532,7 +1550,7 @@ function buildSmartDeck(pool) {
     deck.push(...shuffle(missing).slice(0, deckSize - deck.length));
   }
   
-  return deck;
+  return deck.slice(0, Math.min(SESSION_SIZE, deck.length));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1597,6 +1615,21 @@ function renderChips(containerId, onSelect, currentFilter) {
 // ══════════════════════════════════════════════════════════════
 //  FLASHCARDS
 // ══════════════════════════════════════════════════════════════
+let _sessGot = 0, _sessMissed = 0;
+
+function showSessionComplete() {
+  const rated = _sessGot + _sessMissed;
+  let msg = rated > 0
+    ? `You rated ${rated} card${rated !== 1 ? 's' : ''} — ${_sessGot} got it, ${_sessMissed} missed.`
+    : 'You reached the end of this session.';
+  if (_sessGot > _sessMissed && rated > 0) msg += ' Great work!';
+  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it — practice makes perfect.';
+  document.getElementById('sc-stats').textContent = msg;
+  $('#flashcard').style.display = 'none';
+  document.querySelector('.card-controls').style.display = 'none';
+  document.getElementById('session-complete').style.display = '';
+}
+
 function initFlashcards() {
   updateStreakBadge();
   state.flash.filter = state.progress.lastFilter || 'all';
@@ -1645,6 +1678,23 @@ function initFlashcards() {
     $('#flashcard').classList.toggle('flipped');
   });
 
+  document.getElementById('sc-more').addEventListener('click', () => {
+    _sessGot = 0; _sessMissed = 0;
+    state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+    state.flash.index = 0;
+    $('#flashcard').style.display = '';
+    document.querySelector('.card-controls').style.display = '';
+    document.getElementById('session-complete').style.display = 'none';
+    renderFlashcard();
+  });
+  document.getElementById('sc-quiz').addEventListener('click', () => {
+    _sessGot = 0; _sessMissed = 0;
+    document.getElementById('session-complete').style.display = 'none';
+    $('#flashcard').style.display = '';
+    document.querySelector('.card-controls').style.display = '';
+    document.querySelector('#tabs button[data-view="quiz"]').click();
+  });
+
   $('#flash-next').addEventListener('click', () => {
     nextFlashcard(1);
   });
@@ -1658,6 +1708,7 @@ function initFlashcards() {
     bumpSRLevel(card.term, 1);
     checkAndUpdateStreak();
     saveProgress();
+    _sessGot++;
     renderFlashcard(); // update level indicator before leaving
     nextFlashcard(1);
   });
@@ -1668,20 +1719,22 @@ function initFlashcards() {
     setSRLevel(card.term, 0); // reset fully when missed
     checkAndUpdateStreak();
     saveProgress();
+    _sessMissed++;
     renderFlashcard();
     nextFlashcard(1);
   });
 }
 
 function nextFlashcard(dir) {
+  const total = state.flash.deck.length;
+  if (dir > 0 && state.flash.index >= total - 1) { showSessionComplete(); return; }
   const card = $('#flashcard');
   card.style.transition = 'transform 0.13s ease-in, opacity 0.13s ease-in';
   card.style.transform = dir > 0 ? 'translateX(-14px)' : 'translateX(14px)';
   card.style.opacity = '0';
   setTimeout(() => {
     card.classList.remove('flipped');
-    const total = state.flash.deck.length;
-    state.flash.index = (state.flash.index + dir + total) % total;
+    state.flash.index = Math.max(0, Math.min(state.flash.index + dir, total - 1));
     renderFlashcard();
     card.style.transition = 'none';
     card.style.transform = dir > 0 ? 'translateX(14px)' : 'translateX(-14px)';
@@ -1717,6 +1770,7 @@ function renderFlashcard() {
 // ══════════════════════════════════════════════════════════════
 //  QUIZ
 // ══════════════════════════════════════════════════════════════
+const SESSION_SIZE = 20; // cards shown per flashcard session
 const QUIZ_LENGTH = 10;
 
 function initQuiz() {
