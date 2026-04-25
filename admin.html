@@ -1,41 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>try{if(localStorage.getItem("hosa-theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HOSA Prep Hub — Admin</title>
 <style>
-  /* ── set your admin email below ── */
+  /* ── Dark mode default ── */
   :root {
+    --ink: #e4dfd5;
+    --ink-soft: #9a948c;
+    --ink-faint: #6a6560;
+    --bg: #161411;
+    --surface: #1e1b17;
+    --border: #302d28;
+    --accent: #c9372d;
+    --success: #3d7a52;
+    --error: #c04a3f;
+  }
+  [data-theme="light"] {
     --ink: #1a1a1a;
     --ink-soft: #666;
+    --ink-faint: #888;
     --bg: #fafaf8;
     --surface: #fff;
     --border: #e8e4de;
     --accent: #c0392b;
     --success: #27ae60;
-  }
-  /* ── Dark mode ── */
-  [data-theme="dark"] {
-    --bg: #161411;
-    --bg-card: #1e1b17;
-    --ink: #e4dfd5;
-    --ink-soft: #9a948c;
-    --ink-faint: #6a6560;
-    --rule: #302d28;
-    --accent: #c9372d;
-    --accent-soft: #5a2820;
-    --highlight: #252218;
-    --success: #3d7a52;
     --error: #c04a3f;
   }
-  [data-theme="dark"] body {
-    background-image:
-      radial-gradient(circle at 15% 10%, rgba(168,40,31,0.08) 0%, transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(45,90,61,0.06) 0%, transparent 45%);
-  }
-  [data-theme="dark"] body::before { mix-blend-mode: screen; opacity: 0.1; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Georgia', serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
@@ -43,29 +36,67 @@
     display: flex; align-items: center; justify-content: center;
     min-height: 100vh; font-size: 16px; color: var(--ink-soft);
   }
-  #app { display: none; max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+  #app { display: none; max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
   h1 { font-size: 28px; font-weight: 400; margin-bottom: 6px; }
   .subtitle { color: var(--ink-soft); font-size: 14px; margin-bottom: 40px; }
-  section { margin-bottom: 48px; }
-  h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .badge { background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; font-family: monospace; }
+  section { margin-bottom: 56px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .badge { background: var(--ink); color: var(--bg); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; font-family: monospace; }
   .empty { color: var(--ink-soft); font-size: 14px; padding: 16px 0; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); padding: 8px 12px; background: #f4f2ee; border: 1px solid var(--border); }
-  td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
-  tr:hover td { background: #faf8f4; }
+  th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); padding: 9px 12px; background: var(--surface); border: 1px solid var(--border); }
+  td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); }
+  tr:hover td { background: var(--surface); }
   .email-cell { font-family: monospace; font-size: 13px; }
   .date-cell { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
-  .event-cell { }
+  .num-cell { font-family: monospace; font-size: 13px; text-align: right; }
+  .bar-cell { min-width: 120px; }
+  .mini-bar { height: 5px; background: var(--border); border-radius: 2px; margin-top: 6px; }
+  .mini-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
   .bcc-btn {
-    display: inline-block; margin-top: 12px;
-    background: var(--ink); color: #fff;
+    display: inline-block; margin-top: 14px;
+    background: var(--ink); color: var(--bg);
     padding: 10px 20px; border-radius: 6px;
     font-family: Georgia, serif; font-size: 14px;
     text-decoration: none; cursor: pointer;
   }
-  .bcc-btn:hover { background: #333; }
+  .bcc-btn:hover { opacity: 0.8; }
   .signout { float: right; font-size: 13px; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; background: none; border: none; font-family: Georgia, serif; }
+
+  /* ── Usage stat cards ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 18px 16px;
+  }
+  .stat-card .sc-num {
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--accent);
+    font-family: Georgia, serif;
+  }
+  .stat-card .sc-lbl {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: Georgia, serif;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    margin-top: -10px;
+  }
 </style>
 <style id="enhancements-v2">
   html { scroll-behavior: smooth; }
@@ -92,6 +123,27 @@
 <div id="app">
   <h1>✢ Admin Dashboard <button class="signout" id="signout-btn">Sign out</button></h1>
   <p class="subtitle" id="admin-email-label"></p>
+
+  <!-- USAGE & REACH -->
+  <section id="section-usage">
+    <h2>Usage &amp; Reach <span class="badge" id="usage-badge">loading…</span></h2>
+    <p class="section-sub">Aggregate activity across all registered users and all 16 study events.</p>
+
+    <div class="stat-strip">
+      <div class="stat-card"><div class="sc-num" id="su-users">—</div><div class="sc-lbl">Registered users</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-active">—</div><div class="sc-lbl">Users with activity</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-studied">—</div><div class="sc-lbl">Cards studied (total)</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-mastered">—</div><div class="sc-lbl">Cards mastered</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-questions">—</div><div class="sc-lbl">Quiz questions answered</div></div>
+      <div class="stat-card"><div class="sc-num" id="su-quizzes">—</div><div class="sc-lbl">Quizzes &amp; tests taken</div></div>
+    </div>
+
+    <h2 style="font-size:15px;margin-bottom:12px;border-bottom:none;padding-bottom:0;">Activity by Event</h2>
+    <div id="usage-events"><p class="empty">Loading…</p></div>
+
+    <h2 style="font-size:15px;margin-top:32px;margin-bottom:12px;border-bottom:none;padding-bottom:0;">Activity by User</h2>
+    <div id="usage-users"><p class="empty">Loading…</p></div>
+  </section>
 
   <section id="section-subscribers">
     <h2>Subscribers <span class="badge" id="sub-count">0</span></h2>
@@ -169,6 +221,158 @@ function loadRequests() {
   });
 }
 
+var ALL_EVENTS = [
+  { key: 'medical-terminology',    label: 'Medical Terminology' },
+  { key: 'pathophysiology',        label: 'Pathophysiology' },
+  { key: 'nutrition',              label: 'Nutrition' },
+  { key: 'biochemistry',           label: 'Biochemistry' },
+  { key: 'anatomy-physiology',     label: 'Anatomy & Physiology' },
+  { key: 'pharmacology',           label: 'Pharmacology' },
+  { key: 'medical-math',           label: 'Medical Math' },
+  { key: 'medical-law-ethics',     label: 'Medical Law & Ethics' },
+  { key: 'human-growth-development', label: 'Human Growth & Development' },
+  { key: 'behavioral-health',      label: 'Behavioral Health' },
+  { key: 'clinical-nursing',       label: 'Clinical Nursing' },
+  { key: 'public-health',          label: 'Public Health' },
+  { key: 'sports-medicine',        label: 'Sports Medicine' },
+  { key: 'biomedical-lab-science', label: 'Biomedical Lab Science' },
+  { key: 'biotechnology',          label: 'Biotechnology' },
+  { key: 'emergency-medical-science', label: 'Emergency Medical Science' },
+];
+
+function loadUsage() {
+  db.ref('users').once('value').then(function(snap) {
+    var data = snap.val();
+    if (!data) {
+      document.getElementById('usage-badge').textContent = '0 users';
+      document.getElementById('usage-events').innerHTML = '<p class="empty">No user data yet.</p>';
+      document.getElementById('usage-users').innerHTML = '<p class="empty">No user data yet.</p>';
+      return;
+    }
+
+    var userKeys = Object.keys(data);
+    var totalUsers = userKeys.length;
+    var totalStudied = 0, totalMastered = 0, totalQuestions = 0, totalQuizzes = 0, activeUsers = 0;
+
+    // Per-event aggregates
+    var eventMap = {};
+    ALL_EVENTS.forEach(function(e) {
+      eventMap[e.key] = { studied: 0, mastered: 0, questions: 0, quizzes: 0, users: 0 };
+    });
+
+    // Per-user summary
+    var userRows = [];
+
+    userKeys.forEach(function(uid) {
+      var user = data[uid];
+      var prog = user.progress || {};
+      var userStudied = 0, userQuestions = 0, userQuizzes = 0, userEvents = 0;
+      var lastDate = null;
+
+      Object.keys(prog).forEach(function(evtKey) {
+        var cat = prog[evtKey];
+        var s = (cat.studied  || []).length;
+        var m = (cat.mastered || []).length;
+        var qs = (cat.quizzes || []).reduce(function(acc, q) { return acc + (q.total || 0); }, 0);
+        var qz = (cat.quizzes || []).length;
+
+        totalStudied   += s;
+        totalMastered  += m;
+        totalQuestions += qs;
+        totalQuizzes   += qz;
+        userStudied    += s;
+        userQuestions  += qs;
+        userQuizzes    += qz;
+        if (s > 0 || qs > 0) userEvents++;
+
+        if (eventMap[evtKey]) {
+          eventMap[evtKey].studied   += s;
+          eventMap[evtKey].mastered  += m;
+          eventMap[evtKey].questions += qs;
+          eventMap[evtKey].quizzes   += qz;
+          if (s > 0 || qs > 0) eventMap[evtKey].users++;
+        }
+
+        // Track most recent activity date
+        (cat.quizzes || []).forEach(function(q) {
+          if (q.date && (!lastDate || q.date > lastDate)) lastDate = q.date;
+        });
+        if (cat.lastStudyDate && (!lastDate || cat.lastStudyDate > lastDate)) lastDate = cat.lastStudyDate;
+      });
+
+      if (userStudied > 0 || userQuestions > 0) {
+        activeUsers++;
+        userRows.push({
+          email:     (user.subscribed && user.subscribed.email) || uid.slice(0, 12) + '…',
+          uid:       uid,
+          events:    userEvents,
+          studied:   userStudied,
+          questions: userQuestions,
+          quizzes:   userQuizzes,
+          lastActive: lastDate,
+        });
+      }
+    });
+
+    // ── Top-line stats ──────────────────────────────────────────
+    document.getElementById('usage-badge').textContent   = totalUsers + ' users';
+    document.getElementById('su-users').textContent      = totalUsers.toLocaleString();
+    document.getElementById('su-active').textContent     = activeUsers.toLocaleString();
+    document.getElementById('su-studied').textContent    = totalStudied.toLocaleString();
+    document.getElementById('su-mastered').textContent   = totalMastered.toLocaleString();
+    document.getElementById('su-questions').textContent  = totalQuestions.toLocaleString();
+    document.getElementById('su-quizzes').textContent    = totalQuizzes.toLocaleString();
+
+    // ── Per-event table ─────────────────────────────────────────
+    var maxStudied = Math.max(1, Math.max.apply(null, ALL_EVENTS.map(function(e) { return eventMap[e.key].studied; })));
+    var evHtml = '<table><thead><tr>'
+      + '<th>Event</th><th>Users</th><th>Cards Studied</th><th>Mastered</th><th>Quiz Qs</th><th>Quizzes</th>'
+      + '</tr></thead><tbody>';
+    ALL_EVENTS.slice().sort(function(a, b) {
+      return eventMap[b.key].studied - eventMap[a.key].studied;
+    }).forEach(function(e) {
+      var ev = eventMap[e.key];
+      var pct = Math.round(ev.studied / maxStudied * 100);
+      evHtml += '<tr>'
+        + '<td>' + e.label + '</td>'
+        + '<td class="num-cell">' + ev.users + '</td>'
+        + '<td class="bar-cell">' + ev.studied.toLocaleString()
+          + '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + pct + '%"></div></div></td>'
+        + '<td class="num-cell">' + ev.mastered.toLocaleString() + '</td>'
+        + '<td class="num-cell">' + ev.questions.toLocaleString() + '</td>'
+        + '<td class="num-cell">' + ev.quizzes + '</td>'
+        + '</tr>';
+    });
+    evHtml += '</tbody></table>';
+    document.getElementById('usage-events').innerHTML = evHtml || '<p class="empty">No activity yet.</p>';
+
+    // ── Per-user table ───────────────────────────────────────────
+    userRows.sort(function(a, b) { return b.studied - a.studied; });
+    if (userRows.length === 0) {
+      document.getElementById('usage-users').innerHTML = '<p class="empty">No active users yet.</p>';
+    } else {
+      var uHtml = '<table><thead><tr>'
+        + '<th>User</th><th>Events</th><th>Cards Studied</th><th>Quiz Qs</th><th>Quizzes</th><th>Last Active</th>'
+        + '</tr></thead><tbody>';
+      userRows.forEach(function(u) {
+        uHtml += '<tr>'
+          + '<td class="email-cell">' + u.email + '</td>'
+          + '<td class="num-cell">' + u.events + '</td>'
+          + '<td class="num-cell">' + u.studied.toLocaleString() + '</td>'
+          + '<td class="num-cell">' + u.questions.toLocaleString() + '</td>'
+          + '<td class="num-cell">' + u.quizzes + '</td>'
+          + '<td class="date-cell">' + (u.lastActive ? fmt(u.lastActive) : '—') + '</td>'
+          + '</tr>';
+      });
+      uHtml += '</tbody></table>';
+      document.getElementById('usage-users').innerHTML = uHtml;
+    }
+  }).catch(function(err) {
+    document.getElementById('usage-badge').textContent = 'error';
+    document.getElementById('usage-events').innerHTML = '<p class="empty">Could not load usage data: ' + err.message + '</p>';
+  });
+}
+
 auth.onAuthStateChanged(function(user) {
   document.getElementById('loading').style.display = 'none';
   if (!user) {
@@ -181,6 +385,7 @@ auth.onAuthStateChanged(function(user) {
   }
   document.getElementById('app').style.display = 'block';
   document.getElementById('admin-email-label').textContent = 'Signed in as ' + user.email;
+  loadUsage();
   loadSubscribers();
   loadRequests();
 });
@@ -194,7 +399,7 @@ document.getElementById('signout-btn').onclick = function() {
   var SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>';
   var MOON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
-  function isDark(){ return document.documentElement.getAttribute('data-theme')==='dark'; }
+  function isDark(){ return document.documentElement.getAttribute('data-theme')!=='light'; }
 
   function mount(){
     if(document.getElementById('theme-toggle')) return;
@@ -203,7 +408,7 @@ document.getElementById('signout-btn').onclick = function() {
     btn.setAttribute('aria-label','Toggle dark mode');
     btn.style.cssText = [
       'background:none',
-      'border:1px solid var(--rule)',
+      'border:1px solid var(--border)',
       'width:34px','height:34px','padding:0',
       'display:inline-flex','align-items:center','justify-content:center',
       'cursor:pointer','color:var(--ink)','flex-shrink:0',
@@ -213,18 +418,18 @@ document.getElementById('signout-btn').onclick = function() {
 
     btn.onclick = function(){
       if(isDark()){
-        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme','light');
         try{localStorage.setItem('hosa-theme','light');}catch(e){}
         btn.innerHTML = MOON;
       } else {
-        document.documentElement.setAttribute('data-theme','dark');
+        document.documentElement.removeAttribute('data-theme');
         try{localStorage.setItem('hosa-theme','dark');}catch(e){}
         btn.innerHTML = SUN;
       }
     };
 
-    var target = document.querySelector('.user-pill') || document.querySelector('header');
-    if(target) target.appendChild(btn);
+    var target = document.getElementById('app') || document.body;
+    if(target) target.insertBefore(btn, target.firstChild);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
