@@ -443,6 +443,20 @@
   .rating-btns .btn { padding: 10px 16px; }
   .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+  /* ── Deck progress line ── */
+  .deck-progress-line {
+    text-align: center; font-size: 12px; color: var(--ink-faint);
+    margin: -4px 0 14px; letter-spacing: 0.03em;
+  }
+  /* ── Know-it skip button ── */
+  .know-it-btn {
+    display: inline-block; margin-top: 10px;
+    background: none; border: 1px solid var(--ink-faint);
+    color: var(--ink-faint); font-size: 11px; padding: 4px 12px;
+    border-radius: 20px; cursor: pointer; font-family: Georgia, serif;
+    letter-spacing: 0.04em; transition: color 0.15s, border-color 0.15s;
+  }
+  .know-it-btn:hover { border-color: var(--success); color: var(--success); }
   /* ── Rating hint ── */
   .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
   /* ── Session complete ── */
@@ -1086,10 +1100,11 @@
           <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
         </label>
         <span class="sr-info" id="sr-info" aria-hidden="true">
-          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level for each card — "Got it" fills one in, "Missed it" resets to zero. Turn this off to see every card in a single random pass instead.
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level — "Got it" adds a dot, "Missed it" drops two. New terms mix in each session until you've seen the full deck. Turn off for a plain shuffle.
         </span>
       </div>
 
+      <p id="deck-progress" class="deck-progress-line"></p>
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
           <div class="face front">
@@ -1098,6 +1113,7 @@
             <div class="term" id="flash-front-term"></div>
             <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
             <div class="flip-hint">↻ tap to reveal</div>
+            <button class="know-it-btn" id="flash-know-it" title="Mark as already known — jumps to SR level 5">★ Already know this</button>
           </div>
           <div class="face back">
             <span class="corner">Explanation</span>
@@ -1124,6 +1140,7 @@
         <div class="sc-icon">✓</div>
         <h3 class="sc-title">Session complete!</h3>
         <p id="sc-stats" class="sc-sub"></p>
+        <p id="sc-deck-progress" class="sc-sub" style="margin-top:0;opacity:0.75;font-size:13px;"></p>
         <div class="sc-btns">
           <button class="btn primary" id="sc-more">Study 20 more →</button>
           <button class="btn" id="sc-quiz">Switch to quiz →</button>
@@ -1626,14 +1643,40 @@ function renderChips(containerId, onSelect, currentFilter) {
 // ══════════════════════════════════════════════════════════════
 let _sessGot = 0, _sessMissed = 0;
 
+function skipKnown() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  state.progress.studied.add(card.term);
+  state.progress.mastered.add(card.term);
+  setSRLevel(card.term, 5); // max mastery — already knew this
+  saveProgress();
+  nextFlashcard(1);
+}
+
 function showSessionComplete() {
   const rated = _sessGot + _sessMissed;
   let msg = rated > 0
     ? `You rated ${rated} card${rated !== 1 ? 's' : ''} — ${_sessGot} got it, ${_sessMissed} missed.`
     : 'You reached the end of this session.';
   if (_sessGot > _sessMissed && rated > 0) msg += ' Great work!';
-  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it — practice makes perfect.';
+  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it!';
   document.getElementById('sc-stats').textContent = msg;
+
+  try {
+    const pool       = filterDeck(state.flash.filter);
+    const introduced = pool.filter(c => state.progress.studied.has(c.term)).length;
+    const allSeen    = introduced >= pool.length;
+    const pct        = Math.round(introduced / pool.length * 100);
+    const dpEl = document.getElementById('sc-deck-progress');
+    if (dpEl) dpEl.textContent = allSeen
+      ? `You've now seen all ${pool.length} terms! Switch to the quiz to test yourself.`
+      : `${introduced} of ${pool.length} terms introduced (${pct}%) — keep going to unlock the rest.`;
+    const moreBtn = document.getElementById('sc-more');
+    if (moreBtn) moreBtn.textContent = allSeen
+      ? 'Review weak cards →'
+      : `Continue (${pool.length - introduced} new terms left) →`;
+  } catch(e) {}
+
   $('#flashcard').style.display = 'none';
   document.querySelector('.card-controls').style.display = 'none';
   document.getElementById('session-complete').style.display = '';
@@ -1686,6 +1729,8 @@ function initFlashcards() {
   $('#flashcard').addEventListener('click', () => {
     $('#flashcard').classList.toggle('flipped');
   });
+  const _kiBtn = document.getElementById('flash-know-it');
+  if (_kiBtn) _kiBtn.addEventListener('click', e => { e.stopPropagation(); skipKnown(); });
 
   document.getElementById('sc-more').addEventListener('click', () => {
     _sessGot = 0; _sessMissed = 0;
@@ -1725,7 +1770,7 @@ function initFlashcards() {
     const card = state.flash.deck[state.flash.index];
     state.progress.studied.add(card.term);
     state.progress.mastered.delete(card.term);
-    setSRLevel(card.term, 0); // reset fully when missed
+    setSRLevel(card.term, Math.max(0, getSRLevel(card.term) - 2)); // drop 2 levels when missed
     checkAndUpdateStreak();
     saveProgress();
     _sessMissed++;
@@ -1758,6 +1803,7 @@ function renderFlashcard() {
   const card = state.flash.deck[state.flash.index];
   if (!card) return;
   $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
+  try { const _p=filterDeck(state.flash.filter),_s=_p.filter(c=>state.progress.studied.has(c.term)).length,_el=document.getElementById('deck-progress'); if(_el)_el.textContent=_s+' / '+_p.length+' terms introduced'; } catch(e) {}
   $('#flash-cat-front').textContent = card.type;
   $('#flash-cat-back').textContent = card.type;
   $('#flash-front-term').textContent = card.term;
@@ -1882,7 +1928,7 @@ function answerQuiz(btn, chosen, correct, optsEl) {
     state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
   } else {
     btn.classList.add('incorrect');
-    setSRLevel(correct.term, 0);
+    setSRLevel(correct.term, Math.max(0, getSRLevel(correct.term) - 1));
     // track the miss
     if (!state.progress.lastMissed.includes(correct.term)) {
       state.progress.lastMissed.push(correct.term);
@@ -2192,6 +2238,39 @@ document.addEventListener('keydown', (e) => {
     nextFlashcard(-1);
   }
 });
+</script>
+<script id="onboarding">
+(function(){
+  if(localStorage.getItem('hosa-onboarded-v1')) return;
+  var s=document.createElement('style');
+  s.textContent=[
+    '#ob-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}',
+    '#ob-box{background:var(--bg);border:1px solid var(--border);max-width:420px;width:100%;padding:36px 32px 28px;}',
+    '#ob-box h2{font-size:19px;font-weight:400;margin-bottom:22px;letter-spacing:-0.01em;}',
+    '.ob-step{display:flex;gap:14px;margin-bottom:15px;align-items:flex-start;}',
+    '.ob-icon{font-size:20px;flex-shrink:0;width:26px;text-align:center;margin-top:1px;}',
+    '.ob-text{font-size:13px;line-height:1.55;color:var(--ink-soft);}',
+    '.ob-text strong{color:var(--ink);}',
+    '#ob-start{margin-top:26px;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;font-family:Georgia,serif;font-size:15px;cursor:pointer;letter-spacing:0.01em;}',
+    '#ob-start:hover{opacity:0.88;}',
+  ].join('');
+  document.head.appendChild(s);
+  var el=document.createElement('div');
+  el.id='ob-overlay';
+  el.innerHTML='<div id="ob-box">'
+    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'
+    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'
+    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'
+    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You'll work through the full deck over multiple sessions.</div></div>'
+    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit "Already know this" on any card to skip it straight to mastered.</div></div>'
+    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'
+    +'<button id="ob-start">Got it — start studying!</button>'
+    +'</div>';
+  document.body.appendChild(el);
+  document.getElementById('ob-start').addEventListener('click',function(){
+    el.remove(); localStorage.setItem('hosa-onboarded-v1','1');
+  });
+})();
 </script>
 <script id="dark-mode-toggle">
 (function(){
