@@ -124,6 +124,39 @@
   <h1>✢ Admin Dashboard <button class="signout" id="signout-btn">Sign out</button></h1>
   <p class="subtitle" id="admin-email-label"></p>
 
+  <!-- ANALYTICS -->
+  <section id="section-analytics">
+    <h2>Analytics <span class="badge" id="an-badge">loading…</span></h2>
+    <p class="section-sub">Page views, unique visitors, session time, devices, and traffic sources — across all 17 pages.</p>
+
+    <div class="stat-strip" id="an-strip">
+      <div class="stat-card"><div class="sc-num" id="an-pv">—</div><div class="sc-lbl">All-time page views</div></div>
+      <div class="stat-card"><div class="sc-num" id="an-vis">—</div><div class="sc-lbl">Unique visitors</div></div>
+      <div class="stat-card"><div class="sc-num" id="an-pv30">—</div><div class="sc-lbl">Page views (30 days)</div></div>
+      <div class="stat-card"><div class="sc-num" id="an-vis30">—</div><div class="sc-lbl">Unique visitors (30 days)</div></div>
+      <div class="stat-card"><div class="sc-num" id="an-avgsec">—</div><div class="sc-lbl">Avg session time</div></div>
+      <div class="stat-card"><div class="sc-num" id="an-mobile">—</div><div class="sc-lbl">Mobile visitors</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:32px;" id="an-breakdown-grid">
+      <div>
+        <h2 style="font-size:14px;margin-bottom:10px;border-bottom:none;padding-bottom:0;">Top Pages (all-time)</h2>
+        <div id="an-pages"></div>
+      </div>
+      <div>
+        <h2 style="font-size:14px;margin-bottom:10px;border-bottom:none;padding-bottom:0;">Traffic Sources</h2>
+        <div id="an-sources"></div>
+      </div>
+      <div>
+        <h2 style="font-size:14px;margin-bottom:10px;border-bottom:none;padding-bottom:0;">Devices</h2>
+        <div id="an-devices"></div>
+      </div>
+    </div>
+
+    <h2 style="font-size:14px;margin-bottom:10px;border-bottom:none;padding-bottom:0;">Last 14 Days</h2>
+    <div id="an-daily"></div>
+  </section>
+
   <!-- USAGE & REACH -->
   <section id="section-usage">
     <h2>Usage &amp; Reach <span class="badge" id="usage-badge">loading…</span></h2>
@@ -219,6 +252,186 @@ function loadRequests() {
     });
     html += '</tbody></table>';
     body.innerHTML = html;
+  });
+}
+
+var PAGE_LABELS = {
+  'home': 'Home / Index',
+  'medical-terminology': 'Medical Terminology',
+  'pathophysiology': 'Pathophysiology',
+  'nutrition': 'Nutrition',
+  'biochemistry': 'Biochemistry',
+  'anatomy-physiology': 'Anatomy & Physiology',
+  'pharmacology': 'Pharmacology',
+  'medical-math': 'Medical Math',
+  'medical-law-ethics': 'Medical Law & Ethics',
+  'human-growth-development': 'Human Growth & Dev.',
+  'behavioral-health': 'Behavioral Health',
+  'clinical-nursing': 'Clinical Nursing',
+  'public-health': 'Public Health',
+  'sports-medicine': 'Sports Medicine',
+  'biomedical-lab-science': 'Biomedical Lab Science',
+  'biotechnology': 'Biotechnology',
+  'emergency-medical-science': 'Emergency Medical Science',
+};
+
+function fmtSec(s) {
+  if (s < 60) return s + 's';
+  var m = Math.floor(s / 60), sec = s % 60;
+  return m + 'm ' + (sec > 0 ? sec + 's' : '');
+}
+
+function miniBarTable(rows, maxVal) {
+  var html = '<table style="width:100%;font-size:13px;border-collapse:collapse;">';
+  rows.forEach(function(r) {
+    var pct = Math.round(r.val / Math.max(maxVal, 1) * 100);
+    html += '<tr>'
+      + '<td style="padding:5px 8px 5px 0;color:var(--ink-soft);white-space:nowrap;">' + r.label + '</td>'
+      + '<td style="padding:5px 0;width:100%;">'
+      +   '<div style="display:flex;align-items:center;gap:8px;">'
+      +     '<div style="flex:1;height:6px;background:var(--border);border-radius:3px;">'
+      +       '<div style="width:' + pct + '%;height:100%;background:var(--accent);border-radius:3px;"></div>'
+      +     '</div>'
+      +     '<span style="font-family:monospace;font-size:12px;color:var(--ink-soft);min-width:32px;text-align:right;">' + r.val.toLocaleString() + '</span>'
+      +   '</div>'
+      + '</td>'
+      + '</tr>';
+  });
+  html += '</table>';
+  return html;
+}
+
+function loadAnalytics() {
+  Promise.all([
+    db.ref('analytics/pv').once('value'),
+    db.ref('analytics/vis').once('value'),
+    db.ref('analytics/dev').once('value'),
+    db.ref('analytics/src').once('value'),
+    db.ref('analytics/sess').once('value'),
+  ]).then(function(snaps) {
+    var pvData  = snaps[0].val() || {};
+    var visData = snaps[1].val() || {};
+    var devData = snaps[2].val() || {};
+    var srcData = snaps[3].val() || {};
+    var sessData = snaps[4].val() || {};
+
+    // ── Date helpers ───────────────────────────────────────────
+    var today = new Date();
+    var cutoff30 = new Date(today); cutoff30.setDate(today.getDate() - 30);
+    var cutoff14 = new Date(today); cutoff14.setDate(today.getDate() - 14);
+    function inLast(dateStr, cutoff) {
+      return new Date(dateStr) >= cutoff;
+    }
+
+    // ── Page views: all-time + 30d ──────────────────────────────
+    var totalPV = 0, pv30 = 0;
+    var pageAll = {};  // page → total views
+    Object.keys(pvData).forEach(function(date) {
+      Object.keys(pvData[date]).forEach(function(page) {
+        var n = pvData[date][page] || 0;
+        totalPV += n;
+        pageAll[page] = (pageAll[page] || 0) + n;
+        if (inLast(date, cutoff30)) pv30 += n;
+      });
+    });
+
+    // ── Unique visitors: all-time + 30d ────────────────────────
+    var allVisitors = new Set(), vis30 = new Set();
+    Object.keys(visData).forEach(function(date) {
+      Object.keys(visData[date]).forEach(function(id) {
+        allVisitors.add(id);
+        if (inLast(date, cutoff30)) vis30.add(id);
+      });
+    });
+
+    // ── Sessions: avg duration ──────────────────────────────────
+    var sessArr = Object.values(sessData);
+    var totalSec = sessArr.reduce(function(a, s) { return a + (s.sec || 0); }, 0);
+    var avgSec = sessArr.length ? Math.round(totalSec / sessArr.length) : 0;
+
+    // ── Devices ────────────────────────────────────────────────
+    var devTotals = {};
+    Object.keys(devData).forEach(function(date) {
+      Object.keys(devData[date]).forEach(function(d) {
+        devTotals[d] = (devTotals[d] || 0) + (devData[date][d] || 0);
+      });
+    });
+    var totalDev = Object.values(devTotals).reduce(function(a, v) { return a + v; }, 0) || 1;
+    var mobilePct = Math.round((devTotals['mobile'] || 0) / totalDev * 100);
+
+    // ── Traffic sources ─────────────────────────────────────────
+    var srcTotals = {};
+    Object.keys(srcData).forEach(function(date) {
+      Object.keys(srcData[date]).forEach(function(s) {
+        srcTotals[s] = (srcTotals[s] || 0) + (srcData[date][s] || 0);
+      });
+    });
+
+    // ── Daily breakdown (last 14 days) ─────────────────────────
+    var dailyRows = [];
+    for (var i = 13; i >= 0; i--) {
+      var d = new Date(today); d.setDate(today.getDate() - i);
+      var key = d.toISOString().slice(0, 10);
+      var pv = pvData[key] ? Object.values(pvData[key]).reduce(function(a, v) { return a + v; }, 0) : 0;
+      var uv = visData[key] ? Object.keys(visData[key]).length : 0;
+      dailyRows.push({ date: key, pv: pv, uv: uv });
+    }
+
+    // ── Render top-line stats ───────────────────────────────────
+    document.getElementById('an-badge').textContent = totalPV.toLocaleString() + ' views total';
+    document.getElementById('an-pv').textContent    = totalPV.toLocaleString();
+    document.getElementById('an-vis').textContent   = allVisitors.size.toLocaleString();
+    document.getElementById('an-pv30').textContent  = pv30.toLocaleString();
+    document.getElementById('an-vis30').textContent = vis30.size.toLocaleString();
+    document.getElementById('an-avgsec').textContent = avgSec ? fmtSec(avgSec) : '—';
+    document.getElementById('an-mobile').textContent = mobilePct + '%';
+
+    // ── Top pages ───────────────────────────────────────────────
+    var pageRows = Object.keys(pageAll).map(function(k) {
+      return { label: PAGE_LABELS[k] || k, val: pageAll[k] };
+    }).sort(function(a, b) { return b.val - a.val; }).slice(0, 10);
+    var maxPV = pageRows.length ? pageRows[0].val : 1;
+    document.getElementById('an-pages').innerHTML = pageRows.length
+      ? miniBarTable(pageRows, maxPV)
+      : '<p class="empty">No data yet.</p>';
+
+    // ── Sources ─────────────────────────────────────────────────
+    var srcRows = Object.keys(srcTotals).map(function(k) {
+      return { label: k.charAt(0).toUpperCase() + k.slice(1), val: srcTotals[k] };
+    }).sort(function(a, b) { return b.val - a.val; });
+    var maxSrc = srcRows.length ? srcRows[0].val : 1;
+    document.getElementById('an-sources').innerHTML = srcRows.length
+      ? miniBarTable(srcRows, maxSrc)
+      : '<p class="empty">No data yet.</p>';
+
+    // ── Devices ─────────────────────────────────────────────────
+    var devRows = Object.keys(devTotals).map(function(k) {
+      return { label: k.charAt(0).toUpperCase() + k.slice(1), val: devTotals[k] };
+    }).sort(function(a, b) { return b.val - a.val; });
+    var maxDev = devRows.length ? devRows[0].val : 1;
+    document.getElementById('an-devices').innerHTML = devRows.length
+      ? miniBarTable(devRows, maxDev)
+      : '<p class="empty">No data yet.</p>';
+
+    // ── Daily table ─────────────────────────────────────────────
+    var maxDailyPV = Math.max(1, Math.max.apply(null, dailyRows.map(function(r) { return r.pv; })));
+    var dHtml = '<table><thead><tr><th>Date</th><th>Page Views</th><th>Unique Visitors</th></tr></thead><tbody>';
+    dailyRows.forEach(function(r) {
+      var pct = Math.round(r.pv / maxDailyPV * 100);
+      var label = new Date(r.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      dHtml += '<tr>'
+        + '<td class="date-cell">' + label + '</td>'
+        + '<td class="bar-cell">' + r.pv.toLocaleString()
+          + '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + pct + '%"></div></div></td>'
+        + '<td class="num-cell">' + (r.uv || '—') + '</td>'
+        + '</tr>';
+    });
+    dHtml += '</tbody></table>';
+    document.getElementById('an-daily').innerHTML = dHtml;
+
+  }).catch(function(err) {
+    document.getElementById('an-badge').textContent = 'error';
+    console.error('Analytics load error:', err);
   });
 }
 
@@ -435,6 +648,7 @@ auth.onAuthStateChanged(function(user) {
   }
   document.getElementById('app').style.display = 'block';
   document.getElementById('admin-email-label').textContent = 'Signed in as ' + user.email;
+  loadAnalytics();
   loadUsage();
   loadSubscribers();
   loadRequests();

@@ -1539,5 +1539,38 @@ document.getElementById('request-btn').onclick = function() {
   });
 })();
 </script>
+<script id="hosa-analytics">
+(function(){
+  var PAGE_KEY='home';
+  var t0=Date.now();
+  var today=new Date().toISOString().slice(0,10);
+  var vid=localStorage.getItem('hosa-guest-id');
+  if(!vid){vid='g-'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('hosa-guest-id',vid);}
+  var ua=navigator.userAgent;
+  var dev=/Mobi|Android/i.test(ua)?'mobile':/iPad|Tablet/i.test(ua)?'tablet':'desktop';
+  var ref=document.referrer,src='direct';
+  if(ref){if(/google\./i.test(ref))src='google';else if(/bing\.|yahoo\./i.test(ref))src='search';else if(/instagram\.|facebook\.|twitter\.|tiktok\.|reddit\./i.test(ref))src='social';else src='other';}
+  var pushed=false;
+  function push(uid){
+    if(pushed)return;pushed=true;
+    var id=uid||vid;
+    var inc=firebase.database.ServerValue.increment(1);
+    var u={};
+    u['analytics/pv/'+today+'/'+PAGE_KEY]=inc;
+    u['analytics/vis/'+today+'/'+id]=true;
+    u['analytics/dev/'+today+'/'+dev]=inc;
+    u['analytics/src/'+today+'/'+src]=inc;
+    firebase.database().ref().update(u).catch(function(){});
+  }
+  firebase.auth().onAuthStateChanged(function(user){push(user?user.uid:null);});
+  setTimeout(function(){push(null);},4000);
+  window.addEventListener('pagehide',function(){
+    var dur=Math.round((Date.now()-t0)/1000);
+    if(dur<5)return;
+    var id=(firebase.auth().currentUser||{}).uid||vid;
+    firebase.database().ref('analytics/sess').push({id:id,page:PAGE_KEY,sec:dur,dev:dev,src:src,ts:new Date().toISOString()}).catch(function(){});
+  });
+})();
+</script>
 </body>
 </html>
