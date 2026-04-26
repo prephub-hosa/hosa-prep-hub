@@ -1054,6 +1054,17 @@
   .btn-primary:hover:not(:disabled), .btn.primary:hover:not(:disabled) {
     box-shadow: 0 6px 14px -6px rgba(0,0,0,0.25);
   }
+  /* ── Quiz progress bar ── */
+  .quiz-bar-track { height: 3px; background: var(--border); border-radius: 2px; margin: -4px 0 22px; }
+  .quiz-bar-fill  { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; width: 0; }
+  /* ── Recent quiz history ── */
+  .quiz-hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .quiz-hist-date { color: var(--ink-faint); min-width: 76px; font-size: 12px; flex-shrink: 0; }
+  .quiz-hist-bar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .quiz-hist-bar { height: 100%; background: var(--accent); border-radius: 3px; min-width: 3px; }
+  .quiz-hist-pct { color: var(--ink-soft); min-width: 74px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  /* ── Due Today stat accent ── */
+  #stat-due { color: var(--accent); }
   /* Do NOT touch flashcards */
   .flashcard, .flashcard *, .face, .face * { animation: none; }
 </style>
@@ -1142,7 +1153,7 @@
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
       <p id="next-review-badge" class="next-review-badge"></p>
-      <p class="rating-hint">Tap a card to reveal &middot; "Got it" / "Missed it" train Smart Review &middot; your progress is saved automatically</p>
+      <p class="rating-hint">Tap to reveal &middot; "Got it" / "Missed it" trains Smart Review &middot; G&thinsp;/&thinsp;M keys work too &middot; saves automatically</p>
       <div id="session-complete" style="display:none">
         <div class="sc-icon">✓</div>
         <h3 class="sc-title">Session complete!</h3>
@@ -1168,6 +1179,7 @@
         <span id="quiz-progress">Question 01 of 10</span>
         <span id="quiz-score">Score: 0 / 0</span>
       </div>
+      <div class="quiz-bar-track"><div class="quiz-bar-fill" id="quiz-bar-fill"></div></div>
 
       <div class="quiz-question">
         <div class="quiz-prompt">How would you define this?</div>
@@ -1274,7 +1286,16 @@
         <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
       </div>
     </div>
+    <div class="stat-card">
+      <div class="stat-label">Due Today</div>
+      <div class="stat-val" id="stat-due">0</div>
+    </div>
 
+    <div class="mastery-section" style="margin-bottom:32px">
+      <h3>Recent Quiz Scores</h3>
+      <div class="section-sub">Last 6 practice sessions</div>
+      <div id="quiz-history" style="margin-top:14px"></div>
+    </div>
     <div class="mastery-section">
       <h3>Mastery by Category</h3>
       <div class="section-sub">Percentage of terms marked "got it" at least once</div>
@@ -1947,6 +1968,7 @@ function renderQuiz() {
   const options = buildOptions(card, pool);
 
   $('#quiz-progress').textContent = `Question ${pad(state.quiz.index + 1)} of ${pad(state.quiz.deck.length)}`;
+  try{var _qb=document.getElementById('quiz-bar-fill');if(_qb)_qb.style.width=(state.quiz.index/state.quiz.deck.length*100)+'%';}catch(e){}
   $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index}`;
   $('#quiz-term').textContent = card.term;
 
@@ -2000,6 +2022,16 @@ function answerQuiz(btn, chosen, correct, optsEl) {
 
   $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
   setTimeout(() => { $('#quiz-next').disabled = false; }, 300);
+  if (isCorrect) {
+    const _ai = state.quiz.index;
+    setTimeout(() => {
+      if (state.quiz.answered && state.quiz.index === _ai) {
+        state.quiz.index++;
+        if (state.quiz.index >= state.quiz.deck.length) finishQuiz();
+        else renderQuiz();
+      }
+    }, 1300);
+  }
   saveProgress();
 }
 
@@ -2191,6 +2223,15 @@ function renderProgress() {
   $('#stat-studied').textContent = state.progress.studied.size;
   $('#stat-mastered').textContent = state.progress.mastered.size;
   $('#stat-quizzes').textContent = state.progress.quizzes.length;
+  // Due Today (SRS cards scheduled for today or overdue)
+  try {
+    const _today = getTodayStr();
+    const _due = TERMS.filter(c =>
+      state.progress.studied.has(c.term) && getSRData(c.term).due <= _today
+    ).length;
+    const _dueEl = document.getElementById('stat-due');
+    if (_dueEl) _dueEl.textContent = _due;
+  } catch(e) {}
   $('#stat-streak-val').textContent = state.progress.streak || 0;
 
   if (state.progress.quizzes.length > 0) {
@@ -2199,6 +2240,29 @@ function renderProgress() {
   } else {
     $('#stat-avg').innerHTML = '—<span class="unit">%</span>';
   }
+
+  // Recent quiz score history
+  try {
+    const _hist = document.getElementById('quiz-history');
+    if (_hist) {
+      const _qs = state.progress.quizzes;
+      if (_qs.length === 0) {
+        _hist.innerHTML = '<p style="color:var(--ink-faint);font-size:13px;margin:8px 0 0">No quizzes yet — take a practice quiz to see your scores here.</p>';
+      } else {
+        const _recent = _qs.slice(-6).reverse();
+        _hist.innerHTML = _recent.map(q => {
+          const _pct = Math.round(q.score / q.total * 100);
+          const _dt  = new Date(q.date).toLocaleDateString(undefined, {month:'short',day:'numeric'});
+          const _col = _pct >= 80 ? 'var(--success)' : _pct >= 60 ? 'var(--accent)' : 'var(--ink-faint)';
+          return `<div class="quiz-hist-row">
+            <span class="quiz-hist-date">${_dt}</span>
+            <div class="quiz-hist-bar-wrap"><div class="quiz-hist-bar" style="width:${_pct}%;background:${_col}"></div></div>
+            <span class="quiz-hist-pct">${q.score}/${q.total} · ${_pct}%</span>
+          </div>`;
+        }).join('');
+      }
+    }
+  } catch(e) {}
 
   const list = $('#mastery-list');
   list.innerHTML = '';
@@ -2298,6 +2362,10 @@ document.addEventListener('keydown', (e) => {
     nextFlashcard(1);
   } else if (e.key === 'ArrowLeft') {
     nextFlashcard(-1);
+  } else if ((e.key==='g'||e.key==='G') && document.getElementById('flashcard')?.classList.contains('flipped')) {
+    document.getElementById('flash-got')?.click();
+  } else if ((e.key==='m'||e.key==='M') && document.getElementById('flashcard')?.classList.contains('flipped')) {
+    document.getElementById('flash-miss')?.click();
   }
 });
 </script>
