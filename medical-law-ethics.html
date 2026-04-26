@@ -1207,6 +1207,7 @@
         <button class="btn" id="quiz-review-misses">Review My Misses</button>
         <button class="btn primary" id="quiz-retry">Run It Back →</button>
       </div>
+      <div id="quiz-missed-list" style="display:none;margin-top:28px;text-align:left;border-top:1px solid var(--border,#302d28);padding-top:18px;"></div>
     </div>
   </section>
 
@@ -1264,6 +1265,11 @@
 
   <!-- PROGRESS VIEW -->
   <section class="view" id="view-progress">
+    <div id="due-review-cta" style="display:none;margin-bottom:24px;padding:18px 22px;background:var(--accent-soft,rgba(169,40,31,0.12));border-left:3px solid var(--accent);border-radius:2px;">
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;color:var(--accent);margin-bottom:6px;"><span id="due-cta-count">0</span> cards due for review</div>
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5;">These cards are scheduled to come back today based on your spaced repetition schedule.</div>
+      <button onclick="startDueReview()" style="background:var(--accent);color:var(--bg);border:none;padding:9px 22px;font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;cursor:pointer;border-radius:2px;letter-spacing:0.01em;">Start Review →</button>
+    </div>
     <div class="progress-grid">
       <div class="stat-card">
         <div class="stat-label">Cards Studied</div>
@@ -1735,6 +1741,28 @@ function showSessionComplete() {
   document.getElementById('session-complete').style.display = '';
 }
 
+// Start reviewing only the SRS-due cards
+function startDueReview() {
+  try {
+    const _today = getTodayStr();
+    const _due = TERMS.filter(c =>
+      state.progress.studied.has(c.term) && getSRData(c.term).due <= _today
+    );
+    if (_due.length === 0) return;
+    state.flash.deck = _due.slice().sort(() => Math.random() - 0.5);
+    state.flash.index = 0;
+    // Switch to flashcard tab
+    var _flashBtn = document.querySelector('#tabs button[data-view="flashcards"]');
+    if (_flashBtn) _flashBtn.click();
+    else {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      var _fv = document.getElementById('view-flashcards');
+      if (_fv) _fv.classList.add('active');
+    }
+    renderFlashcard();
+  } catch(e) { console.warn('startDueReview:', e); }
+}
+
 function initFlashcards() {
   updateStreakBadge();
   state.flash.filter = state.progress.lastFilter || 'all';
@@ -1952,6 +1980,7 @@ function startQuiz() {
   state.quiz.index = 0;
   state.quiz.score = 0;
   state.quiz.answered = false;
+  state.quiz.missedTerms = [];
   $('#quiz-stage').style.display = 'block';
   $('#quiz-results').style.display = 'none';
   renderQuiz();
@@ -2008,6 +2037,9 @@ function answerQuiz(btn, chosen, correct, optsEl) {
     if (!state.progress.lastMissed.includes(correct.term)) {
       state.progress.lastMissed.push(correct.term);
     }
+    if (!state.quiz.missedTerms) state.quiz.missedTerms = [];
+    if (!state.quiz.missedTerms.find(t => t.term === correct.term))
+      state.quiz.missedTerms.push(correct);
     // highlight correct
     [...optsEl.children].forEach(c => {
       if (c.textContent.includes(correct.meaning)) c.classList.add('correct');
@@ -2061,6 +2093,18 @@ function finishQuiz() {
   else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
   else msg = 'Every expert begins here. Study, then return.';
   $('#quiz-message').textContent = msg;
+  // Show missed terms list
+  try {
+    const _ml = document.getElementById('quiz-missed-list');
+    const _misses = state.quiz.missedTerms || [];
+    if (_ml && _misses.length > 0) {
+      _ml.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-size:13px;font-weight:600;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">' + _misses.length + ' Term' + (_misses.length === 1 ? '' : 's') + ' to Review</div>'
+        + _misses.map(t => `<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border,#302d28);font-family:'Source Serif 4',Georgia,serif;font-size:14px;line-height:1.4;"><span style="font-weight:600;min-width:110px;color:var(--accent);flex-shrink:0;">${t.term}</span><span style="color:var(--ink-soft);">${t.meaning}</span></div>`).join('');
+      _ml.style.display = '';
+    } else if (_ml) {
+      _ml.style.display = 'none';
+    }
+  } catch(e) {}
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2231,6 +2275,11 @@ function renderProgress() {
     ).length;
     const _dueEl = document.getElementById('stat-due');
     if (_dueEl) _dueEl.textContent = _due;
+    // Show/hide the Due Review CTA
+    const _cta = document.getElementById('due-review-cta');
+    const _ctaCount = document.getElementById('due-cta-count');
+    if (_cta) { _cta.style.display = _due > 0 ? '' : 'none'; }
+    if (_ctaCount) _ctaCount.textContent = _due;
   } catch(e) {}
   $('#stat-streak-val').textContent = state.progress.streak || 0;
 
