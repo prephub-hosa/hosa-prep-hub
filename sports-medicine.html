@@ -997,6 +997,9 @@
     .stat-card { padding: 20px 16px; }
     .stat-card .stat-val { font-size: 40px; }
     .spec-item .spec-val { font-size: 22px; }
+    /* ── Mobile tabs: full-width, compact ── */
+    nav.tabs { width: 100%; margin-bottom: 28px; }
+    nav.tabs button { flex: 1; padding: 11px 4px; font-size: 12px; letter-spacing: 0; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .quiz-question { margin-bottom: 20px; }
   }
   .streak-badge {
@@ -1912,6 +1915,11 @@ function renderFlashcard() {
   try { const studied=state.progress.studied,_p=filterDeck(state.flash.filter),_s=_p.filter(c=>studied.has(c.term)).length,_el=document.getElementById('deck-progress'); const _today=getTodayStr(),_due=_p.filter(c=>studied.has(c.term)&&getSRData(c.term).due<=_today).length; if(_el)_el.textContent=_s+' / '+_p.length+' terms introduced'+(_due>0?' · '+_due+' due today':''); } catch(e) {}
   $('#flash-cat-front').textContent = card.type;
   $('#flash-cat-back').textContent = card.type;
+  // Reset flip state for each new card
+  const _fc = document.getElementById('flashcard');
+  if (_fc) _fc.classList.remove('flipped');
+  const _nrb = document.getElementById('next-review-badge');
+  if (_nrb) { _nrb.style.opacity = '0'; }
   $('#flash-front-term').textContent = card.term;
   $('#flash-back-def').textContent = card.meaning;
   $('#flash-back-ex-text').textContent = card.example;
