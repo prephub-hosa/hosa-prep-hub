@@ -2429,6 +2429,10 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('flash-got')?.click();
   } else if ((e.key==='m'||e.key==='M') && document.getElementById('flashcard')?.classList.contains('flipped')) {
     document.getElementById('flash-miss')?.click();
+  } else if (['1','2','3','4'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const _views = ['flashcards','quiz','test','progress'];
+    const _btn = document.querySelector('#tabs button[data-view="' + _views[+e.key-1] + '"]');
+    if (_btn) _btn.click();
   }
 });
 </script>
