@@ -896,13 +896,16 @@
   @media (max-width: 480px) {
     header { padding: 12px 16px; }
     main { padding: 20px 14px 48px; }
-    .flashcard { aspect-ratio: unset; height: auto; overflow: hidden; perspective: none; }
-    .flashcard-inner { height: auto !important; transform-style: flat !important; transition: none !important; }
+    /* ── Mobile flashcard: consistent height, no jump between front/back ── */
+    .flashcard { aspect-ratio: unset; min-height: 230px; overflow: hidden; perspective: none; }
+    .flashcard-inner { min-height: 230px; height: auto !important; transform-style: flat !important; transition: none !important; }
     .flashcard.flipped .flashcard-inner { transform: none !important; }
     .face {
       position: relative !important; inset: auto !important;
-      width: 100%; height: auto !important; min-height: 180px;
-      padding: 28px 20px;
+      width: 100%; box-sizing: border-box;
+      min-height: 230px; height: auto !important; max-height: 58vh;
+      padding: 22px 18px; overflow-y: auto;
+      word-break: break-word; overflow-wrap: break-word; hyphens: auto;
       transform: none !important; backface-visibility: visible !important;
     }
     .face.back { display: none !important; }
@@ -945,6 +948,8 @@
     margin-bottom: 16px;
     animation: fade 0.3s ease;
   }
+  @keyframes _pl-spin  { to { transform: rotate(360deg); } }
+  @keyframes _score-pop { 0%{transform:scale(0.82);opacity:0.6} 55%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1007,6 +1012,7 @@
   </nav>
 
   <!-- FLASHCARDS VIEW -->
+  <div id="page-loader" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;transition:opacity 0.25s ease"><div style="width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:_pl-spin 0.7s linear infinite"></div></div>
   <section class="view active" id="view-flashcards">
     <div class="category-bar" id="flash-cats">
       <span class="label">Filter</span>
@@ -1015,7 +1021,7 @@
     <div id="resume-banner" class="resume-banner" style="display:none"></div>
     <div class="flashcard-stage">
       <div class="card-counter">
-        <span id="flash-progress">01 / 00</span>
+        <span id="flash-progress">—</span>
         <span class="streak-badge" id="streak-badge" style="display:none"><strong id="streak-num">0</strong> day streak</span>
         <label class="sr-toggle-label">
           <input type="checkbox" id="sr-toggle" checked>
@@ -1663,6 +1669,7 @@ function startFlashcards(filter) {
 function renderFlashcard() {
   const deck = state.flash.deck;
   if (!deck.length) {
+    try { const _dp=document.getElementById('deck-progress'); if(_dp) _dp.textContent='No cards match this filter — try a different category above.'; } catch(e){}
     document.getElementById('flash-front-term').textContent = 'No cards in this filter.';
     document.getElementById('flash-back-def').textContent = '';
     document.getElementById('flash-back-ex-text').textContent = '';
@@ -1696,6 +1703,15 @@ document.getElementById('flash-prev').addEventListener('click', () => nextFlashc
 document.getElementById('flashcard').addEventListener('click', () => {
   document.getElementById('flashcard').classList.toggle('flipped');
 });
+// Mobile swipe: left → next, right → prev
+(function(){
+  var _swX=0; var _fc=document.getElementById('flashcard');
+  _fc.addEventListener('touchstart',function(e){_swX=e.touches[0].clientX;},{passive:true});
+  _fc.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-_swX;
+    if(Math.abs(dx)>48){if(dx<0)nextFlashcard(1);else nextFlashcard(-1);}
+  },{passive:true});
+})();
 (function(){ const _ki=document.getElementById('flash-know-it'); if(_ki) _ki.addEventListener('click',e=>{e.stopPropagation();skipKnown();}); })();
 
 document.getElementById('flash-got').addEventListener('click', () => {
@@ -1809,7 +1825,7 @@ function renderQuizQuestion() {
       fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
       document.getElementById('quiz-verdict').textContent = correct ? 'Correct.' : 'Not quite.';
       document.getElementById('quiz-explain').textContent = card.meaning;
-      document.getElementById('quiz-next').disabled = false;
+      setTimeout(() => { document.getElementById('quiz-next').disabled = false; }, 300);
       saveProgress();
     });
     container.appendChild(btn);
@@ -1824,6 +1840,7 @@ function showQuizResults() {
   document.getElementById('final-score').textContent = score;
   document.getElementById('final-total').textContent = total;
   const pct = Math.round(score / total * 100);
+  if(pct===100){try{var _sn=document.querySelector('#quiz-results .score-num');if(_sn){_sn.style.color='var(--success)';_sn.style.animation='none';setTimeout(function(){_sn.style.animation='_score-pop 0.55s ease';},40);}}catch(e){}}
   let msg = pct === 100 ? 'Perfect — you know this material cold.' :
             pct >= 80  ? 'Strong work. A few more reps and you\'ll own it.' :
             pct >= 60  ? 'Solid foundation. Keep drilling the misses.' :
@@ -1992,12 +2009,12 @@ firebase.auth().onAuthStateChanged(user => {
     }
     const guestBanner = document.getElementById('guest-banner');
     if (guestBanner) guestBanner.style.display = '';
-    loadProgress(null).then(() => { saveProgress(); initFlashcards(); initQuiz(); initTest(); });
+    loadProgress(null).then(() => { saveProgress(); initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
     return;
   }
   document.getElementById('user-email').textContent = user.email;
   document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
-  loadProgress(user.uid).then(() => { initFlashcards(); initQuiz(); initTest(); });
+  loadProgress(user.uid).then(() => { initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
 });
 
 // Smart Review help popover

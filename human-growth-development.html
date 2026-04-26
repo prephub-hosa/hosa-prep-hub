@@ -972,14 +972,16 @@
   @media (max-width: 480px) {
     header { padding: 12px 16px; }
     main { padding: 20px 14px 48px; }
-    /* ── Mobile flashcard: disable 3-D flip so height follows content ── */
-    .flashcard { aspect-ratio: unset; height: auto; overflow: hidden; perspective: none; }
-    .flashcard-inner { height: auto !important; transform-style: flat !important; transition: none !important; }
+    /* ── Mobile flashcard: consistent height, no jump between front/back ── */
+    .flashcard { aspect-ratio: unset; min-height: 230px; overflow: hidden; perspective: none; }
+    .flashcard-inner { min-height: 230px; height: auto !important; transform-style: flat !important; transition: none !important; }
     .flashcard.flipped .flashcard-inner { transform: none !important; }
     .face {
       position: relative !important; inset: auto !important;
-      width: 100%; height: auto !important; min-height: 180px;
-      padding: 28px 20px;
+      width: 100%; box-sizing: border-box;
+      min-height: 230px; height: auto !important; max-height: 58vh;
+      padding: 22px 18px; overflow-y: auto;
+      word-break: break-word; overflow-wrap: break-word; hyphens: auto;
       transform: none !important; backface-visibility: visible !important;
     }
     .face.back { display: none !important; }
@@ -1021,6 +1023,8 @@
     margin-bottom: 16px;
     animation: fade 0.3s ease;
   }
+  @keyframes _pl-spin  { to { transform: rotate(360deg); } }
+  @keyframes _score-pop { 0%{transform:scale(0.82);opacity:0.6} 55%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1085,6 +1089,7 @@
   </nav>
 
   <!-- FLASHCARDS VIEW -->
+  <div id="page-loader" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;transition:opacity 0.25s ease"><div style="width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:_pl-spin 0.7s linear infinite"></div></div>
   <section class="view active" id="view-flashcards">
     <div class="category-bar" id="flash-cats">
       <span class="label">Filter</span>
@@ -1093,7 +1098,7 @@
     <div id="resume-banner" class="resume-banner" style="display:none"></div>
     <div class="flashcard-stage">
       <div class="card-counter">
-        <span id="flash-progress">01 / 00</span>
+        <span id="flash-progress">—</span>
         <span class="streak-badge" id="streak-badge" style="display:none"><strong id="streak-num">0</strong> day streak</span>
         <label class="sr-toggle-label">
           <input type="checkbox" id="sr-toggle" checked>
@@ -1765,6 +1770,17 @@ function initFlashcards() {
   $('#flashcard').addEventListener('click', () => {
     $('#flashcard').classList.toggle('flipped');
   });
+  // Mobile swipe: left → next card, right → prev card
+  (function(){
+    var _swX=0;
+    var _fc=document.getElementById('flashcard');
+    if(!_fc) return;
+    _fc.addEventListener('touchstart',function(e){_swX=e.touches[0].clientX;},{passive:true});
+    _fc.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-_swX;
+      if(Math.abs(dx)>48){if(dx<0)nextFlashcard(1);else nextFlashcard(-1);}
+    },{passive:true});
+  })();
   const _kiBtn = document.getElementById('flash-know-it');
   if (_kiBtn) _kiBtn.addEventListener('click', e => { e.stopPropagation(); skipKnown(); });
 
@@ -1839,7 +1855,15 @@ function nextFlashcard(dir) {
 
 function renderFlashcard() {
   const card = state.flash.deck[state.flash.index];
-  if (!card) return;
+  if (!card) {
+    try {
+      const _dp=document.getElementById('deck-progress');
+      if(_dp) _dp.textContent='No cards match this filter — try a different category above.';
+      const _fp=document.getElementById('flash-progress');
+      if(_fp) _fp.textContent='—';
+    } catch(e){}
+    return;
+  }
   $('#flash-progress').textContent = `${pad(state.flash.index + 1)} / ${pad(state.flash.deck.length)}`;
   try { const studied=state.progress.studied,_p=filterDeck(state.flash.filter),_s=_p.filter(c=>studied.has(c.term)).length,_el=document.getElementById('deck-progress'); const _today=getTodayStr(),_due=_p.filter(c=>studied.has(c.term)&&getSRData(c.term).due<=_today).length; if(_el)_el.textContent=_s+' / '+_p.length+' terms introduced'+(_due>0?' · '+_due+' due today':''); } catch(e) {}
   $('#flash-cat-front').textContent = card.type;
@@ -1984,7 +2008,7 @@ function answerQuiz(btn, chosen, correct, optsEl) {
   $('#quiz-explain').textContent = `"${correct.term}" means ${correct.meaning}. ${correct.example ? 'e.g., ' + correct.example : ''}`;
 
   $('#quiz-score').textContent = `Score: ${state.quiz.score} / ${state.quiz.index + 1}`;
-  $('#quiz-next').disabled = false;
+  setTimeout(() => { $('#quiz-next').disabled = false; }, 300);
   saveProgress();
 }
 
@@ -2001,7 +2025,14 @@ function finishQuiz() {
   $('#final-total').textContent = state.quiz.deck.length;
   const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
   let msg;
-  if (pct === 100) msg = 'Flawless. The terminology bends to you.';
+  if (pct === 100) {
+    msg = 'Flawless. The terminology bends to you.';
+    try {
+      var _sn=$('#quiz-results .score-num')||document.querySelector('#quiz-results .score-num');
+      if(_sn){ _sn.style.color='var(--success)'; _sn.style.animation='none';
+        setTimeout(function(){_sn.style.animation='_score-pop 0.55s ease';},40); }
+    } catch(e){}
+  }
   else if (pct >= 85) msg = 'Sharp work. You are nearly there.';
   else if (pct >= 70) msg = 'Strong foundation. Keep drilling the edges.';
   else if (pct >= 50) msg = 'Halfway home. Review the stumbles and go again.';
@@ -2234,6 +2265,7 @@ firebase.auth().onAuthStateChanged(user => {
       initFlashcards();
       initQuiz();
       initTest();
+      (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})();
     });
     return;
   }
@@ -2243,6 +2275,7 @@ firebase.auth().onAuthStateChanged(user => {
     initFlashcards();
     initQuiz();
     initTest();
+    (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})();
   });
 });
 
