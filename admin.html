@@ -128,6 +128,7 @@
   <section id="section-analytics">
     <h2>Analytics <span class="badge" id="an-badge">loading…</span></h2>
     <p class="section-sub">Page views, unique visitors, session time, devices, and traffic sources — across all 17 pages.</p>
+    <p class="section-sub" style="color:var(--ink-faint);font-size:12px;margin-top:-6px;">⬆ Visitor count includes everyone who loaded any page. The Usage section below only counts people who actually studied (triggered a save) — so Usage will always be ≤ Analytics visitors.</p>
 
     <div class="stat-strip" id="an-strip">
       <div class="stat-card"><div class="sc-num" id="an-pv">—</div><div class="sc-lbl">All-time page views</div></div>
@@ -160,7 +161,7 @@
   <!-- USAGE & REACH -->
   <section id="section-usage">
     <h2>Usage &amp; Reach <span class="badge" id="usage-badge">loading…</span></h2>
-    <p class="section-sub">Aggregate activity across all registered users and all 16 study events.</p>
+    <p class="section-sub">Aggregate activity across all registered users and all 16 study events. <span style="color:var(--ink-faint)">Guests = unique browsers that studied without an account.</span></p>
 
     <div class="stat-strip">
       <div class="stat-card"><div class="sc-num" id="su-users">—</div><div class="sc-lbl">Registered users</div></div>
@@ -517,7 +518,7 @@ function loadUsage() {
       if (userStudied > 0 || userQuestions > 0) {
         activeUsers++;
         userRows.push({
-          label:     (user.subscribed && user.subscribed.email) || uid.slice(0, 12) + '…',
+          label:     user.email || uid.slice(0, 12) + '…',
           type:      'user',
           events:    userEvents,
           studied:   userStudied,

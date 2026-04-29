@@ -2387,6 +2387,8 @@ firebase.auth().onAuthStateChanged(user => {
   }
   document.getElementById('user-email').textContent = user.email;
   document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  // Store email so admin can identify users
+  try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
   loadProgress(user.uid).then(() => {
     initFlashcards();
     initQuiz();

@@ -1373,6 +1373,8 @@ auth.onAuthStateChanged(user => {
   authLoadingEl.style.display = 'none';
   if (user) {
     userEmailEl.textContent = user.email;
+    // Store email in DB so admin dashboard can identify users
+    try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
     authGateEl.style.display = 'none';
     mainEl.style.display = 'block';
     document.getElementById('guest-banner').style.display = 'none';
