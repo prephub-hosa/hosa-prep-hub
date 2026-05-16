@@ -1867,6 +1867,7 @@ function initFlashcards() {
     checkAndUpdateStreak();
     saveProgress();
     _sessGot++;
+    try{gtag('event','flashcard_got',{event_category:DB_PATH});}catch(e){}
     renderFlashcard(); // update level indicator before leaving
     nextFlashcard(1);
   });
@@ -1879,6 +1880,7 @@ function initFlashcards() {
     checkAndUpdateStreak();
     saveProgress();
     _sessMissed++;
+    try{gtag('event','flashcard_missed',{event_category:DB_PATH});}catch(e){}
     renderFlashcard();
     nextFlashcard(1);
   });
@@ -2095,6 +2097,7 @@ function finishQuiz() {
   $('#final-score').textContent = state.quiz.score;
   $('#final-total').textContent = state.quiz.deck.length;
   const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
+  try{gtag('event','quiz_completed',{event_category:DB_PATH,value:pct,quiz_score:state.quiz.score,quiz_total:state.quiz.deck.length});}catch(e){}
   let msg;
   if (pct === 100) {
     msg = 'Flawless. The terminology bends to you.';
@@ -2246,6 +2249,7 @@ function finishTest() {
   $('#test-final-total').textContent = total;
 
   const pct = Math.round((correctCount / total) * 100);
+  try{gtag('event','test_completed',{event_category:DB_PATH,value:pct,test_score:correctCount,test_total:total});}catch(e){}
   let msg;
   if (pct >= 95) msg = 'Exceptional. Competition-ready.';
   else if (pct >= 85) msg = 'Strong performance — well within medal range.';
@@ -2396,6 +2400,7 @@ firebase.auth().onAuthStateChanged(user => {
   document.getElementById('user-email').textContent = user.email;
   document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
   // Store email so admin can identify users
+  try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
   try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
   loadProgress(user.uid).then(() => {
     initFlashcards();
