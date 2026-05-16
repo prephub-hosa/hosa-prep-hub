@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
@@ -1759,6 +1759,7 @@ function showSessionComplete() {
     if (_schedEl && _parts.length) _schedEl.textContent = _parts.join(' · ');
   } catch(e) {}
   $('#flashcard').style.display = 'none';
+  try{gtag('event','session_complete',{event_category:DB_PATH,cards_got:_sessGot,cards_missed:_sessMissed});}catch(e){}
   document.querySelector('.card-controls').style.display = 'none';
   document.getElementById('session-complete').style.display = '';
 }
