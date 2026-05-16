@@ -806,9 +806,9 @@
       <div id="signup-error" class="auth-error"></div>
       <button type="submit" class="auth-btn">Create Account →</button>
     </form>
-    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-      <button type="button" id="btn-guest" style="background:none;border:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Continue without an account</button>
-      <p style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;color:var(--ink-soft);margin:6px 0 0;opacity:.7;">Progress will only save to this browser and may be lost.</p>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--rule);">
+      <button type="button" id="btn-guest" style="width:100%;padding:13px 20px;background:transparent;border:1px solid var(--rule);font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;letter-spacing:0.01em;transition:border-color 0.15s;">Try without an account →</button>
+      <p style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;color:var(--ink-soft);margin:8px 0 0;opacity:.6;text-align:center;">Progress saves to this browser only</p>
     </div>
   </div>
 </div>
@@ -846,8 +846,75 @@
     </aside>
   </section>
 
+  <!-- DEMO FLASHCARD -->
+  <section id="demo-section" style="margin-bottom:80px;">
+    <div class="section-head" style="margin-bottom:36px;">
+      <h2>Try a card <em>right now.</em></h2>
+      <div class="section-label">No account needed</div>
+    </div>
+    <div style="max-width:540px;">
+      <div id="demo-card" onclick="demoFlip()" style="cursor:pointer;background:var(--bg-card);border:1px solid var(--rule);padding:44px 40px;min-height:150px;display:flex;flex-direction:column;justify-content:center;position:relative;transition:box-shadow 0.2s ease;user-select:none;" onmouseenter="this.style.boxShadow='0 12px 28px -14px rgba(0,0,0,0.2)'" onmouseleave="this.style.boxShadow='none'">
+        <div id="demo-front">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:14px;">Tap to reveal · <span id="demo-counter">Card 1 of 4</span></div>
+          <div id="demo-term" style="font-family:'Fraunces',serif;font-size:32px;font-weight:400;line-height:1.1;letter-spacing:-0.025em;">Myocardial Infarction</div>
+          <div id="demo-subject" style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--ink-faint);margin-top:10px;">Medical Terminology</div>
+        </div>
+        <div id="demo-back" style="display:none;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.12em;color:var(--success);margin-bottom:14px;">Definition</div>
+          <div id="demo-def" style="font-family:'Source Serif 4',serif;font-size:16px;line-height:1.6;color:var(--ink);">Death of cardiac muscle caused by prolonged blockage of a coronary artery, cutting off blood and oxygen — the clinical term for a heart attack.</div>
+        </div>
+      </div>
+      <div id="demo-btns" style="display:none;gap:10px;margin-top:10px;">
+        <button onclick="demoRate(false)" style="flex:1;padding:13px;background:none;border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink);transition:border-color 0.15s;" onmouseenter="this.style.borderColor='var(--ink)'" onmouseleave="this.style.borderColor='var(--rule)'">✗  Missed it</button>
+        <button onclick="demoRate(true)" style="flex:1;padding:13px;background:var(--accent);border:1px solid var(--accent);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;color:#fff;">✓  Got it</button>
+      </div>
+      <div id="demo-done" style="display:none;background:var(--bg-card);border:1px solid var(--rule);padding:32px 36px;text-align:center;">
+        <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">That's the idea.</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner. Pick any of the 18 events below to start for real.</div>
+        <a href="#categories" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:12px 28px;background:var(--ink);color:var(--bg);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Choose your event →</a>
+      </div>
+    </div>
+  </section>
+  <script>
+  (function(){
+    const CARDS = [
+      { term:'Myocardial Infarction', subject:'Medical Terminology', def:'Death of cardiac muscle caused by prolonged blockage of a coronary artery, cutting off blood and oxygen — the clinical term for a heart attack.' },
+      { term:'Pharmacokinetics', subject:'Pharmacology', def:'How the body handles a drug: absorption, distribution, metabolism, and excretion (ADME) — determining how much reaches the target and for how long.' },
+      { term:'Homeostasis', subject:'Anatomy & Physiology', def:"The body's ability to maintain a stable internal environment (temperature, pH, glucose) despite external changes — the foundation of all physiology." },
+      { term:'Triage', subject:'Emergency Medical Science', def:'Sorting patients by injury severity to prioritize care when resources are limited — highest priority to those who will die without immediate treatment.' },
+    ];
+    let idx = 0, flipped = false;
+    window.demoFlip = function() {
+      if (flipped) return;
+      flipped = true;
+      document.getElementById('demo-front').style.display = 'none';
+      document.getElementById('demo-back').style.display = 'block';
+      const b = document.getElementById('demo-btns');
+      b.style.display = 'flex';
+    };
+    window.demoRate = function(got) {
+      idx++;
+      if (idx >= CARDS.length) {
+        document.getElementById('demo-card').style.display = 'none';
+        document.getElementById('demo-btns').style.display = 'none';
+        document.getElementById('demo-done').style.display = 'block';
+        return;
+      }
+      flipped = false;
+      const c = CARDS[idx];
+      document.getElementById('demo-term').textContent = c.term;
+      document.getElementById('demo-subject').textContent = c.subject;
+      document.getElementById('demo-def').textContent = c.def;
+      document.getElementById('demo-counter').textContent = 'Card ' + (idx+1) + ' of ' + CARDS.length;
+      document.getElementById('demo-front').style.display = 'block';
+      document.getElementById('demo-back').style.display = 'none';
+      document.getElementById('demo-btns').style.display = 'none';
+    };
+  })();
+  </script>
+
   <!-- CATEGORIES -->
-  <section>
+  <section id="categories-section">
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
       <div class="section-label" id="events-count-label">Eighteen events available</div>
