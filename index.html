@@ -1393,8 +1393,8 @@ auth.onAuthStateChanged(user => {
   authLoadingEl.style.display = 'none';
   if (user) {
     userEmailEl.textContent = user.email;
-    // Store email in DB so admin dashboard can identify users
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
+    try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
     authGateEl.style.display = 'none';
     mainEl.style.display = 'block';
     document.getElementById('guest-banner').style.display = 'none';
@@ -1473,6 +1473,7 @@ document.getElementById('form-signin').addEventListener('submit', async e => {
       document.getElementById('signin-email').value,
       document.getElementById('signin-password').value
     );
+    try { gtag('event', 'user_login', {method: 'email'}); } catch(e) {}
   } catch (err) { errorEl.textContent = friendlyError(err.code); }
 });
 
@@ -1488,6 +1489,7 @@ document.getElementById('form-signup').addEventListener('submit', async e => {
     await auth.createUserWithEmailAndPassword(
       document.getElementById('signup-email').value, password
     );
+    try { gtag('event', 'user_registered', {method: 'email'}); } catch(e) {}
   } catch (err) { errorEl.textContent = friendlyError(err.code); }
 });
 
