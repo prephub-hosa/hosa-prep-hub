@@ -850,7 +850,7 @@
   <section>
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
-      <div class="section-label" id="events-count-label">Sixteen events available</div>
+      <div class="section-label" id="events-count-label">Seventeen events available</div>
     </div>
 
     <div class="event-search-wrap">
@@ -1237,6 +1237,26 @@
         </div>
       </a>
 
+      <a href="physical-therapy.html" class="category-card">
+        <div class="card-number">17</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3>Physical <em>Therapy</em></h3>
+        <p class="card-desc">PT foundations, patient assessment, musculoskeletal conditions, therapeutic modalities, exercise science, and neurology — built for HOSA competitors.</p>
+        <div class="card-stats">
+          <span>72 concepts</span>
+          <span class="card-dot">·</span>
+          <span>6 domains</span>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+        <div class="card-progress-wrap" id="cp-physical-therapy">
+          <div class="cp-bar-track"><div class="cp-bar-fill"></div></div>
+          <div class="cp-label"></div>
+        </div>
+      </a>
+
       <a href="emergency-medical-science.html" class="category-card">
         <div class="card-number">16</div>
         <div class="card-meta">HOSA Competitive Event</div>
@@ -1388,7 +1408,7 @@ auth.onAuthStateChanged(user => {
         if (!snap.exists()) { document.body.classList.add('user-active'); return; }
         var data = snap.val();
         var totals = {
-      'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,
+      'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,      'physical-therapy':72,
     };
         Object.keys(data).forEach(function(cat) {
           var el = document.getElementById('cp-' + cat);
