@@ -1,0 +1,2392 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSA Prep Hub — Dental Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #161411;
+    --bg-card: #1e1b17;
+    --ink: #e4dfd5;
+    --ink-soft: #9a948c;
+    --ink-faint: #6a6560;
+    --rule: #302d28;
+    --accent: #c9372d;
+    --accent-soft: #5a2820;
+    --highlight: #252218;
+    --success: #3d7a52;
+    --error: #c04a3f;
+  }
+  /* ── Light mode ── */
+  [data-theme="light"] {
+    --bg: #f4f1ea;
+    --bg-card: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #3d3830;
+    --rule: #1a1a1a;
+    --accent: #a8281f;
+    --accent-soft: #d6b5a8;
+    --highlight: #e8dcc4;
+    --success: #2d5a3d;
+    --error: #8b2a1f;
+  }
+  [data-theme="light"] body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,40,31,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(45,90,61,0.03) 0%, transparent 40%);
+  }
+  [data-theme="light"] body::before { mix-blend-mode: multiply; opacity: 0.35; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(168,40,31,0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(45,90,61,0.06) 0%, transparent 45%);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.1;
+    z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: screen;
+  }
+
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+
+  .brand::before {
+    content: '✢ ';
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .brand-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .user-pill { display: flex; align-items: center; gap: 14px; }
+  .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
+  .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .brand-link:hover { opacity: 0.65; }
+
+  .meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+
+  .category-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .masthead h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .masthead .subtitle {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 48px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    width: fit-content;
+  }
+
+  nav.tabs button {
+    background: var(--bg);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  nav.tabs button:hover { background: var(--highlight); }
+  nav.tabs button.active { background: var(--ink); color: var(--bg); }
+
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-bar .label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-right: 12px;
+    align-self: center;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .chip:hover { background: var(--highlight); }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip .count {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+
+  .view { display: none; animation: fade 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .flashcard-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .card-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-counter .type-badge {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+
+  .flashcard {
+    aspect-ratio: 8 / 5;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.04),
+      0 12px 32px -12px rgba(0,0,0,0.15);
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+    transition: opacity 0.25s ease;
+  }
+
+  .face.front { opacity: 1; }
+  .face.back { opacity: 0; pointer-events: none; background: var(--bg-card); }
+  .flashcard.flipped .face.front { opacity: 0; pointer-events: none; }
+  .flashcard.flipped .face.back { opacity: 1; pointer-events: auto; }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px;
+    right: 20px; bottom: 20px;
+    border: 1px solid var(--ink-faint);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .face .corner {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .face .corner.right { left: auto; right: 28px; }
+
+  .term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .term em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .definition {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 600px;
+    color: var(--ink);
+  }
+
+  .example {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink-faint);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .example-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-controls .nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    padding: 11px 22px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--highlight); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btns .btn { padding: 10px 16px; }
+  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+  /* ── Deck progress line ── */
+  .deck-progress-line {
+    text-align: center; font-size: 12px; color: var(--ink-faint);
+    margin: -4px 0 14px; letter-spacing: 0.03em;
+  }
+  /* ── Know-it skip button ── */
+  .know-it-btn {
+    display: inline-block; margin-top: 10px;
+    background: none; border: 1px solid var(--ink-faint);
+    color: var(--ink-faint); font-size: 11px; padding: 4px 12px;
+    border-radius: 20px; cursor: pointer; font-family: Georgia, serif;
+    letter-spacing: 0.04em; transition: color 0.15s, border-color 0.15s;
+  }
+  .know-it-btn:hover { border-color: var(--success); color: var(--success); }
+  /* ── Rating hint ── */
+  .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
+  .next-review-badge { text-align: center; font-size: 12px; color: var(--accent); letter-spacing: 0.02em; min-height: 16px; margin: 6px 0 0; opacity: 0; transition: opacity 0.5s ease; }
+  /* ── Session complete ── */
+  #session-complete { text-align: center; padding: 48px 20px 32px; }
+  #session-complete .sc-icon { font-size: 44px; color: var(--success); margin-bottom: 12px; }
+  #session-complete .sc-title { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+  #session-complete .sc-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; line-height: 1.6; max-width: 340px; margin-left: auto; margin-right: auto; }
+  #session-complete .sc-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .quiz-stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-question { margin-bottom: 40px; }
+
+  .quiz-prompt {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .quiz-term {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .quiz-options { display: grid; gap: 12px; }
+
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    line-height: 1.45;
+  }
+
+  .option:hover { background: var(--highlight); }
+
+  .option .letter {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 24px;
+    border-right: 1px solid var(--ink-faint);
+    padding-right: 16px;
+  }
+
+  .option.correct { background: #e6efe0; border-color: var(--success); color: var(--success); }
+  .option.correct .letter { color: var(--success); border-color: var(--success); }
+  .option.incorrect { background: #f5e4e0; border-color: var(--error); color: var(--error); }
+  .option.incorrect .letter { color: var(--error); border-color: var(--error); }
+  .option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: var(--bg-card);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fade 0.3s ease; }
+
+  .quiz-feedback .verdict {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .quiz-feedback.correct { border-color: var(--success); }
+  .quiz-feedback.correct .verdict { color: var(--success); }
+  .quiz-feedback.incorrect { border-color: var(--error); }
+  .quiz-feedback.incorrect .verdict { color: var(--error); }
+
+  .quiz-feedback .explain {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .results {
+    text-align: center;
+    padding: 60px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .results .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(80px, 14vw, 160px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+  }
+
+  .results .score-num .of {
+    color: var(--ink-faint);
+    font-size: 0.5em;
+    font-style: italic;
+  }
+
+  .results .label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin: 16px 0 32px;
+  }
+
+  .results .message {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  .test-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .test-intro::before {
+    content: 'Examination';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .test-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .test-intro p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .test-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .spec-item .spec-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .spec-item .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .timer-bar {
+    position: sticky;
+    top: 61px;
+    background: var(--bg);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    margin-bottom: 40px;
+  }
+
+  .timer {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.warning { color: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 50% { opacity: 0.5; } }
+
+  .timer-progress {
+    flex: 1;
+    margin: 0 32px;
+    height: 2px;
+    background: var(--ink-faint);
+    opacity: 0.2;
+    position: relative;
+  }
+
+  .timer-progress .fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .stat-card .stat-label {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card .stat-val .unit { font-size: 20px; color: var(--ink-faint); font-style: italic; }
+  .stat-card.accent .stat-val { color: var(--accent); }
+
+  .mastery-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mastery-section .section-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+
+  .mastery-row .cat-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--ink-faint);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mastery-bar-bg { position: absolute; inset: 0; background: var(--ink); opacity: 0.08; }
+  .mastery-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); transition: width 0.6s ease; }
+
+  .mastery-pct {
+    font-family: 'Cormorant Garamond', 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .reset-btn { margin-top: 40px; color: var(--ink-soft); }
+
+  .sr-help {
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0; line-height: 1;
+    margin-left: 6px;
+    transition: all 0.15s;
+  }
+  .sr-help:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .sr-info {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--ink);
+    padding: 18px 22px;
+    max-width: 460px;
+    width: 90vw;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    z-index: 20;
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+  }
+  .sr-info.show { display: block; }
+  .sr-info strong { font-weight: 700; color: var(--accent); }
+  .sr-toggle-label { position: relative; }
+
+  .flash-level-row { margin-top: 28px; text-align: center; }
+  .flash-level {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.75;
+    user-select: none;
+  }
+  .sr-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sr-toggle-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .sr-toggle-label:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .sr-toggle-label { font-size: 13px; }
+  }
+
+  @media (max-width: 760px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 20px 60px; }
+    .masthead { grid-template-columns: 1fr; gap: 16px; }
+    .masthead .subtitle { text-align: left; }
+    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { white-space: nowrap; min-height: 44px; }
+    .test-specs { grid-template-columns: 1fr; gap: 12px; }
+    .mastery-row { grid-template-columns: 1fr; gap: 8px; }
+    .card-controls { flex-direction: column; gap: 12px; }
+    .card-controls > * { width: 100%; justify-content: center; }
+    .btn { min-height: 44px; }
+    .rating-btns .btn { flex: 1; min-height: 48px; }
+    .face { padding: 32px 24px; }
+    .results { padding: 40px 24px; }
+    .test-intro { padding: 32px 24px; }
+    .option { padding: 16px 18px; }
+    .progress-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 14px 48px; }
+    /* ── Mobile flashcard: consistent height, no jump between front/back ── */
+    .flashcard { aspect-ratio: unset; min-height: 230px; overflow: hidden; perspective: none; }
+    .flashcard-inner { min-height: 230px; height: auto !important; transform-style: flat !important; transition: none !important; }
+    .flashcard.flipped .flashcard-inner { transform: none !important; }
+    .face {
+      position: relative !important; inset: auto !important;
+      width: 100%; box-sizing: border-box;
+      min-height: 230px; height: auto !important; max-height: 58vh;
+      padding: 22px 18px; overflow-y: auto;
+      word-break: break-word; overflow-wrap: break-word; hyphens: auto;
+      transform: none !important; backface-visibility: visible !important;
+    }
+    .face.back { display: none !important; }
+    .flashcard.flipped .face.front { display: none !important; }
+    .flashcard.flipped .face.back { display: flex !important; }
+    .term { font-size: clamp(18px, 5vw, 26px); }
+    .definition { font-size: 15px; line-height: 1.5; }
+    .option { padding: 14px; font-size: 16px; }
+    .quiz-options { gap: 8px; }
+    .results { padding: 28px 16px; }
+    .test-intro { padding: 24px 16px; }
+    .progress-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-card .stat-val { font-size: 40px; }
+    .spec-item .spec-val { font-size: 22px; }
+    /* ── Mobile tabs: full-width, compact ── */
+    nav.tabs { width: 100%; margin-bottom: 28px; }
+    nav.tabs button { flex: 1; padding: 11px 4px; font-size: 12px; letter-spacing: 0; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .quiz-question { margin-bottom: 20px; }
+  }
+
+  .streak-badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .streak-badge strong {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: -0.02em;
+  }
+  .resume-banner {
+    background: var(--highlight);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    animation: fade 0.3s ease;
+  }
+  /* ── Quiz progress bar ── */
+  .quiz-bar-track { height: 3px; background: var(--border); border-radius: 2px; margin: -4px 0 22px; }
+  .quiz-bar-fill  { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; width: 0; }
+  /* ── Recent quiz history ── */
+  .quiz-hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .quiz-hist-date { color: var(--ink-faint); min-width: 76px; font-size: 12px; flex-shrink: 0; }
+  .quiz-hist-bar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .quiz-hist-bar { height: 100%; background: var(--accent); border-radius: 3px; min-width: 3px; }
+  .quiz-hist-pct { color: var(--ink-soft); min-width: 74px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  /* ── Due Today stat accent ── */
+  #stat-due { color: var(--accent); }
+  @keyframes _pl-spin  { to { transform: rotate(360deg); } }
+  @keyframes _score-pop { 0%{transform:scale(0.82);opacity:0.6} 55%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style id="enhancements-v2">
+  html { scroll-behavior: smooth; }
+  button, a { transition: color 0.18s ease, background-color 0.18s ease,
+              border-color 0.18s ease, box-shadow 0.2s ease, opacity 0.18s ease; }
+  button:not(:disabled):active { transform: scale(0.985); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+<style id="enhancements-v2-study">
+  nav.tabs button { transition: background 0.18s ease, color 0.18s ease; }
+  .category-bar button { transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+  .option { transition: border-color 0.18s ease, background 0.18s ease; }
+  .stat-card { transition: box-shadow 0.22s ease; }
+  .btn { transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; }
+  .btn-primary:hover:not(:disabled), .btn.primary:hover:not(:disabled) {
+    box-shadow: 0 6px 14px -6px rgba(0,0,0,0.25);
+  }
+  .flashcard, .flashcard *, .face, .face * { animation: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <div class="user-pill">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" id="btn-signout">Sign Out</button>
+  </div>
+</header>
+<div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
+  ⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
+  <a href="index.html" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
+</div>
+
+<main>
+  <div class="masthead">
+    <div>
+      <div class="category-eyebrow">Category 17 — Physical Therapy</div>
+      <h1>Dental<br><em>Science</em>.</h1>
+    </div>
+    <div class="subtitle">A study companion for Dental anatomy, oral diseases, preventive dentistry, restorative procedures, dental materials, and infection control — built for HOSA competitors.</div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="flashcards">Flashcards</button>
+    <button data-view="quiz">Practice Quiz</button>
+    <button data-view="test">Timed Test</button>
+    <button data-view="progress">Progress</button>
+  </nav>
+
+  <!-- FLASHCARDS VIEW -->
+  <div id="page-loader" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;transition:opacity 0.25s ease"><div style="width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:_pl-spin 0.7s linear infinite"></div></div>
+  <section class="view active" id="view-flashcards">
+    <div class="category-bar" id="flash-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div id="resume-banner" class="resume-banner" style="display:none"></div>
+    <div class="flashcard-stage">
+      <div class="card-counter">
+        <span id="flash-progress">—</span>
+        <span class="streak-badge" id="streak-badge" style="display:none"><strong id="streak-num">0</strong> day streak</span>
+        <label class="sr-toggle-label">
+          <input type="checkbox" id="sr-toggle" checked>
+          <span>Smart Review</span>
+          <button type="button" class="sr-help" id="sr-help" aria-label="What is Smart Review?">?</button>
+        </label>
+        <span class="sr-info" id="sr-info" aria-hidden="true">
+          <strong>Smart Review</strong> prioritizes cards you're weak on and reduces cards you've mastered. The five dots (○ through ●) show your mastery level — "Got it" adds a dot, "Missed it" drops two. New terms mix in each session until you've seen the full deck. Turn off for a plain shuffle.
+        </span>
+      </div>
+
+      <p id="deck-progress" class="deck-progress-line"></p>
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span class="corner">Concept</span>
+            <span class="corner right" id="flash-cat-front"></span>
+            <div class="term" id="flash-front-term"></div>
+            <div class="flash-level-row"><span id="flash-level" class="flash-level">○○○○○</span></div>
+            <div class="flip-hint">↻ tap to reveal</div>
+            <button class="know-it-btn" id="flash-know-it" title="Mark as already known — jumps to SR level 5">★ Already know this</button>
+          </div>
+          <div class="face back">
+            <span class="corner">Explanation</span>
+            <span class="corner right" id="flash-cat-back"></span>
+            <div class="definition" id="flash-back-def"></div>
+            <div class="example" id="flash-back-ex">
+              <span class="example-label">Example</span>
+              <span id="flash-back-ex-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="btn" id="flash-prev">← Previous</button>
+        <div class="rating-btns">
+          <button class="btn miss" id="flash-miss">Missed it</button>
+          <button class="btn got" id="flash-got">Got it</button>
+        </div>
+        <button class="btn primary" id="flash-next">Next →</button>
+      </div>
+      <p id="next-review-badge" class="next-review-badge"></p>
+      <p class="rating-hint">Tap to reveal &middot; "Got it" / "Missed it" trains Smart Review &middot; G&thinsp;/&thinsp;M keys work too &middot; saves automatically</p>
+      <div id="session-complete" style="display:none">
+        <div class="sc-icon">✓</div>
+        <h3 class="sc-title">Session complete!</h3>
+        <p id="sc-stats" class="sc-sub"></p>
+        <p id="sc-deck-progress" class="sc-sub" style="margin-top:0;opacity:0.75;font-size:13px;"></p>
+        <p id="sc-srs-schedule" class="sc-sub" style="margin-top:0;opacity:0.6;font-size:12px;letter-spacing:0.01em;"></p>
+        <div class="sc-btns">
+          <button class="btn primary" id="sc-more">Study 20 more →</button>
+          <button class="btn" id="sc-quiz">Switch to quiz →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="category-bar" id="quiz-cats">
+      <span class="label">Filter</span>
+    </div>
+
+    <div class="quiz-stage" id="quiz-stage">
+      <div class="quiz-header">
+        <span id="quiz-progress">Question 01 of 10</span>
+        <span id="quiz-score">Score: 0 / 0</span>
+      </div>
+      <div class="quiz-bar-track"><div class="quiz-bar-fill" id="quiz-bar-fill"></div></div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-term" id="quiz-term"></div>
+      </div>
+
+      <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="quiz-feedback" id="quiz-feedback">
+        <div class="verdict" id="quiz-verdict"></div>
+        <div class="explain" id="quiz-explain"></div>
+      </div>
+
+      <div class="card-controls" style="margin-top: 32px;">
+        <button class="btn" id="quiz-restart">↻ Restart</button>
+        <button class="btn primary" id="quiz-next" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <div class="results" id="quiz-results" style="display: none;">
+      <div class="score-num"><span id="final-score">0</span><span class="of">/<span id="final-total">10</span></span></div>
+      <div class="label">Practice Complete</div>
+      <div class="message" id="quiz-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="quiz-review-misses">Review My Misses</button>
+        <button class="btn primary" id="quiz-retry">Run It Back →</button>
+      </div>
+      <div id="quiz-missed-list" style="display:none;margin-top:28px;text-align:left;border-top:1px solid var(--border,#302d28);padding-top:18px;"></div>
+    </div>
+  </section>
+
+  <!-- TIMED TEST VIEW -->
+  <section class="view" id="view-test">
+    <div class="test-intro" id="test-intro">
+      <h2>The HOSA Physical Therapy Examination</h2>
+      <p>A timed assessment modeled on competition conditions. You'll be shown physical therapy terms drawn from all topic areas — PT foundations, patient assessment, musculoskeletal conditions, modalities, therapeutic exercise, and neurology. Select the correct definition. No retries, no feedback until the end.</p>
+      <p>Take a breath. Keep moving. Trust what you know.</p>
+
+      <div class="test-specs">
+        <div class="spec-item">
+          <div class="spec-label">Questions</div>
+          <div class="spec-val">25</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Time Limit</div>
+          <div class="spec-val">12:00</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Format</div>
+          <div class="spec-val">M/C</div>
+        </div>
+      </div>
+
+      <button class="btn accent" id="test-begin" style="width: 100%; padding: 16px;">Begin Examination</button>
+    </div>
+
+    <div id="test-active" style="display: none;">
+      <div class="timer-bar">
+        <div class="timer" id="test-timer">12:00</div>
+        <div class="timer-progress"><div class="fill" id="test-timer-fill" style="width: 100%"></div></div>
+        <div class="meta" id="test-progress">01 / 25</div>
+      </div>
+
+      <div class="quiz-stage">
+        <div class="quiz-question">
+          <div class="quiz-prompt">How would you define this?</div>
+          <div class="quiz-term" id="test-term"></div>
+        </div>
+        <div class="quiz-options" id="test-options"></div>
+      </div>
+    </div>
+
+    <div id="test-results" class="results" style="display: none;">
+      <div class="score-num"><span id="test-final-score">0</span><span class="of">/<span id="test-final-total">25</span></span></div>
+      <div class="label">Examination Complete</div>
+      <div class="message" id="test-message"></div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn" id="test-review">Review Misses</button>
+        <button class="btn primary" id="test-again">Take Again →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS VIEW -->
+  <section class="view" id="view-progress">
+    <div id="due-review-cta" style="display:none;margin-bottom:24px;padding:18px 22px;background:var(--accent-soft,rgba(169,40,31,0.12));border-left:3px solid var(--accent);border-radius:2px;">
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;color:var(--accent);margin-bottom:6px;"><span id="due-cta-count">0</span> cards due for review</div>
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5;">These cards are scheduled to come back today based on your spaced repetition schedule.</div>
+      <button onclick="startDueReview()" style="background:var(--accent);color:var(--bg);border:none;padding:9px 22px;font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;cursor:pointer;border-radius:2px;letter-spacing:0.01em;">Start Review →</button>
+    </div>
+    <div class="progress-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cards Studied</div>
+        <div class="stat-val" id="stat-studied">0</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Mastered</div>
+        <div class="stat-val" id="stat-mastered">0</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:11px;color:var(--ink-faint);margin-top:4px;" id="stat-mastered-label"></div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Day Streak</div>
+        <div class="stat-val" id="stat-streak"><span id="stat-streak-val">0</span><span class="unit">d</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Taken</div>
+        <div class="stat-val" id="stat-quizzes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Score</div>
+        <div class="stat-val" id="stat-avg">0<span class="unit">%</span></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Due Today</div>
+      <div class="stat-val" id="stat-due">0</div>
+    </div>
+
+    <div class="mastery-section" style="margin-bottom:32px">
+      <h3>Recent Quiz Scores</h3>
+      <div class="section-sub">Last 6 practice sessions</div>
+      <div id="quiz-history" style="margin-top:14px"></div>
+    </div>
+    <div class="mastery-section">
+      <h3>Mastery by Category</h3>
+      <div class="section-sub">Percentage of terms marked "got it" at least once</div>
+      <div id="mastery-list"></div>
+    </div>
+
+    <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA — HOSA Emergency Medical Science
+// ══════════════════════════════════════════════════════════════
+const TERMS = [
+  { term: "Crown (Anatomy)", type: "concept", category: "anatomy", meaning: "The visible portion of a tooth above the gum line, covered by enamel; the functional surface used for chewing.", example: "The crown of the upper first molar has four cusps designed to grind food efficiently." },
+  { term: "Root", type: "concept", category: "anatomy", meaning: "The portion of the tooth embedded in the alveolar bone, covered by cementum and attached to bone via the periodontal ligament.", example: "Maxillary molars typically have three roots — mesiobuccal, distobuccal, and palatal." },
+  { term: "Enamel", type: "concept", category: "anatomy", meaning: "The hardest substance in the human body; the highly mineralized outer covering of the tooth crown, produced by ameloblasts before eruption.", example: "Once formed, enamel cannot regenerate — acid erosion and caries permanently destroy it." },
+  { term: "Dentin", type: "concept", category: "anatomy", meaning: "The calcified tissue beneath enamel and cementum that forms the bulk of the tooth; contains dentinal tubules connecting to the pulp.", example: "Exposed dentin causes hypersensitivity because dentinal tubules transmit stimuli directly to pulp nerves." },
+  { term: "Pulp", type: "concept", category: "anatomy", meaning: "The soft connective tissue at the center of the tooth containing nerves, blood vessels, and lymphatics; responsible for tooth vitality and sensation.", example: "Deep caries that reach the pulp cause irreversible pulpitis, requiring root canal therapy." },
+  { term: "Cementum", type: "concept", category: "anatomy", meaning: "The calcified tissue covering the root surface; provides attachment for the periodontal ligament fibers (Sharpey fibers).", example: "Cementum is softer than enamel and highly susceptible to root caries when exposed by gingival recession." },
+  { term: "Periodontal Ligament (PDL)", type: "concept", category: "anatomy", meaning: "The connective tissue fibers anchoring the tooth root to the alveolar bone; contains Sharpey fibers, blood vessels, nerves, and proprioceptors.", example: "The PDL acts as a shock absorber during chewing and provides sensation for occlusal pressure." },
+  { term: "Alveolar Bone", type: "concept", category: "anatomy", meaning: "The bone of the maxilla and mandible that surrounds and supports the tooth roots; remodels in response to occlusal forces.", example: "Periodontal disease destroys alveolar bone, reducing support and eventually causing tooth mobility and loss." },
+  { term: "Gingiva", type: "concept", category: "anatomy", meaning: "The mucosal tissue (gum) surrounding the teeth and covering the alveolar bone; divided into free, attached, and interdental gingiva.", example: "Healthy gingiva is firm, pink, and stippled with a knife-edged margin that fits snugly around the tooth." },
+  { term: "Deciduous Dentition", type: "concept", category: "anatomy", meaning: "The primary (baby) teeth; 20 total (10 per arch) that erupt between 6 months and 3 years and are replaced by permanent teeth.", example: "The deciduous dentition includes central and lateral incisors, canines, and first and second molars in each quadrant." },
+  { term: "Permanent Dentition", type: "concept", category: "anatomy", meaning: "The adult teeth; 32 total (including third molars) that replace deciduous teeth beginning around age 6.", example: "The permanent dentition adds premolars and a third molar to the arch pattern established by deciduous teeth." },
+  { term: "Incisors", type: "concept", category: "anatomy", meaning: "The eight anterior cutting teeth (four maxillary, four mandibular) with a single root and a blade-like crown for cutting food.", example: "Maxillary central incisors are the most prominent teeth and are the first permanent teeth affected by trauma." },
+  { term: "Canines (Cuspids)", type: "concept", category: "anatomy", meaning: "The four cornerstone teeth with a single long root and a pointed cusp; designed for tearing and provide canine guidance in lateral excursion.", example: "Canines have the longest roots of all teeth and are the last anterior teeth to be lost to periodontal disease." },
+  { term: "Premolars (Bicuspids)", type: "concept", category: "anatomy", meaning: "The eight posterior teeth between canines and molars that replace deciduous molars; have two cusps and assist in chewing and tearing.", example: "First premolars often have two roots and are frequently extracted for orthodontic space closure." },
+  { term: "Molars", type: "concept", category: "anatomy", meaning: "The twelve large posterior teeth (including wisdom teeth) with multiple cusps designed for grinding food; have two or three roots.", example: "First molars are the first permanent teeth to erupt around age 6 and most commonly affected by caries." },
+  { term: "Dental Caries", type: "concept", category: "diseases", meaning: "Tooth decay caused by acid produced when oral bacteria (especially Streptococcus mutans) ferment dietary carbohydrates, demineralizing enamel and dentin.", example: "Interproximal caries between molars are best detected by bitewing radiographs before they are clinically visible." },
+  { term: "Gingivitis", type: "concept", category: "diseases", meaning: "Reversible inflammation of the gingiva caused by plaque accumulation; characterized by redness, swelling, and bleeding on probing without bone loss.", example: "Improving home care and receiving a professional cleaning resolved the patient's generalized gingivitis within two weeks." },
+  { term: "Periodontitis", type: "concept", category: "diseases", meaning: "Irreversible infection of the periodontium resulting in destruction of the periodontal ligament and alveolar bone; a leading cause of tooth loss in adults.", example: "Radiographs revealed horizontal bone loss consistent with Stage III periodontitis requiring scaling and root planing." },
+  { term: "Dental Abscess", type: "concept", category: "diseases", meaning: "A localized collection of pus caused by bacterial infection, originating from the pulp (periapical abscess) or periodontal tissues (periodontal abscess).", example: "The patient presented with facial swelling and severe throbbing pain from a periapical abscess on tooth #19." },
+  { term: "Oral Cancer", type: "concept", category: "diseases", meaning: "Malignant neoplasms affecting the lips, tongue, floor of mouth, palate, or oropharynx; most are squamous cell carcinomas linked to tobacco, alcohol, and HPV.", example: "A white, non-healing ulcer on the lateral border of the tongue warranted immediate biopsy to rule out squamous cell carcinoma." },
+  { term: "Malocclusion", type: "concept", category: "diseases", meaning: "Misalignment of the teeth or incorrect jaw relationships classified by Angle's classification (Class I, II, III); affects chewing, speech, and aesthetics.", example: "Class II malocclusion with a large overjet was corrected with orthodontic treatment and functional appliances." },
+  { term: "Bruxism", type: "concept", category: "diseases", meaning: "Involuntary clenching or grinding of teeth, often during sleep; leads to tooth wear, muscle pain, and temporomandibular disorders.", example: "Severe attrition of anterior teeth and masseter hypertrophy confirmed a diagnosis of sleep bruxism; a night guard was fabricated." },
+  { term: "Xerostomia", type: "concept", category: "diseases", meaning: "Dry mouth resulting from reduced salivary flow; increases caries risk significantly and is commonly caused by medications, radiation therapy, or systemic disease.", example: "The oncology patient developed rampant cervical caries following radiation-induced xerostomia and required aggressive fluoride therapy." },
+  { term: "Temporomandibular Disorder (TMD)", type: "concept", category: "diseases", meaning: "A group of conditions affecting the temporomandibular joint and masticatory muscles, causing jaw pain, clicking, and limited opening.", example: "The patient's TMD symptoms — clicking, pain, and limited opening — were managed with a stabilization splint and physical therapy." },
+  { term: "Dental Hypersensitivity", type: "concept", category: "diseases", meaning: "Sharp, transient pain in response to thermal, evaporative, tactile, or osmotic stimuli caused by exposed dentin and open dentinal tubules.", example: "Gingival recession exposed root surfaces and caused dentinal hypersensitivity to cold air that was treated with desensitizing toothpaste." },
+  { term: "Halitosis", type: "concept", category: "diseases", meaning: "Chronic bad breath primarily caused by volatile sulfur compounds produced by anaerobic bacteria on the tongue dorsum and in periodontal pockets.", example: "Treating the patient's periodontitis and instructing tongue cleaning resolved the chronic halitosis that had not responded to mouthwash alone." },
+  { term: "Fluoride", type: "concept", category: "preventive", meaning: "A mineral that prevents caries by remineralizing early lesions, incorporating into enamel as fluorapatite (more acid-resistant), and inhibiting bacterial enzymes.", example: "Community water fluoridation at 0.7 ppm remains the most cost-effective public health measure for caries prevention." },
+  { term: "Dental Sealants", type: "concept", category: "preventive", meaning: "Thin resin coatings applied to the pits and fissures of posterior teeth to physically block bacterial colonization; most effective on newly erupted molars.", example: "Sealants placed on the first permanent molars of 7-year-olds reduced occlusal caries incidence by over 70% at two-year follow-up." },
+  { term: "Dental Plaque", type: "concept", category: "preventive", meaning: "A structured biofilm of bacteria embedded in an extracellular matrix that adheres to tooth surfaces; the primary etiologic agent of caries and periodontal disease.", example: "Disclosing solution revealed heavy plaque accumulation at the gingival margin that the patient was consistently missing when brushing." },
+  { term: "Calculus (Tartar)", type: "concept", category: "preventive", meaning: "Mineralized (calcified) plaque that has hardened on the tooth surface; cannot be removed by brushing and requires professional instrumentation.", example: "Heavy supragingival calculus was removed during prophylaxis with an ultrasonic scaler before fine hand instrumentation." },
+  { term: "Oral Prophylaxis", type: "concept", category: "preventive", meaning: "A professional dental cleaning (scaling and polishing) to remove plaque, calculus, and stains; recommended every 6 months for healthy patients.", example: "The recall prophylaxis appointment included supragingival scaling, coronal polishing, and updated radiographs." },
+  { term: "Bass Brushing Technique", type: "concept", category: "preventive", meaning: "The recommended brushing method: bristles placed at a 45° angle to the gingival margin with short back-and-forth vibrations to clean sulcular areas.", example: "Instruction in the Bass technique helped the patient remove plaque at the gumline that was causing recurring gingivitis." },
+  { term: "Pit and Fissure", type: "concept", category: "preventive", meaning: "Grooves, pits, and fissures on the occlusal surfaces of posterior teeth; most susceptible sites for caries due to plaque retention and difficult cleaning.", example: "Deep pits on the first molar occlusal surface were sealed prophylactically to prevent caries formation." },
+  { term: "Xylitol", type: "concept", category: "preventive", meaning: "A sugar alcohol that inhibits the growth of Streptococcus mutans and promotes remineralization; used in gums, mints, and toothpastes.", example: "Chewing xylitol gum after meals reduced caries incidence in high-risk patients by disrupting the acid-producing bacteria." },
+  { term: "Chlorhexidine", type: "concept", category: "preventive", meaning: "A broad-spectrum antimicrobial mouthrinse that reduces plaque and gingivitis by binding to oral tissues and releasing slowly; gold standard for chemical plaque control.", example: "Post-surgical chlorhexidine rinses reduced bacterial counts and promoted healing in the periodontal surgery patient." },
+  { term: "Dental Radiograph", type: "concept", category: "preventive", meaning: "A diagnostic X-ray image used to detect caries, bone loss, root abnormalities, and pathology not visible clinically.", example: "Bitewing radiographs detected proximal caries at four interproximal surfaces that were not detectable clinically." },
+  { term: "Amalgam Restoration", type: "concept", category: "procedures", meaning: "A durable posterior filling made from an alloy of mercury (50%), silver, tin, copper, and zinc; condensed and carved into the prepared cavity.", example: "A Class II amalgam restoration replaced the decayed mesial-occlusal surfaces of the mandibular first molar." },
+  { term: "Composite Resin Restoration", type: "concept", category: "procedures", meaning: "A tooth-colored, light-cured polymer restoration bonded directly to tooth structure using acid etching and adhesive; preferred for anterior and aesthetic restorations.", example: "The Class III composite on the mesial of the maxillary lateral incisor restored both function and aesthetics after trauma." },
+  { term: "Root Canal Therapy (Endodontics)", type: "concept", category: "procedures", meaning: "Removal of infected or necrotic pulp tissue, shaping and cleaning of root canals, and sealing with gutta-percha to preserve a non-vital tooth.", example: "Root canal therapy on the abscessed lower molar eliminated the infection and allowed the tooth to be retained with a crown." },
+  { term: "Tooth Extraction", type: "concept", category: "procedures", meaning: "Surgical removal of a tooth from the alveolar socket; may be simple (forceps) or surgical (flap, bone removal) depending on tooth position.", example: "Impacted third molars requiring surgical flap elevation and sectioning were referred to an oral surgeon for extraction." },
+  { term: "Crown Restoration", type: "concept", category: "procedures", meaning: "A full-coverage restoration fabricated from porcelain, metal, or PFM that encases the entire clinical crown; used for severely damaged or root-canal-treated teeth.", example: "A porcelain-fused-to-metal crown was placed on the endodontically treated molar to restore function and prevent fracture." },
+  { term: "Fixed Partial Denture (Bridge)", type: "concept", category: "procedures", meaning: "A non-removable prosthetic device that replaces one or more missing teeth using adjacent natural teeth (abutments) to support a pontic.", example: "A three-unit bridge using the second premolar and second molar as abutments replaced the missing first molar." },
+  { term: "Dental Implant", type: "concept", category: "procedures", meaning: "A titanium post surgically placed in the alveolar bone to replace a missing tooth root; integrates through osseointegration and supports a crown, bridge, or denture.", example: "A single implant with a porcelain crown replaced the extracted central incisor with a result indistinguishable from natural teeth." },
+  { term: "Scaling and Root Planing (SRP)", type: "concept", category: "procedures", meaning: "Deep cleaning procedure that removes calculus and plaque from below the gum line and smooths root surfaces to reduce bacterial adhesion and promote reattachment.", example: "Quadrant scaling and root planing under local anesthetic reduced probing depths from 6–7 mm to 3–4 mm at re-evaluation." },
+  { term: "Dental Prophylaxis Polishing", type: "concept", category: "procedures", meaning: "Coronal polishing with a rubber cup and prophylaxis paste to remove stain and biofilm from tooth surfaces; performed after scaling.", example: "Fine prophylaxis paste was used to polish all surfaces after ultrasonic scaling, leaving the teeth smooth and stain-free." },
+  { term: "Rubber Dam Isolation", type: "concept", category: "procedures", meaning: "A latex or nitrile sheet held by a frame and clamp to isolate the operative field, preventing contamination and protecting the airway during restorative procedures.", example: "Rubber dam isolation during composite placement prevented moisture contamination that would have compromised the bond strength." },
+  { term: "Local Anesthesia", type: "concept", category: "procedures", meaning: "Injection of anesthetic agents (lidocaine, articaine) to block nerve conduction and achieve pain control for dental procedures; delivered via infiltration or nerve block.", example: "An inferior alveolar nerve block with lidocaine and epinephrine provided profound anesthesia for the mandibular molar restoration." },
+  { term: "Dental Amalgam", type: "concept", category: "materials", meaning: "An alloy of mercury (50%) mixed with an alloy powder of silver, tin, copper, and zinc; self-sealing, durable, and the most studied restorative material.", example: "Amalgam's long clinical history and low cost make it the preferred material for large posterior restorations in high-load areas." },
+  { term: "Composite Resin", type: "concept", category: "materials", meaning: "A tooth-colored restorative material consisting of a resin matrix (BisGMA) reinforced with glass or ceramic filler particles; cured by blue-spectrum light.", example: "Nanofill composite was selected for the anterior restoration because of its superior polishability and aesthetic properties." },
+  { term: "Dental Porcelain", type: "concept", category: "materials", meaning: "A ceramic material used for fabricating crowns, veneers, and bridges; provides excellent aesthetics and biocompatibility but is brittle.", example: "All-ceramic zirconia crowns were chosen for their superior strength and metal-free aesthetics in the aesthetic zone." },
+  { term: "Dental Cement", type: "concept", category: "materials", meaning: "Materials used to lute (cement) indirect restorations, protect the pulp (base/liner), or provide temporary restoration; types include resin, glass ionomer, and ZOE.", example: "Resin cement was used to permanently lute the all-ceramic crown due to its superior bond strength and low solubility." },
+  { term: "Zinc Oxide Eugenol (ZOE)", type: "concept", category: "materials", meaning: "A sedative cement with analgesic and antimicrobial properties; used for temporary restorations, pulp capping, and root canal sealer.", example: "ZOE temporary cement was placed following pulpotomy to soothe the pulp while the permanent crown was being fabricated." },
+  { term: "Glass Ionomer Cement (GIC)", type: "concept", category: "materials", meaning: "A water-based restorative material that bonds chemically to tooth structure and releases fluoride; used for class V restorations and high-caries-risk patients.", example: "Glass ionomer was the material of choice for the cervical restoration in the xerostomic patient due to its fluoride-releasing properties." },
+  { term: "Impression Material", type: "concept", category: "materials", meaning: "Materials used to create accurate negative reproductions of oral structures for fabricating indirect restorations and study models; includes alginate, polyvinyl siloxane (PVS), and polyether.", example: "A polyvinyl siloxane impression captured the crown preparation with sub-millimeter accuracy for the dental laboratory." },
+  { term: "Gypsum Products", type: "concept", category: "materials", meaning: "Calcium sulfate-based materials (plaster, dental stone, die stone) poured into impressions to create positive reproductions for model fabrication.", example: "Type IV die stone was used to pour the impression of the crown preparation to create an accurate working die." },
+  { term: "Acid Etching", type: "concept", category: "materials", meaning: "Application of 37% phosphoric acid to enamel/dentin to create microporosities that allow resin adhesives to penetrate and form micromechanical bonds.", example: "After 15 seconds of enamel etching, the surface appeared frosted white — indicating proper demineralization for bonding." },
+  { term: "Dental Adhesive (Bonding Agent)", type: "concept", category: "materials", meaning: "A resin-based system applied after etching to bond composite or other materials to tooth structure through micromechanical and chemical adhesion.", example: "A seventh-generation self-etch adhesive was applied and light-cured before composite placement to achieve a reliable dentin bond." },
+  { term: "Standard Precautions", type: "concept", category: "infection-control", meaning: "Infection control practices applied to all patients regardless of known infection status, treating blood, saliva, and body fluids as potentially infectious.", example: "Standard precautions require gloves, mask, and eyewear for all patient care — regardless of whether the patient reports any infectious disease." },
+  { term: "Personal Protective Equipment (PPE)", type: "concept", category: "infection-control", meaning: "Protective barriers including gloves, surgical mask, protective eyewear, and gown used to prevent transmission of pathogens in the dental setting.", example: "The dental team donned full PPE — including face shield and N95 — for aerosol-generating procedures." },
+  { term: "Sterilization", type: "concept", category: "infection-control", meaning: "Complete destruction of all microorganisms including bacterial spores; achieved in dentistry primarily by steam autoclave (121°C/15 psi for 15 minutes).", example: "All heat-stable instruments are sterilized in the autoclave between patients; biological indicators confirm sterilization efficacy weekly." },
+  { term: "Disinfection", type: "concept", category: "infection-control", meaning: "The reduction of pathogenic microorganisms on surfaces (not including bacterial spores); used for dental unit surfaces, countertops, and heat-sensitive items.", example: "After chair-side treatment, the dental assistant wiped all surfaces with an EPA-registered intermediate-level disinfectant." },
+  { term: "Autoclave (Steam Sterilizer)", type: "concept", category: "infection-control", meaning: "The most reliable sterilization method for dental instruments; uses pressurized steam (121–134°C) to destroy all microorganisms including spores.", example: "Spore testing with Bacillus stearothermophilus confirms that the autoclave is achieving sterilization; tested weekly per guidelines." },
+  { term: "Periapical Radiograph", type: "concept", category: "infection-control", meaning: "An intraoral X-ray that captures the entire tooth — crown, root, and surrounding bone — used to detect apical pathology, root fractures, and bone loss.", example: "A periapical radiograph revealed a periapical radiolucency consistent with a chronic abscess at the apex of tooth #8." },
+  { term: "Bitewing Radiograph", type: "concept", category: "infection-control", meaning: "An intraoral X-ray showing the crowns and crestal bone of upper and lower posterior teeth on one film; primary method for detecting interproximal caries.", example: "Posterior bitewing radiographs taken at the recall appointment revealed early interproximal decay not visible during clinical examination." },
+  { term: "Panoramic Radiograph", type: "concept", category: "infection-control", meaning: "An extraoral tomographic image showing all teeth, jaws, sinuses, TMJ, and surrounding structures on a single film; used for comprehensive evaluation.", example: "The panoramic radiograph revealed all four impacted third molars and a radiolucent lesion in the left mandible requiring further evaluation." },
+  { term: "ALARA Principle", type: "concept", category: "infection-control", meaning: "'As Low As Reasonably Achievable' — the guiding principle for radiation safety in dentistry; minimize exposure through proper technique, collimation, and protective equipment.", example: "ALARA was applied by using digital sensors (reducing dose by 80%), rectangular collimation, and lead aprons with thyroid collars." },
+  { term: "Spaulding Classification", type: "concept", category: "infection-control", meaning: "A system classifying medical/dental instruments by infection risk: critical (penetrate tissue — must be sterilized), semi-critical (contact mucosa — high-level disinfection), and non-critical (contact intact skin — low-level disinfection).", example: "Dental mirrors are semi-critical instruments and require at minimum high-level disinfection, though sterilization is preferred." },
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+const state = {
+  activeView: 'flashcards',
+  flash: {
+    filter: 'all',
+    index: 0,
+    deck: [],
+    srEnabled: true,
+  },
+  quiz: {
+    filter: 'all',
+    deck: [],
+    index: 0,
+    score: 0,
+    answered: false,
+  },
+  test: {
+    active: false,
+    deck: [],
+    index: 0,
+    answers: [],
+    timer: null,
+    timeLeft: 720,
+  },
+  progress: {
+    studied: new Set(),
+    mastered: new Set(),
+    quizzes: [],
+    byCategory: {},
+    lastMissed: [],
+    srLevels: {},
+    srData:   {},
+    streak: 0,
+    lastStudyDate: null,
+    lastFilter: 'all',
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENCE (Firebase)
+// ══════════════════════════════════════════════════════════════
+const DB_PATH = 'dental-science';
+
+function saveProgress() {
+  const user = firebase.auth().currentUser;
+  const data = {
+    studied:       [...state.progress.studied],
+    mastered:      [...state.progress.mastered],
+    quizzes:       state.progress.quizzes,
+    lastMissed:    state.progress.lastMissed || [],
+    srLevels:      state.progress.srLevels || {},
+    srData:        state.progress.srData   || {},
+    streak:        state.progress.streak || 0,
+    lastStudyDate: state.progress.lastStudyDate || null,
+    lastFilter:    state.flash.filter || 'all',
+  };
+  if (user) {
+    firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
+      .catch(e => console.warn('Could not save progress:', e));
+  } else {
+    try { localStorage.setItem('hosa::' + DB_PATH, JSON.stringify(data)); } catch(e) {}
+    // Mirror a lightweight summary to Firebase so admin can track guest activity
+    try {
+      let gid = localStorage.getItem('hosa-guest-id');
+      if (!gid) {
+        gid = 'g-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+        localStorage.setItem('hosa-guest-id', gid);
+      }
+      firebase.database().ref('guest-stats/' + gid + '/' + DB_PATH).set({
+        studied:    data.studied.length,
+        mastered:   data.mastered.length,
+        questions:  (data.quizzes || []).reduce((s, q) => s + (q.total || 0), 0),
+        quizzes:    (data.quizzes || []).length,
+        lastActive: new Date().toISOString(),
+      }).catch(() => {});
+    } catch(e) {}
+  }
+}
+
+async function loadProgress(uid) {
+  try {
+    if (uid) {
+      const snap = await firebase.database().ref(`users/${uid}/progress/${DB_PATH}`).get();
+      if (snap.exists()) {
+        const data = snap.val();
+        state.progress.studied       = new Set(data.studied    || []);
+        state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.lastMissed    = data.lastMissed || [];
+        state.progress.srLevels      = data.srLevels   || {};
+        state.progress.srData        = data.srData     || {};
+        state.progress.streak        = data.streak        || 0;
+        state.progress.lastStudyDate = data.lastStudyDate || null;
+        state.progress.lastFilter    = data.lastFilter    || 'all';
+      }
+    } else {
+      const raw = localStorage.getItem('hosa::' + DB_PATH);
+      if (raw) {
+        const data = JSON.parse(raw);
+        state.progress.studied       = new Set(data.studied    || []);
+        state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.lastMissed    = data.lastMissed || [];
+        state.progress.srLevels      = data.srLevels   || {};
+        state.progress.streak        = data.streak        || 0;
+        state.progress.lastStudyDate = data.lastStudyDate || null;
+        state.progress.lastFilter    = data.lastFilter    || 'all';
+      }
+    }
+  } catch(e) { console.warn('Could not load progress:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STREAK
+// ══════════════════════════════════════════════════════════════
+function updateStreak() {
+  const today = new Date().toISOString().split('T')[0];
+  if (state.progress.lastStudyDate === today) return;
+  const last = state.progress.lastStudyDate;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  state.progress.streak = (last === yesterday) ? (state.progress.streak || 0) + 1 : 1;
+  state.progress.lastStudyDate = today;
+  updateStreakBadge();
+}
+
+function updateStreakBadge() {
+  const badge = document.getElementById('streak-badge');
+  const num   = document.getElementById('streak-num');
+  if (!badge || !num) return;
+  if (state.progress.streak > 0) {
+    num.textContent = state.progress.streak;
+    badge.style.display = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SPACED REPETITION
+// ══════════════════════════════════════════════════════════════
+const SR_WEIGHTS = [16, 8, 4, 2, 1, 0.5];
+
+function getSRLevel(term) { return state.progress.srLevels[term] || 0; }
+function setSRLevel(term, level) { state.progress.srLevels[term] = Math.max(0, Math.min(5, level)); }
+function bumpSRLevel(term, delta) { setSRLevel(term, getSRLevel(term) + delta); }
+// buildSmartDeck — new/review split so users progress through the full deck.
+//   Unseen cards (never rated) always get priority slots so every term is
+//   eventually seen. Review cards fill remaining slots, weighted by SR level.
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0)
+    return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
+
+  // ── Split pool into unseen and previously-seen cards ──────────────────────
+  const unseen = pool.filter(c => !state.progress.studied.has(c.term));
+  const seen   = pool.filter(c =>  state.progress.studied.has(c.term));
+
+  // Up to half the session is new cards; rest is SR-weighted review
+  const newSlots    = Math.min(Math.ceil(SESSION_SIZE / 2), unseen.length);
+  const reviewSlots = Math.min(SESSION_SIZE - newSlots, seen.length);
+
+  // New cards — plain shuffle (all unseen cards are equal priority)
+  const newCards = shuffle(unseen).slice(0, newSlots);
+
+  // Review cards — SR-weighted pick (struggles first, mastered rarely)
+  function weightedPick(candidates, count) {
+    if (!candidates.length || count <= 0) return [];
+    const w     = candidates.map(c => ({ card: c, w: SR_WEIGHTS[getSRLevel(c.term)] }));
+    const total = w.reduce((s, x) => s + x.w, 0);
+    const win   = Math.min(5, Math.floor(candidates.length / 3));
+    const result = [], recent = [];
+    let att = 0;
+    while (result.length < count && att < count * 20) {
+      att++;
+      let r = Math.random() * total, picked = null;
+      for (const x of w) { r -= x.w; if (r <= 0) { picked = x.card; break; } }
+      if (!picked) picked = w[w.length - 1].card;
+      if (recent.includes(picked.term)) continue;
+      result.push(picked);
+      recent.push(picked.term);
+      if (recent.length > win) recent.shift();
+    }
+    // top-off if weighted loop didn't fill all slots
+    const used = new Set(result.map(c => c.term));
+    const leftover = shuffle(candidates.filter(c => !used.has(c.term)));
+    result.push(...leftover.slice(0, count - result.length));
+    return result;
+  }
+  const reviewCards = weightedPick(seen, reviewSlots);
+
+  // Interleave: new card, review card, new card, review card …
+  // so users don't get all new cards in a block then all reviews
+  const deck = [];
+  let ni = 0, ri = 0;
+  while (ni < newCards.length || ri < reviewCards.length) {
+    if (ni < newCards.length)    deck.push(newCards[ni++]);
+    if (ri < reviewCards.length) deck.push(reviewCards[ri++]);
+  }
+  return deck.slice(0, SESSION_SIZE);
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const pad = n => String(n).padStart(2, '0');
+
+const categories = [...new Set(TERMS.map(t => t.category))];
+const categoryLabel = c => ({
+  'foundations':    'Foundations',
+  'assessment':     'Patient Assessment',
+  'musculoskeletal':'Musculoskeletal',
+  'modalities':     'Modalities',
+  'exercise':       'Therapeutic Exercise',
+  'neurology':      'Neurology',
+})[c] || c;
+
+function filterDeck(filter) {
+  return filter === 'all' ? [...TERMS] : TERMS.filter(t => t.category === filter);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════
+$$('#tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-' + view).classList.add('active');
+    state.activeView = view;
+    if (view === 'progress') renderProgress();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  CATEGORY CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips(containerId, onSelect, currentFilter) {
+  const container = $(containerId);
+  container.innerHTML = '<span class="label">Filter</span>';
+  const all = document.createElement('button');
+  all.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+  all.innerHTML = `All <span class="count">${TERMS.length}</span>`;
+  all.onclick = () => onSelect('all');
+  container.appendChild(all);
+  categories.forEach(cat => {
+    const count = TERMS.filter(t => t.category === cat).length;
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentFilter === cat ? ' active' : '');
+    b.innerHTML = `${categoryLabel(cat)} <span class="count">${count}</span>`;
+    b.onclick = () => onSelect(cat);
+    container.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function srDots(level) {
+  const filled = Math.min(level, 5);
+  return '●'.repeat(filled) + '○'.repeat(5 - filled);
+}
+
+let _sessGot = 0, _sessMissed = 0;
+
+function skipKnown() {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  state.progress.studied.add(card.term);
+  state.progress.mastered.add(card.term);
+  markKnown(card.term);
+  saveProgress();
+  nextFlashcard(1);
+}
+
+function showSessionComplete() {
+  const rated = _sessGot + _sessMissed;
+  let msg = rated > 0
+    ? `You rated ${rated} card${rated !== 1 ? 's' : ''} — ${_sessGot} got it, ${_sessMissed} missed.`
+    : 'You reached the end of this session.';
+  if (_sessGot > _sessMissed && rated > 0) msg += ' Great work!';
+  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it!';
+  document.getElementById('sc-stats').textContent = msg;
+
+  try {
+    const pool       = filterDeck(state.flash.filter);
+    const introduced = pool.filter(c => state.progress.studied.has(c.term)).length;
+    const allSeen    = introduced >= pool.length;
+    const pct        = Math.round(introduced / pool.length * 100);
+    const dpEl = document.getElementById('sc-deck-progress');
+    if (dpEl) dpEl.textContent = allSeen
+      ? `You've now seen all ${pool.length} terms! Switch to the quiz to test yourself.`
+      : `${introduced} of ${pool.length} terms introduced (${pct}%) — keep going to unlock the rest.`;
+    const moreBtn = document.getElementById('sc-more');
+    if (moreBtn) moreBtn.textContent = allSeen
+      ? 'Review weak cards →'
+      : `Continue (${pool.length - introduced} new terms left) →`;
+  } catch(e) {}
+
+  try {
+    const _today2 = getTodayStr();
+    const _pool2  = filterDeck(state.flash.filter);
+    const _tom = new Date(); _tom.setDate(_tom.getDate()+1);
+    const _tomStr = _tom.toISOString().slice(0,10);
+    const _in4 = new Date(); _in4.setDate(_in4.getDate()+4);
+    const _in4Str = _in4.toISOString().slice(0,10);
+    let _dueTom=0, _due4=0, _later=0;
+    _pool2.forEach(c => {
+      if (!state.progress.studied.has(c.term)) return;
+      const _d = getSRData(c.term);
+      if (_d.due <= _today2) return;
+      if (_d.due <= _tomStr)  _dueTom++;
+      else if (_d.due <= _in4Str) _due4++;
+      else _later++;
+    });
+    const _parts = [];
+    if (_dueTom > 0) _parts.push(_dueTom + ' due tomorrow');
+    if (_due4  > 0)  _parts.push(_due4  + ' due within 4 days');
+    if (_later > 0)  _parts.push(_later + ' well spaced');
+    const _schedEl = document.getElementById('sc-srs-schedule');
+    if (_schedEl && _parts.length) _schedEl.textContent = _parts.join(' · ');
+  } catch(e) {}
+  $('#flashcard').style.display = 'none';
+  try{gtag('event','session_complete',{event_category:DB_PATH,cards_got:_sessGot,cards_missed:_sessMissed});}catch(e){}
+  document.querySelector('.card-controls').style.display = 'none';
+  document.getElementById('session-complete').style.display = '';
+}
+
+// Start reviewing only the SRS-due cards
+function startDueReview() {
+  try {
+    const _today = getTodayStr();
+    const _due = TERMS.filter(c =>
+      state.progress.studied.has(c.term) && getSRData(c.term).due <= _today
+    );
+    if (_due.length === 0) return;
+    state.flash.deck = _due.slice().sort(() => Math.random() - 0.5);
+    state.flash.index = 0;
+    // Switch to flashcard tab
+    var _flashBtn = document.querySelector('#tabs button[data-view="flashcards"]');
+    if (_flashBtn) _flashBtn.click();
+    else {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      var _fv = document.getElementById('view-flashcards');
+      if (_fv) _fv.classList.add('active');
+    }
+    renderFlashcard();
+  } catch(e) { console.warn('startDueReview:', e); }
+}
+
+function initFlashcards() {
+  const srToggle = document.getElementById('sr-toggle');
+  state.flash.srEnabled = srToggle.checked;
+  srToggle.addEventListener('change', () => {
+    state.flash.srEnabled = srToggle.checked;
+    startFlashcards(state.flash.filter);
+  });
+
+  if (state.progress.lastFilter && state.progress.lastFilter !== 'all') {
+    state.flash.filter = state.progress.lastFilter;
+  }
+  renderChips('#flash-cats', filter => {
+    state.flash.filter = filter;
+    startFlashcards(filter);
+  }, state.flash.filter);
+  startFlashcards(state.flash.filter);
+  updateStreakBadge();
+}
+
+function startFlashcards(filter) {
+  state.flash.filter = filter;
+  renderChips('#flash-cats', f => { state.flash.filter = f; startFlashcards(f); }, filter);
+  const pool = filterDeck(filter);
+  state.flash.deck = buildSmartDeck(pool);
+  state.flash.index = 0;
+  renderFlashcard();
+
+  const banner = document.getElementById('resume-banner');
+  if (state.progress.studied.size > 0 && filter === 'all') {
+    const pct = Math.round(state.progress.studied.size / TERMS.length * 100);
+    banner.style.display = '';
+    banner.textContent = `Picking up where you left off — ${pct}% studied, ${state.progress.mastered.size} mastered.`;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function renderFlashcard() {
+  const deck = state.flash.deck;
+  if (!deck.length) {
+    try { const _dp=document.getElementById('deck-progress'); if(_dp) _dp.textContent='No cards match this filter — try a different category above.'; } catch(e){}
+    document.getElementById('flash-front-term').textContent = 'No cards in this filter.';
+    document.getElementById('flash-back-def').textContent = '';
+    document.getElementById('flash-back-ex-text').textContent = '';
+    return;
+  }
+  const idx = ((state.flash.index % deck.length) + deck.length) % deck.length;
+  state.flash.index = idx;
+  const card = deck[idx];
+  // Reset flip state for each new card
+  const _fc = document.getElementById('flashcard');
+  if (_fc) _fc.classList.remove('flipped');
+  const _nrb = document.getElementById('next-review-badge');
+  if (_nrb) { _nrb.style.opacity = '0'; }
+  document.getElementById('flash-front-term').textContent = card.term;
+  document.getElementById('flash-back-def').textContent = card.meaning;
+  document.getElementById('flash-back-ex-text').textContent = card.example;
+  document.getElementById('flash-cat-front').textContent = categoryLabel(card.category);
+  document.getElementById('flash-cat-back').textContent = categoryLabel(card.category);
+  document.getElementById('flash-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
+  document.getElementById('flash-level').textContent = srDots(getSRLevel(card.term));
+  try { const studied=state.progress.studied,_p=filterDeck(state.flash.filter),_s=_p.filter(c=>studied.has(c.term)).length,_el=document.getElementById('deck-progress'); const _today=getTodayStr(),_due=_p.filter(c=>studied.has(c.term)&&getSRData(c.term).due<=_today).length; if(_el)_el.textContent=_s+' / '+_p.length+' terms introduced'+(_due>0?' · '+_due+' due today':''); } catch(e) {}
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+const SESSION_SIZE = 20;
+
+function nextFlashcard(dir) {
+  const total = state.flash.deck.length;
+  if (dir > 0 && state.flash.index >= total - 1) { showSessionComplete(); return; }
+  state.flash.index = Math.max(0, Math.min(state.flash.index + dir, total - 1));
+  renderFlashcard();
+}
+
+document.getElementById('flash-next').addEventListener('click', () => nextFlashcard(1));
+document.getElementById('flash-prev').addEventListener('click', () => nextFlashcard(-1));
+document.getElementById('flashcard').addEventListener('click', () => {
+  document.getElementById('flashcard').classList.toggle('flipped');
+});
+// Mobile swipe: left → next, right → prev
+(function(){
+  var _swX=0; var _fc=document.getElementById('flashcard');
+  _fc.addEventListener('touchstart',function(e){_swX=e.touches[0].clientX;},{passive:true});
+  _fc.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-_swX;
+    if(Math.abs(dx)>48){if(dx<0)nextFlashcard(1);else nextFlashcard(-1);}
+  },{passive:true});
+})();
+(function(){ const _ki=document.getElementById('flash-know-it'); if(_ki) _ki.addEventListener('click',e=>{e.stopPropagation();skipKnown();}); })();
+
+document.getElementById('flash-got').addEventListener('click', () => {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  state.progress.studied.add(card.term);
+  state.progress.mastered.add(card.term);
+  try{gtag('event','flashcard_got',{event_category:DB_PATH});}catch(e){}
+  updateSR(card.term, true);
+  showNextReview((state.progress.srData||{})[card.term]?.interval||1);
+  updateStreak();
+  saveProgress();
+  _sessGot++;
+  nextFlashcard(1);
+});
+
+document.getElementById('flash-miss').addEventListener('click', () => {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  state.progress.studied.add(card.term);
+  state.progress.mastered.delete(card.term);
+  try{gtag('event','flashcard_missed',{event_category:DB_PATH});}catch(e){}
+  updateSR(card.term, false);
+  showNextReview(1);
+  if (!state.progress.lastMissed) state.progress.lastMissed = [];
+  if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
+  updateStreak();
+  saveProgress();
+  _sessMissed++;
+  nextFlashcard(1);
+});
+
+document.getElementById('sc-more').addEventListener('click', () => {
+  _sessGot = 0; _sessMissed = 0;
+  state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
+  state.flash.index = 0;
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.getElementById('session-complete').style.display = 'none';
+  renderFlashcard();
+});
+document.getElementById('sc-quiz').addEventListener('click', () => {
+  _sessGot = 0; _sessMissed = 0;
+  document.getElementById('session-complete').style.display = 'none';
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.querySelector('#tabs button[data-view="quiz"]').click();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+const QUIZ_SIZE = 10;
+
+function initQuiz() {
+  renderChips('#quiz-cats', filter => { state.quiz.filter = filter; startQuiz(); }, state.quiz.filter);
+  startQuiz();
+}
+
+function startQuiz(useLastMissed = false) {
+  let pool = useLastMissed && state.progress.lastMissed?.length
+    ? TERMS.filter(t => state.progress.lastMissed.includes(t.term))
+    : filterDeck(state.quiz.filter);
+  if (pool.length < 4) pool = [...TERMS];
+  state.quiz.deck   = shuffle(pool).slice(0, QUIZ_SIZE);
+  state.quiz.index  = 0;
+  state.quiz.score  = 0;
+  state.quiz.answered = false;
+  state.quiz.missedTerms = [];
+  if (!state.progress.lastMissed) state.progress.lastMissed = [];
+  document.getElementById('quiz-stage').style.display = '';
+  document.getElementById('quiz-results').style.display = 'none';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const deck = state.quiz.deck;
+  const idx  = state.quiz.index;
+  if (idx >= deck.length) { showQuizResults(); return; }
+  const card = deck[idx];
+  document.getElementById('quiz-progress').textContent = `Question ${pad(idx + 1)} of ${pad(deck.length)}`;
+  try{var _qb=document.getElementById('quiz-bar-fill');if(_qb)_qb.style.width=(state.quiz.index/state.quiz.deck.length*100)+'%';}catch(e){}
+  document.getElementById('quiz-score').textContent    = `Score: ${state.quiz.score} / ${idx}`;
+  document.getElementById('quiz-term').textContent     = card.term;
+  document.getElementById('quiz-feedback').className   = 'quiz-feedback';
+  document.getElementById('quiz-next').disabled        = true;
+  state.quiz.answered = false;
+
+  const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
+  const options = shuffle([card, ...distractors]);
+  const letters = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('quiz-options');
+  container.innerHTML = '';
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.meaning}`;
+    btn.addEventListener('click', () => {
+      if (state.quiz.answered) return;
+      state.quiz.answered = true;
+      const correct = opt.term === card.term;
+      updateSR(card.term, correct);
+      if (correct) state.quiz.score++;
+      else {
+        if (!state.progress.lastMissed) state.progress.lastMissed = [];
+        if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
+        if (!state.quiz.missedTerms) state.quiz.missedTerms = [];
+        if (!state.quiz.missedTerms.find(t => t.term === card.term))
+          state.quiz.missedTerms.push(card);
+      }
+      container.querySelectorAll('.option').forEach(b => {
+        b.disabled = true;
+        const bOpt = options[Array.from(container.children).indexOf(b)];
+        if (bOpt?.term === card.term) b.classList.add('correct');
+        else if (b === btn && !correct) b.classList.add('incorrect');
+      });
+      const fb = document.getElementById('quiz-feedback');
+      fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
+      document.getElementById('quiz-verdict').textContent = correct ? 'Correct.' : 'Not quite.';
+      document.getElementById('quiz-explain').textContent = card.meaning;
+      setTimeout(() => { document.getElementById('quiz-next').disabled = false; }, 300);
+      if (correct) {
+        const _ai = state.quiz.index;
+        setTimeout(() => {
+          if (state.quiz.answered && state.quiz.index === _ai) {
+            state.quiz.index++;
+            renderQuizQuestion();
+          }
+        }, 1300);
+      }
+      saveProgress();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function showQuizResults() {
+  const score = state.quiz.score;
+  const total = state.quiz.deck.length;
+  document.getElementById('quiz-stage').style.display = 'none';
+  document.getElementById('quiz-results').style.display = '';
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('final-total').textContent = total;
+  const pct = Math.round(score / total * 100);
+  if(pct===100){try{var _sn=document.querySelector('#quiz-results .score-num');if(_sn){_sn.style.color='var(--success)';_sn.style.animation='none';setTimeout(function(){_sn.style.animation='_score-pop 0.55s ease';},40);}}catch(e){}}
+  let msg = pct === 100 ? 'Perfect — you know this material cold.' :
+            pct >= 80  ? 'Strong work. A few more reps and you\'ll own it.' :
+            pct >= 60  ? 'Solid foundation. Keep drilling the misses.' :
+                         'Good start. Hit the flashcards and try again.';
+  document.getElementById('quiz-message').textContent = msg;
+  // Show missed terms list
+  try {
+    const _ml = document.getElementById('quiz-missed-list');
+    const _misses = state.quiz.missedTerms || [];
+    if (_ml && _misses.length > 0) {
+      _ml.innerHTML = '<div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">'
+        + _misses.length + ' Term' + (_misses.length === 1 ? '' : 's') + ' to Review</div>'
+        + _misses.map(t => `<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border,#302d28);font-family:'Source Serif 4',Georgia,serif;font-size:14px;line-height:1.4;"><span style="font-weight:600;min-width:110px;color:var(--accent);flex-shrink:0;">${t.term}</span><span style="color:var(--ink-soft);">${t.meaning}</span></div>`).join('');
+      _ml.style.display = '';
+    } else if (_ml) {
+      _ml.style.display = 'none';
+    }
+  } catch(e) {}
+  state.progress.quizzes.push({ score, total, date: new Date().toISOString(), timed: false });
+  try{gtag('event','quiz_completed',{event_category:DB_PATH,value:pct,quiz_score:score,quiz_total:total});}catch(e){}
+  saveProgress();
+}
+
+document.getElementById('quiz-next').addEventListener('click', () => { state.quiz.index++; renderQuizQuestion(); });
+document.getElementById('quiz-restart').addEventListener('click', () => startQuiz());
+document.getElementById('quiz-retry').addEventListener('click', () => startQuiz());
+document.getElementById('quiz-review-misses').addEventListener('click', () => startQuiz(true));
+
+// ══════════════════════════════════════════════════════════════
+//  TIMED TEST
+// ══════════════════════════════════════════════════════════════
+const TEST_SIZE = 25;
+const TEST_TIME = 720;
+
+function initTest() {
+  document.getElementById('test-begin').addEventListener('click', startTest);
+  document.getElementById('test-again').addEventListener('click', () => {
+    document.getElementById('test-results').style.display = 'none';
+    document.getElementById('test-intro').style.display = '';
+  });
+  document.getElementById('test-review').addEventListener('click', () => {
+    const misses = state.test.answers.filter(a => !a.correct).map(a => a.term);
+    state.progress.lastMissed = misses;
+    $$('#tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-view="quiz"]').classList.add('active');
+    $$('.view').forEach(v => v.classList.remove('active'));
+    $('#view-quiz').classList.add('active');
+    state.activeView = 'quiz';
+    startQuiz(true);
+  });
+}
+
+function startTest() {
+  state.test.deck     = shuffle([...TERMS]).slice(0, TEST_SIZE);
+  state.test.index    = 0;
+  state.test.answers  = [];
+  state.test.timeLeft = TEST_TIME;
+  document.getElementById('test-intro').style.display   = 'none';
+  document.getElementById('test-results').style.display = 'none';
+  document.getElementById('test-active').style.display  = '';
+  renderTestQuestion();
+  state.test.timer = setInterval(() => {
+    state.test.timeLeft--;
+    updateTestTimer();
+    if (state.test.timeLeft <= 0) { clearInterval(state.test.timer); showTestResults(); }
+  }, 1000);
+}
+
+function updateTestTimer() {
+  const m = Math.floor(state.test.timeLeft / 60);
+  const s = state.test.timeLeft % 60;
+  document.getElementById('test-timer').textContent = `${pad(m)}:${pad(s)}`;
+  document.getElementById('test-timer').className = 'timer' + (state.test.timeLeft <= 60 ? ' warning' : '');
+  document.getElementById('test-timer-fill').style.width = (state.test.timeLeft / TEST_TIME * 100) + '%';
+}
+
+function renderTestQuestion() {
+  const deck = state.test.deck;
+  const idx  = state.test.index;
+  if (idx >= deck.length) { clearInterval(state.test.timer); showTestResults(); return; }
+  const card = deck[idx];
+  document.getElementById('test-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
+  document.getElementById('test-term').textContent     = card.term;
+  const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
+  const options = shuffle([card, ...distractors]);
+  const letters = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('test-options');
+  container.innerHTML = '';
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.meaning}`;
+    btn.addEventListener('click', () => {
+      const correct = opt.term === card.term;
+      updateSR(card.term, correct);
+      state.test.answers.push({ term: card.term, correct });
+      state.test.index++;
+      renderTestQuestion();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function showTestResults() {
+  document.getElementById('test-active').style.display  = 'none';
+  document.getElementById('test-results').style.display = '';
+  const score = state.test.answers.filter(a => a.correct).length;
+  const total = state.test.answers.length;
+  document.getElementById('test-final-score').textContent = score;
+  document.getElementById('test-final-total').textContent  = total;
+  const pct = total ? Math.round(score / total * 100) : 0;
+  let msg = pct === 100 ? 'Perfect examination. You are ready.' :
+            pct >= 80   ? 'Strong result. Minor gaps remain — review your misses.' :
+            pct >= 60   ? 'Above passing. Keep drilling weak areas.' :
+                          'More practice needed. Start with the flashcards.';
+  document.getElementById('test-message').textContent = msg;
+  state.progress.quizzes.push({ score, total, date: new Date().toISOString(), timed: true });
+  try{gtag('event','test_completed',{event_category:DB_PATH,value:pct,test_score:score,test_total:total});}catch(e){}
+  const misses = state.test.answers.filter(a => !a.correct).map(a => a.term);
+  state.progress.lastMissed = misses;
+  saveProgress();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  document.getElementById('stat-studied').textContent  = state.progress.studied.size;
+  document.getElementById('stat-mastered').textContent = state.progress.mastered.size;
+  try {
+    const _mastLabel = document.getElementById('stat-mastered-label');
+    if (_mastLabel) _mastLabel.textContent = 'of ' + TERMS.length;
+  } catch(e) {}
+  document.getElementById('stat-streak-val').textContent = state.progress.streak || 0;
+  document.getElementById('stat-quizzes').textContent  = state.progress.quizzes.length;
+  // Due Today (SRS cards scheduled for today or overdue)
+  try {
+    const _today = getTodayStr();
+    const _due = TERMS.filter(c =>
+      state.progress.studied.has(c.term) && getSRData(c.term).due <= _today
+    ).length;
+    const _dueEl = document.getElementById('stat-due');
+    if (_dueEl) _dueEl.textContent = _due;
+    // Show/hide the Due Review CTA
+    const _cta = document.getElementById('due-review-cta');
+    const _ctaCount = document.getElementById('due-cta-count');
+    if (_cta) { _cta.style.display = _due > 0 ? '' : 'none'; }
+    if (_ctaCount) _ctaCount.textContent = _due;
+  } catch(e) {}
+  const scores = state.progress.quizzes.map(q => q.score / q.total * 100);
+  const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+  document.getElementById('stat-avg').innerHTML = `${avg}<span class="unit">%</span>`;
+
+  // Recent quiz score history
+  try {
+    const _hist = document.getElementById('quiz-history');
+    if (_hist) {
+      const _qs = state.progress.quizzes;
+      if (_qs.length === 0) {
+        _hist.innerHTML = '<p style="color:var(--ink-faint);font-size:13px;margin:8px 0 0">No quizzes yet — take a practice quiz to see your scores here.</p>';
+      } else {
+        const _recent = _qs.slice(-6).reverse();
+        _hist.innerHTML = _recent.map(q => {
+          const _pct = Math.round(q.score / q.total * 100);
+          const _dt  = new Date(q.date).toLocaleDateString(undefined, {month:'short',day:'numeric'});
+          const _col = _pct >= 80 ? 'var(--success)' : _pct >= 60 ? 'var(--accent)' : 'var(--ink-faint)';
+          return `<div class="quiz-hist-row">
+            <span class="quiz-hist-date">${_dt}</span>
+            <div class="quiz-hist-bar-wrap"><div class="quiz-hist-bar" style="width:${_pct}%;background:${_col}"></div></div>
+            <span class="quiz-hist-pct">${q.score}/${q.total} · ${_pct}%</span>
+          </div>`;
+        }).join('');
+      }
+    }
+  } catch(e) {}
+
+  const list = document.getElementById('mastery-list');
+  list.innerHTML = '';
+  categories.forEach(cat => {
+    const catTerms  = TERMS.filter(t => t.category === cat);
+    const mastCount = catTerms.filter(t => state.progress.mastered.has(t.term)).length;
+    const pct = catTerms.length ? Math.round(mastCount / catTerms.length * 100) : 0;
+    const row = document.createElement('div');
+    row.className = 'mastery-row';
+    row.innerHTML = `
+      <div class="cat-name">${categoryLabel(cat)}</div>
+      <div class="mastery-bar">
+        <div class="mastery-bar-bg"></div>
+        <div class="mastery-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="mastery-pct">${mastCount} / ${catTerms.length}</div>`;
+    list.appendChild(row);
+  });
+}
+
+$('#reset-progress').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state.progress = { studied: new Set(), mastered: new Set(), quizzes: [], byCategory: {}, lastMissed: [], srLevels: {}, srData: {}, streak: 0, lastStudyDate: null, lastFilter: 'all' };
+  const user = firebase.auth().currentUser;
+  if (user) {
+    firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).remove();
+  } else {
+    localStorage.removeItem('hosa::' + DB_PATH);
+  }
+  document.getElementById('streak-badge').style.display = 'none';
+  document.getElementById('resume-banner').style.display = 'none';
+  renderProgress();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    const emailEl = document.getElementById('user-email');
+    const signoutBtn = document.getElementById('btn-signout');
+    if (emailEl) emailEl.textContent = 'Guest';
+    if (signoutBtn) {
+      signoutBtn.textContent = 'Sign In';
+      signoutBtn.style.cssText += ';background:var(--accent);color:#fff;border-color:var(--accent);';
+      signoutBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+    }
+    const guestBanner = document.getElementById('guest-banner');
+    if (guestBanner) guestBanner.style.display = '';
+    loadProgress(null).then(() => { saveProgress(); initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
+    return;
+  }
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  // Store email so admin can identify users
+  try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
+  loadProgress(user.uid).then(() => { initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
+});
+
+// Smart Review help popover
+(function() {
+  const helpBtn = document.getElementById('sr-help');
+  const infoBox = document.getElementById('sr-info');
+  if (helpBtn && infoBox) {
+    helpBtn.addEventListener('click', (e) => { e.stopPropagation(); infoBox.classList.toggle('show'); });
+    document.addEventListener('click', (e) => {
+      if (!infoBox.contains(e.target) && e.target !== helpBtn) infoBox.classList.remove('show');
+    });
+  }
+})();
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#flashcard').classList.toggle('flipped'); }
+  else if (e.key === 'ArrowRight') nextFlashcard(1);
+  else if (e.key === 'ArrowLeft') nextFlashcard(-1);
+  else if ((e.key==='g'||e.key==='G') && document.getElementById('flashcard')?.classList.contains('flipped')) {
+    document.getElementById('flash-got')?.click();
+  } else if ((e.key==='m'||e.key==='M') && document.getElementById('flashcard')?.classList.contains('flipped')) {
+    document.getElementById('flash-miss')?.click();
+  } else if (['1','2','3','4'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const _views = ['flashcards','quiz','test','progress'];
+    const _btn = document.querySelector('#tabs button[data-view="' + _views[+e.key-1] + '"]');
+    if (_btn) _btn.click();
+  }
+});
+</script>
+<script id="srs-engine">
+// ── True spaced repetition engine (SM-2 inspired) ─────────────────────────
+// Overrides the weight-based SR system. Later <script> definitions win
+// in global scope, so these replace getSRLevel, buildSmartDeck, etc.
+
+function getTodayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getSRData(term) {
+  const d = state.progress.srData && state.progress.srData[term];
+  return d || { interval: 1, ease: 2.5, reps: 0, due: getTodayStr() };
+}
+
+// Dots UI (0-5) now derived from reps count
+function getSRLevel(term) {
+  const d = state.progress.srData && state.progress.srData[term];
+  if (d) return Math.min(5, d.reps || 0);
+  return (state.progress.srLevels && state.progress.srLevels[term]) || 0;
+}
+
+// Core SR update — call instead of bumpSRLevel / setSRLevel
+function updateSR(term, correct) {
+  if (!state.progress.srData) state.progress.srData = {};
+  const d = getSRData(term);
+  if (correct) {
+    d.reps = (d.reps || 0) + 1;
+    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1);
+    if      (d.reps === 1) d.interval = 1;
+    else if (d.reps === 2) d.interval = 4;
+    else                   d.interval = Math.round((d.interval || 1) * d.ease);
+  } else {
+    d.reps     = 0;
+    d.ease     = Math.max(1.3, (d.ease || 2.5) - 0.2);
+    d.interval = 1;
+  }
+  const due = new Date();
+  due.setDate(due.getDate() + d.interval);
+  d.due = due.toISOString().slice(0, 10);
+  state.progress.srData[term] = d;
+  if (!state.progress.srLevels) state.progress.srLevels = {};
+  state.progress.srLevels[term] = Math.min(5, d.reps);
+}
+
+// "Already know this" — schedules card 30 days out
+function markKnown(term) {
+  if (!state.progress.srData) state.progress.srData = {};
+  const due = new Date();
+  due.setDate(due.getDate() + 30);
+  state.progress.srData[term] = { interval: 30, ease: 2.8, reps: 5, due: due.toISOString().slice(0, 10) };
+  if (!state.progress.srLevels) state.progress.srLevels = {};
+  state.progress.srLevels[term] = 5;
+}
+
+// Migrate old srLevels (0-5 ints) to srData on first load
+function migrateSRData() {
+  if (!state.progress.srData) state.progress.srData = {};
+  if (Object.keys(state.progress.srData).length > 0) return; // already done
+  const today = getTodayStr();
+  const daysMap = [0, 1, 4, 10, 20, 30];
+  Object.entries(state.progress.srLevels || {}).forEach(([term, lvl]) => {
+    const days = daysMap[Math.min(5, lvl || 0)];
+    const due  = new Date();
+    due.setDate(due.getDate() + days);
+    state.progress.srData[term] = {
+      interval: Math.max(1, days || 1),
+      ease:     2.5,
+      reps:     lvl || 0,
+      due:      days === 0 ? today : due.toISOString().slice(0, 10),
+    };
+  });
+}
+
+// Override buildSmartDeck — due-date scheduling replaces weight-based picks
+function buildSmartDeck(pool) {
+  if (!state.flash.srEnabled || pool.length === 0)
+    return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
+
+  migrateSRData(); // safe to call repeatedly — no-op after first run
+  const today   = getTodayStr();
+  const studied = state.progress.studied;
+
+  // Categorise pool into three buckets
+  const due      = shuffle(pool.filter(c =>  studied.has(c.term) && getSRData(c.term).due <= today));
+  const newCards  = shuffle(pool.filter(c => !studied.has(c.term)));
+  const notYetDue = shuffle(pool.filter(c =>  studied.has(c.term) && getSRData(c.term).due >  today));
+
+  const NEW_CAP = Math.ceil(SESSION_SIZE / 2); // max new cards per session
+  const session = [];
+
+  // 1. Due / overdue cards first (up to SESSION_SIZE)
+  session.push(...due.slice(0, SESSION_SIZE));
+  // 2. New cards (up to half the session)
+  session.push(...newCards.slice(0, Math.min(NEW_CAP, SESSION_SIZE - session.length)));
+  // 3. Fill any remaining space with not-yet-due (extra practice)
+  if (session.length < SESSION_SIZE)
+    session.push(...notYetDue.slice(0, SESSION_SIZE - session.length));
+
+  // Light shuffle so due + new cards interleave naturally
+  return shuffle(session).slice(0, SESSION_SIZE);
+}
+
+// Show a brief "next review" hint after rating a card
+function showNextReview(interval) {
+  const el = document.getElementById('next-review-badge');
+  if (!el) return;
+  el.textContent = interval <= 1 ? '↻ Review again tomorrow'
+    : interval <= 3              ? `↻ See you in ${interval} days`
+    : interval <= 10             ? `↻ Next review in ${interval} days`
+    : interval <= 20             ? `↻ Well spaced — back in ${interval} days`
+    :                              `↻ Mastered! Returning in ${interval} days`;
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+</script>
+<script id="onboarding">
+(function(){
+  // Build overlay (hidden until we confirm this is a first visit)
+  var s=document.createElement('style');
+  s.textContent=[
+    '#ob-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}',
+    '#ob-box{background:var(--bg);border:1px solid var(--border);max-width:420px;width:100%;padding:36px 32px 28px;}',
+    '#ob-box h2{font-size:19px;font-weight:400;margin-bottom:22px;letter-spacing:-0.01em;}',
+    '.ob-step{display:flex;gap:14px;margin-bottom:15px;align-items:flex-start;}',
+    '.ob-icon{font-size:20px;flex-shrink:0;width:26px;text-align:center;margin-top:1px;}',
+    '.ob-text{font-size:13px;line-height:1.55;color:var(--ink-soft);}',
+    '.ob-text strong{color:var(--ink);}',
+    '#ob-start{margin-top:26px;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;font-family:Georgia,serif;font-size:15px;cursor:pointer;letter-spacing:0.01em;}',
+    '#ob-start:hover{opacity:0.88;}',
+  ].join('');
+  document.head.appendChild(s);
+  var el=document.createElement('div');
+  el.id='ob-overlay';
+  el.style.display='none';
+  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You'll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
+  document.body.appendChild(el);
+
+  function dismiss(){
+    el.remove();
+    localStorage.setItem('hosa-onboarded-v1','1');
+    try{
+      var u=firebase.auth().currentUser;
+      if(u) firebase.database().ref('users/'+u.uid+'/onboarded').set(true).catch(function(){});
+    }catch(e){}
+  }
+  document.getElementById('ob-start').addEventListener('click',dismiss);
+
+  // Guests: localStorage flag is enough
+  if(localStorage.getItem('hosa-onboarded-v1')) return;
+
+  // Wait for auth to resolve before showing — check Firebase for logged-in users
+  firebase.auth().onAuthStateChanged(function(user){
+    if(!user){ el.style.display=''; return; } // guest — show it
+    firebase.database().ref('users/'+user.uid+'/onboarded').get().then(function(snap){
+      if(snap.val()){ el.remove(); } // already seen on another device
+      else { el.style.display=''; } // first time on this account
+    }).catch(function(){ el.style.display=''; }); // on error, show it
+  });
+})();
+</script>
+<script id="dark-mode-toggle">
+(function(){
+  var SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>';
+  var MOON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  function isDark(){ return document.documentElement.getAttribute('data-theme')!=='light'; }
+  function mount(){
+    if(document.getElementById('theme-toggle')) return;
+    var btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.setAttribute('aria-label','Toggle dark mode');
+    btn.style.cssText = ['background:none','border:1px solid var(--rule)','width:34px','height:34px','padding:0','display:inline-flex','align-items:center','justify-content:center','cursor:pointer','color:var(--ink)','flex-shrink:0','border-radius:3px','margin-left:10px','vertical-align:middle'].join(';');
+    btn.innerHTML = isDark() ? SUN : MOON;
+    btn.onclick = function(){
+      if(isDark()){
+        document.documentElement.setAttribute('data-theme','light');
+        try{localStorage.setItem('hosa-theme','light');}catch(e){}
+        btn.innerHTML = MOON;
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        try{localStorage.setItem('hosa-theme','dark');}catch(e){}
+        btn.innerHTML = SUN;
+      }
+    };
+    var target = document.querySelector('.user-pill') || document.querySelector('header');
+    if(target) target.appendChild(btn);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();
+</script>
+<script id="hosa-analytics">
+(function(){
+  var PAGE_KEY='physical-therapy';
+  var t0=Date.now();
+  var today=new Date().toISOString().slice(0,10);
+  var vid=localStorage.getItem('hosa-guest-id');
+  if(!vid){vid='g-'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('hosa-guest-id',vid);}
+  var ua=navigator.userAgent;
+  var dev=/Mobi|Android/i.test(ua)?'mobile':/iPad|Tablet/i.test(ua)?'tablet':'desktop';
+  var ref=document.referrer,src='direct';
+  if(ref){if(/google\./i.test(ref))src='google';else if(/bing\.|yahoo\./i.test(ref))src='search';else if(/instagram\.|facebook\.|twitter\.|tiktok\.|reddit\./i.test(ref))src='social';else src='other';}
+  var pushed=false;
+  function push(uid){
+    if(pushed)return;pushed=true;
+    var id=uid||vid;
+    var inc=firebase.database.ServerValue.increment(1);
+    var u={};
+    u['analytics/pv/'+today+'/'+PAGE_KEY]=inc;
+    u['analytics/vis/'+today+'/'+id]=true;
+    u['analytics/dev/'+today+'/'+dev]=inc;
+    u['analytics/src/'+today+'/'+src]=inc;
+    firebase.database().ref().update(u).catch(function(){});
+  }
+  firebase.auth().onAuthStateChanged(function(user){push(user?user.uid:null);});
+  setTimeout(function(){push(null);},4000);
+  window.addEventListener('pagehide',function(){
+    var dur=Math.round((Date.now()-t0)/1000);
+    if(dur<5)return;
+    var id=(firebase.auth().currentUser||{}).uid||vid;
+    firebase.database().ref('analytics/sess').push({id:id,page:PAGE_KEY,sec:dur,dev:dev,src:src,ts:new Date().toISOString()}).catch(function(){});
+  });
+})();
+</script>
+</body>
+</html>
