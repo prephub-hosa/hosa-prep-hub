@@ -32,7 +32,7 @@
     'human-growth-development':78, 'behavioral-health':77, 'clinical-nursing':87,
     'public-health':80, 'sports-medicine':73, 'biomedical-lab-science':68, 'biotechnology':80,
     'emergency-medical-science':69, 'physical-therapy':72, 'dental-science':67,
-    'veterinary-science':68, 'epidemiology':58
+    'veterinary-science':68, 'epidemiology':58, 'phlebotomy':60
   };
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
