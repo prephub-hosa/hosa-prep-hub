@@ -25,6 +25,17 @@
     'Beck N.','Imani O.','Quinn G.','Sage D.','Roman V.'
   ];
 
+  // Total term count per subject — used to scale dummy mastery and to display "X / total"
+  var TOTAL_TERMS = {
+    'medical-terminology':216, 'pathophysiology':147, 'nutrition':127, 'biochemistry':112,
+    'anatomy-physiology':96, 'pharmacology':72, 'medical-math':75, 'medical-law-ethics':69,
+    'human-growth-development':78, 'behavioral-health':77, 'clinical-nursing':87,
+    'public-health':80, 'sports-medicine':73, 'biomedical-lab-science':68, 'biotechnology':80,
+    'emergency-medical-science':69, 'physical-therapy':72, 'dental-science':67,
+    'veterinary-science':68, 'epidemiology':58
+  };
+  var TOTAL = TOTAL_TERMS[subject] || 100;
+
   function hashStr(s){
     var h = 2166136261;
     for (var i=0; i<s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -41,10 +52,12 @@
       var attempts = 0;
       do { idx = Math.floor(rand() * NAMES.length); attempts++; } while (used[idx] && attempts < 100);
       used[idx] = 1;
-      // Scores skewed so the top is challenging but beatable
-      var bestTest  = Math.round(72 + rand() * 20);   // 72–92
-      var bestFlash = Math.round(78 + rand() * 17);   // 78–95
-      out.push({ name: NAMES[idx], bestTest: bestTest, bestFlash: bestFlash, seed: true });
+      // Test % skewed for challenge but beatable
+      var bestTest = Math.round(72 + rand() * 20);   // 72–92
+      // Mastered: 38–78% of total deck so the top is reachable
+      var frac = 0.38 + rand() * 0.40;
+      var mastered = Math.max(1, Math.round(TOTAL * frac));
+      out.push({ name: NAMES[idx], bestTest: bestTest, mastered: mastered, seed: true });
     }
     return out;
   }
@@ -95,7 +108,9 @@
   }
   function submit(field, value){
     if (typeof firebase === 'undefined' || !firebase.database) return;
-    value = Math.max(0, Math.min(100, Math.round(value)));
+    value = Math.max(0, Math.round(value));
+    if (field === 'bestTest') value = Math.min(100, value);
+    if (field === 'mastered') value = Math.min(TOTAL, value);
     if (value < 1) return;
     var name = getDisplayName() || 'Student';
     var ref = userRef();
@@ -104,11 +119,11 @@
       var update = {
         name: name,
         bestTest: cur.bestTest || 0,
-        bestFlash: cur.bestFlash || 0,
+        mastered: cur.mastered || 0,
         updatedAt: new Date().toISOString()
       };
-      if (field === 'bestTest')  update.bestTest  = Math.max(update.bestTest, value);
-      if (field === 'bestFlash') update.bestFlash = Math.max(update.bestFlash, value);
+      if (field === 'bestTest') update.bestTest = Math.max(update.bestTest, value);
+      if (field === 'mastered') update.mastered = Math.max(update.mastered, value);
       ref.set(update);
     }).catch(function(){});
   }
@@ -126,13 +141,15 @@
             setTimeout(render, 400);
           }
         } else if (name === 'session_complete'){
-          var got = +params.cards_got || 0;
-          var missed = +params.cards_missed || 0;
-          if (got + missed >= 5){
-            submit('bestFlash', Math.round(100 * got / (got + missed)));
-            if (document.getElementById('view-leaderboard') && document.getElementById('view-leaderboard').classList.contains('active')) {
-              setTimeout(render, 400);
+          // Read live mastered count from the page (window.__hosaMastered is exposed per page)
+          try {
+            if (typeof window.__hosaMastered === 'function') {
+              var m = window.__hosaMastered();
+              if (typeof m === 'number' && m > 0) submit('mastered', m);
             }
+          } catch(e){}
+          if (document.getElementById('view-leaderboard') && document.getElementById('view-leaderboard').classList.contains('active')) {
+            setTimeout(render, 400);
           }
         }
       } catch(e){}
@@ -185,7 +202,7 @@
           '<div id="lb-test-table" class="lb-table"></div>' +
         '</div>' +
         '<div>' +
-          '<h3 style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:500;margin-bottom:12px;">Flashcards — Top 10</h3>' +
+          '<h3 style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:500;margin-bottom:12px;">Cards Mastered — Top 10 <span style="color:var(--ink-faint);font-size:12px;font-weight:400;">(out of ' + TOTAL + ')</span></h3>' +
           '<div id="lb-flash-table" class="lb-table"></div>' +
         '</div>' +
       '</div>' +
@@ -228,17 +245,24 @@
     });
   }
 
+  function fmtValue(key, v){
+    v = v || 0;
+    if (key === 'mastered') return v + ' / ' + TOTAL;
+    return v + '%';
+  }
+
   function rankTable(rows, key, myId){
-    var sorted = rows.slice().sort(function(a,b){
+    // For mastered board, hide entries with 0 mastered (real users only — keep seeds for visual completeness)
+    var pool = rows.filter(function(r){ return r.seed || (r[key] || 0) > 0; });
+    var sorted = pool.slice().sort(function(a,b){
       var av = a[key] || 0, bv = b[key] || 0;
       if (bv !== av) return bv - av;
-      // tiebreaker: real users (no .seed) before seeds
       if (!a.seed && b.seed) return -1;
       if (a.seed && !b.seed) return 1;
       return 0;
     });
     var top = sorted.slice(0, 10);
-    var html = '<table><thead><tr><th class="rank">#</th><th>Name</th><th class="pct">Best</th></tr></thead><tbody>';
+    var html = '<table><thead><tr><th class="rank">#</th><th>Name</th><th class="pct">' + (key==='mastered' ? 'Mastered' : 'Best') + '</th></tr></thead><tbody>';
     top.forEach(function(r, i){
       var isMe = (!r.seed && r._id && r._id === myId);
       html += '<tr class="' + (isMe ? 'me' : '') + '">'
@@ -247,17 +271,16 @@
                 + (r.seed ? '<span class="seed-tag">★</span>' : '')
                 + (isMe ? ' <span style="color:var(--accent);font-size:11px;font-weight:700;">YOU</span>' : '')
             + '</td>'
-            + '<td class="pct">' + ((r[key] || 0) + '%') + '</td>'
+            + '<td class="pct">' + fmtValue(key, r[key]) + '</td>'
           + '</tr>';
     });
     html += '</tbody></table>';
-    // If user is not in top 10, show their rank below
     var myIdx = sorted.findIndex(function(r){ return !r.seed && r._id === myId; });
     if (myIdx >= 10) {
       var me = sorted[myIdx];
-      html += '<div style="margin-top:12px;padding:10px 12px;background:rgba(201,55,45,0.08);border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);">Your rank: <strong style="color:var(--accent);">#' + (myIdx+1) + '</strong> · ' + escapeHtml(me.name) + ' · ' + (me[key]||0) + '%</div>';
+      html += '<div style="margin-top:12px;padding:10px 12px;background:rgba(201,55,45,0.08);border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);">Your rank: <strong style="color:var(--accent);">#' + (myIdx+1) + '</strong> · ' + escapeHtml(me.name) + ' · ' + fmtValue(key, me[key]) + '</div>';
     } else if (myIdx === -1) {
-      html += '<div style="margin-top:12px;padding:10px 12px;background:var(--bg-card);border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);">Take a ' + (key==='bestTest' ? 'test' : 'flashcard session') + ' to appear on this board.</div>';
+      html += '<div style="margin-top:12px;padding:10px 12px;background:var(--bg-card);border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);">' + (key==='bestTest' ? 'Take a test to appear on this board.' : 'Master cards (rate them \\u201CGot it\\u201D) to appear on this board.') + '</div>';
     }
     return html;
   }
@@ -278,7 +301,7 @@
     if (typeof firebase === 'undefined' || !firebase.database){
       var rowsOnly = DUMMIES.slice();
       testBody.innerHTML  = rankTable(rowsOnly, 'bestTest', null);
-      flashBody.innerHTML = rankTable(rowsOnly, 'bestFlash', null);
+      flashBody.innerHTML = rankTable(rowsOnly, 'mastered', null);
       return;
     }
 
@@ -286,15 +309,15 @@
       var data = snap.val() || {};
       var real = Object.keys(data).map(function(id){
         var v = data[id] || {};
-        return { _id: id, name: v.name || 'Student', bestTest: v.bestTest||0, bestFlash: v.bestFlash||0 };
+        return { _id: id, name: v.name || 'Student', bestTest: v.bestTest||0, mastered: v.mastered||0 };
       });
       var rows = DUMMIES.concat(real);
       var myId = getUserId();
-      testBody.innerHTML  = rankTable(rows, 'bestTest',  myId);
-      flashBody.innerHTML = rankTable(rows, 'bestFlash', myId);
+      testBody.innerHTML  = rankTable(rows, 'bestTest', myId);
+      flashBody.innerHTML = rankTable(rows, 'mastered', myId);
     }).catch(function(){
       testBody.innerHTML  = rankTable(DUMMIES, 'bestTest', null);
-      flashBody.innerHTML = rankTable(DUMMIES, 'bestFlash', null);
+      flashBody.innerHTML = rankTable(DUMMIES, 'mastered', null);
     });
   }
 
