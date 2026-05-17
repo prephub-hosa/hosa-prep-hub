@@ -189,6 +189,11 @@
     <h2>Event Requests <span class="badge" id="req-count">0</span></h2>
     <div id="req-body"><p class="empty">No requests yet.</p></div>
   </section>
+
+  <section id="section-feedback">
+    <h2>Feedback <span class="badge" id="fb-count">0</span></h2>
+    <div id="fb-body"><p class="empty">No feedback yet.</p></div>
+  </section>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -231,6 +236,36 @@ function loadSubscribers() {
     });
     html += '</tbody></table>';
     html += '<a class="bcc-btn" href="' + bccLink + '">Open Gmail / Mail with all ' + emails.length + ' addresses in BCC →</a>';
+    body.innerHTML = html;
+  });
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+  });
+}
+
+function loadFeedback() {
+  db.ref('feedback').once('value').then(function(snap) {
+    var data = snap.val();
+    var body = document.getElementById('fb-body');
+    if (!data) { body.innerHTML = '<p class="empty">No feedback yet.</p>'; return; }
+    var rows = Object.values(data);
+    document.getElementById('fb-count').textContent = rows.length;
+    rows.sort(function(a,b){ return (b.submittedAt||'').localeCompare(a.submittedAt||''); });
+    var html = '<table><thead><tr><th>Date</th><th>Rating</th><th>Page</th><th>Comment</th><th>Email</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      var stars = r.rating ? ('★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)) : '—';
+      html += '<tr>'
+            + '<td class="date-cell">' + fmt(r.submittedAt) + '</td>'
+            + '<td style="font-family:monospace;color:#f1c40f;">' + stars + '</td>'
+            + '<td>' + escapeHtml(r.page || '—') + '</td>'
+            + '<td style="max-width:380px;white-space:pre-wrap;">' + escapeHtml(r.text || '—') + '</td>'
+            + '<td class="email-cell">' + escapeHtml(r.email || r.userEmail || '—') + '</td>'
+            + '</tr>';
+    });
+    html += '</tbody></table>';
     body.innerHTML = html;
   });
 }
@@ -653,6 +688,7 @@ auth.onAuthStateChanged(function(user) {
   loadUsage();
   loadSubscribers();
   loadRequests();
+  loadFeedback();
 });
 
 document.getElementById('signout-btn').onclick = function() {
