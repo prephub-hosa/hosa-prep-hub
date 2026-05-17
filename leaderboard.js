@@ -36,7 +36,10 @@
     'medical-assisting':51, 'radiologic-science':43,
     'medical-microbiology':56, 'pharmacy-science':47,
     'forensic-science':38, 'occupational-therapy':34,
-    'optometry':30, 'genetics':33, 'health-informatics':28, 'respiratory-therapy':30
+    'optometry':30, 'genetics':33, 'health-informatics':28, 'respiratory-therapy':30,
+    'nursing-assisting':27, 'cardiovascular-science':30, 'endocrinology':24, 'neurology':25,
+    'oncology':26, 'immunology':27, 'hematology':26, 'dermatology':25,
+    'gastroenterology':26, 'surgical-technology':25
   };
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
