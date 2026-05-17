@@ -918,7 +918,7 @@
   <section id="categories-section">
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
-      <div class="section-label" id="events-count-label">Twenty-five events available</div>
+      <div class="section-label" id="events-count-label">Twenty-seven events available</div>
     </div>
 
     <div class="event-search-wrap">
@@ -1555,6 +1555,56 @@
         </div>
       </a>
 
+      <a href="forensic-science.html" class="category-card">
+        <div class="card-number">26</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3>Forensic<br><em>Science</em></h3>
+        <p class="card-desc">Death investigation, wound analysis, forensic toxicology, trace evidence, and forensic DNA and serology — the science behind criminal investigations.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">20</div>
+            <div class="stat-label">Cards/Session</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">5</div>
+            <div class="stat-label">Domains</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+        <div class="card-progress-wrap" id="cp-forensic-science">
+          <div class="cp-bar-track"><div class="cp-bar-fill"></div></div>
+          <div class="cp-label"></div>
+        </div>
+      </a>
+
+      <a href="occupational-therapy.html" class="category-card">
+        <div class="card-number">27</div>
+        <div class="card-meta">HOSA Competitive Event</div>
+        <h3>Occupational<br><em>Therapy</em></h3>
+        <p class="card-desc">Foundations of OT, frames of reference and practice models, evaluation and standardized assessments, and therapeutic interventions for functional independence.</p>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="stat-num">20</div>
+            <div class="stat-label">Cards/Session</div>
+          </div>
+          <div class="card-stat">
+            <div class="stat-num">4</div>
+            <div class="stat-label">Domains</div>
+          </div>
+        </div>
+        <div class="card-cta">
+          <span>Begin studying</span>
+          <span class="card-arrow">→</span>
+        </div>
+        <div class="card-progress-wrap" id="cp-occupational-therapy">
+          <div class="cp-bar-track"><div class="cp-bar-fill"></div></div>
+          <div class="cp-label"></div>
+        </div>
+      </a>
+
     </div>
     <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
   </section>
@@ -1681,7 +1731,7 @@ auth.onAuthStateChanged(user => {
         if (!snap.exists()) { document.body.classList.add('user-active'); return; }
         var data = snap.val();
         var totals = {
-      'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,      'physical-therapy':72,      'dental-science':67,      'veterinary-science':68,      'epidemiology':58,      'phlebotomy':60,      'medical-assisting':51,      'radiologic-science':43,      'medical-microbiology':56,      'pharmacy-science':47,
+      'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,      'physical-therapy':72,      'dental-science':67,      'veterinary-science':68,      'epidemiology':58,      'phlebotomy':60,      'medical-assisting':51,      'radiologic-science':43,      'medical-microbiology':56,      'pharmacy-science':47,      'forensic-science':38,      'occupational-therapy':34,
     };
         Object.keys(data).forEach(function(cat) {
           var el = document.getElementById('cp-' + cat);

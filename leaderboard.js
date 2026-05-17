@@ -34,7 +34,8 @@
     'emergency-medical-science':69, 'physical-therapy':72, 'dental-science':67,
     'veterinary-science':68, 'epidemiology':58, 'phlebotomy':60,
     'medical-assisting':51, 'radiologic-science':43,
-    'medical-microbiology':56, 'pharmacy-science':47
+    'medical-microbiology':56, 'pharmacy-science':47,
+    'forensic-science':38, 'occupational-therapy':34
   };
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
