@@ -35,7 +35,8 @@
     'veterinary-science':68, 'epidemiology':58, 'phlebotomy':60,
     'medical-assisting':51, 'radiologic-science':43,
     'medical-microbiology':56, 'pharmacy-science':47,
-    'forensic-science':38, 'occupational-therapy':34
+    'forensic-science':38, 'occupational-therapy':34,
+    'optometry':30, 'genetics':33, 'health-informatics':28, 'respiratory-therapy':30
   };
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
