@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+"""Generate allergy-immunology.html from dental-science.html template."""
+import os, re
+BASE = '/home/user/hosa-prep-hub'
+SRC, DST = os.path.join(BASE, 'dental-science.html'), os.path.join(BASE, 'allergy-immunology.html')
+with open(SRC, 'r', encoding='utf-8') as f: html = f.read()
+TERMS_JS = '''const TERMS = [
+  // ── Hypersensitivity Reactions ───────────────────────────────
+  { term: "Hypersensitivity Reaction Types (Gell & Coombs)", type: "concept", category: "hypersensitivity", meaning: "Type I (immediate/IgE): anaphylaxis, allergic rhinitis, asthma — mast cell degranulation. Type II (cytotoxic/IgG): hemolytic anemia, Goodpasture. Type III (immune complex): serum sickness, SLE. Type IV (delayed/T-cell): contact dermatitis, TB skin test.", example: "The penicillin anaphylaxis was Type I (IgE-mediated); the contact dermatitis from nickel was Type IV (T-cell mediated) — different mechanisms, different timing." },
+  { term: "Anaphylaxis", type: "concept", category: "hypersensitivity", meaning: "Severe, life-threatening systemic allergic reaction. Triggers: foods (peanut, shellfish, tree nuts), drugs (penicillin, NSAIDs), insect venom, latex. Features: urticaria, angioedema, bronchospasm, hypotension. Treatment: epinephrine IM (thigh) FIRST — the only first-line drug; antihistamines and corticosteroids adjunctive.", example: "The patient's peanut-induced urticaria, wheezing, and BP of 70/40 was anaphylaxis — IM epinephrine 0.3 mg, supine positioning, and IV fluids were given immediately." },
+  { term: "Urticaria and Angioedema", type: "concept", category: "hypersensitivity", meaning: "Urticaria: transient pruritic wheals from mast cell histamine release; acute (<6 wk) usually allergic or infection-triggered; chronic (>6 wk) often idiopathic. Angioedema: deeper swelling including larynx — life-threatening. Hereditary angioedema (C1-inhibitor deficiency): bradykinin-mediated, no urticaria.", example: "The patient's recurrent urticaria for 3 months without identifiable trigger was chronic spontaneous urticaria; daily cetirizine + bilastine provided good control." },
+
+  // ── Respiratory Allergy ──────────────────────────────────────
+  { term: "Allergic Asthma", type: "concept", category: "respiratory-allergy", meaning: "IgE-mediated bronchospasm triggered by allergens (dust mites, pet dander, pollen, mold). Allergy testing (skin prick or specific IgE) identifies triggers. Subcutaneous allergen immunotherapy (allergy shots) is disease-modifying for allergic asthma. Biologics (dupilumab, mepolizumab) for severe eosinophilic asthma.", example: "The asthmatic patient with positive cat-specific IgE, who worsened every time she visited friends with cats, was offered cat allergen immunotherapy to reduce sensitivity." },
+  { term: "Allergen Immunotherapy (Allergy Shots)", type: "concept", category: "respiratory-allergy", meaning: "Subcutaneous injections of increasing allergen doses → immune tolerance (shift from Th2 to Th1/Treg). 3–5 year course reduces symptoms, medication need, and risk of new sensitizations. Also sublingual (SLIT) tablets/drops. Anaphylaxis risk — must observe 20–30 min post-injection. Only disease-modifying allergy treatment.", example: "After 3 years of grass pollen immunotherapy, the patient's seasonal rhinitis was nearly eliminated — and her risk of developing asthma decreased." },
+  { term: "Eosinophilic Diseases", type: "concept", category: "respiratory-allergy", meaning: "Eosinophilic esophagitis (EoE): esophageal eosinophilia causing dysphagia/food impaction; treated with PPI, swallowed topical steroids, dietary elimination. Eosinophilic asthma: type 2 inflammation; biologic targets IL-5 (mepolizumab), IL-4/13 (dupilumab). Hypereosinophilic syndrome: end-organ damage from persistent eosinophilia.", example: "The teenage boy's dysphagia to solids and food impaction with esophageal eosinophilia >15 per HPF confirmed EoE; swallowed budesonide and milk elimination were started." },
+
+  // ── Food & Drug Allergy ──────────────────────────────────────
+  { term: "Food Allergy", type: "concept", category: "food-drug-allergy", meaning: "IgE-mediated: immediate reaction within 2 hours of ingestion (urticaria, angioedema, anaphylaxis). Common allergens: peanut, tree nuts, milk, egg, wheat, soy, fish, shellfish (Big 9 in US). Diagnosis: SPT + specific IgE; oral food challenge gold standard. Management: strict avoidance + epinephrine auto-injector.", example: "The 3-year-old's facial swelling and vomiting within 15 minutes of eating cashews prompted skin prick testing — positive cashew-specific IgE confirmed tree nut allergy." },
+  { term: "Drug Allergy and Penicillin Allergy", type: "concept", category: "food-drug-allergy", meaning: "True IgE-mediated penicillin allergy in <1% of labeled patients; 80–90% of 'allergic' patients tolerate penicillin on challenge. Penicillin skin test followed by oral amoxicillin challenge is safe delabeling method. Cross-reactivity with cephalosporins is low (~1–2%). NSAIDs: often non-immunologic intolerance (aspirin exacerbated respiratory disease).", example: "The patient labeled 'penicillin-allergic' since childhood had a negative skin test and tolerated amoxicillin challenge — delabeled, allowing penicillin-class antibiotics for her infection." },
+  { term: "Alpha-Gal Syndrome", type: "concept", category: "food-drug-allergy", meaning: "Lone star tick bite sensitizes to alpha-galactose (alpha-gal) sugar on mammalian meat → delayed anaphylaxis 3–6 hours after eating red meat (beef, pork, lamb). Diagnosis: alpha-gal IgE test. Management: avoidance of mammalian meat, carry epinephrine. Can improve after avoiding tick bites.", example: "The hunter's recurrent anaphylaxis occurring 4 hours after red meat — never identified before — was diagnosed as alpha-gal syndrome after positive alpha-gal IgE testing." },
+
+  // ── Immune Deficiencies ──────────────────────────────────────
+  { term: "Primary Immunodeficiency Disorders", type: "concept", category: "immune-deficiency", meaning: "Antibody deficiencies (most common): X-linked agammaglobulinemia (no B cells, BTK mutation), Common Variable Immunodeficiency (low Ig, recurrent sinopulmonary infections). T-cell deficiencies: DiGeorge (thymic aplasia, 22q11 deletion). Combined: SCID (severe combined immunodeficiency — T and B cell deficiency).", example: "The toddler with recurrent pneumococcal pneumonia, otitis, and undetectable IgA, IgG, IgM with absent B cells was diagnosed with X-linked agammaglobulinemia; IVIG was started." },
+  { term: "Hereditary Angioedema (HAE)", type: "concept", category: "immune-deficiency", meaning: "Autosomal dominant C1-inhibitor deficiency → bradykinin accumulation → recurrent angioedema without urticaria (skin, GI, laryngeal). Triggers: trauma, stress, estrogen. Acute: C1-INH concentrate, icatibant (bradykinin receptor antagonist), or plasma. Prophylaxis: lanadelumab (anti-kallikrein biologic) or C1-INH infusions.", example: "The patient's recurrent abdominal pain and laryngeal edema without urticaria had undetectable C4 and low C1-INH — HAE; icatibant was prescribed for acute attacks." },
+];'''
+m = re.search(r'const TERMS = \[.*?^\];', html, re.DOTALL | re.MULTILINE)
+html = html[:m.start()] + TERMS_JS + html[m.end():]
+CAT = """const categoryLabel = c => ({
+  'hypersensitivity':   'Hypersensitivity Reactions',
+  'respiratory-allergy':'Respiratory Allergy',
+  'food-drug-allergy':  'Food & Drug Allergy',
+  'immune-deficiency':  'Immune Deficiencies',
+})[c] || c;"""
+html = re.sub(r"const categoryLabel = c => \(\{[^}]+\}\)\[c\] \|\| c;", CAT, html, count=1, flags=re.DOTALL)
+html = html.replace("const DB_PATH = 'dental-science';", "const DB_PATH = 'allergy-immunology';", 1)
+html = html.replace('<title>HOSA Prep Hub — Dental Science</title>', '<title>HOSA Prep Hub — Allergy &amp; Immunology</title>', 1)
+html = html.replace('<h1>Dental<br><em>Science</em>.</h1>', '<h1>Allergy &amp;<br><em>Immunology</em>.</h1>', 1)
+html = html.replace('A study companion for Dental anatomy, oral diseases, preventive dentistry, restorative procedures, dental materials, and infection control — built for HOSA competitors.',
+                    'A study companion for hypersensitivity reactions and anaphylaxis, respiratory allergy and immunotherapy, food and drug allergy, and primary immune deficiency disorders — built for HOSA competitors.', 1)
+html = html.replace('//  DATA — HOSA Emergency Medical Science', '//  DATA — HOSA Allergy & Immunology', 1)
+with open(DST, 'w', encoding='utf-8') as f: f.write(html)
+print(f'Wrote {DST} — {TERMS_JS.count("{ term:")} terms')
