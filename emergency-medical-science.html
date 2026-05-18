@@ -2232,7 +2232,7 @@ function showQuizResults() {
     const _ml = document.getElementById('quiz-missed-list');
     const _misses = state.quiz.missedTerms || [];
     if (_ml && _misses.length > 0) {
-      _ml.innerHTML = '<div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">'
+      _ml.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-size:13px;font-weight:600;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">'
         + _misses.length + ' Term' + (_misses.length === 1 ? '' : 's') + ' to Review</div>'
         + _misses.map(t => `<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border,#302d28);font-family:'Source Serif 4',Georgia,serif;font-size:14px;line-height:1.4;"><span style="font-weight:600;min-width:110px;color:var(--accent);flex-shrink:0;">${t.term}</span><span style="color:var(--ink-soft);">${t.meaning}</span></div>`).join('');
       _ml.style.display = '';

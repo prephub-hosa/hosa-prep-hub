@@ -2199,10 +2199,6 @@ document.getElementById('goal-dec')?.addEventListener('click', () => {
   localStorage.setItem(GOAL_STORAGE, _dailyGoal);
   updateGoalRing();
 });
-}catch(e){}
-    renderFlashcard();
-    nextFlashcard(1);
-  });
 }
 
 function nextFlashcard(dir) {
