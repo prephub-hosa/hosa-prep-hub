@@ -555,32 +555,32 @@
   }
   .know-it-btn:hover { border-color: var(--success); color: var(--success); }
   /* ── Must-Know Terms section ── */
-  .must-know-section { margin: 0 0 18px; }
+  .must-know-section { margin: 0 0 20px; }
   .mk-toggle-btn {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 10px;
     background: none; border: 1px solid var(--accent); color: var(--accent);
-    padding: 6px 14px; font-family: 'Cormorant Garamond', serif;
-    font-size: 12px; font-weight: 600; font-variant: small-caps;
-    letter-spacing: 0.08em; cursor: pointer; width: 100%;
+    padding: 11px 16px; font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px; font-weight: 600;
+    letter-spacing: 0.01em; cursor: pointer; width: 100%;
     transition: background 0.15s, color 0.15s;
   }
   .mk-toggle-btn:hover { background: var(--accent); color: var(--bg); }
-  .mk-toggle-btn .mk-chevron { margin-left: auto; transition: transform 0.2s; font-style: normal; font-variant: normal; letter-spacing: 0; }
+  .mk-toggle-btn .mk-chevron { margin-left: auto; transition: transform 0.2s; font-style: normal; font-variant: normal; letter-spacing: 0; font-size: 14px; }
   .mk-toggle-btn.open .mk-chevron { transform: rotate(180deg); }
-  .mk-body { display: none; border: 1px solid var(--accent); border-top: none; padding: 16px 14px 10px; }
+  .mk-body { display: none; border: 1px solid var(--accent); border-top: none; padding: 18px 16px 14px; }
   .mk-body.open { display: block; }
-  .mk-intro { font-family: 'Source Serif 4', Georgia, serif; font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; line-height: 1.5; }
-  .mk-list { display: flex; flex-direction: column; gap: 10px; }
+  .mk-intro { font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.6; }
+  .mk-list { display: flex; flex-direction: column; gap: 14px; }
   .mk-card {
-    border-left: 3px solid var(--accent); padding: 10px 12px;
+    border-left: 3px solid var(--accent); padding: 14px 16px;
     background: var(--bg-card);
   }
-  .mk-term { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 3px; }
-  .mk-meaning { font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; line-height: 1.5; }
-  .mk-why { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; display: flex; align-items: flex-start; gap: 5px; line-height: 1.4; }
-  .mk-why::before { content: '★'; flex-shrink: 0; font-size: 10px; margin-top: 1px; }
-  .mk-jump { background: none; border: none; color: var(--ink-faint); font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.04em; font-variant: small-caps; cursor: pointer; padding: 0; margin-top: 4px; display: inline-block; text-decoration: underline; text-underline-offset: 2px; }
-  .mk-jump:hover { color: var(--ink); }
+  .mk-term { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .mk-meaning { font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; color: var(--ink); margin-bottom: 10px; line-height: 1.6; }
+  .mk-why { font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; font-weight: 500; color: var(--accent); display: flex; align-items: flex-start; gap: 7px; line-height: 1.55; }
+  .mk-why::before { content: '★'; flex-shrink: 0; font-size: 12px; margin-top: 3px; }
+  .mk-jump { background: none; border: 1px solid var(--rule); color: var(--ink-soft); font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; padding: 6px 12px; margin-top: 10px; display: inline-block; transition: border-color 0.15s, color 0.15s; }
+  .mk-jump:hover { color: var(--ink); border-color: var(--ink); }
   /* ── Rating hint ── */
   .rating-hint { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.02em; }
   .next-review-badge { text-align: center; font-size: 12px; color: var(--accent); letter-spacing: 0.02em; min-height: 16px; margin: 6px 0 0; opacity: 0; transition: opacity 0.5s ease; }
