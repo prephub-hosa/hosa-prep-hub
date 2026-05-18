@@ -704,6 +704,32 @@
     margin-top: auto;
   }
 
+  /* ——— Term of the day ——— */
+  .totd-section { margin-bottom: 80px; }
+  .totd-card {
+    border: 1px solid var(--rule);
+    padding: 32px 36px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px 32px;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+  .totd-card:hover { border-color: var(--ink-soft); }
+  .totd-eyebrow { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); margin-bottom: 6px; }
+  .totd-term { font-family: 'Fraunces',serif; font-size: 26px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 12px; color: var(--ink); }
+  .totd-def { font-family: 'Source Serif 4',Georgia,serif; font-size: 15px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 16px; }
+  .totd-meta { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-faint); }
+  .totd-link { display: inline-block; font-family: 'Source Serif 4',Georgia,serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; letter-spacing: 0.01em; white-space: nowrap; padding-top: 4px; }
+  .totd-link:hover { text-decoration: underline; }
+  .totd-date { font-family: 'Fraunces',serif; font-size: 40px; font-weight: 300; color: var(--ink-faint); letter-spacing: -0.04em; line-height: 1; text-align: right; }
+  .totd-date-label { font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); text-align: right; margin-top: 2px; }
+  @media (max-width: 640px) {
+    .totd-card { grid-template-columns: 1fr; padding: 24px 20px; }
+    .totd-date { display: none; }
+    .totd-term { font-size: 22px; }
+  }
+
   /* ——— Starter / beginner path ——— */
   .starter-grid {
     display: grid;
@@ -1524,6 +1550,27 @@
         </div>
         <div class="starter-cta">Start studying →</div>
       </a>
+    </div>
+  </section>
+
+  <!-- TERM OF THE DAY -->
+  <section class="totd-section" id="totd-section">
+    <div class="section-head" style="margin-bottom:20px;">
+      <h2>Term of the <em>Day.</em></h2>
+      <div class="section-label">One clinical term, every day</div>
+    </div>
+    <div class="totd-card" id="totd-card">
+      <div>
+        <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
+        <h3 class="totd-term" id="totd-term"></h3>
+        <p class="totd-def" id="totd-def"></p>
+        <div class="totd-meta" id="totd-event"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="totd-date" id="totd-date-num"></div>
+        <div class="totd-date-label" id="totd-date-label"></div>
+        <a class="totd-link" id="totd-link" href="#">Study this event →</a>
+      </div>
     </div>
   </section>
 
@@ -3276,6 +3323,70 @@ document.getElementById('request-btn').onclick = function() {
       surpriseMe();
     }
   });
+})();
+</script>
+
+<script id="totd-js">
+(function(){
+  var TERMS = [
+    {term:'Homeostasis',def:'The body\'s ability to maintain a stable internal environment (temperature, pH, fluid balance) despite external changes — the foundation of all physiology.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
+    {term:'Myocardial Infarction',def:'Death of heart muscle tissue caused by prolonged ischemia due to coronary artery occlusion; commonly called a heart attack.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
+    {term:'Apoptosis',def:'Programmed cell death — a tightly regulated process the body uses to eliminate damaged, infected, or unnecessary cells without triggering inflammation.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Tachycardia',def:'A resting heart rate above 100 beats per minute; may be physiological (exercise, fever) or pathological (arrhythmia, shock).',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Septicemia',def:'Bacteria in the bloodstream causing systemic infection; can rapidly progress to septic shock with multiorgan failure if untreated.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Dyspnea',def:'Subjective sensation of shortness of breath or difficulty breathing; a hallmark symptom of cardiac and pulmonary disease.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
+    {term:'Hematuria',def:'Blood in the urine, classified as gross (visible) or microscopic; may indicate UTI, kidney stones, glomerulonephritis, or malignancy.',event:'Nephrology',slug:'nephrology'},
+    {term:'Anaphylaxis',def:'A rapid, life-threatening systemic allergic reaction triggered by IgE-mediated mast cell degranulation; treated immediately with epinephrine.',event:'Allergy & Immunology',slug:'allergy-immunology'},
+    {term:'Encephalopathy',def:'Any diffuse disease or disorder of the brain causing altered cognition, behavior, or consciousness; etiologies include metabolic, toxic, and infectious causes.',event:'Neurology',slug:'neurology'},
+    {term:'Epistaxis',def:'Nosebleed; most commonly from Kiesselbach\'s plexus in the anterior nasal septum; usually self-limiting but can indicate hypertension or clotting disorders.',event:'Otolaryngology',slug:'otolaryngology'},
+    {term:'Hemostasis',def:'The process that stops bleeding — comprising vasoconstriction, platelet plug formation, and the coagulation cascade to form a stable fibrin clot.',event:'Hematology',slug:'hematology'},
+    {term:'Hyperglycemia',def:'Elevated blood glucose (>126 mg/dL fasting); a hallmark of diabetes mellitus resulting from insufficient insulin action or secretion.',event:'Endocrinology',slug:'endocrinology'},
+    {term:'Cyanosis',def:'A blue-gray discoloration of skin/mucous membranes caused by deoxygenated hemoglobin; indicates hypoxia when >5 g/dL deoxyhemoglobin is present.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Peritonitis',def:'Inflammation of the peritoneum, usually from bacterial infection secondary to bowel perforation, appendicitis, or trauma; a surgical emergency.',event:'Gastroenterology',slug:'gastroenterology'},
+    {term:'Atelectasis',def:'Collapse or incomplete expansion of lung alveoli, leading to reduced gas exchange; common post-surgery or with mucus plugging.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
+    {term:'Diuresis',def:'Increased urine production; stimulated by diuretics, high fluid intake, or conditions such as diabetes insipidus and hyperglycemia.',event:'Pharmacology',slug:'pharmacology'},
+    {term:'Ecchymosis',def:'Bruising — subcutaneous hemorrhage causing a purple/yellow skin discoloration; may signal trauma, coagulopathy, or vasculitis.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Asystole',def:'Complete absence of cardiac electrical activity (flat-line ECG); a non-shockable cardiac arrest rhythm managed with CPR and epinephrine.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Peristalsis',def:'Rhythmic, wave-like contractions of smooth muscle that propel contents through tubular organs — the mechanism moving food through the GI tract.',event:'Gastroenterology',slug:'gastroenterology'},
+    {term:'Intubation',def:'Insertion of an endotracheal tube into the trachea to secure the airway, enable mechanical ventilation, and protect against aspiration.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Neuroplasticity',def:'The brain\'s ability to reorganize synaptic connections in response to learning, experience, or injury — the basis for rehabilitation after stroke.',event:'Neurology',slug:'neurology'},
+    {term:'Osmosis',def:'Net movement of water across a semipermeable membrane from a region of low solute concentration to high solute concentration until equilibrium.',event:'Biochemistry',slug:'biochemistry'},
+    {term:'Thrombocytopenia',def:'A platelet count below 150,000/μL, causing increased bleeding risk; causes include bone marrow suppression, autoimmune destruction (ITP), and heparin-induced types.',event:'Hematology',slug:'hematology'},
+    {term:'Bradycardia',def:'A resting heart rate below 60 beats per minute; normal in athletes but pathological when causing hemodynamic compromise.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
+    {term:'Prion',def:'A misfolded protein capable of inducing other proteins to misfold; responsible for fatal neurodegenerative diseases such as Creutzfeldt-Jakob disease.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Comorbidity',def:'The presence of two or more chronic conditions in the same patient simultaneously; complicates treatment decisions and worsens prognosis.',event:'Healthcare Systems',slug:'healthcare-systems'},
+    {term:'Triage',def:'The process of sorting patients by severity of injury or illness to prioritize emergency care when resources are limited.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Pharmacokinetics',def:'The study of how the body handles a drug — including absorption, distribution, metabolism, and excretion (ADME) — determining its concentration over time.',event:'Pharmacology',slug:'pharmacology'},
+    {term:'Autopsy',def:'A post-mortem examination of a body to determine cause of death, document pathology, and gather data for medicolegal or research purposes.',event:'Forensic Science',slug:'forensic-science'},
+    {term:'Edema',def:'Accumulation of excess fluid in the interstitial space, causing swelling; results from increased capillary pressure, reduced oncotic pressure, or lymphatic obstruction.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Immunity',def:'The body\'s defense against pathogens, comprising innate (rapid, nonspecific) and adaptive (antigen-specific, memory-forming) branches.',event:'Immunology',slug:'immunology'},
+    {term:'Dehydration',def:'Excessive loss of body water relative to intake, impairing cellular function; classified as mild (<5%), moderate (5-10%), or severe (>10%) by % body weight lost.',event:'Nutrition',slug:'nutrition'},
+    {term:'Pathogen',def:'A microorganism (virus, bacterium, fungus, parasite) capable of causing disease in a susceptible host.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Prophylaxis',def:'Preventive treatment or intervention given before a disease or infection occurs to reduce risk; includes vaccines, antibiotics, and surgical preparation.',event:'Public Health',slug:'public-health'},
+    {term:'Iatrogenic',def:'Illness or adverse effect caused by medical examination, treatment, or other healthcare intervention — a key concept in patient safety and medical law.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
+    {term:'Homeostasis',def:'The body\'s ability to regulate its internal environment within narrow parameters despite changing external conditions.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
+    {term:'Remission',def:'A period during which signs and symptoms of a disease decrease significantly or disappear; may be complete or partial and temporary or sustained.',event:'Oncology',slug:'oncology'},
+    {term:'Teratogen',def:'A substance, organism, or physical agent that disrupts normal fetal development when a pregnant person is exposed, causing structural or functional defects.',event:'Human Growth & Development',slug:'human-growth-development'},
+    {term:'Biopsy',def:'Removal of tissue from a living patient for microscopic examination; the definitive method for diagnosing cancer and many other diseases.',event:'Biomedical Lab Science',slug:'biomedical-lab-science'},
+    {term:'Palliative Care',def:'Specialized medical care focused on relief of pain, symptoms, and stress of serious illness — provided alongside curative treatment, not instead of it.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
+  ];
+
+  var d = new Date();
+  var idx = (d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate()) % TERMS.length;
+  var t = TERMS[idx];
+
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  document.getElementById('totd-eyebrow').textContent = 'Clinical Term of the Day · ' + days[d.getDay()];
+  document.getElementById('totd-term').textContent = t.term;
+  document.getElementById('totd-def').textContent = t.def;
+  document.getElementById('totd-event').textContent = t.event;
+  document.getElementById('totd-date-num').textContent = months[d.getMonth()] + ' ' + d.getDate();
+  document.getElementById('totd-date-label').textContent = d.getFullYear();
+  var link = document.getElementById('totd-link');
+  link.href = t.slug + '.html';
+  link.textContent = 'Study ' + t.event + ' →';
 })();
 </script>
 
