@@ -1095,6 +1095,124 @@
   @keyframes _score-pop { 0%{transform:scale(0.82);opacity:0.6} 55%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
   .cpb { padding: 9px 18px; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; color: var(--ink); cursor: pointer; transition: border-color 0.15s; }
   .cpb:hover { border-color: var(--ink-soft); }
+
+  /* ——— GUIDE TAB ——— */
+  .guide-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .guide-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 32px 28px;
+  }
+  .guide-panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .guide-panel-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-faint);
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .guide-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .guide-stat {
+    padding: 16px;
+    border: 1px solid var(--rule);
+  }
+  .guide-stat-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .guide-stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .guide-topics-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .guide-topics-text {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .guide-tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .guide-tip {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .guide-tip-num {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 20px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+  .guide-tip-text {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  @media (max-width: 760px) {
+    .guide-layout { grid-template-columns: 1fr; gap: 24px; }
+    .guide-panel { padding: 24px 20px; }
+  }
+
+  /* ——— Test section responsive fixes ——— */
+  .test-intro { box-sizing: border-box; width: 100%; }
+  @media (max-width: 480px) {
+    .test-intro { padding: 24px 16px; border-left: none; border-right: none; }
+    .test-intro h2 { font-size: 24px; }
+    .test-specs { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .spec-item .spec-val { font-size: 20px; }
+    .timer-bar { top: 52px; padding: 12px 0; }
+    .quiz-term { font-size: clamp(24px, 6vw, 40px); }
+    .option { padding: 14px 16px; font-size: 15px; }
+    nav.tabs button { padding: 12px 18px; font-size: 14px; }
+    .quiz-header { flex-wrap: wrap; gap: 8px; }
+  }
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1185,6 +1303,7 @@
     <button data-view="quiz">Practice Quiz</button>
     <button data-view="test">Timed Test</button>
     <button data-view="progress">Progress</button>
+    <button data-view="guide">Guide</button>
   </nav>
 
   <!-- FLASHCARDS VIEW -->
@@ -1488,6 +1607,66 @@
     <button class="btn reset-btn" id="reset-progress">↺ Reset all progress</button>
   </section>
 
+
+  <!-- GUIDE VIEW -->
+  <section class="view" id="view-guide">
+    <div class="guide-layout">
+      <div class="guide-panel">
+        <div class="guide-panel-title">Competition Format</div>
+        <div class="guide-panel-sub">What to expect at the HOSA competitive event</div>
+        <div class="guide-stat-grid">
+          <div class="guide-stat">
+            <div class="guide-stat-label">Questions</div>
+            <div class="guide-stat-val">50</div>
+          </div>
+          <div class="guide-stat">
+            <div class="guide-stat-label">Time Limit</div>
+            <div class="guide-stat-val">45 min</div>
+          </div>
+          <div class="guide-stat">
+            <div class="guide-stat-label">Format</div>
+            <div class="guide-stat-val" style="font-size:15px;padding-top:3px;">Multiple Choice</div>
+          </div>
+          <div class="guide-stat">
+            <div class="guide-stat-label">Level</div>
+            <div class="guide-stat-val" style="font-size:15px;padding-top:3px;">State &amp; ILC</div>
+          </div>
+        </div>
+        <div class="guide-topics-label">Topics Covered</div>
+        <div class="guide-topics-text">Psychiatric disorders, DSM-5, psychopharmacology, psychotherapy, involuntary commitment, mental status exam</div>
+      </div>
+      <div class="guide-panel">
+        <div class="guide-panel-title">Study Strategy</div>
+        <div class="guide-panel-sub">High-yield tips for scoring well on this event</div>
+        <ul class="guide-tips-list">
+        <li class="guide-tip">
+          <span class="guide-tip-num">01</span>
+          <span class="guide-tip-text">Mental Status Exam (MSE): appearance, behavior, speech, mood/affect, thought process/content, cognition, insight — components.</span>
+        </li>
+        <li class="guide-tip">
+          <span class="guide-tip-num">02</span>
+          <span class="guide-tip-text">Major psychiatric disorders: schizophrenia (positive vs. negative symptoms), bipolar (I vs. II difference), MDD criteria.</span>
+        </li>
+        <li class="guide-tip">
+          <span class="guide-tip-num">03</span>
+          <span class="guide-tip-text">Psychopharmacology: SSRIs (first-line depression/anxiety), atypical antipsychotics (risperidone, olanzapine — metabolic side effects).</span>
+        </li>
+        <li class="guide-tip">
+          <span class="guide-tip-num">04</span>
+          <span class="guide-tip-text">Mood stabilizers: lithium (levels + toxicity signs), valproate, lamotrigine — indications and monitoring.</span>
+        </li>
+        <li class="guide-tip">
+          <span class="guide-tip-num">05</span>
+          <span class="guide-tip-text">Psychotherapy types: CBT, DBT (borderline PD), motivational interviewing — best-matched condition for each.</span>
+        </li>
+        <li class="guide-tip">
+          <span class="guide-tip-num">06</span>
+          <span class="guide-tip-text">Involuntary commitment criteria: danger to self, danger to others, grave disability — varies by state but principles are consistent.</span>
+        </li>
+        </ul>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>
