@@ -472,11 +472,38 @@
   .kbd-close { margin-top: 20px; background: none; border: 1px solid var(--rule); padding: 9px 22px; font-family: 'Source Serif 4',serif; font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; width: 100%; transition: all 0.15s; }
   .kbd-close:hover { color: var(--ink); border-color: var(--ink-soft); }
   @media (max-width: 640px) { .kbd-card { padding: 24px 20px; } }
-  /* ── Deck progress line ── */
+  /* ── Deck progress line + cram row ── */
+  .deck-progress-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; margin: -4px 0 14px; }
   .deck-progress-line {
-    text-align: center; font-size: 12px; color: var(--ink-faint);
-    margin: -4px 0 14px; letter-spacing: 0.03em;
+    text-align: left; font-size: 12px; color: var(--ink-faint);
+    margin: 0; letter-spacing: 0.03em; flex: 1;
   }
+  .cram-btn { padding: 3px 9px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; font-variant: small-caps; font-family: 'Cormorant Garamond',serif; border: 1px solid #c08040; color: #c08040; background: transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .cram-btn:hover { background: #c08040; color: var(--bg); }
+  .cram-btn.active { background: #c08040; color: var(--bg); }
+  .sess-timer-display { font-family: 'Fraunces',serif; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.01em; white-space: nowrap; display: none; }
+  /* ── Daily goal ring ── */
+  .goal-section { margin-bottom: 40px; }
+  .goal-ring-wrap { display: flex; align-items: center; gap: 24px; margin-bottom: 14px; }
+  .goal-ring-svg { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+  .goal-ring-svg svg { width: 72px; height: 72px; transform: rotate(-90deg); display: block; }
+  .goal-ring-track { fill: none; stroke: var(--rule); stroke-width: 7; }
+  .goal-ring-fill { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+  .goal-ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .goal-ring-num { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 600; line-height: 1; color: var(--ink); }
+  .goal-ring-sub { font-family: 'Cormorant Garamond',serif; font-size: 10px; letter-spacing: 0.06em; font-variant: small-caps; color: var(--ink-faint); }
+  .goal-ring-meta h4 { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .goal-ring-meta p { font-family: 'Source Serif 4',Georgia,serif; font-size: 13px; color: var(--ink-soft); margin: 0 0 10px; }
+  .goal-adj { display: flex; align-items: center; gap: 8px; }
+  .goal-adj-btn { border: 1px solid var(--rule); background: transparent; color: var(--ink); width: 24px; height: 24px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; transition: border-color 0.15s; }
+  .goal-adj-btn:hover { border-color: var(--ink); }
+  .goal-adj-val { font-family: 'Fraunces',serif; font-size: 14px; min-width: 60px; color: var(--ink); }
+  /* ── Milestone streak badges ── */
+  .milestone-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .ms-badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--rule); font-family: 'Cormorant Garamond',serif; font-size: 12px; letter-spacing: 0.06em; font-variant: small-caps; color: var(--ink-faint); transition: border-color 0.3s, color 0.3s; }
+  .ms-badge.earned { color: var(--ink); border-color: var(--accent); }
+  .ms-badge-icon { font-size: 14px; filter: grayscale(1); opacity: 0.4; transition: filter 0.3s, opacity 0.3s; }
+  .ms-badge.earned .ms-badge-icon { filter: none; opacity: 1; }
   /* ── Know-it skip button ── */
   .know-it-btn {
     display: inline-block; margin-top: 10px;
@@ -1119,7 +1146,11 @@
         </span>
       </div>
 
-      <p id="deck-progress" class="deck-progress-line"></p>
+      <div class="deck-progress-row">
+        <p id="deck-progress" class="deck-progress-line"></p>
+        <span class="sess-timer-display" id="sess-timer"></span>
+        <button class="cram-btn" id="cram-btn" title="Study only cards due today">⚡ Cram</button>
+      </div>
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
           <div class="face front">
@@ -1309,6 +1340,37 @@
     <div class="stat-card">
       <div class="stat-label">Due Today</div>
       <div class="stat-val" id="stat-due">0</div>
+    </div>
+
+    <div class="goal-section">
+      <h3 style="font-family:'Fraunces',serif;font-size:20px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;">Daily Goal</h3>
+      <div class="section-sub" style="margin-bottom:16px;">Cards reviewed today vs. your goal</div>
+      <div class="goal-ring-wrap">
+        <div class="goal-ring-svg">
+          <svg viewBox="0 0 72 72">
+            <circle class="goal-ring-track" cx="36" cy="36" r="31"/>
+            <circle class="goal-ring-fill" id="goal-ring-fill" cx="36" cy="36" r="31" stroke-dasharray="194.78" stroke-dashoffset="194.78"/>
+          </svg>
+          <div class="goal-ring-inner">
+            <span class="goal-ring-num" id="goal-done">0</span>
+            <span class="goal-ring-sub">today</span>
+          </div>
+        </div>
+        <div class="goal-ring-meta">
+          <h4 style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;letter-spacing:-0.02em;margin:0 0 4px;">Set your daily target</h4>
+          <p style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-soft);margin:0 0 10px;">Adjust in increments of 5 cards</p>
+          <div class="goal-adj">
+            <button class="goal-adj-btn" id="goal-dec">−</button>
+            <span class="goal-adj-val"><span id="goal-target">20</span> cards</span>
+            <button class="goal-adj-btn" id="goal-inc">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="milestone-badges" id="milestone-badges">
+        <div class="ms-badge" data-days="7"><span class="ms-badge-icon">🥉</span> 7-day streak</div>
+        <div class="ms-badge" data-days="30"><span class="ms-badge-icon">🥈</span> 30-day streak</div>
+        <div class="ms-badge" data-days="100"><span class="ms-badge-icon">🥇</span> 100-day streak</div>
+      </div>
     </div>
 
     <div class="heatmap-wrap">
@@ -1911,12 +1973,88 @@ function rateCard(q) {
     var _ss = document.getElementById('sess-stats');
     if (_ss) { _ss.classList.add('visible'); document.getElementById('ss-got-n').textContent = _sessGot; document.getElementById('ss-hard-n').textContent = _sessHard; document.getElementById('ss-miss-n').textContent = _sessMissed; }
   } catch(e) {}
+  // Track daily goal progress
+  try {
+    _dailyDone++;
+    const _dk = 'hosa::daily::' + (typeof getTodayStr==='function'?getTodayStr():new Date().toISOString().slice(0,10));
+    localStorage.setItem(_dk, _dailyDone);
+    updateGoalRing();
+  } catch(e) {}
   nextFlashcard(1);
 }
 document.getElementById('flash-again').addEventListener('click', () => rateCard(0));
 document.getElementById('flash-hard').addEventListener('click',  () => rateCard(2));
 document.getElementById('flash-good').addEventListener('click',  () => rateCard(4));
 document.getElementById('flash-easy').addEventListener('click',  () => rateCard(5));
+
+// ── Cram mode ─────────────────────────────────────────────────
+let _cramMode = false, _cramInterval = null;
+function startCramMode() {
+  const today = typeof getTodayStr==='function' ? getTodayStr() : new Date().toISOString().slice(0,10);
+  const pool = filterDeck(state.flash.filter);
+  const due = pool.filter(c => state.progress.studied.has(c.term) && getSRData(c.term).due <= today);
+  const cramBtn = document.getElementById('cram-btn');
+  if (due.length === 0) {
+    if (cramBtn) { cramBtn.textContent = '✓ All caught up!'; setTimeout(()=>{ cramBtn.textContent='⚡ Cram'; },2500); }
+    return;
+  }
+  _cramMode = true;
+  if (cramBtn) { cramBtn.classList.add('active'); cramBtn.textContent = '✗ Exit Cram'; }
+  const timerEl = document.getElementById('sess-timer');
+  if (timerEl) timerEl.style.display = '';
+  const _start = Date.now();
+  clearInterval(_cramInterval);
+  _cramInterval = setInterval(() => {
+    if (!_cramMode) { clearInterval(_cramInterval); return; }
+    const s = Math.floor((Date.now()-_start)/1000);
+    if (timerEl) timerEl.textContent = Math.floor(s/60).toString().padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  }, 1000);
+  state.flash.deck = (typeof shuffle==='function' ? shuffle(due) : due);
+  state.flash.index = 0;
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.getElementById('session-complete').style.display = 'none';
+  renderFlashcard();
+}
+function exitCramMode() {
+  _cramMode = false;
+  clearInterval(_cramInterval);
+  const timerEl = document.getElementById('sess-timer');
+  if (timerEl) { timerEl.style.display = 'none'; timerEl.textContent = ''; }
+  const cramBtn = document.getElementById('cram-btn');
+  if (cramBtn) { cramBtn.classList.remove('active'); cramBtn.textContent = '⚡ Cram'; }
+}
+document.getElementById('cram-btn')?.addEventListener('click', () => { _cramMode ? exitCramMode() : startCramMode(); });
+
+// ── Daily goal ring ───────────────────────────────────────────
+const GOAL_STORAGE = 'hosa::daily-goal';
+let _dailyGoal = parseInt(localStorage.getItem(GOAL_STORAGE)||'20', 10);
+const _todayKey = 'hosa::daily::' + (typeof getTodayStr==='function' ? getTodayStr() : new Date().toISOString().slice(0,10));
+let _dailyDone  = parseInt(localStorage.getItem(_todayKey)||'0', 10);
+
+function updateGoalRing() {
+  try {
+    const fill = document.getElementById('goal-ring-fill');
+    const doneEl = document.getElementById('goal-done');
+    const targetEl = document.getElementById('goal-target');
+    if (!fill) return;
+    const circ = 2 * Math.PI * 31; // 194.78
+    const pct = Math.min(1, _dailyDone / Math.max(1, _dailyGoal));
+    fill.style.strokeDashoffset = circ * (1 - pct);
+    if (doneEl) doneEl.textContent = _dailyDone;
+    if (targetEl) targetEl.textContent = _dailyGoal;
+  } catch(e) {}
+}
+document.getElementById('goal-inc')?.addEventListener('click', () => {
+  _dailyGoal = Math.min(100, _dailyGoal + 5);
+  localStorage.setItem(GOAL_STORAGE, _dailyGoal);
+  updateGoalRing();
+});
+document.getElementById('goal-dec')?.addEventListener('click', () => {
+  _dailyGoal = Math.max(5, _dailyGoal - 5);
+  localStorage.setItem(GOAL_STORAGE, _dailyGoal);
+  updateGoalRing();
+});
 
 document.getElementById('sc-more').addEventListener('click', () => {
   _sessGot = 0; _sessMissed = 0; _sessHard = 0;
@@ -2245,6 +2383,14 @@ function renderProgress() {
     list.appendChild(row);
   });
   renderHeatmap();
+  updateGoalRing();
+  // Milestone streak badges
+  try {
+    const streak = state.progress.streak || 0;
+    document.querySelectorAll('#milestone-badges .ms-badge').forEach(b => {
+      b.classList.toggle('earned', streak >= parseInt(b.getAttribute('data-days'),10));
+    });
+  } catch(e) {}
 }
 
 function renderHeatmap() {
