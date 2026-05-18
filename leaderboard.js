@@ -10,8 +10,6 @@
   window.__hosaLBLoaded = true;
 
   var subject = (location.pathname.split('/').pop() || '').replace('.html','') || '';
-  // Skip homepage, admin
-  if (!subject || subject === 'index' || subject === 'home' || subject === 'admin') return;
 
   // ── Dummy player pool ──────────────────────────────────────
   var NAMES = [
@@ -47,6 +45,11 @@
     'psychiatry':15, 'neonatology':13, 'physical-medicine-rehabilitation':12,
     'allergy-immunology':11, 'global-health':12
   };
+  window.TOTAL_TERMS = TOTAL_TERMS;
+
+  // Skip the rest on pages without a subject (homepage, admin)
+  if (!subject || subject === 'index' || subject === 'home' || subject === 'admin') return;
+
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
   function hashStr(s){

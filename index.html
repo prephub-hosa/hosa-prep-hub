@@ -253,7 +253,7 @@
   }
   #event-search {
     width: 100%;
-    padding: 16px 20px 16px 50px;
+    padding: 16px 44px 16px 50px;
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 17px;
     color: var(--ink);
@@ -365,6 +365,93 @@
     font-style: italic;
     opacity: 0.7;
     margin-left: 5px;
+  }
+  .filter-btn.surprise {
+    margin-left: auto;
+    border-color: var(--accent);
+    color: var(--accent);
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .filter-btn.surprise:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .filter-btn.surprise .kbd {
+    font-family: 'Source Serif 4', monospace;
+    font-style: normal;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+    padding: 1px 5px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    opacity: 0.6;
+    vertical-align: 1px;
+  }
+  .event-search-box {
+    position: relative;
+  }
+  .search-kbd-hint {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Source Serif 4', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    padding: 2px 6px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+  .event-search-box:focus-within .search-kbd-hint { opacity: 0; }
+  @media (max-width: 640px) { .search-kbd-hint { display: none; } }
+
+  /* Studied indicator on cards */
+  .card-studied-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--success, #2a8a4f);
+    background: rgba(42,138,79,0.08);
+    border: 1px solid rgba(42,138,79,0.25);
+    padding: 2px 7px 2px 6px;
+    border-radius: 2px;
+    line-height: 1.3;
+  }
+  .category-card.is-studied .card-studied-badge { display: inline-flex; }
+  .category-card.is-studied {
+    border-top-width: 3px;
+  }
+  .card-studied-badge svg { width: 9px; height: 9px; }
+  [data-theme="light"] .card-studied-badge {
+    background: rgba(42,138,79,0.12);
+    border-color: rgba(42,138,79,0.35);
+  }
+
+  /* Random-pick flash effect */
+  @keyframes _random-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(169,40,31,0.5); transform: translateY(-3px) scale(1.02); }
+    50%  { box-shadow: 0 0 0 12px rgba(169,40,31,0); transform: translateY(-3px) scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(169,40,31,0); transform: translateY(-3px) scale(1.02); }
+  }
+  .category-card.is-picked {
+    animation: _random-pulse 1.1s ease-out;
+    border-color: var(--accent);
   }
 
   /* ——— Categories ——— */
@@ -1297,10 +1384,12 @@
         <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
         <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
         <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
+        <button class="filter-btn surprise" id="btn-surprise" type="button" title="Pick a random event">Surprise me <span class="kbd">R</span></button>
       </div>
       <div class="event-search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="search" id="event-search" placeholder="Search events — try &ldquo;nursing&rdquo; or &ldquo;path&rdquo;&hellip;" autocomplete="off" spellcheck="false">
+        <span class="search-kbd-hint">/</span>
       </div>
     </div>
 
@@ -2868,6 +2957,7 @@ document.getElementById('request-btn').onclick = function() {
 })();
 </script>
 
+<script src="leaderboard.js"></script>
 <script id="event-search-js">
 (function(){
   var input    = document.getElementById('event-search');
@@ -2936,6 +3026,77 @@ document.getElementById('request-btn').onclick = function() {
   // Clear on ESC
   input.addEventListener('keydown', function(e){
     if (e.key === 'Escape') { input.value = ''; applyFilters(); input.blur(); }
+  });
+
+  // ── Studied indicators + per-card progress bars from localStorage ──
+  function slugFromHref(href){
+    if (!href) return '';
+    var m = href.match(/([^\/]+)\.html(?:[?#].*)?$/);
+    return m ? m[1] : '';
+  }
+  var BADGE_HTML = '<span class="card-studied-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="badge-text">Studied</span></span>';
+  var anyStudied = 0, totalMastered = 0;
+  cardData.forEach(function(c){
+    var slug = slugFromHref(c.el.getAttribute('href'));
+    if (!slug) return;
+    try {
+      var raw = localStorage.getItem('hosa::' + slug);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      var studiedCt  = (data.studied  && data.studied.length)  || 0;
+      var masteredCt = (data.mastered && data.mastered.length) || 0;
+      if (studiedCt === 0 && masteredCt === 0) return;
+      anyStudied++;
+      totalMastered += masteredCt;
+      c.el.classList.add('is-studied');
+      // Insert badge after card-number
+      var num = c.el.querySelector('.card-number');
+      if (num && !c.el.querySelector('.card-studied-badge')) {
+        num.insertAdjacentHTML('afterend', BADGE_HTML);
+      }
+      // Try to fill the progress bar — need total terms for pct
+      var fillEl = c.el.querySelector('.cp-bar-fill');
+      var labelEl = c.el.querySelector('.cp-label');
+      var totalTerms = (window.TOTAL_TERMS && window.TOTAL_TERMS[slug]) || studiedCt || 1;
+      var pct = Math.min(100, Math.round(masteredCt / totalTerms * 100));
+      if (fillEl) { setTimeout(function(){ fillEl.style.width = pct + '%'; }, 80); }
+      if (labelEl) labelEl.textContent = masteredCt + ' mastered · ' + studiedCt + ' studied';
+    } catch(e){}
+  });
+  if (anyStudied > 0) document.body.classList.add('user-active');
+
+  // ── Surprise Me ──
+  function surpriseMe(){
+    var visible = cardData.filter(function(c){ return c.el.style.display !== 'none'; });
+    if (!visible.length) return;
+    var pick = visible[Math.floor(Math.random() * visible.length)];
+    // Scroll into view, flash, navigate
+    pick.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    pick.el.classList.remove('is-picked'); void pick.el.offsetWidth;
+    pick.el.classList.add('is-picked');
+    setTimeout(function(){
+      pick.el.classList.remove('is-picked');
+      window.location.href = pick.el.getAttribute('href');
+    }, 950);
+  }
+  var btnSurprise = document.getElementById('btn-surprise');
+  if (btnSurprise) btnSurprise.addEventListener('click', surpriseMe);
+
+  // ── Global keyboard shortcuts ──
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable;
+    if (typing) return;
+    // ignore when modifier keys held (avoid clashing with browser shortcuts)
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === '/') {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    } else if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      surpriseMe();
+    }
   });
 })();
 </script>
