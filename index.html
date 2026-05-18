@@ -848,9 +848,251 @@
   .cp-bar-track { height: 3px; background: var(--rule); border-radius: 2px; }
   .cp-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0; transition: width 0.6s ease; }
   .cp-label { font-family: 'Source Serif 4', Georgia, serif; font-size: 11px; color: var(--ink-faint); margin-top: 5px; letter-spacing: 0.02em; }
+
+  /* ——— Onboarding / Recommendation Modal ——— */
+  #onboard {
+    position: fixed; inset: 0; z-index: 800;
+    background: rgba(20,18,16,0.72);
+    backdrop-filter: blur(6px);
+    display: none; justify-content: center; align-items: center;
+    padding: 20px; overflow-y: auto;
+  }
+  [data-theme="light"] #onboard { background: rgba(30,28,22,0.4); }
+  #onboard.open { display: flex; }
+  .onboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.4);
+    max-width: 720px; width: 100%;
+    padding: 40px 44px 36px;
+    position: relative;
+  }
+  .onboard-close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: none; cursor: pointer;
+    font-size: 26px; line-height: 1; padding: 6px 10px;
+    color: var(--ink-soft); font-family: 'Source Serif 4', serif;
+  }
+  .onboard-close:hover { color: var(--ink); }
+  .onboard-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-variant: small-caps;
+    letter-spacing: 0.14em; color: var(--accent);
+    margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--accent);
+    display: inline-block;
+  }
+  .onboard-title {
+    font-family: 'Fraunces', serif;
+    font-size: 38px; font-weight: 400;
+    letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 8px;
+  }
+  .onboard-title em { color: var(--accent); font-style: italic; font-weight: 500; }
+  .onboard-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-style: italic;
+    color: var(--ink-soft); margin-bottom: 28px;
+  }
+  .onboard-actions {
+    display: flex; gap: 12px; justify-content: space-between; align-items: center;
+    margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--rule);
+  }
+  .onboard-btn {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 22px; cursor: pointer;
+    transition: all 0.15s; letter-spacing: 0.01em;
+  }
+  .onboard-btn.primary {
+    background: var(--accent); color: #fff; border: 1px solid var(--accent);
+  }
+  .onboard-btn.primary:hover { filter: brightness(1.08); }
+  .onboard-btn.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .onboard-btn.ghost {
+    background: transparent; color: var(--ink-soft); border: none;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .onboard-btn.ghost:hover { color: var(--ink); }
+  .onboard-btn.secondary {
+    background: transparent; color: var(--ink); border: 1px solid var(--rule);
+  }
+  .onboard-btn.secondary:hover { border-color: var(--ink); }
+
+  /* Step 1 — two big choice tiles */
+  .onboard-choice-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 12px;
+  }
+  .onboard-choice {
+    text-align: left; padding: 28px 24px; background: transparent;
+    border: 1px solid var(--rule); cursor: pointer;
+    transition: border-color 0.15s, transform 0.2s;
+    color: var(--ink); font-family: inherit;
+  }
+  .onboard-choice:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .onboard-choice .choice-title {
+    font-family: 'Fraunces', serif; font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em; line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .onboard-choice .choice-desc {
+    font-family: 'Source Serif 4', serif; font-size: 14px;
+    color: var(--ink-soft); line-height: 1.5;
+  }
+
+  /* Step 2 — interest chips */
+  .onboard-chips {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 8px;
+  }
+  .onboard-chip {
+    text-align: left; padding: 12px 14px;
+    background: transparent; border: 1px solid var(--rule);
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'Source Serif 4', serif; font-size: 14px;
+    font-weight: 500; color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .onboard-chip .chip-emoji { font-size: 18px; flex-shrink: 0; }
+  .onboard-chip:hover { border-color: var(--ink-soft); }
+  .onboard-chip.selected {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .onboard-chip-hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-style: italic;
+    color: var(--ink-faint); margin-top: 10px;
+  }
+
+  /* Step 3 — rec cards */
+  .onboard-recs { display: grid; gap: 12px; }
+  .onboard-rec {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 18px; align-items: center;
+    padding: 18px 22px; background: var(--bg);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    text-decoration: none; color: var(--ink);
+    transition: transform 0.2s, box-shadow 0.25s;
+  }
+  .onboard-rec:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(0,0,0,0.18); }
+  .onboard-rec .rec-rank {
+    font-family: 'Fraunces', serif; font-size: 32px;
+    font-style: italic; color: var(--accent);
+    opacity: 0.6; line-height: 1; letter-spacing: -0.04em;
+  }
+  .onboard-rec .rec-title {
+    font-family: 'Fraunces', serif; font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .onboard-rec .rec-meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-style: italic;
+    color: var(--ink-soft);
+  }
+  .onboard-rec .rec-arrow {
+    font-family: 'Fraunces', serif; font-size: 22px;
+    color: var(--ink-soft); font-style: italic;
+    transition: transform 0.2s, color 0.2s;
+  }
+  .onboard-rec:hover .rec-arrow { transform: translateX(3px); color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .onboard-card { padding: 28px 20px 22px; }
+    .onboard-title { font-size: 28px; }
+    .onboard-choice-grid { grid-template-columns: 1fr; }
+    .onboard-chips { grid-template-columns: repeat(2, 1fr); }
+    .onboard-rec { grid-template-columns: 1fr auto; }
+    .onboard-rec .rec-rank { display: none; }
+  }
+
+  /* "Find your event" hero pill */
+  .find-event-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; margin-top: 14px;
+    background: transparent;
+    border: 1px dashed var(--ink-soft);
+    color: var(--ink-soft);
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
 </head>
 <body>
+
+<!-- Onboarding & Recommendation Modal -->
+<div id="onboard" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
+  <div class="onboard-card">
+    <button type="button" class="onboard-close" id="onboard-close" aria-label="Close">&times;</button>
+
+    <!-- Step 1 — split: pick or browse -->
+    <div data-step="1">
+      <div class="onboard-eyebrow">Welcome to HOSA Prep Hub</div>
+      <h2 class="onboard-title" id="onboard-title">Let's find your <em>event.</em></h2>
+      <p class="onboard-sub">Sixty events is a lot. Two clicks gets you to the three that fit you best.</p>
+
+      <div class="onboard-choice-grid">
+        <button type="button" class="onboard-choice" data-go="2">
+          <div class="choice-title">Help me <em style="color:var(--accent);font-style:italic;">pick</em></div>
+          <div class="choice-desc">Tell us what interests you and we'll recommend three events to start with.</div>
+        </button>
+        <button type="button" class="onboard-choice" data-go="browse">
+          <div class="choice-title">I'll browse <em style="color:var(--accent);font-style:italic;">all 60</em></div>
+          <div class="choice-desc">Skip the questions and jump straight to the full event list.</div>
+        </button>
+      </div>
+
+      <div class="onboard-actions">
+        <button type="button" class="onboard-btn ghost" id="onboard-skip-1">Skip — I know what I want</button>
+      </div>
+    </div>
+
+    <!-- Step 2 — interest chips -->
+    <div data-step="2" style="display:none">
+      <div class="onboard-eyebrow">Step 2 of 3</div>
+      <h2 class="onboard-title">What <em>interests</em> you?</h2>
+      <p class="onboard-sub">Pick one or more. We'll match you to events that fit.</p>
+
+      <div class="onboard-chips" id="onboard-chips">
+        <button type="button" class="onboard-chip" data-interest="patient-care"><span class="chip-emoji">🩺</span>Direct patient care</button>
+        <button type="button" class="onboard-chip" data-interest="emergency"><span class="chip-emoji">🚑</span>Emergency &amp; trauma</button>
+        <button type="button" class="onboard-chip" data-interest="surgery"><span class="chip-emoji">🔪</span>Surgery &amp; procedures</button>
+        <button type="button" class="onboard-chip" data-interest="mental-health"><span class="chip-emoji">🧠</span>Mental &amp; behavioral</button>
+        <button type="button" class="onboard-chip" data-interest="pediatric"><span class="chip-emoji">👶</span>Pediatric care</button>
+        <button type="button" class="onboard-chip" data-interest="lab-research"><span class="chip-emoji">🔬</span>Lab &amp; research</button>
+        <button type="button" class="onboard-chip" data-interest="imaging-diagnostics"><span class="chip-emoji">📷</span>Imaging &amp; diagnostics</button>
+        <button type="button" class="onboard-chip" data-interest="therapy-rehab"><span class="chip-emoji">🦾</span>Therapy &amp; rehab</button>
+        <button type="button" class="onboard-chip" data-interest="pharmacy"><span class="chip-emoji">💊</span>Pharmacy &amp; meds</button>
+        <button type="button" class="onboard-chip" data-interest="public-health"><span class="chip-emoji">🌍</span>Public &amp; global health</button>
+        <button type="button" class="onboard-chip" data-interest="fundamentals"><span class="chip-emoji">📚</span>Fundamentals first</button>
+        <button type="button" class="onboard-chip" data-interest="specialty"><span class="chip-emoji">🫀</span>Body-system specialty</button>
+      </div>
+      <div class="onboard-chip-hint">Multi-select — pick everything that sounds like you.</div>
+
+      <div class="onboard-actions">
+        <button type="button" class="onboard-btn ghost" data-go="1">← Back</button>
+        <button type="button" class="onboard-btn primary" id="onboard-see-recs" disabled>See my recommendations →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 — recommendations -->
+    <div data-step="3" style="display:none">
+      <div class="onboard-eyebrow">Step 3 of 3</div>
+      <h2 class="onboard-title">Start <em>here.</em></h2>
+      <p class="onboard-sub">Based on what you picked, these three are your best starting points.</p>
+      <div class="onboard-recs" id="onboard-recs"></div>
+      <div class="onboard-actions">
+        <button type="button" class="onboard-btn ghost" data-go="2">← Refine my picks</button>
+        <button type="button" class="onboard-btn secondary" id="onboard-finish">See all 60 events →</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="auth-loading" style="display:none">Loading…</div>
 
@@ -936,6 +1178,9 @@
         <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Start studying →</a>
         <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Try a card</a>
       </div>
+      <button type="button" class="find-event-pill" id="open-onboard">
+        <span>✦</span> Not sure which event? Take the 30-second quiz
+      </button>
     </div>
     <aside class="hero-aside">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
@@ -991,9 +1236,12 @@
         <button onclick="demoRate(true)" style="flex:1;padding:13px;background:var(--accent);border:1px solid var(--accent);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;color:#fff;">✓  Got it</button>
       </div>
       <div id="demo-done" style="display:none;background:var(--bg-card);border:1px solid var(--rule);padding:32px 36px;text-align:center;">
-        <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">That's the idea.</div>
-        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner. Pick any of the 60 events below to start for real.</div>
-        <a href="#categories" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:12px 28px;background:var(--ink);color:var(--bg);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Choose your event →</a>
+        <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">That's the idea.</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner — so each session targets your weak spots automatically.</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button type="button" onclick="document.getElementById('open-onboard').click();" style="display:inline-block;padding:12px 24px;background:var(--accent);color:#fff;border:1px solid var(--accent);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.01em;">Find my event →</button>
+          <a href="#categories" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:12px 24px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Browse all 60</a>
+        </div>
       </div>
     </div>
   </section>
@@ -2347,8 +2595,30 @@ function renderContinueStudying() {
         '<div style="font-family:\'Source Serif 4\',serif;font-size:13px;color:var(--ink-soft);">' + e.mastered + ' mastered &middot; ' + e.studied + ' studied</div>' +
       '</a>';
     }).join('');
+    var totalCards = entries.reduce(function(s,x){ return s + x.studied; }, 0);
     meta.textContent = top.length + (top.length === 1 ? ' event in progress' : ' events in progress');
     section.style.display = 'block';
+
+    // Soft signup prompt if guest with substantial progress and not dismissed
+    var dismissed = false;
+    try { dismissed = !!localStorage.getItem('hosa-save-prompt-dismissed'); } catch(e) {}
+    if (!dismissed && !firebase.auth().currentUser && totalCards >= 8) {
+      var prompt = document.createElement('div');
+      prompt.style.cssText = 'margin-top:18px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--accent);border-left:3px solid var(--accent);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-family:"Source Serif 4",serif;font-size:14px;';
+      prompt.innerHTML =
+        '<div><strong>You\'ve studied ' + totalCards + ' cards on this browser.</strong> ' +
+        '<span style="color:var(--ink-soft);">Create a free account to sync across devices and never lose your progress.</span></div>' +
+        '<div style="display:flex;gap:8px;flex-shrink:0;"><button id="save-prompt-signin" style="padding:8px 16px;background:var(--accent);color:#fff;border:1px solid var(--accent);font:inherit;font-weight:600;cursor:pointer;">Save progress →</button>' +
+        '<button id="save-prompt-dismiss" style="padding:8px 12px;background:transparent;color:var(--ink-soft);border:none;cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px;">Not now</button></div>';
+      section.appendChild(prompt);
+      document.getElementById('save-prompt-signin').addEventListener('click', function(){
+        document.getElementById('auth-gate').style.display = 'flex';
+      });
+      document.getElementById('save-prompt-dismiss').addEventListener('click', function(){
+        try { localStorage.setItem('hosa-save-prompt-dismissed', '1'); } catch(e) {}
+        prompt.remove();
+      });
+    }
   } catch(e) {}
 }
 
@@ -2669,6 +2939,156 @@ document.getElementById('request-btn').onclick = function() {
   });
 })();
 </script>
+
+<script id="onboarding-rec">
+(function(){
+  var ONBOARD_KEY = 'hosa-onboard-v1';
+
+  // Interest → ranked list of event slugs. Higher position = stronger match.
+  var INTEREST_MAP = {
+    'patient-care':         ['clinical-nursing','medical-assisting','nursing-assisting','geriatrics','emergency-medical-science','phlebotomy'],
+    'emergency':            ['emergency-medical-science','trauma-critical-care','pain-management','sports-medicine'],
+    'surgery':              ['surgical-technology','trauma-critical-care','dental-science','oncology','radiologic-science'],
+    'mental-health':        ['behavioral-health','psychiatry','human-growth-development'],
+    'pediatric':            ['pediatrics','neonatology','human-growth-development','obstetrics-gynecology'],
+    'lab-research':         ['biomedical-lab-science','biotechnology','medical-microbiology','genetics','hematology','phlebotomy','immunology'],
+    'imaging-diagnostics':  ['radiologic-science','forensic-science','medical-microbiology'],
+    'therapy-rehab':        ['physical-therapy','occupational-therapy','speech-language-pathology','physical-medicine-rehabilitation','audiology','respiratory-therapy'],
+    'pharmacy':             ['pharmacology','pharmacy-science'],
+    'public-health':        ['public-health','epidemiology','global-health','healthcare-systems','medical-law-ethics','health-informatics'],
+    'fundamentals':         ['medical-terminology','anatomy-physiology','pathophysiology','biochemistry','medical-math','nutrition'],
+    'specialty':            ['cardiovascular-science','neurology','endocrinology','gastroenterology','nephrology','dermatology','rheumatology','otolaryngology','urology','sleep-medicine','infectious-disease','allergy-immunology','oncology','hematology'],
+  };
+
+  var modal     = document.getElementById('onboard');
+  var closeBtn  = document.getElementById('onboard-close');
+  var chips     = Array.from(document.querySelectorAll('.onboard-chip'));
+  var seeRecsBtn = document.getElementById('onboard-see-recs');
+  var finishBtn = document.getElementById('onboard-finish');
+  var recsEl    = document.getElementById('onboard-recs');
+  var openBtn   = document.getElementById('open-onboard');
+  var picked    = {};
+
+  // Build label map from category cards on the page
+  var labelMap = {};
+  var descMap  = {};
+  document.querySelectorAll('.categories .category-card').forEach(function(card){
+    var href = card.getAttribute('href') || '';
+    var slug = href.replace('.html','');
+    var h3 = card.querySelector('h3');
+    var p  = card.querySelector('.card-desc');
+    labelMap[slug] = h3 ? h3.textContent.trim() : slug;
+    descMap[slug]  = p  ? p.textContent.trim()  : '';
+  });
+
+  function showStep(n) {
+    modal.querySelectorAll('[data-step]').forEach(function(s){ s.style.display = 'none'; });
+    var step = modal.querySelector('[data-step="' + n + '"]');
+    if (step) step.style.display = 'block';
+  }
+  function openModal(initialStep) {
+    modal.classList.add('open');
+    showStep(initialStep || 1);
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    try { localStorage.setItem(ONBOARD_KEY, '1'); } catch(e) {}
+  }
+
+  // Step 1 choices
+  modal.querySelectorAll('[data-go]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var go = btn.getAttribute('data-go');
+      if (go === 'browse') {
+        closeModal();
+        document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});
+      } else {
+        showStep(go);
+      }
+    });
+  });
+
+  // Chip multi-select
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var k = chip.getAttribute('data-interest');
+      if (picked[k]) { delete picked[k]; chip.classList.remove('selected'); }
+      else { picked[k] = 1; chip.classList.add('selected'); }
+      var anySelected = Object.keys(picked).length > 0;
+      seeRecsBtn.disabled = !anySelected;
+    });
+  });
+
+  function computeRecs() {
+    var scores = {};
+    Object.keys(picked).forEach(function(interest){
+      var list = INTEREST_MAP[interest] || [];
+      list.forEach(function(slug, idx){
+        // Weight by position (top = 6, next = 5, ...)
+        var w = Math.max(1, 6 - idx);
+        scores[slug] = (scores[slug] || 0) + w;
+      });
+    });
+    var ranked = Object.keys(scores).sort(function(a,b){ return scores[b] - scores[a]; });
+    return ranked.slice(0, 3);
+  }
+
+  function renderRecs(slugs) {
+    recsEl.innerHTML = slugs.map(function(slug, idx){
+      var label = labelMap[slug] || slug;
+      var desc  = descMap[slug]  || '';
+      // Trim description
+      if (desc.length > 130) desc = desc.slice(0, 127).replace(/\s+\S*$/, '') + '…';
+      return '<a class="onboard-rec" href="' + slug + '.html">' +
+        '<div class="rec-rank">' + String(idx + 1).padStart(2,'0') + '</div>' +
+        '<div><div class="rec-title">' + label + '</div><div class="rec-meta">' + desc + '</div></div>' +
+        '<div class="rec-arrow">→</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  seeRecsBtn.addEventListener('click', function(){
+    var recs = computeRecs();
+    if (recs.length === 0) return;
+    renderRecs(recs);
+    showStep(3);
+    try { gtag('event', 'onboard_recommendations', { interests: Object.keys(picked).join(',') }); } catch(e){}
+  });
+
+  finishBtn.addEventListener('click', function(){
+    closeModal();
+    document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+  document.getElementById('onboard-skip-1').addEventListener('click', closeModal);
+
+  // Open via hero pill — always opens at step 1 of full flow
+  openBtn.addEventListener('click', function(){ openModal(1); });
+
+  // Auto-open on first visit only, after a short delay so the page paints
+  var seen = false;
+  try { seen = !!localStorage.getItem(ONBOARD_KEY); } catch(e) {}
+  // Don't open if user has any existing progress (they've used the site before)
+  var hasProgress = false;
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('hosa::') === 0) { hasProgress = true; break; }
+    }
+  } catch(e) {}
+  if (!seen && !hasProgress) {
+    setTimeout(function(){ openModal(1); }, 1200);
+  }
+})();
+</script>
+
 <script id="hosa-analytics">
 (function(){
   var PAGE_KEY='home';
