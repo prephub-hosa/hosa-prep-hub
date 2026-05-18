@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Generate neonatology.html from dental-science.html template."""
+import os, re
+BASE = '/home/user/hosa-prep-hub'
+SRC, DST = os.path.join(BASE, 'dental-science.html'), os.path.join(BASE, 'neonatology.html')
+with open(SRC, 'r', encoding='utf-8') as f: html = f.read()
+TERMS_JS = '''const TERMS = [
+  // ── Newborn Assessment ───────────────────────────────────────
+  { term: "APGAR Score", type: "concept", category: "newborn-assessment", meaning: "Assessed at 1 and 5 minutes: Appearance (color), Pulse (HR), Grimace (reflex), Activity (tone), Respiration. Each 0–2; total ≥7 = reassuring, 4–6 = needs support, ≤3 = immediate resuscitation. 5-min score more prognostic.", example: "The newborn's 1-min APGAR of 5 (1 color, 2 HR, 1 reflex, 0 tone, 1 resp) prompted supplemental oxygen and stimulation; 5-min score improved to 8." },
+  { term: "Newborn Resuscitation (NRP)", type: "concept", category: "newborn-assessment", meaning: "Warm, dry, stimulate → assess breathing/HR. HR <100: positive pressure ventilation (PPV) with 21% O2. HR <60 after 30 sec PPV: chest compressions (3:1 ratio) + 100% O2. Persistent bradycardia: epinephrine IV/UVC. Meconium in non-vigorous: intubate and suction.", example: "The term infant born apneic with HR 50 required PPV then chest compressions; HR rose to 120 after epinephrine via umbilical vein catheter." },
+  { term: "Gestational Age Assessment", type: "concept", category: "newborn-assessment", meaning: "Ballard score assesses neuromuscular (posture, window sign, arm recoil) and physical (skin, lanugo, plantar creases, breast, ear, genitalia) maturity. Term: 37–42 weeks. Preterm <37. Post-term >42. SGA <10th percentile; LGA >90th; AGA 10th–90th.", example: "The newborn's Ballard score of 34 weeks correlated with the 34-week gestational age by dates; AGA weight and NICU monitoring were appropriate." },
+  { term: "Routine Newborn Care & Screening", type: "concept", category: "newborn-assessment", meaning: "Vitamin K IM (clotting factor synthesis immature), erythromycin eye prophylaxis (gonococcal), hepatitis B vaccine. Newborn metabolic screen (PKU, hypothyroidism, CF, hemoglobinopathies, 30+ conditions by heel stick). Hearing screen. Critical CHD screen by pulse oximetry.", example: "The newborn received vitamin K, eye prophylaxis, and Hep B vaccine; the metabolic screen returned elevated TSH prompting early congenital hypothyroidism treatment." },
+
+  // ── Respiratory & Common NICU Conditions ─────────────────────
+  { term: "Respiratory Distress Syndrome (RDS)", type: "concept", category: "nicu-conditions", meaning: "Surfactant deficiency in preterm infants → alveolar collapse, hypoxia, tachypnea, grunting, retractions. CXR: ground-glass, air bronchograms. Treated with exogenous surfactant (prophylactic or rescue) and respiratory support (CPAP, mechanical ventilation). Antenatal steroids if possible.", example: "The 28-week infant's worsening hypoxia with ground-glass CXR was treated with rescue surfactant; CPAP maintained FiO2 <0.35 within 24 hours." },
+  { term: "Transient Tachypnea of the Newborn (TTN)", type: "concept", category: "nicu-conditions", meaning: "Retained fetal lung fluid in late-preterm or C-section born infants → tachypnea, mild hypoxia in first hours. CXR: perihilar streaking, fluid in fissures. Usually resolves in 24–72 hours with supportive care (supplemental O2, feeding support). Self-limiting.", example: "The 37-week C-section neonate's tachypnea (RR 80) and perihilar streaking on CXR resolved with 2 days of supplemental oxygen — TTN." },
+  { term: "Neonatal Jaundice (Hyperbilirubinemia)", type: "concept", category: "nicu-conditions", meaning: "Physiologic: bilirubin peaks day 3-4 term, 5-7 preterm; benign. Pathologic: onset <24 hours (hemolysis), rapid rise >0.5 mg/dL/hr, direct bilirubin >2 (cholestasis). Phototherapy is primary treatment; exchange transfusion for severe levels to prevent kernicterus (bilirubin encephalopathy).", example: "The breastfed neonate's bilirubin of 18 mg/dL at day 4 started phototherapy; levels declined to 12 mg/dL over 24 hours, safe to discontinue." },
+  { term: "Necrotizing Enterocolitis (NEC)", type: "concept", category: "nicu-conditions", meaning: "Inflammatory bowel necrosis primarily in preterm infants; presents with feeding intolerance, abdominal distension, bloody stools. KUB shows pneumatosis intestinalis (air in bowel wall). Treated with NPO, NG decompression, IV antibiotics. Surgery for perforation.", example: "The 30-week infant's bloody stools and abdominal distension with pneumatosis on KUB confirmed NEC; IV antibiotics, NPO, and surgical consultation were initiated." },
+
+  // ── Neonatal Infections & Metabolic ───────────────────────────
+  { term: "Neonatal Sepsis", type: "concept", category: "infections-metabolic", meaning: "Early-onset (<72h): GBS, E. coli, Listeria from vertical transmission. Late-onset (>72h): CoNS, Candida, Staph aureus — often NICU-acquired. Presents with temperature instability, apnea, poor feeding, lethargy. Empiric: ampicillin + gentamicin for early; vancomycin + gentamicin for late.", example: "The term infant with respiratory distress and temperature of 35°C at 12 hours had blood cultures drawn and was started on ampicillin + gentamicin pending GBS rule-out." },
+  { term: "Neonatal Hypoglycemia", type: "concept", category: "infections-metabolic", meaning: "Blood glucose <45 mg/dL in the first hours of life; at-risk: IDM, SGA, LGA, preterm, hypothermia. Symptoms: jitteriness, poor feeding, apnea, seizures. Asymptomatic: early feeds; symptomatic or persistent: IV dextrose (D10W 2 mL/kg bolus) + infusion.", example: "The LGA newborn of a diabetic mother with blood glucose of 30 mg/dL and jitteriness was given D10W 2 mL/kg bolus with resolution of symptoms and glucose of 55." },
+  { term: "Intraventricular Hemorrhage (IVH)", type: "concept", category: "infections-metabolic", meaning: "Bleeding into germinal matrix/ventricles in preterm infants <32 weeks. Graded I-IV by severity (I = subependymal; IV = parenchymal). Risk factors: prematurity, respiratory distress, hemodynamic instability. Diagnosed by cranial ultrasound. Grades III-IV associated with neurodevelopmental disability.", example: "The 26-week infant's routine day-3 head ultrasound showed bilateral Grade III IVH — parents counseled about risk of cerebral palsy and developmental delay." },
+
+  // ── Congenital Conditions ──────────────────────────────────────
+  { term: "Congenital Heart Disease (CHD) Overview", type: "concept", category: "congenital", meaning: "Most common birth defect. Acyanotic (left-to-right shunts): VSD, ASD, PDA. Cyanotic (right-to-left or mixing): Tetralogy of Fallot, TGA, truncus arteriosus, hypoplastic left heart. Critical CHD: pulse oximetry screen at >24h. Treatment: surgical or catheter-based repair.", example: "The newborn's SpO2 of 82% on CCHD screen despite normal room air breathing prompted echo revealing transposition of the great arteries — emergency transfer." },
+  { term: "Inborn Errors of Metabolism", type: "concept", category: "congenital", meaning: "Enzyme defects in metabolic pathways; PKU (phenylalanine → tyrosine), MSUD (maple syrup urine), galactosemia, organic acidemias, urea cycle defects. Presents in neonates with lethargy, vomiting, seizures, unusual odor. Diagnosed on newborn screen. Treated with dietary restriction or supplementation.", example: "The 5-day-old with lethargy and 'sweaty feet' smell had elevated leucine on expanded screen — MSUD diagnosed; special formula preventing neurological damage." },
+];'''
+m = re.search(r'const TERMS = \[.*?^\];', html, re.DOTALL | re.MULTILINE)
+html = html[:m.start()] + TERMS_JS + html[m.end():]
+CAT = """const categoryLabel = c => ({
+  'newborn-assessment':  'Newborn Assessment',
+  'nicu-conditions':     'Respiratory & NICU Conditions',
+  'infections-metabolic':'Neonatal Infections & Metabolic',
+  'congenital':          'Congenital Conditions',
+})[c] || c;"""
+html = re.sub(r"const categoryLabel = c => \(\{[^}]+\}\)\[c\] \|\| c;", CAT, html, count=1, flags=re.DOTALL)
+html = html.replace("const DB_PATH = 'dental-science';", "const DB_PATH = 'neonatology';", 1)
+html = html.replace('<title>HOSA Prep Hub — Dental Science</title>', '<title>HOSA Prep Hub — Neonatology</title>', 1)
+html = html.replace('<h1>Dental<br><em>Science</em>.</h1>', '<h1>Neo<em>natology</em>.</h1>', 1)
+html = html.replace('A study companion for Dental anatomy, oral diseases, preventive dentistry, restorative procedures, dental materials, and infection control — built for HOSA competitors.',
+                    'A study companion for newborn assessment and resuscitation, NICU conditions including RDS and NEC, neonatal infections and metabolic emergencies, and congenital heart disease — built for HOSA competitors.', 1)
+html = html.replace('//  DATA — HOSA Emergency Medical Science', '//  DATA — HOSA Neonatology', 1)
+with open(DST, 'w', encoding='utf-8') as f: f.write(html)
+print(f'Wrote {DST} — {TERMS_JS.count("{ term:")} terms')

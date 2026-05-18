@@ -82,12 +82,31 @@
 
   header {
     border-bottom: 1px solid var(--rule);
-    padding: 20px 40px;
+    padding: 16px 40px;
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(4px);
   }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .header-nav a {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .header-nav a:hover { color: var(--accent); }
 
   .brand {
     font-family: 'Fraunces', serif;
@@ -314,69 +333,119 @@
     color: var(--ink-faint);
   }
 
+  /* ——— Filter Tabs ——— */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .filter-btn {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 7px 16px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .filter-btn.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .filter-btn .filter-count {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-style: italic;
+    opacity: 0.7;
+    margin-left: 5px;
+  }
+
   /* ——— Categories ——— */
   .categories {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     margin-bottom: 96px;
   }
 
   .category-card {
     background: var(--bg-card);
     border: 1px solid var(--rule);
-    padding: 40px 36px 36px;
+    border-top: 3px solid var(--rule);
+    padding: 24px 22px 20px;
     text-decoration: none;
     color: var(--ink);
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 420px;
+    transition: border-color 0.2s, box-shadow 0.25s, transform 0.22s;
+    min-height: auto;
     box-shadow: 0 1px 0 rgba(0,0,0,0.02);
   }
 
+  .category-card[data-group="basic"]    { border-top-color: #2a8a7a; }
+  .category-card[data-group="clinical"] { border-top-color: var(--accent); }
+  .category-card[data-group="allied"]   { border-top-color: #3d7a52; }
+  .category-card[data-group="systems"]  { border-top-color: #4a72a0; }
+
   .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -16px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -12px rgba(0,0,0,0.18);
   }
 
   .category-card:hover .card-arrow {
-    transform: translateX(6px);
+    transform: translateX(4px);
     color: var(--accent);
   }
 
   .card-number {
     font-family: 'Fraunces', serif;
-    font-size: 68px;
+    font-size: 40px;
     font-weight: 300;
     font-style: italic;
     color: var(--accent);
     line-height: 1;
     letter-spacing: -0.04em;
-    margin-bottom: 12px;
-    opacity: 0.85;
+    margin-bottom: 8px;
+    opacity: 0.75;
   }
 
   .card-meta {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     font-variant: small-caps;
     letter-spacing: 0.1em;
     color: var(--ink-faint);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--ink-faint);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
+  .card-group-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  [data-group="basic"]    .card-group-dot { background: #2a8a7a; }
+  [data-group="clinical"] .card-group-dot { background: var(--accent); }
+  [data-group="allied"]   .card-group-dot { background: #3d7a52; }
+  [data-group="systems"]  .card-group-dot { background: #4a72a0; }
 
   .category-card h3 {
     font-family: 'Fraunces', serif;
-    font-size: 42px;
+    font-size: 26px;
     font-weight: 400;
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-    margin-bottom: 20px;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
   }
 
   .category-card h3 em {
@@ -387,24 +456,24 @@
 
   .card-desc {
     font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    line-height: 1.55;
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--ink-soft);
-    margin-bottom: 28px;
+    margin-bottom: 14px;
     flex: 1;
   }
 
   .card-stats {
     display: flex;
-    gap: 32px;
-    margin-bottom: 28px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(26,26,26,0.12);
+    gap: 20px;
+    margin-bottom: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
   }
 
   .card-stat .stat-num {
     font-family: 'Fraunces', serif;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 500;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -412,12 +481,12 @@
 
   .card-stat .stat-label {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
+    font-size: 12px;
     font-variant: small-caps;
     font-style: italic;
     letter-spacing: 0.06em;
     color: var(--ink-faint);
-    margin-top: 4px;
+    margin-top: 3px;
   }
 
   .card-cta {
@@ -425,11 +494,13 @@
     justify-content: space-between;
     align-items: baseline;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
     font-variant: small-caps;
     letter-spacing: 0.08em;
     color: var(--ink);
+    margin-top: auto;
+    padding-top: 10px;
   }
 
   .card-arrow {
@@ -645,10 +716,13 @@
   }
 
   /* ——— Responsive ——— */
+  @media (max-width: 1100px) {
+    .categories { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
     .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
-    .categories { grid-template-columns: 1fr; }
     .testimonials { grid-template-columns: 1fr; }
     .how { grid-template-columns: 1fr; gap: 32px; }
     .newsletter { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
@@ -657,14 +731,20 @@
     footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
   }
 
+  @media (max-width: 640px) {
+    .categories { grid-template-columns: 1fr; }
+    .filter-bar { gap: 6px; }
+    .filter-btn { font-size: 12px; padding: 6px 12px; }
+  }
+
   @media (max-width: 480px) {
     header { padding: 12px 16px; }
     main { padding: 32px 16px; }
-    .category-card { padding: 28px 20px 20px; min-height: auto; }
-    .category-card h3 { font-size: 32px; }
-    .card-number { font-size: 48px; }
+    .category-card { padding: 18px 16px 14px; }
+    .category-card h3 { font-size: 22px; }
+    .card-number { font-size: 32px; }
     .newsletter { padding: 24px 16px; }
-    .event-search-wrap { margin-bottom: 48px; }
+    .event-search-wrap { margin-bottom: 32px; }
     #event-search { font-size: 16px; padding: 14px 16px 14px 46px; }
     .auth-card { padding: 36px 20px; }
     footer { padding: 20px 16px; }
@@ -818,6 +898,10 @@
 
 <header>
   <div class="brand">HOSA Prep Hub</div>
+  <nav class="header-nav">
+    <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;">Events</a>
+    <a href="#how-section" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'});return false;">How it works</a>
+  </nav>
   <div class="user-pill">
     <span class="user-email" id="user-email"></span>
     <button class="btn-signout" id="btn-signout">Sign Out</button>
@@ -871,7 +955,7 @@
       </div>
       <div id="demo-done" style="display:none;background:var(--bg-card);border:1px solid var(--rule);padding:32px 36px;text-align:center;">
         <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">That's the idea.</div>
-        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner. Pick any of the 18 events below to start for real.</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner. Pick any of the 60 events below to start for real.</div>
         <a href="#categories" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:12px 28px;background:var(--ink);color:var(--bg);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Choose your event →</a>
       </div>
     </div>
@@ -918,10 +1002,17 @@
   <section id="categories-section">
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
-      <div class="section-label" id="events-count-label">Fifty-five events available</div>
+      <div class="section-label" id="events-count-label">60 events available</div>
     </div>
 
     <div class="event-search-wrap">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" data-filter="all">All <span class="filter-count">60</span></button>
+        <button class="filter-btn" data-filter="clinical">Clinical Medicine <span class="filter-count"></span></button>
+        <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
+        <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
+        <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
+      </div>
       <div class="event-search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="search" id="event-search" placeholder="Search events — try &ldquo;nursing&rdquo; or &ldquo;path&rdquo;&hellip;" autocomplete="off" spellcheck="false">
@@ -930,9 +1021,9 @@
 
     <div class="categories">
 
-      <a href="medical-terminology.html" class="category-card">
+      <a href="medical-terminology.html" class="category-card" data-group="basic">
         <div class="card-number">01</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Medical <em>Terminology</em></h3>
         <p class="card-desc">Master the language of medicine through prefixes, suffixes, and word roots — the vocabulary foundation every healthcare field depends on.</p>
         <div class="card-stats">
@@ -955,9 +1046,9 @@
         </div>
       </a>
 
-      <a href="pathophysiology.html" class="category-card">
+      <a href="pathophysiology.html" class="category-card" data-group="basic">
         <div class="card-number">02</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3><em>Patho</em>physiology</h3>
         <p class="card-desc">Study diseases and disorders across every major body system — cardiovascular, endocrine, neurological, and more.</p>
         <div class="card-stats">
@@ -980,9 +1071,9 @@
         </div>
       </a>
 
-      <a href="nutrition.html" class="category-card">
+      <a href="nutrition.html" class="category-card" data-group="clinical">
         <div class="card-number">03</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3><em>Nutrition</em></h3>
         <p class="card-desc">Macronutrients, vitamins, fluid balance, medical nutrition therapy — the full HOSA Nutrition test plan, built to scope.</p>
         <div class="card-stats">
@@ -1005,7 +1096,7 @@
         </div>
       </a>
 
-      <a href="biochemistry.html" class="category-card">
+      <a href="biochemistry.html" class="category-card" data-group="basic">
         <div class="card-number">04</div>
         <div class="card-meta">HOSA ATC Event</div>
         <h3><em>Bio</em>chemistry</h3>
@@ -1030,9 +1121,9 @@
         </div>
       </a>
 
-      <a href="anatomy-physiology.html" class="category-card">
+      <a href="anatomy-physiology.html" class="category-card" data-group="basic">
         <div class="card-number">05</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Anatomy &amp; <em>Physiology</em></h3>
         <p class="card-desc">Body systems, anatomical terminology, and physiological processes — from the skeleton to the endocrine system.</p>
         <div class="card-stats">
@@ -1055,9 +1146,9 @@
         </div>
       </a>
 
-      <a href="pharmacology.html" class="category-card">
+      <a href="pharmacology.html" class="category-card" data-group="basic">
         <div class="card-number">06</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3><em>Pharma</em>cology</h3>
         <p class="card-desc">Drug classifications, mechanisms of action, and clinical applications — from antibiotics to cardiac drugs.</p>
         <div class="card-stats">
@@ -1080,9 +1171,9 @@
         </div>
       </a>
 
-      <a href="medical-math.html" class="category-card">
+      <a href="medical-math.html" class="category-card" data-group="basic">
         <div class="card-number">07</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Medical <em>Math</em></h3>
         <p class="card-desc">Dosage calculations, IV drip rates, unit conversions, lab values, and clinical formulas — the numbers side of medicine.</p>
         <div class="card-stats">
@@ -1105,9 +1196,9 @@
         </div>
       </a>
 
-      <a href="medical-law-ethics.html" class="category-card">
+      <a href="medical-law-ethics.html" class="category-card" data-group="systems">
         <div class="card-number">08</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Medical Law <em>&amp; Ethics</em></h3>
         <p class="card-desc">Healthcare law, patient rights, HIPAA, bioethical principles, and professional accountability — the foundation of ethical practice.</p>
         <div class="card-stats">
@@ -1130,9 +1221,9 @@
         </div>
       </a>
 
-      <a href="human-growth-development.html" class="category-card">
+      <a href="human-growth-development.html" class="category-card" data-group="systems">
         <div class="card-number">09</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Human Growth <em>&amp; Development</em></h3>
         <p class="card-desc">Lifespan development from conception to late adulthood — milestones, major theorists (Piaget, Erikson, Kohlberg), and the physical, cognitive, and social changes that shape us.</p>
         <div class="card-stats">
@@ -1155,9 +1246,9 @@
         </div>
       </a>
 
-      <a href="behavioral-health.html" class="category-card">
+      <a href="behavioral-health.html" class="category-card" data-group="clinical">
         <div class="card-number">10</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Behavioral <em>Health</em></h3>
         <p class="card-desc">Mental health disorders, substance use, psychiatric medications, and therapy modalities — everything from DSM-5 criteria to neurotransmitters and evidence-based treatments.</p>
         <div class="card-stats">
@@ -1180,9 +1271,9 @@
         </div>
       </a>
 
-      <a href="clinical-nursing.html" class="category-card">
+      <a href="clinical-nursing.html" class="category-card" data-group="clinical">
         <div class="card-number">11</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Clinical <em>Nursing</em></h3>
         <p class="card-desc">Vital signs, patient care, clinical procedures, medication administration, infection control, and medical equipment — the complete foundation of hands-on nursing practice.</p>
         <div class="card-stats">
@@ -1205,9 +1296,9 @@
         </div>
       </a>
 
-      <a href="public-health.html" class="category-card">
+      <a href="public-health.html" class="category-card" data-group="systems">
         <div class="card-number">12</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Public <em>Health</em></h3>
         <p class="card-desc">Epidemiology, disease prevention, biostatistics, environmental health, global health systems, and health promotion — the science of protecting and improving community health.</p>
         <div class="card-stats">
@@ -1230,9 +1321,9 @@
         </div>
       </a>
 
-      <a href="sports-medicine.html" class="category-card">
+      <a href="sports-medicine.html" class="category-card" data-group="clinical">
         <div class="card-number">13</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Sports <em>Medicine</em></h3>
         <p class="card-desc">Sports injuries, injury assessment, musculoskeletal anatomy, treatment techniques, rehabilitation principles, and medical conditions in athletes — from sprains to sudden cardiac arrest.</p>
         <div class="card-stats">
@@ -1255,9 +1346,9 @@
         </div>
       </a>
 
-      <a href="biomedical-lab-science.html" class="category-card">
+      <a href="biomedical-lab-science.html" class="category-card" data-group="basic">
         <div class="card-number">14</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Biomedical <em>Lab Science</em></h3>
         <p class="card-desc">Lab safety, microbiology, hematology, urinalysis, clinical chemistry, and quality control — the diagnostic science behind every blood draw, culture, and test result.</p>
         <div class="card-stats">
@@ -1280,9 +1371,9 @@
         </div>
       </a>
 
-      <a href="biotechnology.html" class="category-card">
+      <a href="biotechnology.html" class="category-card" data-group="basic">
         <div class="card-number">15</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Biotech &amp; <em>Genetic Science</em></h3>
         <p class="card-desc">Core biotech concepts, lab techniques, genetic engineering, biopharmaceuticals, real-world applications, and bioethics — built for HOSA competitors.</p>
         <div class="card-stats">
@@ -1305,9 +1396,9 @@
         </div>
       </a>
 
-      <a href="emergency-medical-science.html" class="category-card">
+      <a href="emergency-medical-science.html" class="category-card" data-group="clinical">
         <div class="card-number">16</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Emergency <em>Medical Science</em></h3>
         <p class="card-desc">EMS systems, patient assessment, airway management, trauma care, medical emergencies, and special situations — everything an EMT needs to know.</p>
         <div class="card-stats">
@@ -1330,9 +1421,9 @@
         </div>
       </a>
 
-      <a href="physical-therapy.html" class="category-card">
+      <a href="physical-therapy.html" class="category-card" data-group="allied">
         <div class="card-number">17</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Physical <em>Therapy</em></h3>
         <p class="card-desc">PT foundations, patient assessment, musculoskeletal conditions, therapeutic modalities, exercise science, and neurology — built for HOSA competitors.</p>
         <div class="card-stats">
@@ -1355,9 +1446,9 @@
         </div>
       </a>
 
-      <a href="dental-science.html" class="category-card">
+      <a href="dental-science.html" class="category-card" data-group="allied">
         <div class="card-number">18</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Dental <em>Science</em></h3>
         <p class="card-desc">Dental anatomy, oral diseases, preventive dentistry, restorative procedures, dental materials, and infection control — the complete foundation of oral healthcare.</p>
         <div class="card-stats">
@@ -1380,9 +1471,9 @@
         </div>
       </a>
 
-      <a href="veterinary-science.html" class="category-card">
+      <a href="veterinary-science.html" class="category-card" data-group="allied">
         <div class="card-number">19</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Veterinary <em>Science</em></h3>
         <p class="card-desc">Animal anatomy, common diseases, parasitology and zoonotic disease, animal nutrition, veterinary pharmacology, and clinical procedures — the foundation of animal medicine.</p>
         <div class="card-stats">
@@ -1405,9 +1496,9 @@
         </div>
       </a>
 
-      <a href="epidemiology.html" class="category-card">
+      <a href="epidemiology.html" class="category-card" data-group="systems">
         <div class="card-number">20</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3><em>Epi</em>demiology</h3>
         <p class="card-desc">Epidemiological foundations, study designs, measures and statistics, disease surveillance, outbreak investigation, historical epidemics, and levels of prevention.</p>
         <div class="card-stats">
@@ -1430,9 +1521,9 @@
         </div>
       </a>
 
-      <a href="phlebotomy.html" class="category-card">
+      <a href="phlebotomy.html" class="category-card" data-group="allied">
         <div class="card-number">21</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Phle<em>botomy</em></h3>
         <p class="card-desc">Venous anatomy, phlebotomy equipment, color-coded tubes and the CLSI order of draw, venipuncture procedure, complications, and OSHA safety standards.</p>
         <div class="card-stats">
@@ -1455,9 +1546,9 @@
         </div>
       </a>
 
-      <a href="medical-assisting.html" class="category-card">
+      <a href="medical-assisting.html" class="category-card" data-group="allied">
         <div class="card-number">22</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Medical<br><em>Assisting</em></h3>
         <p class="card-desc">Administrative skills, clinical procedures, vital signs and measurements, pharmacology and injections, laboratory testing, and patient-centered care.</p>
         <div class="card-stats">
@@ -1480,9 +1571,9 @@
         </div>
       </a>
 
-      <a href="radiologic-science.html" class="category-card">
+      <a href="radiologic-science.html" class="category-card" data-group="clinical">
         <div class="card-number">23</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Radiologic<br><em>Science</em></h3>
         <p class="card-desc">Imaging modalities, patient positioning, radiation safety and ALARA, anatomical findings on imaging, and radiographic procedures and equipment.</p>
         <div class="card-stats">
@@ -1505,9 +1596,9 @@
         </div>
       </a>
 
-      <a href="medical-microbiology.html" class="category-card">
+      <a href="medical-microbiology.html" class="category-card" data-group="basic">
         <div class="card-number">24</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Medical<br><em>Microbiology</em></h3>
         <p class="card-desc">Bacteria, viruses, fungi and parasites, antimicrobial agents and resistance, laboratory diagnosis, and infection control practices.</p>
         <div class="card-stats">
@@ -1530,9 +1621,9 @@
         </div>
       </a>
 
-      <a href="pharmacy-science.html" class="category-card">
+      <a href="pharmacy-science.html" class="category-card" data-group="allied">
         <div class="card-number">25</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Pharmacy<br><em>Science</em></h3>
         <p class="card-desc">Prescription anatomy and dispensing, major drug classes, pharmacokinetics, compounding and pharmacy calculations, and pharmacy regulation and safety.</p>
         <div class="card-stats">
@@ -1555,9 +1646,9 @@
         </div>
       </a>
 
-      <a href="forensic-science.html" class="category-card">
+      <a href="forensic-science.html" class="category-card" data-group="basic">
         <div class="card-number">26</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Forensic<br><em>Science</em></h3>
         <p class="card-desc">Death investigation, wound analysis, forensic toxicology, trace evidence, and forensic DNA and serology — the science behind criminal investigations.</p>
         <div class="card-stats">
@@ -1580,9 +1671,9 @@
         </div>
       </a>
 
-      <a href="occupational-therapy.html" class="category-card">
+      <a href="occupational-therapy.html" class="category-card" data-group="allied">
         <div class="card-number">27</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Occupational<br><em>Therapy</em></h3>
         <p class="card-desc">Foundations of OT, frames of reference and practice models, evaluation and standardized assessments, and therapeutic interventions for functional independence.</p>
         <div class="card-stats">
@@ -1605,9 +1696,9 @@
         </div>
       </a>
 
-      <a href="optometry.html" class="category-card">
+      <a href="optometry.html" class="category-card" data-group="allied">
         <div class="card-number">28</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Opto<em>metry</em></h3>
         <p class="card-desc">Eye anatomy from cornea to retina, refractive errors and prescriptions, ocular diseases, and ophthalmic examination techniques.</p>
         <div class="card-stats">
@@ -1630,9 +1721,9 @@
         </div>
       </a>
 
-      <a href="genetics.html" class="category-card">
+      <a href="genetics.html" class="category-card" data-group="basic">
         <div class="card-number">29</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Gene<em>tics</em></h3>
         <p class="card-desc">Molecular genetics, Mendelian inheritance patterns, chromosomal and single-gene disorders, and the role of genetics in modern clinical medicine.</p>
         <div class="card-stats">
@@ -1655,9 +1746,9 @@
         </div>
       </a>
 
-      <a href="health-informatics.html" class="category-card">
+      <a href="health-informatics.html" class="category-card" data-group="systems">
         <div class="card-number">30</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Health<br><em>Informatics</em></h3>
         <p class="card-desc">Electronic health records and clinical systems, interoperability standards (HL7, FHIR, ICD-10), HIPAA privacy and security, and healthcare data analytics.</p>
         <div class="card-stats">
@@ -1680,9 +1771,9 @@
         </div>
       </a>
 
-      <a href="respiratory-therapy.html" class="category-card">
+      <a href="respiratory-therapy.html" class="category-card" data-group="allied">
         <div class="card-number">31</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Respiratory<br><em>Therapy</em></h3>
         <p class="card-desc">Pulmonary anatomy and physiology, lung pathology from asthma to ARDS, respiratory assessment and ABGs, and oxygen and airway therapy.</p>
         <div class="card-stats">
@@ -1705,9 +1796,9 @@
         </div>
       </a>
 
-      <a href="nursing-assisting.html" class="category-card">
+      <a href="nursing-assisting.html" class="category-card" data-group="allied">
         <div class="card-number">32</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Nursing<br><em>Assisting</em></h3>
         <p class="card-desc">CNA scope and professionalism, ADLs and personal care, vital signs, safe mobility and transfers, and infection control and special-population care.</p>
         <div class="card-stats">
@@ -1718,9 +1809,9 @@
         <div class="card-progress-wrap" id="cp-nursing-assisting"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="cardiovascular-science.html" class="category-card">
+      <a href="cardiovascular-science.html" class="category-card" data-group="clinical">
         <div class="card-number">33</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Cardiovascular<br><em>Science</em></h3>
         <p class="card-desc">Cardiac anatomy and physiology, EKG interpretation and arrhythmias, cardiac pathology including MI and heart failure, and cardiovascular drugs and interventions.</p>
         <div class="card-stats">
@@ -1731,9 +1822,9 @@
         <div class="card-progress-wrap" id="cp-cardiovascular-science"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="endocrinology.html" class="category-card">
+      <a href="endocrinology.html" class="category-card" data-group="clinical">
         <div class="card-number">34</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Endo<em>crinology</em></h3>
         <p class="card-desc">Pituitary and hypothalamic disorders, thyroid disease, diabetes mellitus and its complications, and adrenal and parathyroid conditions.</p>
         <div class="card-stats">
@@ -1744,9 +1835,9 @@
         <div class="card-progress-wrap" id="cp-endocrinology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="neurology.html" class="category-card">
+      <a href="neurology.html" class="category-card" data-group="clinical">
         <div class="card-number">35</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Neuro<em>logy</em></h3>
         <p class="card-desc">CNS anatomy and function, stroke and cerebrovascular disease, seizures and movement disorders, and other neurologic conditions from meningitis to dementia.</p>
         <div class="card-stats">
@@ -1757,9 +1848,9 @@
         <div class="card-progress-wrap" id="cp-neurology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="oncology.html" class="category-card">
+      <a href="oncology.html" class="category-card" data-group="clinical">
         <div class="card-number">36</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Onco<em>logy</em></h3>
         <p class="card-desc">Cancer biology and hallmarks, the most common malignancies, diagnosis and TNM staging, and modern cancer treatment from chemo to immunotherapy.</p>
         <div class="card-stats">
@@ -1770,9 +1861,9 @@
         <div class="card-progress-wrap" id="cp-oncology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="immunology.html" class="category-card">
+      <a href="immunology.html" class="category-card" data-group="basic">
         <div class="card-number">37</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Immuno<em>logy</em></h3>
         <p class="card-desc">Innate and adaptive immunity, immunoglobulin classes and T-cell subsets, hypersensitivity reactions and autoimmune disease, and vaccines and transplant immunology.</p>
         <div class="card-stats">
@@ -1783,9 +1874,9 @@
         <div class="card-progress-wrap" id="cp-immunology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="hematology.html" class="category-card">
+      <a href="hematology.html" class="category-card" data-group="basic">
         <div class="card-number">38</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Hemato<em>logy</em></h3>
         <p class="card-desc">Blood cell biology and hematopoiesis, anemias from iron deficiency to sickle cell, coagulation and bleeding disorders, and blood cancers and transfusion medicine.</p>
         <div class="card-stats">
@@ -1796,9 +1887,9 @@
         <div class="card-progress-wrap" id="cp-hematology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="dermatology.html" class="category-card">
+      <a href="dermatology.html" class="category-card" data-group="clinical">
         <div class="card-number">39</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Derma<em>tology</em></h3>
         <p class="card-desc">Skin anatomy and appendages, primary and secondary lesion morphology, inflammatory and infectious skin conditions, and skin cancers from BCC to melanoma.</p>
         <div class="card-stats">
@@ -1809,9 +1900,9 @@
         <div class="card-progress-wrap" id="cp-dermatology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="gastroenterology.html" class="category-card">
+      <a href="gastroenterology.html" class="category-card" data-group="clinical">
         <div class="card-number">40</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Gastro<em>enterology</em></h3>
         <p class="card-desc">GI tract anatomy and physiology, upper and lower GI disorders including IBD and ulcers, and hepatobiliary and pancreatic disease from cirrhosis to pancreatitis.</p>
         <div class="card-stats">
@@ -1822,9 +1913,9 @@
         <div class="card-progress-wrap" id="cp-gastroenterology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="surgical-technology.html" class="category-card">
+      <a href="surgical-technology.html" class="category-card" data-group="basic">
         <div class="card-number">41</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Surgical<br><em>Technology</em></h3>
         <p class="card-desc">OR roles and environment, surgical asepsis and sterilization, instruments and supplies, and operative procedures, time outs, and surgical counts.</p>
         <div class="card-stats">
@@ -1835,9 +1926,9 @@
         <div class="card-progress-wrap" id="cp-surgical-technology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="nephrology.html" class="category-card">
+      <a href="nephrology.html" class="category-card" data-group="clinical">
         <div class="card-number">42</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Nephro<em>logy</em></h3>
         <p class="card-desc">Kidney anatomy and physiology, fluid and electrolyte and acid-base disorders, acute and chronic kidney disease, and dialysis and renal transplant.</p>
         <div class="card-stats">
@@ -1848,9 +1939,9 @@
         <div class="card-progress-wrap" id="cp-nephrology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="obstetrics-gynecology.html" class="category-card">
+      <a href="obstetrics-gynecology.html" class="category-card" data-group="clinical">
         <div class="card-number">43</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Obstetrics<br>&amp; <em>Gynecology</em></h3>
         <p class="card-desc">Female reproductive anatomy and physiology, pregnancy and prenatal care, labor and delivery, and major gynecologic conditions.</p>
         <div class="card-stats">
@@ -1861,9 +1952,9 @@
         <div class="card-progress-wrap" id="cp-obstetrics-gynecology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="pediatrics.html" class="category-card">
+      <a href="pediatrics.html" class="category-card" data-group="clinical">
         <div class="card-number">44</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Pedi<em>atrics</em></h3>
         <p class="card-desc">Growth and development milestones, pediatric vaccines and infections, and the most common conditions encountered in children from asthma to ADHD.</p>
         <div class="card-stats">
@@ -1874,9 +1965,9 @@
         <div class="card-progress-wrap" id="cp-pediatrics"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="geriatrics.html" class="category-card">
+      <a href="geriatrics.html" class="category-card" data-group="clinical">
         <div class="card-number">45</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Geri<em>atrics</em></h3>
         <p class="card-desc">Physiology of aging, geriatric syndromes including falls and delirium and dementia, and comprehensive assessment and end-of-life care.</p>
         <div class="card-stats">
@@ -1887,9 +1978,9 @@
         <div class="card-progress-wrap" id="cp-geriatrics"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="infectious-disease.html" class="category-card">
+      <a href="infectious-disease.html" class="category-card" data-group="clinical">
         <div class="card-number">46</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Infectious<br><em>Disease</em></h3>
         <p class="card-desc">Sepsis and bacteremia, common clinical infections including UTI and pneumonia and cellulitis, and special populations including HIV, TB, and STIs.</p>
         <div class="card-stats">
@@ -1900,9 +1991,9 @@
         <div class="card-progress-wrap" id="cp-infectious-disease"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="rheumatology.html" class="category-card">
+      <a href="rheumatology.html" class="category-card" data-group="clinical">
         <div class="card-number">47</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Rheuma<em>tology</em></h3>
         <p class="card-desc">Autoimmune joint disease, connective tissue diseases including lupus and scleroderma, and crystal arthropathies and other rheumatologic conditions.</p>
         <div class="card-stats">
@@ -1913,9 +2004,9 @@
         <div class="card-progress-wrap" id="cp-rheumatology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="otolaryngology.html" class="category-card">
+      <a href="otolaryngology.html" class="category-card" data-group="clinical">
         <div class="card-number">48</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Otolaryng<em>ology</em></h3>
         <p class="card-desc">Ear disorders from otitis to vertigo, nose and sinus conditions including allergic rhinitis and sinusitis, and throat and voice disorders including pharyngitis and OSA.</p>
         <div class="card-stats">
@@ -1926,9 +2017,9 @@
         <div class="card-progress-wrap" id="cp-otolaryngology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="urology.html" class="category-card">
+      <a href="urology.html" class="category-card" data-group="clinical">
         <div class="card-number">49</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Uro<em>logy</em></h3>
         <p class="card-desc">The lower urinary tract, kidney stones and urologic tumors, and male andrology and pediatric urologic emergencies.</p>
         <div class="card-stats">
@@ -1939,9 +2030,9 @@
         <div class="card-progress-wrap" id="cp-urology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="sleep-medicine.html" class="category-card">
+      <a href="sleep-medicine.html" class="category-card" data-group="clinical">
         <div class="card-number">50</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Sleep<br><em>Medicine</em></h3>
         <p class="card-desc">Sleep physiology and architecture, sleep-disordered breathing and CPAP, and insomnia and other sleep disorders.</p>
         <div class="card-stats">
@@ -1952,9 +2043,9 @@
         <div class="card-progress-wrap" id="cp-sleep-medicine"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="pain-management.html" class="category-card">
+      <a href="pain-management.html" class="category-card" data-group="clinical">
         <div class="card-number">51</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Pain<br><em>Management</em></h3>
         <p class="card-desc">Pain physiology and types, non-opioid analgesics, and opioids and interventional pain procedures.</p>
         <div class="card-stats">
@@ -1965,9 +2056,9 @@
         <div class="card-progress-wrap" id="cp-pain-management"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="trauma-critical-care.html" class="category-card">
+      <a href="trauma-critical-care.html" class="category-card" data-group="clinical">
         <div class="card-number">52</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Trauma &amp;<br><em>Critical Care</em></h3>
         <p class="card-desc">Trauma resuscitation and ATLS principles, shock and resuscitation, and core ICU concepts including ARDS, mechanical ventilation, and sepsis.</p>
         <div class="card-stats">
@@ -1978,9 +2069,9 @@
         <div class="card-progress-wrap" id="cp-trauma-critical-care"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="speech-language-pathology.html" class="category-card">
+      <a href="speech-language-pathology.html" class="category-card" data-group="allied">
         <div class="card-number">53</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Speech-Language<br><em>Pathology</em></h3>
         <p class="card-desc">SLP scope and communication foundations, speech and language disorders, dysphagia evaluation and treatment, and AAC and pediatric issues.</p>
         <div class="card-stats">
@@ -1991,9 +2082,9 @@
         <div class="card-progress-wrap" id="cp-speech-language-pathology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="audiology.html" class="category-card">
+      <a href="audiology.html" class="category-card" data-group="allied">
         <div class="card-number">54</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Audio<em>logy</em></h3>
         <p class="card-desc">Auditory anatomy and physiology, types of hearing loss, audiologic assessment, and hearing rehabilitation including hearing aids and cochlear implants.</p>
         <div class="card-stats">
@@ -2004,9 +2095,9 @@
         <div class="card-progress-wrap" id="cp-audiology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-      <a href="healthcare-systems.html" class="category-card">
+      <a href="healthcare-systems.html" class="category-card" data-group="systems">
         <div class="card-number">55</div>
-        <div class="card-meta">HOSA Competitive Event</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
         <h3>Healthcare<br><em>Systems</em></h3>
         <p class="card-desc">US healthcare structure and providers, insurance and payment systems including Medicare/Medicaid/ACA, and healthcare quality, policy, and public health.</p>
         <div class="card-stats">
@@ -2015,6 +2106,71 @@
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
         <div class="card-progress-wrap" id="cp-healthcare-systems"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
+      </a>
+
+      <a href="psychiatry.html" class="category-card" data-group="clinical">
+        <div class="card-number">56</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
+        <h3>Psychi<em>atry</em></h3>
+        <p class="card-desc">Mood disorders, anxiety and trauma-related disorders, psychotic disorders, substance use and personality disorders, and neurodevelopmental conditions.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
+        </div>
+        <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
+        <div class="card-progress-wrap" id="cp-psychiatry"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
+      </a>
+
+      <a href="neonatology.html" class="category-card" data-group="clinical">
+        <div class="card-number">57</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
+        <h3>Neo<em>natology</em></h3>
+        <p class="card-desc">Newborn assessment and resuscitation, NICU conditions including RDS and NEC, neonatal infections and metabolic emergencies, and congenital heart disease.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
+        </div>
+        <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
+        <div class="card-progress-wrap" id="cp-neonatology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
+      </a>
+
+      <a href="physical-medicine-rehabilitation.html" class="category-card" data-group="allied">
+        <div class="card-number">58</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
+        <h3>Physical Medicine &amp;<br><em>Rehabilitation</em></h3>
+        <p class="card-desc">Rehab foundations and the multidisciplinary team, stroke and neurological rehabilitation, spinal cord injury, musculoskeletal medicine and amputee care.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
+        </div>
+        <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
+        <div class="card-progress-wrap" id="cp-physical-medicine-rehabilitation"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
+      </a>
+
+      <a href="allergy-immunology.html" class="category-card" data-group="clinical">
+        <div class="card-number">59</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
+        <h3>Allergy &amp;<br><em>Immunology</em></h3>
+        <p class="card-desc">Hypersensitivity reaction types and anaphylaxis, respiratory allergy and immunotherapy, food and drug allergy, and primary immune deficiency disorders.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
+        </div>
+        <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
+        <div class="card-progress-wrap" id="cp-allergy-immunology"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
+      </a>
+
+      <a href="global-health.html" class="category-card" data-group="systems">
+        <div class="card-number">60</div>
+        <div class="card-meta">HOSA Competitive Event <span class="card-group-dot"></span></div>
+        <h3>Global<br><em>Health</em></h3>
+        <p class="card-desc">Global burden of disease and health equity, major global diseases including malaria and TB and HIV, universal health coverage, and the One Health approach.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
+        </div>
+        <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
+        <div class="card-progress-wrap" id="cp-global-health"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
     </div>
@@ -2040,7 +2196,7 @@
   </section>
 
   <!-- HOW IT WORKS -->
-  <section>
+  <section id="how-section">
     <div class="section-head">
       <h2>How each event <em>works.</em></h2>
       <div class="section-label">Three modes of study</div>
@@ -2144,6 +2300,8 @@ auth.onAuthStateChanged(user => {
         var data = snap.val();
         var totals = {
       'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,      'physical-therapy':72,      'dental-science':67,      'veterinary-science':68,      'epidemiology':58,      'phlebotomy':60,      'medical-assisting':51,      'radiologic-science':43,      'medical-microbiology':56,      'pharmacy-science':47,      'forensic-science':38,      'occupational-therapy':34,      'optometry':30,      'genetics':33,      'health-informatics':28,      'respiratory-therapy':30,      'nursing-assisting':27,      'cardiovascular-science':30,      'endocrinology':24,      'neurology':25,      'oncology':26,      'immunology':27,      'hematology':26,      'dermatology':25,      'gastroenterology':26,      'surgical-technology':25,      'nephrology':19,      'obstetrics-gynecology':21,      'pediatrics':20,      'geriatrics':18,      'infectious-disease':17,      'rheumatology':17,      'otolaryngology':18,      'urology':18,      'sleep-medicine':15,      'pain-management':18,      'trauma-critical-care':19,      'speech-language-pathology':21,      'audiology':22,      'healthcare-systems':20,
+      'psychiatry':15,      'neonatology':13,      'physical-medicine-rehabilitation':12,
+      'allergy-immunology':11,      'global-health':12,
     };
         Object.keys(data).forEach(function(cat) {
           var el = document.getElementById('cp-' + cat);
@@ -2351,30 +2509,43 @@ document.getElementById('request-btn').onclick = function() {
   var queryEl  = document.getElementById('search-query-display');
   var label    = document.getElementById('events-count-label');
   var total    = cards.length;
+  var activeGroup = 'all';
 
-  // Build searchable text per card once
+  // Build per-card data once
   var cardData = Array.from(cards).map(function(card) {
     return {
       el: card,
-      text: card.textContent.toLowerCase()
+      text: card.textContent.toLowerCase(),
+      group: card.getAttribute('data-group') || 'basic'
     };
   });
 
-  function search(raw) {
-    var q = raw.trim().toLowerCase();
+  // Count cards per group for filter button badges
+  var groupCounts = { all: total, basic: 0, clinical: 0, allied: 0, systems: 0 };
+  cardData.forEach(function(c){ groupCounts[c.group] = (groupCounts[c.group] || 0) + 1; });
+  document.querySelectorAll('.filter-btn').forEach(function(btn){
+    var g = btn.getAttribute('data-filter');
+    var span = btn.querySelector('.filter-count');
+    if (span && groupCounts[g] !== undefined) span.textContent = groupCounts[g];
+  });
+
+  function applyFilters() {
+    var q = input.value.trim().toLowerCase();
     var visible = 0;
 
     cardData.forEach(function(c) {
-      var show = !q || c.text.indexOf(q) !== -1;
+      var matchGroup = (activeGroup === 'all') || (c.group === activeGroup);
+      var matchText  = !q || c.text.indexOf(q) !== -1;
+      var show = matchGroup && matchText;
       c.el.style.display = show ? '' : 'none';
       if (show) visible++;
     });
 
-    if (!q) {
+    if (!q && activeGroup === 'all') {
       noRes.style.display = 'none';
-      label.textContent = total + ' events available';
+      label.textContent = '60 events available';
     } else if (visible === 0) {
-      queryEl.textContent = raw.trim();
+      queryEl.textContent = (q || activeGroup);
       noRes.style.display = 'block';
       label.textContent = 'No matches';
     } else {
@@ -2383,11 +2554,21 @@ document.getElementById('request-btn').onclick = function() {
     }
   }
 
-  input.addEventListener('input', function(){ search(input.value); });
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeGroup = btn.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+
+  input.addEventListener('input', applyFilters);
 
   // Clear on ESC
   input.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') { input.value = ''; search(''); input.blur(); }
+    if (e.key === 'Escape') { input.value = ''; applyFilters(); input.blur(); }
   });
 })();
 </script>

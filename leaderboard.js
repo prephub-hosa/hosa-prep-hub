@@ -43,7 +43,9 @@
     'nephrology':19, 'obstetrics-gynecology':21, 'pediatrics':20, 'geriatrics':18,
     'infectious-disease':17, 'rheumatology':17, 'otolaryngology':18, 'urology':18,
     'sleep-medicine':15, 'pain-management':18, 'trauma-critical-care':19,
-    'speech-language-pathology':21, 'audiology':22, 'healthcare-systems':20
+    'speech-language-pathology':21, 'audiology':22, 'healthcare-systems':20,
+    'psychiatry':15, 'neonatology':13, 'physical-medicine-rehabilitation':12,
+    'allergy-immunology':11, 'global-health':12
   };
   var TOTAL = TOTAL_TERMS[subject] || 100;
 
