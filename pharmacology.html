@@ -1263,6 +1263,10 @@
           <div class="quiz-term" id="test-term"></div>
         </div>
         <div class="quiz-options" id="test-options"></div>
+        <div class="quiz-feedback" id="test-feedback">
+          <div class="verdict" id="test-verdict"></div>
+          <div class="explain" id="test-explain"></div>
+        </div>
       </div>
     </div>
 
@@ -2218,9 +2222,11 @@ function updateTimerDisplay() {
 function renderTestQuestion() {
   const card = state.test.deck[state.test.index];
   const options = buildOptions(card, TERMS);
+  state.test.answered = false;
 
   $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
   $('#test-term').textContent = card.term;
+  document.getElementById('test-feedback').className = 'quiz-feedback';
 
   const optsEl = $('#test-options');
   optsEl.innerHTML = '';
@@ -2235,6 +2241,8 @@ function renderTestQuestion() {
 }
 
 function answerTest(chosen, correct) {
+  if (state.test.answered) return;
+  state.test.answered = true;
   const isCorrect = chosen.term === correct.term;
   state.test.answers.push({
     term: correct.term,
@@ -2252,14 +2260,29 @@ function answerTest(chosen, correct) {
     updateSR(correct.term, true);
     state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
   }
+  const optsEl = document.getElementById('test-options');
+  const allBtns = optsEl.querySelectorAll('.option');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const bText = b.querySelector("span:last-child")?.textContent;
+    if (bText === correct.meaning) b.classList.add('correct');
+    else if (bText === chosen.meaning && !isCorrect) b.classList.add('incorrect');
+  });
+  const fb = document.getElementById('test-feedback');
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+  document.getElementById('test-verdict').textContent = isCorrect ? 'Correct.' : 'Not quite.';
+  document.getElementById('test-explain').textContent = correct.meaning;
   saveProgress();
-  state.test.index++;
-  if (state.test.index >= state.test.deck.length) {
-    clearInterval(state.test.timer);
-    finishTest();
-  } else {
-    renderTestQuestion();
-  }
+  const _ai = state.test.index;
+  setTimeout(() => {
+    state.test.index++;
+    if (state.test.index >= state.test.deck.length) {
+      clearInterval(state.test.timer);
+      finishTest();
+    } else {
+      renderTestQuestion();
+    }
+  }, isCorrect ? 1300 : 2000);
 }
 
 function finishTest() {

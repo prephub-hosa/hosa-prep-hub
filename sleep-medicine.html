@@ -1186,6 +1186,10 @@
           <div class="quiz-term" id="test-term"></div>
         </div>
         <div class="quiz-options" id="test-options"></div>
+        <div class="quiz-feedback" id="test-feedback">
+          <div class="verdict" id="test-verdict"></div>
+          <div class="explain" id="test-explain"></div>
+        </div>
       </div>
     </div>
 
@@ -1960,8 +1964,10 @@ function renderTestQuestion() {
   const idx  = state.test.index;
   if (idx >= deck.length) { clearInterval(state.test.timer); showTestResults(); return; }
   const card = deck[idx];
+  state.test.answered = false;
   document.getElementById('test-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
   document.getElementById('test-term').textContent     = card.term;
+  document.getElementById('test-feedback').className   = 'quiz-feedback';
   const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
   const options = shuffle([card, ...distractors]);
   const letters = ['A', 'B', 'C', 'D'];
@@ -1972,11 +1978,28 @@ function renderTestQuestion() {
     btn.className = 'option';
     btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.meaning}`;
     btn.addEventListener('click', () => {
+      if (state.test.answered) return;
+      state.test.answered = true;
       const correct = opt.term === card.term;
       updateSR(card.term, correct);
       state.test.answers.push({ term: card.term, correct });
-      state.test.index++;
-      renderTestQuestion();
+      container.querySelectorAll('.option').forEach(b => {
+        b.disabled = true;
+        const bOpt = options[Array.from(container.children).indexOf(b)];
+        if (bOpt?.term === card.term) b.classList.add('correct');
+        else if (b === btn && !correct) b.classList.add('incorrect');
+      });
+      const fb = document.getElementById('test-feedback');
+      fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
+      document.getElementById('test-verdict').textContent = correct ? 'Correct.' : 'Not quite.';
+      document.getElementById('test-explain').textContent = card.meaning;
+      const _ai = state.test.index;
+      setTimeout(() => {
+        if (state.test.index === _ai) {
+          state.test.index++;
+          renderTestQuestion();
+        }
+      }, correct ? 1300 : 2000);
     });
     container.appendChild(btn);
   });
