@@ -704,6 +704,33 @@
     margin-top: auto;
   }
 
+  /* ——— Your Progress banner (only shown if user has XP) ——— */
+  .your-progress {
+    display: none;
+    margin: -32px 0 64px;
+    padding: 24px 32px;
+    border: 1px solid var(--rule);
+    background: linear-gradient(100deg, var(--bg-card) 0%, rgba(168,40,31,0.04) 100%);
+    align-items: center;
+    gap: 36px;
+  }
+  .your-progress.show { display: flex; }
+  .yp-level-block { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; }
+  .yp-level-badge { font-family: 'Fraunces',serif; font-size: 40px; font-weight: 500; color: var(--accent); letter-spacing: -0.03em; line-height: 1; }
+  .yp-level-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.1em; font-variant: small-caps; color: var(--ink-faint); margin-top: 4px; }
+  .yp-stats { display: flex; gap: 32px; flex: 1; }
+  .yp-stat-num { font-family: 'Fraunces',serif; font-size: 22px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; line-height: 1; }
+  .yp-stat-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.1em; font-variant: small-caps; color: var(--ink-faint); margin-top: 4px; }
+  .yp-bar { flex: 1; max-width: 220px; }
+  .yp-bar-track { height: 5px; background: var(--rule); position: relative; }
+  .yp-bar-fill { height: 100%; background: var(--accent); transition: width 0.6s ease; }
+  .yp-bar-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.08em; font-variant: small-caps; color: var(--ink-faint); margin-top: 6px; }
+  @media (max-width: 760px) {
+    .your-progress { flex-direction: column; align-items: flex-start; gap: 20px; padding: 20px 22px; }
+    .yp-stats { gap: 24px; flex-wrap: wrap; }
+    .yp-bar { max-width: 100%; width: 100%; }
+  }
+
   /* ——— Term of the day ——— */
   .totd-section { margin-bottom: 80px; }
   .totd-card {
@@ -1434,6 +1461,32 @@
         </div>
       </div>
     </aside>
+  </section>
+
+  <!-- YOUR PROGRESS (shown only if user has earned XP) -->
+  <section class="your-progress" id="your-progress">
+    <div class="yp-level-block">
+      <div class="yp-level-badge">Lv <span id="yp-level">1</span></div>
+      <div class="yp-level-label">Your Level</div>
+    </div>
+    <div class="yp-stats">
+      <div>
+        <div class="yp-stat-num" id="yp-xp">0</div>
+        <div class="yp-stat-label">Total XP</div>
+      </div>
+      <div>
+        <div class="yp-stat-num" id="yp-mastered">0</div>
+        <div class="yp-stat-label">Terms Mastered</div>
+      </div>
+      <div>
+        <div class="yp-stat-num" id="yp-events">0</div>
+        <div class="yp-stat-label">Events Studied</div>
+      </div>
+    </div>
+    <div class="yp-bar">
+      <div class="yp-bar-track"><div class="yp-bar-fill" id="yp-bar-fill" style="width:0%"></div></div>
+      <div class="yp-bar-label" id="yp-bar-text">0 XP to next level</div>
+    </div>
   </section>
 
   <!-- CONTINUE STUDYING (rendered by JS if localStorage has progress) -->
@@ -3323,6 +3376,35 @@ document.getElementById('request-btn').onclick = function() {
       surpriseMe();
     }
   });
+})();
+</script>
+
+<script id="your-progress-js">
+(function(){
+  var xp = parseInt(localStorage.getItem('hosa::xp')||'0', 10);
+  if (xp === 0) return;
+  var lvl = Math.floor(Math.sqrt(xp/50)) + 1;
+  var cur = (lvl-1)*(lvl-1)*50;
+  var next = lvl*lvl*50;
+  var pct = ((xp - cur) / Math.max(1,(next - cur))) * 100;
+  document.getElementById('yp-level').textContent = lvl;
+  document.getElementById('yp-xp').textContent = xp.toLocaleString();
+  document.getElementById('yp-bar-fill').style.width = Math.min(100,pct) + '%';
+  document.getElementById('yp-bar-text').textContent = (xp - cur) + ' / ' + (next - cur) + ' XP to Lv ' + (lvl+1);
+  var mastered = 0, events = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k || k.indexOf('hosa::') !== 0) continue;
+    if (k === 'hosa::xp' || k === 'hosa::daily-goal' || k.indexOf('hosa::daily::') === 0) continue;
+    try {
+      var data = JSON.parse(localStorage.getItem(k));
+      var mc = (data && data.mastered && data.mastered.length) || 0;
+      if (mc > 0) { mastered += mc; events++; }
+    } catch(e) {}
+  }
+  document.getElementById('yp-mastered').textContent = mastered.toLocaleString();
+  document.getElementById('yp-events').textContent = events;
+  document.getElementById('your-progress').classList.add('show');
 })();
 </script>
 
