@@ -115,6 +115,40 @@
   .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
   .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .brand-link:hover { opacity: 0.65; }
+  /* ── XP pill in header ── */
+  .xp-pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border: 1px solid var(--rule); font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink); transition: border-color 0.2s; }
+  .xp-pill:hover { border-color: var(--accent); }
+  .xp-lvl { font-family: 'Fraunces',serif; font-weight: 600; color: var(--accent); font-variant: normal; letter-spacing: 0; font-size: 13px; }
+  .xp-bar-mini { width: 50px; height: 4px; background: var(--rule); position: relative; }
+  .xp-bar-mini-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; }
+  .xp-toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: var(--bg-card); border: 1px solid var(--accent); padding: 10px 22px; font-family: 'Fraunces',serif; font-size: 14px; z-index: 1500; opacity: 0; transition: opacity 0.25s, top 0.3s; pointer-events: none; box-shadow: 0 4px 24px rgba(0,0,0,0.12); white-space: nowrap; }
+  .xp-toast.show { opacity: 1; top: 30px; }
+  .xp-toast.level-up { border-color: #c79a30; background: linear-gradient(120deg, var(--bg-card), rgba(199,154,48,0.1)); font-weight: 600; padding: 14px 30px; font-size: 16px; }
+  @media (max-width: 640px) { .xp-pill .xp-bar-mini { display: none; } }
+  /* ── Cross-linked terms in definitions ── */
+  .term-link { color: var(--accent); border-bottom: 1px dotted var(--accent); cursor: pointer; padding: 0 2px; transition: background 0.15s, color 0.15s; }
+  .term-link:hover { background: rgba(168,40,31,0.08); color: var(--accent); }
+  [data-theme="light"] .term-link:hover { background: rgba(168,40,31,0.06); }
+  /* ── Quiz mode toggle (learn mode) ── */
+  .quiz-mode-toggle { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid var(--rule); }
+  .qmt-btn { flex: 1; padding: 9px 12px; background: transparent; border: none; font-family: 'Cormorant Garamond',serif; font-size: 12px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.08em; cursor: pointer; color: var(--ink-soft); transition: all 0.15s; border-right: 1px solid var(--rule); }
+  .qmt-btn:last-child { border-right: none; }
+  .qmt-btn.active { background: var(--ink); color: var(--bg); }
+  .qmt-btn:not(.active):hover { background: var(--rule); }
+  .learn-input-wrap { display: none; flex-direction: column; gap: 12px; }
+  .learn-input-wrap.active { display: flex; }
+  .learn-input { width: 100%; padding: 14px 18px; font-family: 'Source Serif 4',Georgia,serif; font-size: 17px; border: 1px solid var(--rule); background: var(--bg-card); color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .learn-input:focus { border-color: var(--accent); }
+  .learn-input:disabled { opacity: 0.7; }
+  .learn-submit-row { display: flex; gap: 10px; align-items: center; }
+  .learn-hint { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-style: italic; color: var(--ink-faint); }
+  /* ── Detailed quiz rationales ── */
+  .rationale-row { padding: 10px 0; border-top: 1px solid var(--rule); font-family: 'Source Serif 4',Georgia,serif; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+  .rationale-row:first-child { border-top: none; padding-top: 0; }
+  .rationale-row strong { font-family: 'Fraunces',serif; font-weight: 600; letter-spacing: -0.01em; }
+  .rationale-row.r-correct strong { color: var(--success); }
+  .rationale-row.r-picked-wrong strong { color: var(--error); }
+  .rationale-row.r-distractor { opacity: 0.7; font-size: 13px; }
 
   .meta {
     font-family: 'Cormorant Garamond', serif;
@@ -1072,11 +1106,17 @@
 <header>
   <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
   <button class="kbd-help-btn" id="kbd-help-open" type="button">? Shortcuts</button>
+  <div class="xp-pill" id="xp-pill" title="Total XP earned across all events">
+    <span class="xp-lvl">Lv <span id="xp-level">1</span></span>
+    <div class="xp-bar-mini"><div class="xp-bar-mini-fill" id="xp-bar-fill" style="width:0%"></div></div>
+    <span id="xp-total">0 XP</span>
+  </div>
   <div class="user-pill">
     <span class="user-email" id="user-email"></span>
     <button class="btn-signout" id="btn-signout">Sign Out</button>
   </div>
 </header>
+<div class="xp-toast" id="xp-toast"></div>
 <div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
   ⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
   <a href="index.html" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
@@ -1221,12 +1261,26 @@
       </div>
       <div class="quiz-bar-track"><div class="quiz-bar-fill" id="quiz-bar-fill"></div></div>
 
+      <div class="quiz-mode-toggle" id="quiz-mode-toggle">
+        <button class="qmt-btn active" data-mode="mc">Multiple Choice</button>
+        <button class="qmt-btn" data-mode="learn">Type the Answer</button>
+      </div>
+
       <div class="quiz-question">
-        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-prompt" id="quiz-prompt">How would you define this?</div>
         <div class="quiz-term" id="quiz-term"></div>
       </div>
 
       <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="learn-input-wrap" id="learn-input-wrap">
+        <input type="text" class="learn-input" id="learn-input" placeholder="Type the term…" autocomplete="off" spellcheck="false">
+        <div class="learn-submit-row">
+          <button class="btn primary" id="learn-submit">Check answer</button>
+          <button class="btn" id="learn-skip">Skip (count wrong)</button>
+          <span class="learn-hint">2-typo tolerance · press Enter to check</span>
+        </div>
+      </div>
 
       <div class="quiz-feedback" id="quiz-feedback">
         <div class="verdict" id="quiz-verdict"></div>
@@ -1916,8 +1970,8 @@ function renderFlashcard() {
   const _nrb = document.getElementById('next-review-badge');
   if (_nrb) { _nrb.style.opacity = '0'; }
   document.getElementById('flash-front-term').textContent = card.term;
-  document.getElementById('flash-back-def').textContent = card.meaning;
-  document.getElementById('flash-back-ex-text').textContent = card.example;
+  document.getElementById('flash-back-def').innerHTML = linkifyDef(card.meaning, card.term);
+  document.getElementById('flash-back-ex-text').innerHTML = linkifyDef(card.example, card.term);
   document.getElementById('flash-cat-front').textContent = categoryLabel(card.category);
   document.getElementById('flash-cat-back').textContent = categoryLabel(card.category);
   document.getElementById('flash-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
@@ -1982,10 +2036,97 @@ function rateCard(q) {
   } catch(e) {}
   nextFlashcard(1);
 }
+// ── XP & Level system (global across all events) ─────────────
+const XP_STORAGE = 'hosa::xp';
+let _xpTotal = parseInt(localStorage.getItem(XP_STORAGE)||'0', 10);
+function xpLevel(xp) { return Math.floor(Math.sqrt(Math.max(0,xp)/50)) + 1; }
+function xpForLevel(lvl) { return (lvl-1)*(lvl-1)*50; }
+function updateXPDisplay() {
+  try {
+    const lvl = xpLevel(_xpTotal);
+    const cur = xpForLevel(lvl), next = xpForLevel(lvl+1);
+    const pct = ((_xpTotal - cur) / Math.max(1,(next - cur))) * 100;
+    const lvlEl = document.getElementById('xp-level');
+    const totEl = document.getElementById('xp-total');
+    const fillEl = document.getElementById('xp-bar-fill');
+    if (lvlEl) lvlEl.textContent = lvl;
+    if (totEl) totEl.textContent = _xpTotal.toLocaleString() + ' XP';
+    if (fillEl) fillEl.style.width = Math.min(100,pct) + '%';
+  } catch(e) {}
+}
+function showXPToast(msg, cls) {
+  const t = document.getElementById('xp-toast');
+  if (!t) return;
+  t.className = 'xp-toast ' + (cls || '');
+  t.textContent = msg;
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._hideTm);
+  t._hideTm = setTimeout(() => { t.classList.remove('show'); }, cls === 'level-up' ? 2400 : 1200);
+}
+function awardXP(amount) {
+  if (!amount) return;
+  const oldLvl = xpLevel(_xpTotal);
+  _xpTotal += amount;
+  localStorage.setItem(XP_STORAGE, _xpTotal);
+  const newLvl = xpLevel(_xpTotal);
+  updateXPDisplay();
+  if (newLvl > oldLvl) {
+    showXPToast('🎉 Level ' + newLvl + ' unlocked!', 'level-up');
+    try{gtag('event','level_up',{level:newLvl});}catch(e){}
+  } else {
+    showXPToast('+' + amount + ' XP', '');
+  }
+}
+updateXPDisplay();
+// Award XP from flashcard rating
+const _xpByQ = {0:1, 2:3, 4:5, 5:8};
+const _origRateCard = rateCard;
+rateCard = function(q) { _origRateCard(q); awardXP(_xpByQ[q] || 0); };
+
 document.getElementById('flash-again').addEventListener('click', () => rateCard(0));
 document.getElementById('flash-hard').addEventListener('click',  () => rateCard(2));
 document.getElementById('flash-good').addEventListener('click',  () => rateCard(4));
 document.getElementById('flash-easy').addEventListener('click',  () => rateCard(5));
+
+// ── Term cross-linking in definitions (AMBOSS-style) ──────────
+function linkifyDef(text, currentTerm) {
+  try {
+    if (!text) return '';
+    const others = TERMS.filter(t => t.term !== currentTerm).map(t => t.term);
+    others.sort((a,b) => b.length - a.length);
+    let html = String(text).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    others.forEach(t => {
+      const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/"/g,'&quot;');
+      const re = new RegExp('(?<![\\w>])(' + escaped + ')(?![\\w<])', 'gi');
+      let didReplace = false;
+      html = html.replace(re, (match) => {
+        if (didReplace) return match; // only link first occurrence per term
+        didReplace = true;
+        return '<span class="term-link" data-term="' + t.replace(/"/g,'&quot;') + '">' + match + '</span>';
+      });
+    });
+    return html;
+  } catch(e) { return String(text); }
+}
+// Click handler for cross-linked terms
+document.addEventListener('click', e => {
+  const tl = e.target.closest('.term-link');
+  if (!tl) return;
+  e.stopPropagation();
+  const term = tl.getAttribute('data-term');
+  let idx = state.flash.deck.findIndex(c => c.term === term);
+  if (idx === -1) {
+    const card = TERMS.find(c => c.term === term);
+    if (!card) return;
+    state.flash.deck = [card, ...state.flash.deck.filter(c => c.term !== term)];
+    idx = 0;
+  }
+  state.flash.index = idx;
+  renderFlashcard();
+  // Force flip to show definition (since user came from definition)
+  setTimeout(() => { document.getElementById('flashcard')?.classList.add('flipped'); }, 50);
+});
 
 // ── Cram mode ─────────────────────────────────────────────────
 let _cramMode = false, _cramInterval = null;
@@ -2100,6 +2241,105 @@ function startQuiz(useLastMissed = false) {
   renderQuizQuestion();
 }
 
+// ── Quiz mode toggle (MC vs Learn) ────────────────────────────
+state.quiz.mode = state.quiz.mode || 'mc';
+document.querySelectorAll('#quiz-mode-toggle .qmt-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    state.quiz.mode = b.getAttribute('data-mode');
+    document.querySelectorAll('#quiz-mode-toggle .qmt-btn').forEach(x => x.classList.toggle('active', x === b));
+    if (state.quiz.answered) return; // Don't reset mid-question
+    renderQuizQuestion();
+  });
+});
+
+// Fuzzy match using Levenshtein distance for learn mode
+function _normTerm(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+function _levDist(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length; if (!b.length) return a.length;
+  const v0 = new Array(b.length + 1).fill(0).map((_,i)=>i);
+  for (let i = 0; i < a.length; i++) {
+    let prev = i + 1;
+    for (let j = 0; j < b.length; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      const cur = Math.min(prev + 1, v0[j+1] + 1, v0[j] + cost);
+      v0[j] = prev; prev = cur;
+    }
+    v0[b.length] = prev;
+  }
+  return v0[b.length];
+}
+function fuzzyMatchTerm(typed, correct) {
+  const a = _normTerm(typed), b = _normTerm(correct);
+  if (!a) return {ok:false, exact:false};
+  if (a === b) return {ok:true, exact:true};
+  // Allow 2 typos for short terms, scaling for longer
+  const tol = Math.max(2, Math.floor(b.length * 0.2));
+  const d = _levDist(a, b);
+  return {ok: d <= tol, exact: false, dist: d};
+}
+
+function buildRationale(card, options, picked, correct, mode) {
+  // Returns HTML string with detailed rationale
+  let html = '';
+  html += '<div class="rationale-row r-correct"><strong>✓ ' + card.term + '</strong> — ' + card.meaning + '</div>';
+  if (mode === 'mc' && !correct && picked && picked.term !== card.term) {
+    html += '<div class="rationale-row r-picked-wrong"><strong>✗ You picked ' + picked.term + '</strong> — ' + picked.meaning + '</div>';
+  }
+  if (mode === 'mc' && options) {
+    const shown = new Set([card.term, picked && picked.term]);
+    options.filter(o => !shown.has(o.term)).forEach(o => {
+      html += '<div class="rationale-row r-distractor"><strong>' + o.term + ':</strong> ' + o.meaning + '</div>';
+    });
+  }
+  if (mode === 'learn' && !correct && picked) {
+    html += '<div class="rationale-row r-picked-wrong"><strong>✗ You typed:</strong> "' + (picked.typed||'') + '"</div>';
+  }
+  return html;
+}
+
+function handleQuizAnswer(card, options, picked, correct, mode) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  updateSR(card.term, correct);
+  if (correct) { state.quiz.score++; awardXP(10); }
+  else {
+    if (!state.progress.lastMissed) state.progress.lastMissed = [];
+    if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
+    if (!state.quiz.missedTerms) state.quiz.missedTerms = [];
+    if (!state.quiz.missedTerms.find(t => t.term === card.term)) state.quiz.missedTerms.push(card);
+  }
+  // Update MC option highlights
+  if (mode === 'mc' && options) {
+    const container = document.getElementById('quiz-options');
+    container.querySelectorAll('.option').forEach(b => {
+      b.disabled = true;
+      const bOpt = options[Array.from(container.children).indexOf(b)];
+      if (bOpt?.term === card.term) b.classList.add('correct');
+      else if (picked && bOpt === picked && !correct) b.classList.add('incorrect');
+    });
+  }
+  if (mode === 'learn') {
+    const inp = document.getElementById('learn-input');
+    if (inp) { inp.disabled = true; if (correct) inp.style.borderColor = 'var(--success)'; else inp.style.borderColor = 'var(--error)'; }
+  }
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
+  document.getElementById('quiz-verdict').textContent = correct ? (picked && picked.typoNote ? 'Correct! (with typo)' : 'Correct.') : 'Not quite.';
+  document.getElementById('quiz-explain').innerHTML = buildRationale(card, options, picked, correct, mode);
+  setTimeout(() => { document.getElementById('quiz-next').disabled = false; }, 300);
+  if (correct) {
+    const _ai = state.quiz.index;
+    setTimeout(() => {
+      if (state.quiz.answered && state.quiz.index === _ai) {
+        state.quiz.index++;
+        renderQuizQuestion();
+      }
+    }, 1500);
+  }
+  saveProgress();
+}
+
 function renderQuizQuestion() {
   const deck = state.quiz.deck;
   const idx  = state.quiz.index;
@@ -2108,58 +2348,69 @@ function renderQuizQuestion() {
   document.getElementById('quiz-progress').textContent = `Question ${pad(idx + 1)} of ${pad(deck.length)}`;
   try{var _qb=document.getElementById('quiz-bar-fill');if(_qb)_qb.style.width=(state.quiz.index/state.quiz.deck.length*100)+'%';}catch(e){}
   document.getElementById('quiz-score').textContent    = `Score: ${state.quiz.score} / ${idx}`;
-  document.getElementById('quiz-term').textContent     = card.term;
   document.getElementById('quiz-feedback').className   = 'quiz-feedback';
   document.getElementById('quiz-next').disabled        = true;
   state.quiz.answered = false;
 
-  const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
-  const options = shuffle([card, ...distractors]);
-  const letters = ['A', 'B', 'C', 'D'];
-  const container = document.getElementById('quiz-options');
-  container.innerHTML = '';
-  options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.meaning}`;
-    btn.addEventListener('click', () => {
-      if (state.quiz.answered) return;
-      state.quiz.answered = true;
-      const correct = opt.term === card.term;
-      updateSR(card.term, correct);
-      if (correct) state.quiz.score++;
-      else {
-        if (!state.progress.lastMissed) state.progress.lastMissed = [];
-        if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
-        if (!state.quiz.missedTerms) state.quiz.missedTerms = [];
-        if (!state.quiz.missedTerms.find(t => t.term === card.term))
-          state.quiz.missedTerms.push(card);
-      }
-      container.querySelectorAll('.option').forEach(b => {
-        b.disabled = true;
-        const bOpt = options[Array.from(container.children).indexOf(b)];
-        if (bOpt?.term === card.term) b.classList.add('correct');
-        else if (b === btn && !correct) b.classList.add('incorrect');
-      });
-      const fb = document.getElementById('quiz-feedback');
-      fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
-      document.getElementById('quiz-verdict').textContent = correct ? 'Correct.' : 'Not quite.';
-      document.getElementById('quiz-explain').textContent = card.meaning;
-      setTimeout(() => { document.getElementById('quiz-next').disabled = false; }, 300);
-      if (correct) {
-        const _ai = state.quiz.index;
-        setTimeout(() => {
-          if (state.quiz.answered && state.quiz.index === _ai) {
-            state.quiz.index++;
-            renderQuizQuestion();
-          }
-        }, 1300);
-      }
-      saveProgress();
+  const mode = state.quiz.mode || 'mc';
+  const mcWrap = document.getElementById('quiz-options');
+  const learnWrap = document.getElementById('learn-input-wrap');
+  const promptEl = document.getElementById('quiz-prompt');
+  const termEl = document.getElementById('quiz-term');
+
+  if (mode === 'learn') {
+    // Show definition, ask user to type the term
+    promptEl.textContent = 'What term matches this definition?';
+    termEl.innerHTML = '<span style="font-family:\'Source Serif 4\',Georgia,serif;font-size:18px;font-weight:400;letter-spacing:0;line-height:1.5;color:var(--ink-soft);">' + linkifyDef(card.meaning, card.term) + '</span>';
+    mcWrap.style.display = 'none';
+    learnWrap.classList.add('active');
+    const inp = document.getElementById('learn-input');
+    inp.value = ''; inp.disabled = false; inp.style.borderColor = '';
+    setTimeout(() => inp.focus(), 50);
+  } else {
+    // Multiple choice
+    promptEl.textContent = 'How would you define this?';
+    termEl.textContent = card.term;
+    mcWrap.style.display = '';
+    learnWrap.classList.remove('active');
+
+    const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
+    const options = shuffle([card, ...distractors]);
+    state.quiz._currentOptions = options;
+    state.quiz._currentCard = card;
+    const letters = ['A', 'B', 'C', 'D'];
+    mcWrap.innerHTML = '';
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.meaning}`;
+      btn.addEventListener('click', () => handleQuizAnswer(card, options, opt, opt.term === card.term, 'mc'));
+      mcWrap.appendChild(btn);
     });
-    container.appendChild(btn);
-  });
+  }
+  state.quiz._currentCard = card;
 }
+
+// Learn-mode submit handlers
+function _submitLearnAnswer() {
+  if (state.quiz.answered) return;
+  const card = state.quiz._currentCard;
+  if (!card) return;
+  const typed = document.getElementById('learn-input').value;
+  const m = fuzzyMatchTerm(typed, card.term);
+  const picked = {typed: typed, typoNote: m.ok && !m.exact};
+  handleQuizAnswer(card, null, picked, m.ok, 'learn');
+}
+document.getElementById('learn-submit')?.addEventListener('click', _submitLearnAnswer);
+document.getElementById('learn-skip')?.addEventListener('click', () => {
+  if (state.quiz.answered) return;
+  const card = state.quiz._currentCard;
+  if (!card) return;
+  handleQuizAnswer(card, null, {typed:''}, false, 'learn');
+});
+document.getElementById('learn-input')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); _submitLearnAnswer(); }
+});
 
 function showQuizResults() {
   const score = state.quiz.score;
@@ -2270,6 +2521,7 @@ function renderTestQuestion() {
       const correct = opt.term === card.term;
       updateSR(card.term, correct);
       state.test.answers.push({ term: card.term, correct });
+      if (correct) awardXP(15);
       container.querySelectorAll('.option').forEach(b => {
         b.disabled = true;
         const bOpt = options[Array.from(container.children).indexOf(b)];
@@ -2279,7 +2531,12 @@ function renderTestQuestion() {
       const fb = document.getElementById('test-feedback');
       fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
       document.getElementById('test-verdict').textContent = correct ? 'Correct.' : 'Not quite.';
-      document.getElementById('test-explain').textContent = card.meaning;
+      // Detailed rationale on test
+      let _testRat = '<div class="rationale-row r-correct"><strong>✓ ' + card.term + '</strong> — ' + card.meaning + '</div>';
+      if (!correct && opt && opt.term !== card.term) {
+        _testRat += '<div class="rationale-row r-picked-wrong"><strong>✗ You picked ' + opt.term + '</strong> — ' + opt.meaning + '</div>';
+      }
+      document.getElementById('test-explain').innerHTML = _testRat;
       const _ai = state.test.index;
       setTimeout(() => {
         if (state.test.index === _ai) {
