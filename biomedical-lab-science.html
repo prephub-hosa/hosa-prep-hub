@@ -1532,6 +1532,7 @@ function saveProgress() {
   const data = {
     studied:       [...state.progress.studied],
     mastered:      [...state.progress.mastered],
+    studyDates:    Array.from(state.progress.studyDates || []),
     quizzes:       state.progress.quizzes,
     lastMissed:    state.progress.lastMissed || [],
     srLevels:      state.progress.srLevels || {},
@@ -1571,6 +1572,7 @@ async function loadProgress(uid) {
         const data = snap.val();
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1585,6 +1587,7 @@ async function loadProgress(uid) {
         const data = JSON.parse(raw);
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1618,6 +1621,10 @@ function updateStreakBadge() {
     num.textContent = state.progress.streak;
     badge.style.display = '';
   }
+}
+function recordStudyDate() {
+  if (!state.progress.studyDates) state.progress.studyDates = new Set();
+  state.progress.studyDates.add(getTodayStr());
 }
 
 // ══════════════════════════════════════════════════════════════
