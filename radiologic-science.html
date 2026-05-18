@@ -428,10 +428,50 @@
   .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .rating-btns { display: flex; gap: 8px; }
-  .rating-btns .btn { padding: 10px 16px; }
-  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
+  .rating-btns { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .rating-btns .btn { padding: 9px 6px; font-size: 13px; font-weight: 600; text-align: center; letter-spacing: 0.01em; }
+  .rate-again { border-color: var(--error) !important; color: var(--error) !important; }
+  .rate-again:hover { background: var(--error) !important; color: var(--bg) !important; border-color: var(--error) !important; }
+  .rate-hard  { border-color: #c08040; color: #c08040; }
+  .rate-hard:hover  { background: #c08040; color: var(--bg); border-color: #c08040; }
+  .rate-good  { border-color: var(--success); color: var(--success); }
+  .rate-good:hover  { background: var(--success); color: var(--bg); border-color: var(--success); }
+  .rate-easy  { border-color: #4a72a0; color: #4a72a0; }
+  .rate-easy:hover  { background: #4a72a0; color: var(--bg); border-color: #4a72a0; }
+  .rating-label-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 4px; }
+  .rating-label-row span { font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-faint); text-align: center; }
+  /* Session stats */
+  .sess-stats { display: flex; gap: 16px; justify-content: center; margin: 0 0 10px; font-family: 'Cormorant Garamond',serif; font-size: 12px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-faint); opacity: 0; transition: opacity 0.3s; }
+  .sess-stats.visible { opacity: 1; }
+  .sess-stat { display: flex; align-items: center; gap: 5px; }
+  .sess-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .ss-got .sess-dot { background: var(--success); }
+  .ss-hard .sess-dot { background: #c08040; }
+  .ss-miss .sess-dot { background: var(--error); }
+  .sess-stat-num { color: var(--ink-soft); }
+  /* Study heatmap */
+  .heatmap-wrap { margin-bottom: 40px; }
+  .heatmap-grid { display: flex; flex-wrap: wrap; gap: 4px; max-width: 244px; }
+  .hm-day { width: 26px; height: 26px; border: 1px solid var(--rule); border-radius: 3px; position: relative; transition: opacity 0.15s; }
+  .hm-day.active { background: var(--accent); border-color: var(--accent); opacity: 0.75; }
+  .hm-day.active.is-today { opacity: 1; outline: 2px solid var(--accent); outline-offset: 1px; }
+  .hm-day.is-today:not(.active) { border-color: var(--ink-soft); }
+  .hm-label-row { display: flex; gap: 16px; margin-bottom: 8px; font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-faint); }
+  /* Keyboard shortcut overlay */
+  .kbd-help-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'Source Serif 4',serif; font-size: 12px; font-weight: 600; color: var(--ink-faint); cursor: pointer; letter-spacing: 0.04em; border-radius: 2px; transition: all 0.15s; }
+  .kbd-help-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+  .kbd-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.72); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+  .kbd-overlay.open { display: flex; }
+  .kbd-card { background: var(--bg-card); border: 1px solid var(--rule); padding: 36px 40px; max-width: 500px; width: 92%; }
+  .kbd-card-title { font-family: 'Fraunces',serif; font-size: 22px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 24px; }
+  .kbd-section { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); margin: 16px 0 8px; }
+  .kbd-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--rule); font-family: 'Source Serif 4',serif; font-size: 13px; color: var(--ink-soft); }
+  .kbd-row:last-child { border-bottom: none; }
+  .kbd-keys { display: flex; gap: 4px; }
+  .kbd-key { font-family: monospace; font-size: 11px; font-weight: 700; padding: 3px 7px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink-soft); letter-spacing: 0; }
+  .kbd-close { margin-top: 20px; background: none; border: 1px solid var(--rule); padding: 9px 22px; font-family: 'Source Serif 4',serif; font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; width: 100%; transition: all 0.15s; }
+  .kbd-close:hover { color: var(--ink); border-color: var(--ink-soft); }
+  @media (max-width: 640px) { .kbd-card { padding: 24px 20px; } }
   /* ── Deck progress line ── */
   .deck-progress-line {
     text-align: center; font-size: 12px; color: var(--ink-faint);
@@ -925,6 +965,7 @@
     nav.tabs { width: 100%; margin-bottom: 28px; }
     nav.tabs button { flex: 1; padding: 11px 4px; font-size: 12px; letter-spacing: 0; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .quiz-question { margin-bottom: 20px; }
+    .rating-btns .btn { padding: 10px 4px; font-size: 12px; }
   }
 
   .streak-badge {
@@ -1003,6 +1044,7 @@
 
 <header>
   <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <button class="kbd-help-btn" id="kbd-help-open" type="button">? Shortcuts</button>
   <div class="user-pill">
     <span class="user-email" id="user-email"></span>
     <button class="btn-signout" id="btn-signout">Sign Out</button>
@@ -1013,6 +1055,26 @@
   <a href="index.html" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
 </div>
 
+<div class="kbd-overlay" id="kbd-overlay">
+  <div class="kbd-card">
+    <div class="kbd-card-title">Keyboard Shortcuts</div>
+    <div class="kbd-section">Flashcards</div>
+    <div class="kbd-row"><span>Flip card</span><span class="kbd-keys"><span class="kbd-key">Space</span><span class="kbd-key">Enter</span></span></div>
+    <div class="kbd-row"><span>Next card</span><span class="kbd-keys"><span class="kbd-key">→</span></span></div>
+    <div class="kbd-row"><span>Previous card</span><span class="kbd-keys"><span class="kbd-key">←</span></span></div>
+    <div class="kbd-row"><span>Rate: Again</span><span class="kbd-keys"><span class="kbd-key">A</span></span></div>
+    <div class="kbd-row"><span>Rate: Hard</span><span class="kbd-keys"><span class="kbd-key">H</span></span></div>
+    <div class="kbd-row"><span>Rate: Good</span><span class="kbd-keys"><span class="kbd-key">G</span></span></div>
+    <div class="kbd-row"><span>Rate: Easy</span><span class="kbd-keys"><span class="kbd-key">E</span></span></div>
+    <div class="kbd-section">Navigation</div>
+    <div class="kbd-row"><span>Switch to Flashcards</span><span class="kbd-keys"><span class="kbd-key">1</span></span></div>
+    <div class="kbd-row"><span>Switch to Quiz</span><span class="kbd-keys"><span class="kbd-key">2</span></span></div>
+    <div class="kbd-row"><span>Switch to Test</span><span class="kbd-keys"><span class="kbd-key">3</span></span></div>
+    <div class="kbd-row"><span>Switch to Progress</span><span class="kbd-keys"><span class="kbd-key">4</span></span></div>
+    <div class="kbd-row"><span>Show/hide this</span><span class="kbd-keys"><span class="kbd-key">?</span></span></div>
+    <button class="kbd-close" id="kbd-close">Close</button>
+  </div>
+</div>
 <main>
   <div class="masthead">
     <div>
@@ -1080,16 +1142,26 @@
         </div>
       </div>
 
+      <div class="sess-stats" id="sess-stats">
+        <span class="sess-stat ss-got"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-got-n">0</span></span>
+        <span class="sess-stat ss-hard"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-hard-n">0</span></span>
+        <span class="sess-stat ss-miss"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-miss-n">0</span></span>
+      </div>
       <div class="card-controls">
-        <button class="btn" id="flash-prev">← Previous</button>
+        <button class="btn" id="flash-prev">← Prev</button>
         <div class="rating-btns">
-          <button class="btn miss" id="flash-miss">Missed it</button>
-          <button class="btn got" id="flash-got">Got it</button>
+          <button class="btn rate-again" id="flash-again">✗ Again</button>
+          <button class="btn rate-hard"  id="flash-hard">~ Hard</button>
+          <button class="btn rate-good"  id="flash-good">✓ Good</button>
+          <button class="btn rate-easy"  id="flash-easy">★ Easy</button>
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
+      <div class="rating-label-row">
+        <span>Space: Again</span><span>H key</span><span>G key</span><span>E key</span>
+      </div>
       <p id="next-review-badge" class="next-review-badge"></p>
-      <p class="rating-hint">Tap to reveal &middot; "Got it" / "Missed it" trains Smart Review &middot; G&thinsp;/&thinsp;M keys work too &middot; saves automatically</p>
+      <p class="rating-hint">Tap to reveal, then rate · Smart Review adjusts intervals · saves automatically · ? for shortcuts</p>
       <div id="session-complete" style="display:none">
         <div class="sc-icon">✓</div>
         <h3 class="sc-title">Session complete!</h3>
@@ -1239,6 +1311,12 @@
       <div class="stat-val" id="stat-due">0</div>
     </div>
 
+    <div class="heatmap-wrap">
+      <h3 style="font-family:'Fraunces',serif;font-size:20px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;">Study Activity</h3>
+      <div class="section-sub" style="margin-bottom:16px;">Last 28 days</div>
+      <div class="hm-label-row" id="hm-label-row"></div>
+      <div class="heatmap-grid" id="heatmap-grid"></div>
+    </div>
     <div class="mastery-section" style="margin-bottom:32px">
       <h3>Recent Quiz Scores</h3>
       <div class="section-sub">Last 6 practice sessions</div>
@@ -1348,6 +1426,7 @@ const state = {
     srLevels: {},
     srData:   {},
     streak: 0,
+    studyDates: new Set(),
     lastStudyDate: null,
     lastFilter: 'all',
   },
@@ -1363,6 +1442,7 @@ function saveProgress() {
   const data = {
     studied:       [...state.progress.studied],
     mastered:      [...state.progress.mastered],
+    studyDates:    Array.from(state.progress.studyDates || []),
     quizzes:       state.progress.quizzes,
     lastMissed:    state.progress.lastMissed || [],
     srLevels:      state.progress.srLevels || {},
@@ -1402,6 +1482,7 @@ async function loadProgress(uid) {
         const data = snap.val();
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1416,6 +1497,7 @@ async function loadProgress(uid) {
         const data = JSON.parse(raw);
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1448,6 +1530,11 @@ function updateStreakBadge() {
     num.textContent = state.progress.streak;
     badge.style.display = '';
   }
+}
+
+function recordStudyDate() {
+  if (!state.progress.studyDates) state.progress.studyDates = new Set();
+  state.progress.studyDates.add(getTodayStr());
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1592,13 +1679,13 @@ function skipKnown() {
 }
 
 function showSessionComplete() {
-  const rated = _sessGot + _sessMissed;
-  let msg = rated > 0
-    ? `You rated ${rated} card${rated !== 1 ? 's' : ''} — ${_sessGot} got it, ${_sessMissed} missed.`
-    : 'You reached the end of this session.';
-  if (_sessGot > _sessMissed && rated > 0) msg += ' Great work!';
-  else if (_sessMissed > 0 && rated > 0) msg += ' Keep at it!';
-  document.getElementById('sc-stats').textContent = msg;
+  const _stats = document.getElementById('sc-stats');
+  const rated = _sessGot + _sessHard + _sessMissed;
+  const _pct = rated > 0 ? Math.round((_sessGot + _sessHard) / rated * 100) : 0;
+  const _msg = rated === 0
+    ? `You went through all ${state.flash.deck.length} cards this session.`
+    : `${rated} cards rated — ${_sessGot} easy/good, ${_sessHard} hard, ${_sessMissed} missed · ${_pct}% passing`;
+  document.getElementById('sc-stats').textContent = _msg;
 
   try {
     const pool       = filterDeck(state.flash.filter);
@@ -1773,38 +1860,38 @@ document.getElementById('flashcard').addEventListener('click', () => {
 })();
 (function(){ const _ki=document.getElementById('flash-know-it'); if(_ki) _ki.addEventListener('click',e=>{e.stopPropagation();skipKnown();}); })();
 
-document.getElementById('flash-got').addEventListener('click', () => {
+let _sessHard = 0;
+function rateCard(q) {
   const card = state.flash.deck[state.flash.index];
   if (!card) return;
+  const correct = q >= 3;
   state.progress.studied.add(card.term);
-  state.progress.mastered.add(card.term);
-  try{gtag('event','flashcard_got',{event_category:DB_PATH});}catch(e){}
-  updateSR(card.term, true);
+  if (correct) state.progress.mastered.add(card.term);
+  else { state.progress.mastered.delete(card.term); if (!state.progress.lastMissed) state.progress.lastMissed = []; if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term); }
+  try{gtag('event','flashcard_rated',{event_category:DB_PATH,quality:q});}catch(e){}
+  updateSR(card.term, q);
   showNextReview((state.progress.srData||{})[card.term]?.interval||1);
   updateStreak();
+  recordStudyDate();
   saveProgress();
-  _sessGot++;
+  if (q === 0) _sessMissed++;
+  else if (q === 2) _sessHard++;
+  else _sessGot++;
+  // Update session stats display
+  try {
+    var _ss = document.getElementById('sess-stats');
+    if (_ss) { _ss.classList.add('visible'); document.getElementById('ss-got-n').textContent = _sessGot; document.getElementById('ss-hard-n').textContent = _sessHard; document.getElementById('ss-miss-n').textContent = _sessMissed; }
+  } catch(e) {}
   nextFlashcard(1);
-});
-
-document.getElementById('flash-miss').addEventListener('click', () => {
-  const card = state.flash.deck[state.flash.index];
-  if (!card) return;
-  state.progress.studied.add(card.term);
-  state.progress.mastered.delete(card.term);
-  try{gtag('event','flashcard_missed',{event_category:DB_PATH});}catch(e){}
-  updateSR(card.term, false);
-  showNextReview(1);
-  if (!state.progress.lastMissed) state.progress.lastMissed = [];
-  if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
-  updateStreak();
-  saveProgress();
-  _sessMissed++;
-  nextFlashcard(1);
-});
+}
+document.getElementById('flash-again').addEventListener('click', () => rateCard(0));
+document.getElementById('flash-hard').addEventListener('click',  () => rateCard(2));
+document.getElementById('flash-good').addEventListener('click',  () => rateCard(4));
+document.getElementById('flash-easy').addEventListener('click',  () => rateCard(5));
 
 document.getElementById('sc-more').addEventListener('click', () => {
-  _sessGot = 0; _sessMissed = 0;
+  _sessGot = 0; _sessMissed = 0; _sessHard = 0;
+  try { var _ss=document.getElementById('sess-stats'); if(_ss){_ss.classList.remove('visible');document.getElementById('ss-got-n').textContent='0';document.getElementById('ss-hard-n').textContent='0';document.getElementById('ss-miss-n').textContent='0';} } catch(e){}
   state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
   state.flash.index = 0;
   document.getElementById('flashcard').style.display = '';
@@ -1813,7 +1900,7 @@ document.getElementById('sc-more').addEventListener('click', () => {
   renderFlashcard();
 });
 document.getElementById('sc-quiz').addEventListener('click', () => {
-  _sessGot = 0; _sessMissed = 0;
+  _sessGot = 0; _sessMissed = 0; _sessHard = 0;
   document.getElementById('session-complete').style.display = 'none';
   document.getElementById('flashcard').style.display = '';
   document.querySelector('.card-controls').style.display = '';
@@ -2128,6 +2215,32 @@ function renderProgress() {
       <div class="mastery-pct">${mastCount} / ${catTerms.length}</div>`;
     list.appendChild(row);
   });
+  renderHeatmap();
+}
+
+function renderHeatmap() {
+  try {
+    const grid = document.getElementById('heatmap-grid');
+    const labelRow = document.getElementById('hm-label-row');
+    if (!grid) return;
+    const today = getTodayStr();
+    const dates = state.progress.studyDates || new Set();
+    grid.innerHTML = '';
+    if (labelRow) {
+      const weeks = ['4w ago','3w ago','2w ago','Last week'];
+      labelRow.innerHTML = weeks.map(w => `<span>${w}</span>`).join('');
+    }
+    for (let i = 27; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().slice(0, 10);
+      const el = document.createElement('div');
+      el.className = 'hm-day' + (dates.has(ds) ? ' active' : '') + (ds === today ? ' is-today' : '');
+      const fmt = d.toLocaleDateString(undefined, {month:'short',day:'numeric'});
+      el.title = fmt + (dates.has(ds) ? ' — studied' : '');
+      grid.appendChild(el);
+    }
+  } catch(e) {}
 }
 
 $('#reset-progress').addEventListener('click', () => {
@@ -2181,21 +2294,49 @@ firebase.auth().onAuthStateChanged(user => {
   }
 })();
 
+// Keyboard shortcuts overlay
+(function() {
+  const overlay = document.getElementById('kbd-overlay');
+  const openBtn = document.getElementById('kbd-help-open');
+  const closeBtn = document.getElementById('kbd-close');
+  function openOverlay() { if (overlay) overlay.classList.add('open'); }
+  function closeOverlay() { if (overlay) overlay.classList.remove('open'); }
+  if (openBtn) openBtn.addEventListener('click', openOverlay);
+  if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+})();
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  // ? key — toggle shortcut overlay
+  if (e.key === '?') {
+    const overlay = document.getElementById('kbd-overlay');
+    if (overlay) overlay.classList.toggle('open');
+    return;
+  }
+  // Escape — close overlay
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('kbd-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+  // Tab navigation (works from any view)
+  if (['1','2','3','4'].includes(e.key)) {
+    const _views = ['flashcards','quiz','test','progress'];
+    const _btn = document.querySelector('#tabs button[data-view="' + _views[+e.key-1] + '"]');
+    if (_btn) { _btn.click(); return; }
+  }
   if (state.activeView !== 'flashcards') return;
   if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#flashcard').classList.toggle('flipped'); }
   else if (e.key === 'ArrowRight') nextFlashcard(1);
   else if (e.key === 'ArrowLeft') nextFlashcard(-1);
-  else if ((e.key==='g'||e.key==='G') && document.getElementById('flashcard')?.classList.contains('flipped')) {
-    document.getElementById('flash-got')?.click();
-  } else if ((e.key==='m'||e.key==='M') && document.getElementById('flashcard')?.classList.contains('flipped')) {
-    document.getElementById('flash-miss')?.click();
-  } else if (['1','2','3','4'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
-    const _views = ['flashcards','quiz','test','progress'];
-    const _btn = document.querySelector('#tabs button[data-view="' + _views[+e.key-1] + '"]');
-    if (_btn) _btn.click();
-  }
+  const flipped = document.getElementById('flashcard')?.classList.contains('flipped');
+  if (!flipped) return;
+  if (e.key==='a'||e.key==='A') document.getElementById('flash-again')?.click();
+  else if (e.key==='h'||e.key==='H') document.getElementById('flash-hard')?.click();
+  else if (e.key==='g'||e.key==='G') document.getElementById('flash-good')?.click();
+  else if (e.key==='e'||e.key==='E') document.getElementById('flash-easy')?.click();
 });
 </script>
 <script id="srs-engine">
@@ -2220,14 +2361,17 @@ function getSRLevel(term) {
 }
 
 // Core SR update — call instead of bumpSRLevel / setSRLevel
-function updateSR(term, correct) {
+function updateSR(term, qOrBool) {
+  const q = typeof qOrBool === 'boolean' ? (qOrBool ? 4 : 0) : qOrBool;
+  const correct = q >= 3;
   if (!state.progress.srData) state.progress.srData = {};
   const d = getSRData(term);
   if (correct) {
     d.reps = (d.reps || 0) + 1;
-    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1);
-    if      (d.reps === 1) d.interval = 1;
-    else if (d.reps === 2) d.interval = 4;
+    // Ease adjusts by quality: q=4 normal, q=5 boost, q=2 would be < 3 so not here
+    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1 - (5 - q) * 0.08);
+    if      (d.reps === 1) d.interval = q === 5 ? 3 : 1;
+    else if (d.reps === 2) d.interval = q === 5 ? 6 : 4;
     else                   d.interval = Math.round((d.interval || 1) * d.ease);
   } else {
     d.reps     = 0;

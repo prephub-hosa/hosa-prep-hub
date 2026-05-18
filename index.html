@@ -163,11 +163,11 @@
 
   h1.hero-title {
     font-family: 'Fraunces', serif;
-    font-size: clamp(56px, 8vw, 104px);
+    font-size: clamp(48px, 7vw, 92px);
     font-weight: 400;
     line-height: 0.93;
     letter-spacing: -0.045em;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
   h1.hero-title em {
@@ -176,37 +176,13 @@
     font-weight: 500;
   }
 
-  .hero-lede {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-style: italic;
-    font-weight: 400;
-    line-height: 1.4;
-    color: var(--ink-soft);
-    max-width: 560px;
-    margin-bottom: 32px;
-  }
-
-  .hero-tagline {
+  .hero-sub {
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .hero-tagline span {
-    display: inline-block;
-    padding: 6px 14px;
-    border: 1px solid var(--ink);
-    background: var(--bg-card);
-  }
-
-  .hero-tagline span strong {
-    color: var(--accent);
-    font-weight: 700;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 500px;
+    margin-bottom: 0;
   }
 
   .hero-aside {
@@ -214,25 +190,30 @@
     padding-left: 40px;
   }
 
-  .hero-aside .aside-label {
+  .hero-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+  }
+
+  .hero-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stat-label {
     font-family: 'Cormorant Garamond', serif;
     font-size: 13px;
-    font-weight: 500;
     font-variant: small-caps;
-    letter-spacing: 0.1em;
-    color: var(--ink-faint);
-    margin-bottom: 16px;
-  }
-
-  .hero-aside p {
-    font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    line-height: 1.6;
+    letter-spacing: 0.08em;
     color: var(--ink-soft);
-    margin-bottom: 20px;
+    margin-top: 6px;
   }
-
-  .hero-aside p:last-child { margin-bottom: 0; }
 
   /* ——— Event search bar ——— */
   .event-search-wrap {
@@ -613,7 +594,7 @@
   /* ——— Testimonials ——— */
   .testimonials {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     margin-bottom: 96px;
   }
@@ -666,41 +647,146 @@
   /* ——— How it works ——— */
   .how {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
     margin-bottom: 96px;
   }
 
   .how-item {
-    padding-top: 24px;
-    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+    border-top: 2px solid var(--rule);
+    display: flex;
+    flex-direction: column;
   }
+
+  .how-item:hover { border-top-color: var(--ink-soft); }
 
   .how-num {
     font-family: 'Fraunces', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     font-variant: small-caps;
     font-style: italic;
     letter-spacing: 0.1em;
-    color: var(--accent);
     margin-bottom: 12px;
   }
+  .how-num-1 { color: #4a72a0; }
+  .how-num-2 { color: var(--success); }
+  .how-num-3 { color: var(--accent); }
+  .how-num-4 { color: #c08040; }
 
   .how-item h4 {
     font-family: 'Fraunces', serif;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 500;
     line-height: 1.15;
     letter-spacing: -0.02em;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .how-item p {
     font-family: 'Source Serif 4', serif;
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    flex: 1;
+    margin-bottom: 14px;
+  }
+
+  .how-detail {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+    margin-top: auto;
+  }
+
+  /* ——— Starter / beginner path ——— */
+  .starter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .starter-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--ink-faint);
+    padding: 28px 24px 22px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.2s, box-shadow 0.25s, border-top-color 0.2s;
+  }
+
+  .starter-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px -12px rgba(0,0,0,0.22);
+    border-top-color: var(--accent);
+  }
+
+  .starter-card:nth-child(1) { border-top-color: var(--accent); }
+
+  .starter-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--accent);
+    opacity: 0.6;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .starter-body { flex: 1; }
+
+  .starter-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .starter-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .starter-card p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
     line-height: 1.55;
     color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .starter-cta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (max-width: 900px) {
+    .starter-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .starter-grid { grid-template-columns: 1fr; }
   }
 
   /* ——— Email capture ——— */
@@ -787,14 +873,29 @@
   /* ——— Footer ——— */
   footer {
     border-top: 1px solid var(--rule);
-    padding: 32px 40px;
+    padding: 40px 40px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .footer-copy {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-style: italic;
     color: var(--ink-faint);
+    max-width: 320px;
+    line-height: 1.4;
   }
 
   footer .footer-mark {
@@ -802,30 +903,53 @@
     font-style: normal;
   }
 
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .footer-nav a {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+  }
+
+  .footer-nav a:hover { color: var(--ink); }
+
   /* ——— Responsive ——— */
   @media (max-width: 1100px) {
     .categories { grid-template-columns: repeat(2, 1fr); }
     #continue-list { grid-template-columns: repeat(2, 1fr) !important; }
+    .how { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     #continue-list { grid-template-columns: 1fr !important; }
   }
-
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
     .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
-    .testimonials { grid-template-columns: 1fr; }
-    .how { grid-template-columns: 1fr; gap: 32px; }
+    .testimonials { grid-template-columns: 1fr 1fr; }
+    .testimonials .testimonial:last-child { display: none; }
+    .how { grid-template-columns: repeat(2, 1fr); gap: 28px; }
     .newsletter { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
     main { padding: 48px 24px; }
     header { padding: 16px 24px; }
-    footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 24px; }
+    .footer-nav { align-items: flex-start; }
+    .how { grid-template-columns: 1fr 1fr; }
   }
 
   @media (max-width: 640px) {
     .categories { grid-template-columns: 1fr; }
     .filter-bar { gap: 6px; }
     .filter-btn { font-size: 12px; padding: 6px 12px; }
+    .how { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 480px) {
@@ -1253,39 +1377,34 @@
   <section class="hero">
     <div>
       <div class="eyebrow">60 HOSA events &middot; Free &middot; No signup required</div>
-      <h1 class="hero-title">Train like <em>competition day.</em></h1>
+      <h1 class="hero-title">Master every <em>HOSA event</em><br>one card at a time.</h1>
+      <p class="hero-sub">Spaced repetition flashcards, practice quizzes, and timed exams — covering all 60 competitive events with 2,800+ clinical terms. Built by a HOSA competitor, for HOSA competitors.</p>
 
-      <div class="hero-tagline">
-        <span>Track <strong>weak areas.</strong></span>
-        <span>Review <strong>misses.</strong></span>
-        <span>Improve <strong>faster.</strong></span>
-      </div>
-
-      <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Start studying →</a>
-        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Try a card</a>
+      <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:filter 0.15s;">Start studying — it's free →</a>
+        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:border-color 0.15s;">Try a card</a>
       </div>
       <button type="button" class="find-event-pill" id="open-onboard">
         <span>✦</span> Not sure which event? Take the 30-second quiz
       </button>
     </div>
     <aside class="hero-aside">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">60</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">HOSA Events</div>
+      <div class="hero-stats-grid">
+        <div class="hero-stat">
+          <div class="hero-stat-num">60</div>
+          <div class="hero-stat-label">HOSA Events</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">2,800+</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Flashcards</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2,800+</div>
+          <div class="hero-stat-label">Flashcards</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">3</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Study Modes</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-label">Study Modes</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">$0</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Cost, ever</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">$0</div>
+          <div class="hero-stat-label">Cost, ever</div>
         </div>
       </div>
     </aside>
@@ -1371,6 +1490,43 @@
   </script>
 
   <!-- CATEGORIES -->
+  <!-- BEGINNER PATH -->
+  <section id="start-here" style="margin-bottom:80px;">
+    <div class="section-head" style="margin-bottom:28px;">
+      <h2>New to HOSA? <em>Start here.</em></h2>
+      <div class="section-label">Most studied events for first-time competitors</div>
+    </div>
+    <div class="starter-grid">
+      <a href="medical-terminology.html" class="starter-card">
+        <div class="starter-num">01</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Best first event</div>
+          <h4>Medical Terminology</h4>
+          <p>The vocabulary foundation every healthcare field depends on — prefixes, suffixes, and roots used across all other events.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+      <a href="anatomy-physiology.html" class="starter-card">
+        <div class="starter-num">02</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Build your foundation</div>
+          <h4>Anatomy &amp; Physiology</h4>
+          <p>Systems, organs, and how the body works — essential background for clinical events from emergency medicine to surgery.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+      <a href="pathophysiology.html" class="starter-card">
+        <div class="starter-num">03</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Bridge to clinical events</div>
+          <h4>Pathophysiology</h4>
+          <p>Disease mechanisms, from cellular injury to systemic failures — the reasoning layer that links anatomy to clinical diagnosis.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+    </div>
+  </section>
+
   <section id="categories-section">
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
@@ -2560,11 +2716,15 @@
     <div class="testimonials">
       <div class="testimonial">
         <blockquote>The timed tests helped me stop panicking. I walked into my regional feeling calm because the practice felt exactly like the real thing.</blockquote>
-        <div class="attribution">HOSA Competitor, Medical Terminology</div>
+        <div class="attribution">HOSA Competitor &mdash; Medical Terminology</div>
       </div>
       <div class="testimonial">
         <blockquote>Smart Review actually made studying feel efficient. The cards I kept missing showed up more, and the ones I knew just faded away.</blockquote>
-        <div class="attribution">HOSA Competitor, Pathophysiology</div>
+        <div class="attribution">HOSA Competitor &mdash; Pathophysiology</div>
+      </div>
+      <div class="testimonial">
+        <blockquote>I went from 60% on practice tests to placing at state. The 4-button rating makes a huge difference — you can actually tell the algorithm you're struggling.</blockquote>
+        <div class="attribution">HOSA Competitor &mdash; Anatomy &amp; Physiology</div>
       </div>
     </div>
   </section>
@@ -2572,25 +2732,34 @@
   <!-- HOW IT WORKS -->
   <section id="how-section">
     <div class="section-head">
-      <h2>How each event <em>works.</em></h2>
-      <div class="section-label">Three modes of study</div>
+      <h2>Four modes, one <em>system.</em></h2>
+      <div class="section-label">Each event includes all four</div>
     </div>
 
     <div class="how">
       <div class="how-item">
-        <div class="how-num">i. Learn</div>
+        <div class="how-num how-num-1">i. Learn</div>
         <h4>Flashcards</h4>
-        <p>Clean, focused cards with term on one side and explanation on the other. Smart Review tracks what you know and prioritizes what you don't.</p>
+        <p>Spaced-repetition cards with a 4-point rating (Again / Hard / Good / Easy) so the algorithm knows exactly how well you know each term and when to show it again.</p>
+        <div class="how-detail">Smart Review · SM-2 algorithm · 20 cards/session</div>
       </div>
       <div class="how-item">
-        <div class="how-num">ii. Confirm</div>
-        <h4>Practice Quizzes</h4>
-        <p>Ten-question sets with multiple choice and immediate feedback. Finish and jump straight into reviewing your misses as flashcards.</p>
+        <div class="how-num how-num-2">ii. Confirm</div>
+        <h4>Practice Quiz</h4>
+        <p>Ten-question multiple-choice sets with immediate right/wrong feedback after each answer. When you finish, jump straight into reviewing your misses.</p>
+        <div class="how-detail">10 questions · Instant feedback · Miss review mode</div>
       </div>
       <div class="how-item">
-        <div class="how-num">iii. Perform</div>
-        <h4>Timed Examinations</h4>
-        <p>Twenty-five questions in twelve minutes — no feedback until the end. Modeled on HOSA competition conditions so you're ready when it counts.</p>
+        <div class="how-num how-num-3">iii. Perform</div>
+        <h4>Timed Test</h4>
+        <p>25 questions in 12 minutes with per-question feedback — right/wrong shown after each answer, then full results at the end. Mirrors HOSA competition conditions.</p>
+        <div class="how-detail">25 questions · 12-minute clock · Category breakdown</div>
+      </div>
+      <div class="how-item">
+        <div class="how-num how-num-4">iv. Track</div>
+        <h4>Progress</h4>
+        <p>See your mastery by category, review score history, track your study streak, and see exactly which cards are due for review today based on your spaced repetition schedule.</p>
+        <div class="how-detail">Study heatmap · Quiz history · Due-today queue</div>
       </div>
     </div>
   </section>
@@ -2624,8 +2793,17 @@
 </main>
 
 <footer>
-  <div>HOSA Prep Hub — <span class="footer-mark">✢</span> A study companion, not an official HOSA publication.</div>
-  <div>Built for competitors, by a competitor.</div>
+  <div class="footer-left">
+    <div class="footer-brand"><span class="footer-mark">✢</span> HOSA Prep Hub</div>
+    <div class="footer-copy">A study companion, not an official HOSA publication. Free to use, forever.</div>
+  </div>
+  <nav class="footer-nav">
+    <a href="medical-terminology.html">Medical Terminology</a>
+    <a href="anatomy-physiology.html">Anatomy &amp; Physiology</a>
+    <a href="emergency-medical-science.html">Emergency Medicine</a>
+    <a href="pathophysiology.html">Pathophysiology</a>
+    <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;">All 60 events →</a>
+  </nav>
 </footer>
 
 
@@ -2904,7 +3082,7 @@ document.getElementById('request-btn').onclick = function() {
 <script id="scroll-reveal">
 (function() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter');
+  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter, .starter-grid');
   targets.forEach(function(el){ el.classList.add('reveal'); });
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
