@@ -7,8 +7,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
 
 /* ── Color tokens (dark default; light still opt-in via data-theme) ─ */
+/* Electric violet → cyan ("aura" tech palette).
+   Brand red is preserved for danger states only (Rate: Again, errors). */
 :root {
-  --bg:           #08080b;
+  --bg:           #07070a;
   --bg-elev:      rgba(255,255,255,0.025);
   --bg-card:      rgba(255,255,255,0.035);
   --bg-glass:     rgba(255,255,255,0.04);
@@ -17,18 +19,19 @@
   --ink-faint:    #71717a;
   --rule:         rgba(255,255,255,0.07);
   --rule-strong:  rgba(255,255,255,0.14);
-  --accent:       #ef4444;        /* primary red — brand */
-  --accent-2:     #f97316;        /* orange for gradient */
-  --accent-3:     #ec4899;        /* magenta for aurora */
-  --accent-soft:  rgba(239,68,68,0.18);
-  --accent-glow:  rgba(239,68,68,0.45);
-  --highlight:    rgba(239,68,68,0.10);
-  --success:      #34d399;
-  --error:        #f87171;
-  --grad-cta:     linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-  --grad-aurora-a: radial-gradient(circle at 18% 12%, rgba(239,68,68,0.18) 0%, transparent 42%);
-  --grad-aurora-b: radial-gradient(circle at 82% 8%,  rgba(236,72,153,0.14) 0%, transparent 45%);
-  --grad-aurora-c: radial-gradient(circle at 50% 92%, rgba(59,130,246,0.12) 0%, transparent 50%);
+  --accent:       #8b5cf6;        /* electric violet — primary */
+  --accent-2:     #06b6d4;        /* electric cyan — gradient stop */
+  --accent-3:     #6366f1;        /* indigo — aurora support */
+  --accent-soft:  rgba(139,92,246,0.16);
+  --accent-glow:  rgba(139,92,246,0.50);
+  --highlight:    rgba(139,92,246,0.10);
+  --brand-red:    #f43f5e;        /* danger / error / Again */
+  --success:      #10d399;
+  --error:        #f43f5e;
+  --grad-cta:     linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+  --grad-aurora-a: radial-gradient(circle at 14% 8%,  rgba(139,92,246,0.22) 0%, transparent 45%);
+  --grad-aurora-b: radial-gradient(circle at 88% 12%, rgba(6,182,212,0.16)  0%, transparent 48%);
+  --grad-aurora-c: radial-gradient(circle at 50% 95%, rgba(99,102,241,0.14) 0%, transparent 55%);
 }
 
 /* Light theme stays available — but tuned to feel modern, not bookish */
@@ -42,14 +45,15 @@
   --ink-faint:   #71717a;
   --rule:        rgba(9,9,11,0.08);
   --rule-strong: rgba(9,9,11,0.15);
-  --accent:      #dc2626;
-  --accent-2:    #ea580c;
-  --accent-3:    #db2777;
-  --accent-soft: rgba(220,38,38,0.10);
-  --accent-glow: rgba(220,38,38,0.30);
-  --highlight:   rgba(220,38,38,0.06);
+  --accent:      #7c3aed;
+  --accent-2:    #0891b2;
+  --accent-3:    #4f46e5;
+  --accent-soft: rgba(124,58,237,0.10);
+  --accent-glow: rgba(124,58,237,0.30);
+  --highlight:   rgba(124,58,237,0.06);
+  --brand-red:   #e11d48;
   --success:     #059669;
-  --error:       #dc2626;
+  --error:       #e11d48;
 }
 
 /* ── Reset typography to modern sans (keep Fraunces for hero) ────── */
@@ -78,9 +82,9 @@ body {
 body::before { display: none !important; }
 [data-theme="light"] body {
   background:
-    radial-gradient(circle at 18% 12%, rgba(220,38,38,0.05) 0%, transparent 42%),
-    radial-gradient(circle at 82% 8%,  rgba(219,39,119,0.04) 0%, transparent 45%),
-    radial-gradient(circle at 50% 92%, rgba(59,130,246,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 14% 8%,  rgba(124,58,237,0.07) 0%, transparent 45%),
+    radial-gradient(circle at 88% 12%, rgba(8,145,178,0.06)  0%, transparent 48%),
+    radial-gradient(circle at 50% 95%, rgba(79,70,229,0.05)  0%, transparent 55%),
     var(--bg) !important;
 }
 
@@ -226,7 +230,7 @@ button.btn-signout,
   box-shadow:
     0 1px 0 rgba(255,255,255,0.15) inset,
     0 8px 24px -8px var(--accent-glow),
-    0 0 0 1px rgba(239,68,68,0.4);
+    0 0 0 1px rgba(139,92,246,0.45);
   transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease !important;
   position: relative;
   overflow: hidden;
@@ -238,8 +242,8 @@ a[href="#categories-section"]:hover,
   box-shadow:
     0 1px 0 rgba(255,255,255,0.2) inset,
     0 14px 36px -10px var(--accent-glow),
-    0 0 0 1px rgba(239,68,68,0.6),
-    0 0 30px var(--accent-glow);
+    0 0 0 1px rgba(6,182,212,0.55),
+    0 0 36px var(--accent-glow);
   filter: brightness(1.08);
 }
 
@@ -302,7 +306,7 @@ a[href="#demo-section"]:hover,
 .section-head h2 em {
   font-style: normal !important;
   font-weight: 700 !important;
-  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent !important;
@@ -426,10 +430,10 @@ a[href="#demo-section"]:hover,
     0 0 40px -10px var(--card-glow, var(--accent-glow));
 }
 .category-card:hover::before { opacity: 0.6; }
-.category-card[data-group="basic"]    { --card-glow: rgba(20,184,166,0.5); }
-.category-card[data-group="clinical"] { --card-glow: rgba(239,68,68,0.5); }
-.category-card[data-group="allied"]   { --card-glow: rgba(34,197,94,0.5); }
-.category-card[data-group="systems"]  { --card-glow: rgba(59,130,246,0.5); }
+.category-card[data-group="basic"]    { --card-glow: rgba(16,211,153,0.45); }   /* teal-green */
+.category-card[data-group="clinical"] { --card-glow: rgba(139,92,246,0.50); }  /* violet */
+.category-card[data-group="allied"]   { --card-glow: rgba(6,182,212,0.45); }    /* cyan */
+.category-card[data-group="systems"]  { --card-glow: rgba(99,102,241,0.48); }   /* indigo */
 
 .card-number {
   font-family: 'Geist Mono', monospace !important;
@@ -462,10 +466,10 @@ a[href="#demo-section"]:hover,
   width: 8px !important; height: 8px !important;
   box-shadow: 0 0 8px currentColor;
 }
-[data-group="basic"]    .card-group-dot { background: #14b8a6 !important; color: #14b8a6; }
-[data-group="clinical"] .card-group-dot { background: #ef4444 !important; color: #ef4444; }
-[data-group="allied"]   .card-group-dot { background: #22c55e !important; color: #22c55e; }
-[data-group="systems"]  .card-group-dot { background: #3b82f6 !important; color: #3b82f6; }
+[data-group="basic"]    .card-group-dot { background: #10d399 !important; color: #10d399; }
+[data-group="clinical"] .card-group-dot { background: #8b5cf6 !important; color: #8b5cf6; }
+[data-group="allied"]   .card-group-dot { background: #06b6d4 !important; color: #06b6d4; }
+[data-group="systems"]  .card-group-dot { background: #6366f1 !important; color: #6366f1; }
 
 .category-card h3 {
   font-family: 'Inter', sans-serif !important;
@@ -479,7 +483,7 @@ a[href="#demo-section"]:hover,
 .category-card h3 em {
   font-style: normal !important;
   font-weight: 600 !important;
-  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent !important;
@@ -639,7 +643,7 @@ footer {
 .masthead h1 em {
   font-style: normal !important;
   font-weight: 700 !important;
-  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent !important;
