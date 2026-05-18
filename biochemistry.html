@@ -119,6 +119,40 @@
   .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
   .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .brand-link:hover { opacity: 0.65; }
+  /* ── XP pill in header ── */
+  .xp-pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border: 1px solid var(--rule); font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink); transition: border-color 0.2s; }
+  .xp-pill:hover { border-color: var(--accent); }
+  .xp-lvl { font-family: 'Fraunces',serif; font-weight: 600; color: var(--accent); font-variant: normal; letter-spacing: 0; font-size: 13px; }
+  .xp-bar-mini { width: 50px; height: 4px; background: var(--rule); position: relative; }
+  .xp-bar-mini-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; }
+  .xp-toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: var(--bg-card); border: 1px solid var(--accent); padding: 10px 22px; font-family: 'Fraunces',serif; font-size: 14px; z-index: 1500; opacity: 0; transition: opacity 0.25s, top 0.3s; pointer-events: none; box-shadow: 0 4px 24px rgba(0,0,0,0.12); white-space: nowrap; }
+  .xp-toast.show { opacity: 1; top: 30px; }
+  .xp-toast.level-up { border-color: #c79a30; background: linear-gradient(120deg, var(--bg-card), rgba(199,154,48,0.1)); font-weight: 600; padding: 14px 30px; font-size: 16px; }
+  @media (max-width: 640px) { .xp-pill .xp-bar-mini { display: none; } }
+  /* ── Cross-linked terms in definitions ── */
+  .term-link { color: var(--accent); border-bottom: 1px dotted var(--accent); cursor: pointer; padding: 0 2px; transition: background 0.15s, color 0.15s; }
+  .term-link:hover { background: rgba(168,40,31,0.08); color: var(--accent); }
+  [data-theme="light"] .term-link:hover { background: rgba(168,40,31,0.06); }
+  /* ── Quiz mode toggle (learn mode) ── */
+  .quiz-mode-toggle { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid var(--rule); }
+  .qmt-btn { flex: 1; padding: 9px 12px; background: transparent; border: none; font-family: 'Cormorant Garamond',serif; font-size: 12px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.08em; cursor: pointer; color: var(--ink-soft); transition: all 0.15s; border-right: 1px solid var(--rule); }
+  .qmt-btn:last-child { border-right: none; }
+  .qmt-btn.active { background: var(--ink); color: var(--bg); }
+  .qmt-btn:not(.active):hover { background: var(--rule); }
+  .learn-input-wrap { display: none; flex-direction: column; gap: 12px; }
+  .learn-input-wrap.active { display: flex; }
+  .learn-input { width: 100%; padding: 14px 18px; font-family: 'Source Serif 4',Georgia,serif; font-size: 17px; border: 1px solid var(--rule); background: var(--bg-card); color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .learn-input:focus { border-color: var(--accent); }
+  .learn-input:disabled { opacity: 0.7; }
+  .learn-submit-row { display: flex; gap: 10px; align-items: center; }
+  .learn-hint { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-style: italic; color: var(--ink-faint); }
+  /* ── Detailed quiz rationales ── */
+  .rationale-row { padding: 10px 0; border-top: 1px solid var(--rule); font-family: 'Source Serif 4',Georgia,serif; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+  .rationale-row:first-child { border-top: none; padding-top: 0; }
+  .rationale-row strong { font-family: 'Fraunces',serif; font-weight: 600; letter-spacing: -0.01em; }
+  .rationale-row.r-correct strong { color: var(--success); }
+  .rationale-row.r-picked-wrong strong { color: var(--error); }
+  .rationale-row.r-distractor { opacity: 0.7; font-size: 13px; }
 
   .meta {
     font-family: 'Cormorant Garamond', serif;
@@ -439,15 +473,78 @@
   .btn.accent { background: var(--accent); border-color: var(--accent); color: var(--bg); }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .rating-btns { display: flex; gap: 8px; }
-  .rating-btns .btn { padding: 10px 16px; }
-  .rating-btns .miss:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .rating-btns .got:hover { background: var(--success); color: var(--bg); border-color: var(--success); }
-  /* ── Deck progress line ── */
+  .rating-btns { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .rating-btns .btn { padding: 9px 6px; font-size: 13px; font-weight: 600; text-align: center; letter-spacing: 0.01em; }
+  .rate-again { border-color: var(--error) !important; color: var(--error) !important; }
+  .rate-again:hover { background: var(--error) !important; color: var(--bg) !important; border-color: var(--error) !important; }
+  .rate-hard  { border-color: #c08040; color: #c08040; }
+  .rate-hard:hover  { background: #c08040; color: var(--bg); border-color: #c08040; }
+  .rate-good  { border-color: var(--success); color: var(--success); }
+  .rate-good:hover  { background: var(--success); color: var(--bg); border-color: var(--success); }
+  .rate-easy  { border-color: #4a72a0; color: #4a72a0; }
+  .rate-easy:hover  { background: #4a72a0; color: var(--bg); border-color: #4a72a0; }
+  .rating-label-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 4px; }
+  .rating-label-row span { font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-faint); text-align: center; }
+  .sess-stats { display: flex; gap: 16px; justify-content: center; margin: 0 0 10px; font-family: 'Cormorant Garamond',serif; font-size: 12px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-faint); opacity: 0; transition: opacity 0.3s; }
+  .sess-stats.visible { opacity: 1; }
+  .sess-stat { display: flex; align-items: center; gap: 5px; }
+  .sess-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .ss-got .sess-dot { background: var(--success); }
+  .ss-hard .sess-dot { background: #c08040; }
+  .ss-miss .sess-dot { background: var(--error); }
+  .sess-stat-num { color: var(--ink-soft); }
+  .heatmap-wrap { margin-bottom: 40px; }
+  .heatmap-grid { display: flex; flex-wrap: wrap; gap: 4px; max-width: 244px; }
+  .hm-day { width: 26px; height: 26px; border: 1px solid var(--rule); border-radius: 3px; transition: opacity 0.15s; }
+  .hm-day.active { background: var(--accent); border-color: var(--accent); opacity: 0.75; }
+  .hm-day.active.is-today { opacity: 1; outline: 2px solid var(--accent); outline-offset: 1px; }
+  .hm-day.is-today:not(.active) { border-color: var(--ink-soft); }
+  .hm-label-row { display: flex; gap: 16px; margin-bottom: 8px; font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-faint); }
+  .kbd-help-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'Source Serif 4',serif; font-size: 12px; font-weight: 600; color: var(--ink-faint); cursor: pointer; letter-spacing: 0.04em; border-radius: 2px; transition: all 0.15s; }
+  .kbd-help-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+  .kbd-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.72); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+  .kbd-overlay.open { display: flex; }
+  .kbd-card { background: var(--bg-card); border: 1px solid var(--rule); padding: 36px 40px; max-width: 500px; width: 92%; }
+  .kbd-card-title { font-family: 'Fraunces',serif; font-size: 22px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 24px; }
+  .kbd-section { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); margin: 16px 0 8px; }
+  .kbd-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--rule); font-family: 'Source Serif 4',serif; font-size: 13px; color: var(--ink-soft); }
+  .kbd-row:last-child { border-bottom: none; }
+  .kbd-keys { display: flex; gap: 4px; }
+  .kbd-key { font-family: monospace; font-size: 11px; font-weight: 700; padding: 3px 7px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink-soft); letter-spacing: 0; }
+  .kbd-close { margin-top: 20px; background: none; border: 1px solid var(--rule); padding: 9px 22px; font-family: 'Source Serif 4',serif; font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; width: 100%; transition: all 0.15s; }
+  .kbd-close:hover { color: var(--ink); border-color: var(--ink-soft); }
+  /* ── Deck progress line + cram row ── */
+  .deck-progress-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; margin: -4px 0 14px; }
   .deck-progress-line {
-    text-align: center; font-size: 12px; color: var(--ink-faint);
-    margin: -4px 0 14px; letter-spacing: 0.03em;
+    text-align: left; font-size: 12px; color: var(--ink-faint);
+    margin: 0; letter-spacing: 0.03em; flex: 1;
   }
+  .cram-btn { padding: 3px 9px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; font-variant: small-caps; font-family: 'Cormorant Garamond',serif; border: 1px solid #c08040; color: #c08040; background: transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .cram-btn:hover { background: #c08040; color: var(--bg); }
+  .cram-btn.active { background: #c08040; color: var(--bg); }
+  .sess-timer-display { font-family: 'Fraunces',serif; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.01em; white-space: nowrap; display: none; }
+  /* ── Daily goal ring ── */
+  .goal-section { margin-bottom: 40px; }
+  .goal-ring-wrap { display: flex; align-items: center; gap: 24px; margin-bottom: 14px; }
+  .goal-ring-svg { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+  .goal-ring-svg svg { width: 72px; height: 72px; transform: rotate(-90deg); display: block; }
+  .goal-ring-track { fill: none; stroke: var(--rule); stroke-width: 7; }
+  .goal-ring-fill { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+  .goal-ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .goal-ring-num { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 600; line-height: 1; color: var(--ink); }
+  .goal-ring-sub { font-family: 'Cormorant Garamond',serif; font-size: 10px; letter-spacing: 0.06em; font-variant: small-caps; color: var(--ink-faint); }
+  .goal-ring-meta h4 { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .goal-ring-meta p { font-family: 'Source Serif 4',Georgia,serif; font-size: 13px; color: var(--ink-soft); margin: 0 0 10px; }
+  .goal-adj { display: flex; align-items: center; gap: 8px; }
+  .goal-adj-btn { border: 1px solid var(--rule); background: transparent; color: var(--ink); width: 24px; height: 24px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; transition: border-color 0.15s; }
+  .goal-adj-btn:hover { border-color: var(--ink); }
+  .goal-adj-val { font-family: 'Fraunces',serif; font-size: 14px; min-width: 60px; color: var(--ink); }
+  /* ── Milestone streak badges ── */
+  .milestone-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .ms-badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--rule); font-family: 'Cormorant Garamond',serif; font-size: 12px; letter-spacing: 0.06em; font-variant: small-caps; color: var(--ink-faint); transition: border-color 0.3s, color 0.3s; }
+  .ms-badge.earned { color: var(--ink); border-color: var(--accent); }
+  .ms-badge-icon { font-size: 14px; filter: grayscale(1); opacity: 0.4; transition: filter 0.3s, opacity 0.3s; }
+  .ms-badge.earned .ms-badge-icon { filter: none; opacity: 1; }
   /* ── Know-it skip button ── */
   .know-it-btn {
     display: inline-block; margin-top: 10px;
@@ -1080,16 +1177,43 @@
 
 <header>
   <a href="index.html" class="brand-link"><div class="brand">HOSA Prep Hub</div></a>
+  <button class="kbd-help-btn" id="kbd-help-open" type="button">? Shortcuts</button>
+  <div class="xp-pill" id="xp-pill" title="Total XP earned across all events">
+    <span class="xp-lvl">Lv <span id="xp-level">1</span></span>
+    <div class="xp-bar-mini"><div class="xp-bar-mini-fill" id="xp-bar-fill" style="width:0%"></div></div>
+    <span id="xp-total">0 XP</span>
+  </div>
   <div class="user-pill">
     <span class="user-email" id="user-email"></span>
     <button class="btn-signout" id="btn-signout">Sign Out</button>
   </div>
 </header>
+<div class="xp-toast" id="xp-toast"></div>
 <div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
   ⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
   <a href="index.html" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
 </div>
 
+<div class="kbd-overlay" id="kbd-overlay">
+  <div class="kbd-card">
+    <div class="kbd-card-title">Keyboard Shortcuts</div>
+    <div class="kbd-section">Flashcards</div>
+    <div class="kbd-row"><span>Flip card</span><span class="kbd-keys"><span class="kbd-key">Space</span><span class="kbd-key">Enter</span></span></div>
+    <div class="kbd-row"><span>Next card</span><span class="kbd-keys"><span class="kbd-key">→</span></span></div>
+    <div class="kbd-row"><span>Previous card</span><span class="kbd-keys"><span class="kbd-key">←</span></span></div>
+    <div class="kbd-row"><span>Rate: Again</span><span class="kbd-keys"><span class="kbd-key">A</span></span></div>
+    <div class="kbd-row"><span>Rate: Hard</span><span class="kbd-keys"><span class="kbd-key">H</span></span></div>
+    <div class="kbd-row"><span>Rate: Good</span><span class="kbd-keys"><span class="kbd-key">G</span></span></div>
+    <div class="kbd-row"><span>Rate: Easy</span><span class="kbd-keys"><span class="kbd-key">E</span></span></div>
+    <div class="kbd-section">Navigation</div>
+    <div class="kbd-row"><span>Switch to Flashcards</span><span class="kbd-keys"><span class="kbd-key">1</span></span></div>
+    <div class="kbd-row"><span>Switch to Quiz</span><span class="kbd-keys"><span class="kbd-key">2</span></span></div>
+    <div class="kbd-row"><span>Switch to Test</span><span class="kbd-keys"><span class="kbd-key">3</span></span></div>
+    <div class="kbd-row"><span>Switch to Progress</span><span class="kbd-keys"><span class="kbd-key">4</span></span></div>
+    <div class="kbd-row"><span>Show/hide this</span><span class="kbd-keys"><span class="kbd-key">?</span></span></div>
+    <button class="kbd-close" id="kbd-close">Close</button>
+  </div>
+</div>
 <main>
   <div class="masthead">
     <div>
@@ -1134,7 +1258,11 @@
         </span>
       </div>
 
-      <p id="deck-progress" class="deck-progress-line"></p>
+      <div class="deck-progress-row">
+        <p id="deck-progress" class="deck-progress-line"></p>
+        <span class="sess-timer-display" id="sess-timer"></span>
+        <button class="cram-btn" id="cram-btn" title="Study only cards due today">⚡ Cram</button>
+      </div>
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
           <div class="face front">
@@ -1157,16 +1285,26 @@
         </div>
       </div>
 
+      <div class="sess-stats" id="sess-stats">
+        <span class="sess-stat ss-got"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-got-n">0</span></span>
+        <span class="sess-stat ss-hard"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-hard-n">0</span></span>
+        <span class="sess-stat ss-miss"><span class="sess-dot"></span><span class="sess-stat-num" id="ss-miss-n">0</span></span>
+      </div>
       <div class="card-controls">
-        <button class="btn" id="flash-prev">← Previous</button>
+        <button class="btn" id="flash-prev">← Prev</button>
         <div class="rating-btns">
-          <button class="btn miss" id="flash-miss">Missed it</button>
-          <button class="btn got" id="flash-got">Got it</button>
+          <button class="btn rate-again" id="flash-again">&#x2717; Again</button>
+          <button class="btn rate-hard"  id="flash-hard">~ Hard</button>
+          <button class="btn rate-good"  id="flash-good">&#x2713; Good</button>
+          <button class="btn rate-easy"  id="flash-easy">&#x2605; Easy</button>
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
+      <div class="rating-label-row">
+        <span>A key</span><span>H key</span><span>G key</span><span>E key</span>
+      </div>
       <p id="next-review-badge" class="next-review-badge"></p>
-      <p class="rating-hint">Tap to reveal &middot; "Got it" / "Missed it" trains Smart Review &middot; G&thinsp;/&thinsp;M keys work too &middot; saves automatically</p>
+      <p class="rating-hint">Tap to reveal, then rate &middot; Smart Review adjusts intervals &middot; saves automatically &middot; ? for shortcuts</p>
       <div id="session-complete" style="display:none">
         <div class="sc-icon">✓</div>
         <h3 class="sc-title">Session complete!</h3>
@@ -1195,12 +1333,26 @@
       </div>
       <div class="quiz-bar-track"><div class="quiz-bar-fill" id="quiz-bar-fill"></div></div>
 
+      <div class="quiz-mode-toggle" id="quiz-mode-toggle">
+        <button class="qmt-btn active" data-mode="mc">Multiple Choice</button>
+        <button class="qmt-btn" data-mode="learn">Type the Answer</button>
+      </div>
+
       <div class="quiz-question">
-        <div class="quiz-prompt">How would you define this?</div>
+        <div class="quiz-prompt" id="quiz-prompt">How would you define this?</div>
         <div class="quiz-term" id="quiz-term"></div>
       </div>
 
       <div class="quiz-options" id="quiz-options"></div>
+
+      <div class="learn-input-wrap" id="learn-input-wrap">
+        <input type="text" class="learn-input" id="learn-input" placeholder="Type the term…" autocomplete="off" spellcheck="false">
+        <div class="learn-submit-row">
+          <button class="btn primary" id="learn-submit">Check answer</button>
+          <button class="btn" id="learn-skip">Skip (count wrong)</button>
+          <span class="learn-hint">2-typo tolerance · press Enter to check</span>
+        </div>
+      </div>
 
       <div class="quiz-feedback" id="quiz-feedback">
         <div class="verdict" id="quiz-verdict"></div>
@@ -1263,6 +1415,10 @@
           <div class="quiz-term" id="test-term"></div>
         </div>
         <div class="quiz-options" id="test-options"></div>
+        <div class="quiz-feedback" id="test-feedback">
+          <div class="verdict" id="test-verdict"></div>
+          <div class="explain" id="test-explain"></div>
+        </div>
       </div>
     </div>
 
@@ -1310,6 +1466,44 @@
     <div class="stat-card">
       <div class="stat-label">Due Today</div>
       <div class="stat-val" id="stat-due">0</div>
+    </div>
+
+    <div class="goal-section">
+      <h3 style="font-family:'Fraunces',serif;font-size:20px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;">Daily Goal</h3>
+      <div class="section-sub" style="margin-bottom:16px;">Cards reviewed today vs. your goal</div>
+      <div class="goal-ring-wrap">
+        <div class="goal-ring-svg">
+          <svg viewBox="0 0 72 72">
+            <circle class="goal-ring-track" cx="36" cy="36" r="31"/>
+            <circle class="goal-ring-fill" id="goal-ring-fill" cx="36" cy="36" r="31" stroke-dasharray="194.78" stroke-dashoffset="194.78"/>
+          </svg>
+          <div class="goal-ring-inner">
+            <span class="goal-ring-num" id="goal-done">0</span>
+            <span class="goal-ring-sub">today</span>
+          </div>
+        </div>
+        <div class="goal-ring-meta">
+          <h4 style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;letter-spacing:-0.02em;margin:0 0 4px;">Set your daily target</h4>
+          <p style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-soft);margin:0 0 10px;">Adjust in increments of 5 cards</p>
+          <div class="goal-adj">
+            <button class="goal-adj-btn" id="goal-dec">−</button>
+            <span class="goal-adj-val"><span id="goal-target">20</span> cards</span>
+            <button class="goal-adj-btn" id="goal-inc">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="milestone-badges" id="milestone-badges">
+        <div class="ms-badge" data-days="7"><span class="ms-badge-icon">🥉</span> 7-day streak</div>
+        <div class="ms-badge" data-days="30"><span class="ms-badge-icon">🥈</span> 30-day streak</div>
+        <div class="ms-badge" data-days="100"><span class="ms-badge-icon">🥇</span> 100-day streak</div>
+      </div>
+    </div>
+
+    <div class="heatmap-wrap">
+      <h3 style="font-family:'Fraunces',serif;font-size:20px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;">Study Activity</h3>
+      <div class="section-sub" style="margin-bottom:16px;">Last 28 days</div>
+      <div class="hm-label-row" id="hm-label-row"></div>
+      <div class="heatmap-grid" id="heatmap-grid"></div>
     </div>
 
     <div class="mastery-section" style="margin-bottom:32px">
@@ -1511,6 +1705,7 @@ const state = {
     srLevels: {},
     srData:   {},
     streak: 0,
+    studyDates: new Set(),
     lastStudyDate: null,
     lastFilter: 'all',
   },
@@ -1527,6 +1722,7 @@ function saveProgress() {
   const data = {
     studied:       [...state.progress.studied],
     mastered:      [...state.progress.mastered],
+    studyDates:    Array.from(state.progress.studyDates || []),
     quizzes:       state.progress.quizzes,
     lastMissed:    state.progress.lastMissed || [],
     srLevels:      state.progress.srLevels || {},
@@ -1566,6 +1762,7 @@ async function loadProgress(uid) {
         const data = snap.val();
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1580,6 +1777,7 @@ async function loadProgress(uid) {
         const data = JSON.parse(raw);
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
+        state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = data.quizzes    || [];
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
@@ -1613,6 +1811,10 @@ function updateStreakBadge() {
     num.textContent = state.progress.streak;
     badge.style.display = '';
   }
+}
+function recordStudyDate() {
+  if (!state.progress.studyDates) state.progress.studyDates = new Set();
+  state.progress.studyDates.add(getTodayStr());
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1925,7 +2127,8 @@ function initFlashcards() {
   if (_kiBtn) _kiBtn.addEventListener('click', e => { e.stopPropagation(); skipKnown(); });
 
   document.getElementById('sc-more').addEventListener('click', () => {
-    _sessGot = 0; _sessMissed = 0;
+    _sessGot = 0; _sessMissed = 0; _sessHard = 0;
+  try{var _ss2=document.getElementById("sess-stats");if(_ss2){_ss2.classList.remove("visible");["ss-got-n","ss-hard-n","ss-miss-n"].forEach(id=>{var el=document.getElementById(id);if(el)el.textContent="0";});}}catch(e){}
     state.flash.deck = buildSmartDeck(filterDeck(state.flash.filter));
     state.flash.index = 0;
     $('#flashcard').style.display = '';
@@ -1947,29 +2150,114 @@ function initFlashcards() {
   $('#flash-prev').addEventListener('click', () => {
     nextFlashcard(-1);
   });
-  $('#flash-got').addEventListener('click', () => {
-    const card = state.flash.deck[state.flash.index];
-    state.progress.studied.add(card.term);
-    state.progress.mastered.add(card.term);
-    updateSR(card.term, true);
-    showNextReview((state.progress.srData||{})[card.term]?.interval||1);
-    checkAndUpdateStreak();
-    saveProgress();
-    _sessGot++;
-    try{gtag('event','flashcard_got',{event_category:DB_PATH});}catch(e){}
-    renderFlashcard(); // update level indicator before leaving
-    nextFlashcard(1);
-  });
-  $('#flash-miss').addEventListener('click', () => {
-    const card = state.flash.deck[state.flash.index];
-    state.progress.studied.add(card.term);
-    state.progress.mastered.delete(card.term);
-    updateSR(card.term, false);
-    showNextReview(1);
-    checkAndUpdateStreak();
-    saveProgress();
-    _sessMissed++;
-    try{gtag('event','flashcard_missed',{event_category:DB_PATH});}catch(e){}
+
+let _sessHard = 0;
+function rateCard(q) {
+  const card = state.flash.deck[state.flash.index];
+  if (!card) return;
+  const correct = q >= 3;
+  state.progress.studied.add(card.term);
+  if (correct) state.progress.mastered.add(card.term);
+  else { state.progress.mastered.delete(card.term); if (!state.progress.lastMissed) state.progress.lastMissed = []; if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term); }
+  updateSR(card.term, q);
+  showNextReview((state.progress.srData||{})[card.term]?.interval||1);
+  if (typeof checkAndUpdateStreak === 'function') checkAndUpdateStreak();
+  else if (typeof updateStreak === 'function') updateStreak();
+  if (!state.progress.studyDates) state.progress.studyDates = new Set();
+  state.progress.studyDates.add(typeof getTodayStr === 'function' ? getTodayStr() : new Date().toISOString().slice(0,10));
+  saveProgress();
+  if (q === 0) _sessMissed++;
+  else if (q === 2) _sessHard++;
+  else _sessGot++;
+  try{gtag('event','flashcard_rated',{event_category:DB_PATH,quality:q});}catch(e){}
+  try {
+    var _ss=document.getElementById('sess-stats');
+    if(_ss){_ss.classList.add('visible');document.getElementById('ss-got-n').textContent=_sessGot;document.getElementById('ss-hard-n').textContent=_sessHard;document.getElementById('ss-miss-n').textContent=_sessMissed;}
+  } catch(e){}
+  if (typeof renderFlashcard === 'function') renderFlashcard();
+  // Track daily goal progress
+  try {
+    _dailyDone++;
+    const _dk = 'hosa::daily::' + (typeof getTodayStr==='function'?getTodayStr():new Date().toISOString().slice(0,10));
+    localStorage.setItem(_dk, _dailyDone);
+    updateGoalRing();
+  } catch(e) {}
+  nextFlashcard(1);
+}
+document.getElementById('flash-again').addEventListener('click', () => rateCard(0));
+document.getElementById('flash-hard').addEventListener('click',  () => rateCard(2));
+document.getElementById('flash-good').addEventListener('click',  () => rateCard(4));
+document.getElementById('flash-easy').addEventListener('click',  () => rateCard(5));
+
+// ── Cram mode ─────────────────────────────────────────────────
+let _cramMode = false, _cramInterval = null;
+function startCramMode() {
+  const today = typeof getTodayStr==='function' ? getTodayStr() : new Date().toISOString().slice(0,10);
+  const pool = filterDeck(state.flash.filter);
+  const due = pool.filter(c => state.progress.studied.has(c.term) && getSRData(c.term).due <= today);
+  const cramBtn = document.getElementById('cram-btn');
+  if (due.length === 0) {
+    if (cramBtn) { cramBtn.textContent = '✓ All caught up!'; setTimeout(()=>{ cramBtn.textContent='⚡ Cram'; },2500); }
+    return;
+  }
+  _cramMode = true;
+  if (cramBtn) { cramBtn.classList.add('active'); cramBtn.textContent = '✗ Exit Cram'; }
+  const timerEl = document.getElementById('sess-timer');
+  if (timerEl) timerEl.style.display = '';
+  const _start = Date.now();
+  clearInterval(_cramInterval);
+  _cramInterval = setInterval(() => {
+    if (!_cramMode) { clearInterval(_cramInterval); return; }
+    const s = Math.floor((Date.now()-_start)/1000);
+    if (timerEl) timerEl.textContent = Math.floor(s/60).toString().padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  }, 1000);
+  state.flash.deck = (typeof shuffle==='function' ? shuffle(due) : due);
+  state.flash.index = 0;
+  document.getElementById('flashcard').style.display = '';
+  document.querySelector('.card-controls').style.display = '';
+  document.getElementById('session-complete').style.display = 'none';
+  renderFlashcard();
+}
+function exitCramMode() {
+  _cramMode = false;
+  clearInterval(_cramInterval);
+  const timerEl = document.getElementById('sess-timer');
+  if (timerEl) { timerEl.style.display = 'none'; timerEl.textContent = ''; }
+  const cramBtn = document.getElementById('cram-btn');
+  if (cramBtn) { cramBtn.classList.remove('active'); cramBtn.textContent = '⚡ Cram'; }
+}
+document.getElementById('cram-btn')?.addEventListener('click', () => { _cramMode ? exitCramMode() : startCramMode(); });
+
+// ── Daily goal ring ───────────────────────────────────────────
+const GOAL_STORAGE = 'hosa::daily-goal';
+let _dailyGoal = parseInt(localStorage.getItem(GOAL_STORAGE)||'20', 10);
+const _todayKey = 'hosa::daily::' + (typeof getTodayStr==='function' ? getTodayStr() : new Date().toISOString().slice(0,10));
+let _dailyDone  = parseInt(localStorage.getItem(_todayKey)||'0', 10);
+
+function updateGoalRing() {
+  try {
+    const fill = document.getElementById('goal-ring-fill');
+    const doneEl = document.getElementById('goal-done');
+    const targetEl = document.getElementById('goal-target');
+    if (!fill) return;
+    const circ = 2 * Math.PI * 31; // 194.78
+    const pct = Math.min(1, _dailyDone / Math.max(1, _dailyGoal));
+    fill.style.strokeDashoffset = circ * (1 - pct);
+    if (doneEl) doneEl.textContent = _dailyDone;
+    if (targetEl) targetEl.textContent = _dailyGoal;
+  } catch(e) {}
+}
+document.getElementById('goal-inc')?.addEventListener('click', () => {
+  _dailyGoal = Math.min(100, _dailyGoal + 5);
+  localStorage.setItem(GOAL_STORAGE, _dailyGoal);
+  updateGoalRing();
+});
+document.getElementById('goal-dec')?.addEventListener('click', () => {
+  _dailyGoal = Math.max(5, _dailyGoal - 5);
+  localStorage.setItem(GOAL_STORAGE, _dailyGoal);
+  updateGoalRing();
+});
+}catch(e){}
     renderFlashcard();
     nextFlashcard(1);
   });
@@ -2016,8 +2304,8 @@ function renderFlashcard() {
   const _nrb = document.getElementById('next-review-badge');
   if (_nrb) { _nrb.style.opacity = '0'; }
   $('#flash-front-term').textContent = card.term;
-  $('#flash-back-def').textContent = card.meaning;
-  $('#flash-back-ex-text').textContent = card.example;
+  $('#flash-back-def').innerHTML = linkifyDef(card.meaning, card.term);
+  $('#flash-back-ex-text').innerHTML = linkifyDef(card.example, card.term);
   // render mastery level indicator
   const levelEl = document.getElementById('flash-level');
   if (levelEl) {
@@ -2272,9 +2560,11 @@ function updateTimerDisplay() {
 function renderTestQuestion() {
   const card = state.test.deck[state.test.index];
   const options = buildOptions(card, TERMS);
+  state.test.answered = false;
 
   $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
   $('#test-term').textContent = card.term;
+  document.getElementById('test-feedback').className = 'quiz-feedback';
 
   const optsEl = $('#test-options');
   optsEl.innerHTML = '';
@@ -2289,6 +2579,8 @@ function renderTestQuestion() {
 }
 
 function answerTest(chosen, correct) {
+  if (state.test.answered) return;
+  state.test.answered = true;
   const isCorrect = chosen.term === correct.term;
   state.test.answers.push({
     term: correct.term,
@@ -2297,6 +2589,7 @@ function answerTest(chosen, correct) {
     isCorrect: isCorrect,
     example: correct.example,
   });
+  if (isCorrect) awardXP(15);
   if (!isCorrect) {
     updateSR(correct.term, false);
     if (!state.progress.lastMissed.includes(correct.term)) {
@@ -2306,14 +2599,33 @@ function answerTest(chosen, correct) {
     updateSR(correct.term, true);
     state.progress.lastMissed = state.progress.lastMissed.filter(t => t !== correct.term);
   }
-  saveProgress();
-  state.test.index++;
-  if (state.test.index >= state.test.deck.length) {
-    clearInterval(state.test.timer);
-    finishTest();
-  } else {
-    renderTestQuestion();
+  const optsEl = document.getElementById('test-options');
+  const allBtns = optsEl.querySelectorAll('.option');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const bText = b.querySelector("span:last-child")?.textContent;
+    if (bText === correct.meaning) b.classList.add('correct');
+    else if (bText === chosen.meaning && !isCorrect) b.classList.add('incorrect');
+  });
+  const fb = document.getElementById('test-feedback');
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+  document.getElementById('test-verdict').textContent = isCorrect ? 'Correct.' : 'Not quite.';
+  let _testRat = '<div class="rationale-row r-correct"><strong>✓ ' + correct.term + '</strong> — ' + correct.meaning + '</div>';
+  if (!isCorrect && chosen && chosen.term !== correct.term) {
+    _testRat += '<div class="rationale-row r-picked-wrong"><strong>✗ You picked ' + chosen.term + '</strong> — ' + chosen.meaning + '</div>';
   }
+  document.getElementById('test-explain').innerHTML = _testRat;
+  saveProgress();
+  const _ai = state.test.index;
+  setTimeout(() => {
+    state.test.index++;
+    if (state.test.index >= state.test.deck.length) {
+      clearInterval(state.test.timer);
+      finishTest();
+    } else {
+      renderTestQuestion();
+    }
+  }, isCorrect ? 1300 : 2000);
 }
 
 function finishTest() {
@@ -2445,7 +2757,38 @@ function renderProgress() {
     `;
     list.appendChild(row);
   });
+  renderHeatmap();
+  updateGoalRing();
+  // Milestone streak badges
+  try {
+    const streak = state.progress.streak || 0;
+    document.querySelectorAll('#milestone-badges .ms-badge').forEach(b => {
+      b.classList.toggle('earned', streak >= parseInt(b.getAttribute('data-days'),10));
+    });
+  } catch(e) {}
 }
+function renderHeatmap() {
+  try {
+    const grid = document.getElementById('heatmap-grid');
+    const labelRow = document.getElementById('hm-label-row');
+    if (!grid) return;
+    const today = typeof getTodayStr === 'function' ? getTodayStr() : new Date().toISOString().slice(0,10);
+    const dates = state.progress.studyDates || new Set();
+    grid.innerHTML = '';
+    if (labelRow) {
+      labelRow.innerHTML = ['4w ago','3w ago','2w ago','Last week'].map(w=>`<span>${w}</span>`).join('');
+    }
+    for (let i = 27; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const ds = d.toISOString().slice(0, 10);
+      const el = document.createElement('div');
+      el.className = 'hm-day' + (dates.has(ds) ? ' active' : '') + (ds === today ? ' is-today' : '');
+      el.title = d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + (dates.has(ds) ? ' — studied' : '');
+      grid.appendChild(el);
+    }
+  } catch(e) {}
+}
+
 
 $('#reset-progress').addEventListener('click', () => {
   if (!confirm('Reset all progress? This cannot be undone.')) return;
@@ -2517,26 +2860,326 @@ firebase.auth().onAuthStateChanged(user => {
   }
 })();
 
+// Keyboard shortcuts overlay
+(function() {
+  const overlay = document.getElementById('kbd-overlay');
+  const openBtn = document.getElementById('kbd-help-open');
+  const closeBtn = document.getElementById('kbd-close');
+  function openOverlay() { if (overlay) overlay.classList.add('open'); }
+  function closeOverlay() { if (overlay) overlay.classList.remove('open'); }
+  if (openBtn) openBtn.addEventListener('click', openOverlay);
+  if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+})();
+
 // keyboard shortcuts for flashcards
 document.addEventListener('keydown', (e) => {
-  if (state.activeView !== 'flashcards') return;
-  if (e.key === ' ' || e.key === 'Enter') {
-    e.preventDefault();
-    $('#flashcard').classList.toggle('flipped');
-  } else if (e.key === 'ArrowRight') {
-    nextFlashcard(1);
-  } else if (e.key === 'ArrowLeft') {
-    nextFlashcard(-1);
-  } else if ((e.key==='g'||e.key==='G') && document.getElementById('flashcard')?.classList.contains('flipped')) {
-    document.getElementById('flash-got')?.click();
-  } else if ((e.key==='m'||e.key==='M') && document.getElementById('flashcard')?.classList.contains('flipped')) {
-    document.getElementById('flash-miss')?.click();
-  } else if (['1','2','3','4'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === '?') {
+    const overlay = document.getElementById('kbd-overlay');
+    if (overlay) overlay.classList.toggle('open');
+    return;
+  }
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('kbd-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+  if (['1','2','3','4'].includes(e.key)) {
     const _views = ['flashcards','quiz','test','progress'];
     const _btn = document.querySelector('#tabs button[data-view="' + _views[+e.key-1] + '"]');
-    if (_btn) _btn.click();
+    if (_btn) { _btn.click(); return; }
   }
+  if (state.activeView !== 'flashcards') return;
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#flashcard').classList.toggle('flipped'); }
+  else if (e.key === 'ArrowRight') nextFlashcard(1);
+  else if (e.key === 'ArrowLeft') nextFlashcard(-1);
+  const flipped = document.getElementById('flashcard')?.classList.contains('flipped');
+  if (!flipped) return;
+  if (e.key==='a'||e.key==='A') document.getElementById('flash-again')?.click();
+  else if (e.key==='h'||e.key==='H') document.getElementById('flash-hard')?.click();
+  else if (e.key==='g'||e.key==='G') document.getElementById('flash-good')?.click();
+  else if (e.key==='e'||e.key==='E') document.getElementById('flash-easy')?.click();
 });
+
+// ══════════════════════════════════════════════════════════════
+//  PROPAGATED FEATURES: XP, term-linking, learn-mode, rationales
+// ══════════════════════════════════════════════════════════════
+// ── XP & Level system (global across all events) ─────────────
+const XP_STORAGE = 'hosa::xp';
+let _xpTotal = parseInt(localStorage.getItem(XP_STORAGE)||'0', 10);
+function xpLevel(xp) { return Math.floor(Math.sqrt(Math.max(0,xp)/50)) + 1; }
+function xpForLevel(lvl) { return (lvl-1)*(lvl-1)*50; }
+function updateXPDisplay() {
+  try {
+    const lvl = xpLevel(_xpTotal);
+    const cur = xpForLevel(lvl), next = xpForLevel(lvl+1);
+    const pct = ((_xpTotal - cur) / Math.max(1,(next - cur))) * 100;
+    const lvlEl = document.getElementById('xp-level');
+    const totEl = document.getElementById('xp-total');
+    const fillEl = document.getElementById('xp-bar-fill');
+    if (lvlEl) lvlEl.textContent = lvl;
+    if (totEl) totEl.textContent = _xpTotal.toLocaleString() + ' XP';
+    if (fillEl) fillEl.style.width = Math.min(100,pct) + '%';
+  } catch(e) {}
+}
+function showXPToast(msg, cls) {
+  const t = document.getElementById('xp-toast');
+  if (!t) return;
+  t.className = 'xp-toast ' + (cls || '');
+  t.textContent = msg;
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._hideTm);
+  t._hideTm = setTimeout(() => { t.classList.remove('show'); }, cls === 'level-up' ? 2400 : 1200);
+}
+function awardXP(amount) {
+  if (!amount) return;
+  const oldLvl = xpLevel(_xpTotal);
+  _xpTotal += amount;
+  localStorage.setItem(XP_STORAGE, _xpTotal);
+  const newLvl = xpLevel(_xpTotal);
+  updateXPDisplay();
+  if (newLvl > oldLvl) {
+    showXPToast('🎉 Level ' + newLvl + ' unlocked!', 'level-up');
+    try{gtag('event','level_up',{level:newLvl});}catch(e){}
+  } else {
+    showXPToast('+' + amount + ' XP', '');
+  }
+}
+updateXPDisplay();
+// Monkey-patch rateCard to award XP
+try {
+  const _xpByQ = {0:1, 2:3, 4:5, 5:8};
+  if (typeof rateCard === 'function') {
+    const _origRateCard = rateCard;
+    rateCard = function(q) { _origRateCard(q); awardXP(_xpByQ[q] || 0); };
+  }
+} catch(e) {}
+
+// ── Term cross-linking in definitions (AMBOSS-style) ──────────
+function linkifyDef(text, currentTerm) {
+  try {
+    if (!text) return '';
+    const others = TERMS.filter(t => t.term !== currentTerm).map(t => t.term);
+    others.sort((a,b) => b.length - a.length);
+    let html = String(text).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    others.forEach(t => {
+      const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/"/g,'&quot;');
+      const re = new RegExp('(?<![\\w>])(' + escaped + ')(?![\\w<])', 'gi');
+      let didReplace = false;
+      html = html.replace(re, (match) => {
+        if (didReplace) return match;
+        didReplace = true;
+        return '<span class="term-link" data-term="' + t.replace(/"/g,'&quot;') + '">' + match + '</span>';
+      });
+    });
+    return html;
+  } catch(e) { return String(text); }
+}
+// Click handler for cross-linked terms
+document.addEventListener('click', e => {
+  const tl = e.target.closest('.term-link');
+  if (!tl) return;
+  e.stopPropagation();
+  const term = tl.getAttribute('data-term');
+  let idx = state.flash.deck.findIndex(c => c.term === term);
+  if (idx === -1) {
+    const card = TERMS.find(c => c.term === term);
+    if (!card) return;
+    state.flash.deck = [card, ...state.flash.deck.filter(c => c.term !== term)];
+    idx = 0;
+  }
+  state.flash.index = idx;
+  if (typeof renderFlashcard === 'function') renderFlashcard();
+  setTimeout(() => { document.getElementById('flashcard')?.classList.add('flipped'); }, 50);
+});
+
+// ── New quiz: mode toggle + learn mode + rationales ───────────
+state.quiz = state.quiz || {};
+state.quiz.mode = state.quiz.mode || 'mc';
+document.querySelectorAll('#quiz-mode-toggle .qmt-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    state.quiz.mode = b.getAttribute('data-mode');
+    document.querySelectorAll('#quiz-mode-toggle .qmt-btn').forEach(x => x.classList.toggle('active', x === b));
+    if (state.quiz.answered) return;
+    if (typeof renderQuizQuestion === 'function') renderQuizQuestion();
+  });
+});
+
+function _normTerm(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+function _levDist(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length; if (!b.length) return a.length;
+  const v0 = new Array(b.length + 1).fill(0).map((_,i)=>i);
+  for (let i = 0; i < a.length; i++) {
+    let prev = i + 1;
+    for (let j = 0; j < b.length; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      const cur = Math.min(prev + 1, v0[j+1] + 1, v0[j] + cost);
+      v0[j] = prev; prev = cur;
+    }
+    v0[b.length] = prev;
+  }
+  return v0[b.length];
+}
+function fuzzyMatchTerm(typed, correct) {
+  const a = _normTerm(typed), b = _normTerm(correct);
+  if (!a) return {ok:false, exact:false};
+  if (a === b) return {ok:true, exact:true};
+  const tol = Math.max(2, Math.floor(b.length * 0.2));
+  const d = _levDist(a, b);
+  return {ok: d <= tol, exact: false, dist: d};
+}
+
+function buildRationale(card, options, picked, correct, mode) {
+  let html = '';
+  html += '<div class="rationale-row r-correct"><strong>✓ ' + card.term + '</strong> — ' + card.meaning + '</div>';
+  if (mode === 'mc' && !correct && picked && picked.term !== card.term) {
+    html += '<div class="rationale-row r-picked-wrong"><strong>✗ You picked ' + picked.term + '</strong> — ' + picked.meaning + '</div>';
+  }
+  if (mode === 'mc' && options) {
+    const shown = new Set([card.term, picked && picked.term]);
+    options.filter(o => !shown.has(o.term)).forEach(o => {
+      html += '<div class="rationale-row r-distractor"><strong>' + o.term + ':</strong> ' + o.meaning + '</div>';
+    });
+  }
+  if (mode === 'learn' && !correct && picked) {
+    html += '<div class="rationale-row r-picked-wrong"><strong>✗ You typed:</strong> "' + (picked.typed||'') + '"</div>';
+  }
+  return html;
+}
+
+function handleQuizAnswer(card, options, picked, correct, mode) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  try { updateSR(card.term, correct); } catch(e) {}
+  if (correct) { state.quiz.score++; awardXP(10); state.progress.mastered.add(card.term); state.progress.lastMissed = (state.progress.lastMissed||[]).filter(t => t !== card.term); }
+  else {
+    if (!state.progress.lastMissed) state.progress.lastMissed = [];
+    if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term);
+    if (!state.quiz.missedTerms) state.quiz.missedTerms = [];
+    if (!state.quiz.missedTerms.find(t => t.term === card.term)) state.quiz.missedTerms.push(card);
+  }
+  state.progress.studied.add(card.term);
+  if (mode === 'mc' && options) {
+    const container = document.getElementById('quiz-options');
+    container.querySelectorAll('.option').forEach(b => {
+      b.disabled = true;
+      const bOpt = options[Array.from(container.children).indexOf(b)];
+      if (bOpt && bOpt.term === card.term) b.classList.add('correct');
+      else if (picked && bOpt === picked && !correct) b.classList.add('incorrect');
+    });
+  }
+  if (mode === 'learn') {
+    const inp = document.getElementById('learn-input');
+    if (inp) { inp.disabled = true; inp.style.borderColor = correct ? 'var(--success)' : 'var(--error)'; }
+  }
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'incorrect');
+  document.getElementById('quiz-verdict').textContent = correct ? (picked && picked.typoNote ? 'Correct! (with typo)' : 'Correct.') : 'Not quite.';
+  document.getElementById('quiz-explain').innerHTML = buildRationale(card, options, picked, correct, mode);
+  document.getElementById('quiz-score').textContent = 'Score: ' + state.quiz.score + ' / ' + (state.quiz.index + 1);
+  setTimeout(() => { document.getElementById('quiz-next').disabled = false; }, 300);
+  if (correct) {
+    const _ai = state.quiz.index;
+    setTimeout(() => {
+      if (state.quiz.answered && state.quiz.index === _ai) {
+        state.quiz.index++;
+        renderQuizQuestion();
+      }
+    }, 1500);
+  }
+  try { saveProgress(); } catch(e) {}
+}
+
+function renderQuizQuestion() {
+  const deck = state.quiz.deck;
+  const idx  = state.quiz.index;
+  if (idx >= deck.length) {
+    if (typeof showQuizResults === 'function') showQuizResults();
+    else if (typeof finishQuiz === 'function') finishQuiz();
+    return;
+  }
+  const card = deck[idx];
+  document.getElementById('quiz-progress').textContent = 'Question ' + pad(idx + 1) + ' of ' + pad(deck.length);
+  try{var _qb=document.getElementById('quiz-bar-fill');if(_qb)_qb.style.width=(state.quiz.index/state.quiz.deck.length*100)+'%';}catch(e){}
+  document.getElementById('quiz-score').textContent = 'Score: ' + state.quiz.score + ' / ' + idx;
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-next').disabled = true;
+  state.quiz.answered = false;
+
+  const mode = state.quiz.mode || 'mc';
+  const mcWrap = document.getElementById('quiz-options');
+  const learnWrap = document.getElementById('learn-input-wrap');
+  const promptEl = document.getElementById('quiz-prompt');
+  const termEl = document.getElementById('quiz-term');
+
+  if (mode === 'learn') {
+    promptEl.textContent = 'What term matches this definition?';
+    termEl.innerHTML = '<span style="font-family:\'Source Serif 4\',Georgia,serif;font-size:18px;font-weight:400;letter-spacing:0;line-height:1.5;color:var(--ink-soft);">' + linkifyDef(card.meaning, card.term) + '</span>';
+    mcWrap.style.display = 'none';
+    learnWrap.classList.add('active');
+    const inp = document.getElementById('learn-input');
+    if (inp) { inp.value = ''; inp.disabled = false; inp.style.borderColor = ''; setTimeout(() => inp.focus(), 50); }
+  } else {
+    promptEl.textContent = 'How would you define this?';
+    termEl.textContent = card.term;
+    mcWrap.style.display = '';
+    learnWrap.classList.remove('active');
+
+    const distractors = shuffle(TERMS.filter(t => t.term !== card.term)).slice(0, 3);
+    const options = shuffle([card, ...distractors]);
+    state.quiz._currentOptions = options;
+    state.quiz._currentCard = card;
+    const letters = ['A', 'B', 'C', 'D'];
+    mcWrap.innerHTML = '';
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.innerHTML = '<span class="letter">' + letters[i] + '</span>' + opt.meaning;
+      btn.addEventListener('click', () => handleQuizAnswer(card, options, opt, opt.term === card.term, 'mc'));
+      mcWrap.appendChild(btn);
+    });
+  }
+  state.quiz._currentCard = card;
+}
+
+// Override legacy renderQuiz to use the new renderQuizQuestion
+try { renderQuiz = renderQuizQuestion; } catch(e) {}
+try { window.renderQuiz = renderQuizQuestion; } catch(e) {}
+
+// Learn-mode submit handlers
+function _submitLearnAnswer() {
+  if (state.quiz.answered) return;
+  const card = state.quiz._currentCard;
+  if (!card) return;
+  const typed = document.getElementById('learn-input').value;
+  const m = fuzzyMatchTerm(typed, card.term);
+  const picked = {typed: typed, typoNote: m.ok && !m.exact};
+  handleQuizAnswer(card, null, picked, m.ok, 'learn');
+}
+document.getElementById('learn-submit')?.addEventListener('click', _submitLearnAnswer);
+document.getElementById('learn-skip')?.addEventListener('click', () => {
+  if (state.quiz.answered) return;
+  const card = state.quiz._currentCard;
+  if (!card) return;
+  handleQuizAnswer(card, null, {typed:''}, false, 'learn');
+});
+document.getElementById('learn-input')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); _submitLearnAnswer(); }
+});
+
+// Re-bind quiz-next to use the new renderQuizQuestion (replaces legacy handler)
+(function(){
+  const nextBtn = document.getElementById('quiz-next');
+  if (!nextBtn) return;
+  const clone = nextBtn.cloneNode(true);
+  nextBtn.parentNode.replaceChild(clone, nextBtn);
+  clone.addEventListener('click', () => { state.quiz.index++; renderQuizQuestion(); });
+})();
+// End propagated features
+
 </script>
 <script id="srs-engine">
 // ── True spaced repetition engine (SM-2 inspired) ─────────────────────────
@@ -2559,15 +3202,17 @@ function getSRLevel(term) {
   return (state.progress.srLevels && state.progress.srLevels[term]) || 0;
 }
 
-// Core SR update — call instead of bumpSRLevel / setSRLevel
-function updateSR(term, correct) {
+// Core SR update — accepts q-value (0=Again,2=Hard,4=Good,5=Easy) or bool
+function updateSR(term, qOrBool) {
+  const q = typeof qOrBool === 'boolean' ? (qOrBool ? 4 : 0) : qOrBool;
+  const correct = q >= 3;
   if (!state.progress.srData) state.progress.srData = {};
   const d = getSRData(term);
   if (correct) {
     d.reps = (d.reps || 0) + 1;
-    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1);
-    if      (d.reps === 1) d.interval = 1;
-    else if (d.reps === 2) d.interval = 4;
+    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1 - (5 - q) * 0.08);
+    if      (d.reps === 1) d.interval = q === 5 ? 3 : 1;
+    else if (d.reps === 2) d.interval = q === 5 ? 6 : 4;
     else                   d.interval = Math.round((d.interval || 1) * d.ease);
   } else {
     d.reps     = 0;

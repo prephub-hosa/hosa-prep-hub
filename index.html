@@ -163,11 +163,11 @@
 
   h1.hero-title {
     font-family: 'Fraunces', serif;
-    font-size: clamp(56px, 8vw, 104px);
+    font-size: clamp(48px, 7vw, 92px);
     font-weight: 400;
     line-height: 0.93;
     letter-spacing: -0.045em;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
   h1.hero-title em {
@@ -176,37 +176,13 @@
     font-weight: 500;
   }
 
-  .hero-lede {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-style: italic;
-    font-weight: 400;
-    line-height: 1.4;
-    color: var(--ink-soft);
-    max-width: 560px;
-    margin-bottom: 32px;
-  }
-
-  .hero-tagline {
+  .hero-sub {
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .hero-tagline span {
-    display: inline-block;
-    padding: 6px 14px;
-    border: 1px solid var(--ink);
-    background: var(--bg-card);
-  }
-
-  .hero-tagline span strong {
-    color: var(--accent);
-    font-weight: 700;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 500px;
+    margin-bottom: 0;
   }
 
   .hero-aside {
@@ -214,25 +190,30 @@
     padding-left: 40px;
   }
 
-  .hero-aside .aside-label {
+  .hero-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+  }
+
+  .hero-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stat-label {
     font-family: 'Cormorant Garamond', serif;
     font-size: 13px;
-    font-weight: 500;
     font-variant: small-caps;
-    letter-spacing: 0.1em;
-    color: var(--ink-faint);
-    margin-bottom: 16px;
-  }
-
-  .hero-aside p {
-    font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    line-height: 1.6;
+    letter-spacing: 0.08em;
     color: var(--ink-soft);
-    margin-bottom: 20px;
+    margin-top: 6px;
   }
-
-  .hero-aside p:last-child { margin-bottom: 0; }
 
   /* ——— Event search bar ——— */
   .event-search-wrap {
@@ -253,7 +234,7 @@
   }
   #event-search {
     width: 100%;
-    padding: 16px 20px 16px 50px;
+    padding: 16px 44px 16px 50px;
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 17px;
     color: var(--ink);
@@ -365,6 +346,93 @@
     font-style: italic;
     opacity: 0.7;
     margin-left: 5px;
+  }
+  .filter-btn.surprise {
+    margin-left: auto;
+    border-color: var(--accent);
+    color: var(--accent);
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .filter-btn.surprise:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .filter-btn.surprise .kbd {
+    font-family: 'Source Serif 4', monospace;
+    font-style: normal;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+    padding: 1px 5px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    opacity: 0.6;
+    vertical-align: 1px;
+  }
+  .event-search-box {
+    position: relative;
+  }
+  .search-kbd-hint {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Source Serif 4', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    padding: 2px 6px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+  .event-search-box:focus-within .search-kbd-hint { opacity: 0; }
+  @media (max-width: 640px) { .search-kbd-hint { display: none; } }
+
+  /* Studied indicator on cards */
+  .card-studied-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--success, #2a8a4f);
+    background: rgba(42,138,79,0.08);
+    border: 1px solid rgba(42,138,79,0.25);
+    padding: 2px 7px 2px 6px;
+    border-radius: 2px;
+    line-height: 1.3;
+  }
+  .category-card.is-studied .card-studied-badge { display: inline-flex; }
+  .category-card.is-studied {
+    border-top-width: 3px;
+  }
+  .card-studied-badge svg { width: 9px; height: 9px; }
+  [data-theme="light"] .card-studied-badge {
+    background: rgba(42,138,79,0.12);
+    border-color: rgba(42,138,79,0.35);
+  }
+
+  /* Random-pick flash effect */
+  @keyframes _random-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(169,40,31,0.5); transform: translateY(-3px) scale(1.02); }
+    50%  { box-shadow: 0 0 0 12px rgba(169,40,31,0); transform: translateY(-3px) scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(169,40,31,0); transform: translateY(-3px) scale(1.02); }
+  }
+  .category-card.is-picked {
+    animation: _random-pulse 1.1s ease-out;
+    border-color: var(--accent);
   }
 
   /* ——— Categories ——— */
@@ -526,7 +594,7 @@
   /* ——— Testimonials ——— */
   .testimonials {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     margin-bottom: 96px;
   }
@@ -579,41 +647,199 @@
   /* ——— How it works ——— */
   .how {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
     margin-bottom: 96px;
   }
 
   .how-item {
-    padding-top: 24px;
-    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+    border-top: 2px solid var(--rule);
+    display: flex;
+    flex-direction: column;
   }
+
+  .how-item:hover { border-top-color: var(--ink-soft); }
 
   .how-num {
     font-family: 'Fraunces', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     font-variant: small-caps;
     font-style: italic;
     letter-spacing: 0.1em;
-    color: var(--accent);
     margin-bottom: 12px;
   }
+  .how-num-1 { color: #4a72a0; }
+  .how-num-2 { color: var(--success); }
+  .how-num-3 { color: var(--accent); }
+  .how-num-4 { color: #c08040; }
 
   .how-item h4 {
     font-family: 'Fraunces', serif;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 500;
     line-height: 1.15;
     letter-spacing: -0.02em;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .how-item p {
     font-family: 'Source Serif 4', serif;
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    flex: 1;
+    margin-bottom: 14px;
+  }
+
+  .how-detail {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+    margin-top: auto;
+  }
+
+  /* ——— Your Progress banner (only shown if user has XP) ——— */
+  .your-progress {
+    display: none;
+    margin: -32px 0 64px;
+    padding: 24px 32px;
+    border: 1px solid var(--rule);
+    background: linear-gradient(100deg, var(--bg-card) 0%, rgba(168,40,31,0.04) 100%);
+    align-items: center;
+    gap: 36px;
+  }
+  .your-progress.show { display: flex; }
+  .yp-level-block { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; }
+  .yp-level-badge { font-family: 'Fraunces',serif; font-size: 40px; font-weight: 500; color: var(--accent); letter-spacing: -0.03em; line-height: 1; }
+  .yp-level-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.1em; font-variant: small-caps; color: var(--ink-faint); margin-top: 4px; }
+  .yp-stats { display: flex; gap: 32px; flex: 1; }
+  .yp-stat-num { font-family: 'Fraunces',serif; font-size: 22px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; line-height: 1; }
+  .yp-stat-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.1em; font-variant: small-caps; color: var(--ink-faint); margin-top: 4px; }
+  .yp-bar { flex: 1; max-width: 220px; }
+  .yp-bar-track { height: 5px; background: var(--rule); position: relative; }
+  .yp-bar-fill { height: 100%; background: var(--accent); transition: width 0.6s ease; }
+  .yp-bar-label { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 0.08em; font-variant: small-caps; color: var(--ink-faint); margin-top: 6px; }
+  @media (max-width: 760px) {
+    .your-progress { flex-direction: column; align-items: flex-start; gap: 20px; padding: 20px 22px; }
+    .yp-stats { gap: 24px; flex-wrap: wrap; }
+    .yp-bar { max-width: 100%; width: 100%; }
+  }
+
+  /* ——— Term of the day ——— */
+  .totd-section { margin-bottom: 80px; }
+  .totd-card {
+    border: 1px solid var(--rule);
+    padding: 32px 36px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px 32px;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+  .totd-card:hover { border-color: var(--ink-soft); }
+  .totd-eyebrow { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); margin-bottom: 6px; }
+  .totd-term { font-family: 'Fraunces',serif; font-size: 26px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 12px; color: var(--ink); }
+  .totd-def { font-family: 'Source Serif 4',Georgia,serif; font-size: 15px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 16px; }
+  .totd-meta { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-faint); }
+  .totd-link { display: inline-block; font-family: 'Source Serif 4',Georgia,serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; letter-spacing: 0.01em; white-space: nowrap; padding-top: 4px; }
+  .totd-link:hover { text-decoration: underline; }
+  .totd-date { font-family: 'Fraunces',serif; font-size: 40px; font-weight: 300; color: var(--ink-faint); letter-spacing: -0.04em; line-height: 1; text-align: right; }
+  .totd-date-label { font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); text-align: right; margin-top: 2px; }
+  @media (max-width: 640px) {
+    .totd-card { grid-template-columns: 1fr; padding: 24px 20px; }
+    .totd-date { display: none; }
+    .totd-term { font-size: 22px; }
+  }
+
+  /* ——— Starter / beginner path ——— */
+  .starter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .starter-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--ink-faint);
+    padding: 28px 24px 22px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.2s, box-shadow 0.25s, border-top-color 0.2s;
+  }
+
+  .starter-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px -12px rgba(0,0,0,0.22);
+    border-top-color: var(--accent);
+  }
+
+  .starter-card:nth-child(1) { border-top-color: var(--accent); }
+
+  .starter-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--accent);
+    opacity: 0.6;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .starter-body { flex: 1; }
+
+  .starter-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .starter-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .starter-card p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
     line-height: 1.55;
     color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .starter-cta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (max-width: 900px) {
+    .starter-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .starter-grid { grid-template-columns: 1fr; }
   }
 
   /* ——— Email capture ——— */
@@ -700,14 +926,29 @@
   /* ——— Footer ——— */
   footer {
     border-top: 1px solid var(--rule);
-    padding: 32px 40px;
+    padding: 40px 40px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .footer-copy {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-style: italic;
     color: var(--ink-faint);
+    max-width: 320px;
+    line-height: 1.4;
   }
 
   footer .footer-mark {
@@ -715,30 +956,53 @@
     font-style: normal;
   }
 
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .footer-nav a {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+  }
+
+  .footer-nav a:hover { color: var(--ink); }
+
   /* ——— Responsive ——— */
   @media (max-width: 1100px) {
     .categories { grid-template-columns: repeat(2, 1fr); }
     #continue-list { grid-template-columns: repeat(2, 1fr) !important; }
+    .how { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     #continue-list { grid-template-columns: 1fr !important; }
   }
-
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
     .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
-    .testimonials { grid-template-columns: 1fr; }
-    .how { grid-template-columns: 1fr; gap: 32px; }
+    .testimonials { grid-template-columns: 1fr 1fr; }
+    .testimonials .testimonial:last-child { display: none; }
+    .how { grid-template-columns: repeat(2, 1fr); gap: 28px; }
     .newsletter { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
     main { padding: 48px 24px; }
     header { padding: 16px 24px; }
-    footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 24px; }
+    .footer-nav { align-items: flex-start; }
+    .how { grid-template-columns: 1fr 1fr; }
   }
 
   @media (max-width: 640px) {
     .categories { grid-template-columns: 1fr; }
     .filter-bar { gap: 6px; }
     .filter-btn { font-size: 12px; padding: 6px 12px; }
+    .how { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 480px) {
@@ -1166,42 +1430,63 @@
   <section class="hero">
     <div>
       <div class="eyebrow">60 HOSA events &middot; Free &middot; No signup required</div>
-      <h1 class="hero-title">Train like <em>competition day.</em></h1>
+      <h1 class="hero-title">Master every <em>HOSA event</em><br>one card at a time.</h1>
+      <p class="hero-sub">Spaced repetition flashcards, practice quizzes, and timed exams — covering all 60 competitive events with 2,800+ clinical terms. Built by a HOSA competitor, for HOSA competitors.</p>
 
-      <div class="hero-tagline">
-        <span>Track <strong>weak areas.</strong></span>
-        <span>Review <strong>misses.</strong></span>
-        <span>Improve <strong>faster.</strong></span>
-      </div>
-
-      <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Start studying →</a>
-        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Try a card</a>
+      <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:filter 0.15s;">Start studying — it's free →</a>
+        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:border-color 0.15s;">Try a card</a>
       </div>
       <button type="button" class="find-event-pill" id="open-onboard">
         <span>✦</span> Not sure which event? Take the 30-second quiz
       </button>
     </div>
     <aside class="hero-aside">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">60</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">HOSA Events</div>
+      <div class="hero-stats-grid">
+        <div class="hero-stat">
+          <div class="hero-stat-num">60</div>
+          <div class="hero-stat-label">HOSA Events</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">2,800+</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Flashcards</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2,800+</div>
+          <div class="hero-stat-label">Flashcards</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">3</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Study Modes</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-label">Study Modes</div>
         </div>
-        <div>
-          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">$0</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Cost, ever</div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">$0</div>
+          <div class="hero-stat-label">Cost, ever</div>
         </div>
       </div>
     </aside>
+  </section>
+
+  <!-- YOUR PROGRESS (shown only if user has earned XP) -->
+  <section class="your-progress" id="your-progress">
+    <div class="yp-level-block">
+      <div class="yp-level-badge">Lv <span id="yp-level">1</span></div>
+      <div class="yp-level-label">Your Level</div>
+    </div>
+    <div class="yp-stats">
+      <div>
+        <div class="yp-stat-num" id="yp-xp">0</div>
+        <div class="yp-stat-label">Total XP</div>
+      </div>
+      <div>
+        <div class="yp-stat-num" id="yp-mastered">0</div>
+        <div class="yp-stat-label">Terms Mastered</div>
+      </div>
+      <div>
+        <div class="yp-stat-num" id="yp-events">0</div>
+        <div class="yp-stat-label">Events Studied</div>
+      </div>
+    </div>
+    <div class="yp-bar">
+      <div class="yp-bar-track"><div class="yp-bar-fill" id="yp-bar-fill" style="width:0%"></div></div>
+      <div class="yp-bar-label" id="yp-bar-text">0 XP to next level</div>
+    </div>
   </section>
 
   <!-- CONTINUE STUDYING (rendered by JS if localStorage has progress) -->
@@ -1284,6 +1569,64 @@
   </script>
 
   <!-- CATEGORIES -->
+  <!-- BEGINNER PATH -->
+  <section id="start-here" style="margin-bottom:80px;">
+    <div class="section-head" style="margin-bottom:28px;">
+      <h2>New to HOSA? <em>Start here.</em></h2>
+      <div class="section-label">Most studied events for first-time competitors</div>
+    </div>
+    <div class="starter-grid">
+      <a href="medical-terminology.html" class="starter-card">
+        <div class="starter-num">01</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Best first event</div>
+          <h4>Medical Terminology</h4>
+          <p>The vocabulary foundation every healthcare field depends on — prefixes, suffixes, and roots used across all other events.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+      <a href="anatomy-physiology.html" class="starter-card">
+        <div class="starter-num">02</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Build your foundation</div>
+          <h4>Anatomy &amp; Physiology</h4>
+          <p>Systems, organs, and how the body works — essential background for clinical events from emergency medicine to surgery.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+      <a href="pathophysiology.html" class="starter-card">
+        <div class="starter-num">03</div>
+        <div class="starter-body">
+          <div class="starter-eyebrow">Bridge to clinical events</div>
+          <h4>Pathophysiology</h4>
+          <p>Disease mechanisms, from cellular injury to systemic failures — the reasoning layer that links anatomy to clinical diagnosis.</p>
+        </div>
+        <div class="starter-cta">Start studying →</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- TERM OF THE DAY -->
+  <section class="totd-section" id="totd-section">
+    <div class="section-head" style="margin-bottom:20px;">
+      <h2>Term of the <em>Day.</em></h2>
+      <div class="section-label">One clinical term, every day</div>
+    </div>
+    <div class="totd-card" id="totd-card">
+      <div>
+        <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
+        <h3 class="totd-term" id="totd-term"></h3>
+        <p class="totd-def" id="totd-def"></p>
+        <div class="totd-meta" id="totd-event"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="totd-date" id="totd-date-num"></div>
+        <div class="totd-date-label" id="totd-date-label"></div>
+        <a class="totd-link" id="totd-link" href="#">Study this event →</a>
+      </div>
+    </div>
+  </section>
+
   <section id="categories-section">
     <div class="section-head">
       <h2>Choose your <em>event.</em></h2>
@@ -1297,10 +1640,12 @@
         <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
         <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
         <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
+        <button class="filter-btn surprise" id="btn-surprise" type="button" title="Pick a random event">Surprise me <span class="kbd">R</span></button>
       </div>
       <div class="event-search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="search" id="event-search" placeholder="Search events — try &ldquo;nursing&rdquo; or &ldquo;path&rdquo;&hellip;" autocomplete="off" spellcheck="false">
+        <span class="search-kbd-hint">/</span>
       </div>
     </div>
 
@@ -2471,11 +2816,15 @@
     <div class="testimonials">
       <div class="testimonial">
         <blockquote>The timed tests helped me stop panicking. I walked into my regional feeling calm because the practice felt exactly like the real thing.</blockquote>
-        <div class="attribution">HOSA Competitor, Medical Terminology</div>
+        <div class="attribution">HOSA Competitor &mdash; Medical Terminology</div>
       </div>
       <div class="testimonial">
         <blockquote>Smart Review actually made studying feel efficient. The cards I kept missing showed up more, and the ones I knew just faded away.</blockquote>
-        <div class="attribution">HOSA Competitor, Pathophysiology</div>
+        <div class="attribution">HOSA Competitor &mdash; Pathophysiology</div>
+      </div>
+      <div class="testimonial">
+        <blockquote>I went from 60% on practice tests to placing at state. The 4-button rating makes a huge difference — you can actually tell the algorithm you're struggling.</blockquote>
+        <div class="attribution">HOSA Competitor &mdash; Anatomy &amp; Physiology</div>
       </div>
     </div>
   </section>
@@ -2483,25 +2832,34 @@
   <!-- HOW IT WORKS -->
   <section id="how-section">
     <div class="section-head">
-      <h2>How each event <em>works.</em></h2>
-      <div class="section-label">Three modes of study</div>
+      <h2>Four modes, one <em>system.</em></h2>
+      <div class="section-label">Each event includes all four</div>
     </div>
 
     <div class="how">
       <div class="how-item">
-        <div class="how-num">i. Learn</div>
+        <div class="how-num how-num-1">i. Learn</div>
         <h4>Flashcards</h4>
-        <p>Clean, focused cards with term on one side and explanation on the other. Smart Review tracks what you know and prioritizes what you don't.</p>
+        <p>Spaced-repetition cards with a 4-point rating (Again / Hard / Good / Easy) so the algorithm knows exactly how well you know each term and when to show it again.</p>
+        <div class="how-detail">Smart Review · SM-2 algorithm · 20 cards/session</div>
       </div>
       <div class="how-item">
-        <div class="how-num">ii. Confirm</div>
-        <h4>Practice Quizzes</h4>
-        <p>Ten-question sets with multiple choice and immediate feedback. Finish and jump straight into reviewing your misses as flashcards.</p>
+        <div class="how-num how-num-2">ii. Confirm</div>
+        <h4>Practice Quiz</h4>
+        <p>Ten-question multiple-choice sets with immediate right/wrong feedback after each answer. When you finish, jump straight into reviewing your misses.</p>
+        <div class="how-detail">10 questions · Instant feedback · Miss review mode</div>
       </div>
       <div class="how-item">
-        <div class="how-num">iii. Perform</div>
-        <h4>Timed Examinations</h4>
-        <p>Twenty-five questions in twelve minutes — no feedback until the end. Modeled on HOSA competition conditions so you're ready when it counts.</p>
+        <div class="how-num how-num-3">iii. Perform</div>
+        <h4>Timed Test</h4>
+        <p>25 questions in 12 minutes with per-question feedback — right/wrong shown after each answer, then full results at the end. Mirrors HOSA competition conditions.</p>
+        <div class="how-detail">25 questions · 12-minute clock · Category breakdown</div>
+      </div>
+      <div class="how-item">
+        <div class="how-num how-num-4">iv. Track</div>
+        <h4>Progress</h4>
+        <p>See your mastery by category, review score history, track your study streak, and see exactly which cards are due for review today based on your spaced repetition schedule.</p>
+        <div class="how-detail">Study heatmap · Quiz history · Due-today queue</div>
       </div>
     </div>
   </section>
@@ -2535,8 +2893,17 @@
 </main>
 
 <footer>
-  <div>HOSA Prep Hub — <span class="footer-mark">✢</span> A study companion, not an official HOSA publication.</div>
-  <div>Built for competitors, by a competitor.</div>
+  <div class="footer-left">
+    <div class="footer-brand"><span class="footer-mark">✢</span> HOSA Prep Hub</div>
+    <div class="footer-copy">A study companion, not an official HOSA publication. Free to use, forever.</div>
+  </div>
+  <nav class="footer-nav">
+    <a href="medical-terminology.html">Medical Terminology</a>
+    <a href="anatomy-physiology.html">Anatomy &amp; Physiology</a>
+    <a href="emergency-medical-science.html">Emergency Medicine</a>
+    <a href="pathophysiology.html">Pathophysiology</a>
+    <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;">All 60 events →</a>
+  </nav>
 </footer>
 
 
@@ -2815,7 +3182,7 @@ document.getElementById('request-btn').onclick = function() {
 <script id="scroll-reveal">
 (function() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter');
+  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter, .starter-grid');
   targets.forEach(function(el){ el.classList.add('reveal'); });
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
@@ -2868,6 +3235,7 @@ document.getElementById('request-btn').onclick = function() {
 })();
 </script>
 
+<script src="leaderboard.js"></script>
 <script id="event-search-js">
 (function(){
   var input    = document.getElementById('event-search');
@@ -2937,6 +3305,170 @@ document.getElementById('request-btn').onclick = function() {
   input.addEventListener('keydown', function(e){
     if (e.key === 'Escape') { input.value = ''; applyFilters(); input.blur(); }
   });
+
+  // ── Studied indicators + per-card progress bars from localStorage ──
+  function slugFromHref(href){
+    if (!href) return '';
+    var m = href.match(/([^\/]+)\.html(?:[?#].*)?$/);
+    return m ? m[1] : '';
+  }
+  var BADGE_HTML = '<span class="card-studied-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="badge-text">Studied</span></span>';
+  var anyStudied = 0, totalMastered = 0;
+  cardData.forEach(function(c){
+    var slug = slugFromHref(c.el.getAttribute('href'));
+    if (!slug) return;
+    try {
+      var raw = localStorage.getItem('hosa::' + slug);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      var studiedCt  = (data.studied  && data.studied.length)  || 0;
+      var masteredCt = (data.mastered && data.mastered.length) || 0;
+      if (studiedCt === 0 && masteredCt === 0) return;
+      anyStudied++;
+      totalMastered += masteredCt;
+      c.el.classList.add('is-studied');
+      // Insert badge after card-number
+      var num = c.el.querySelector('.card-number');
+      if (num && !c.el.querySelector('.card-studied-badge')) {
+        num.insertAdjacentHTML('afterend', BADGE_HTML);
+      }
+      // Try to fill the progress bar — need total terms for pct
+      var fillEl = c.el.querySelector('.cp-bar-fill');
+      var labelEl = c.el.querySelector('.cp-label');
+      var totalTerms = (window.TOTAL_TERMS && window.TOTAL_TERMS[slug]) || studiedCt || 1;
+      var pct = Math.min(100, Math.round(masteredCt / totalTerms * 100));
+      if (fillEl) { setTimeout(function(){ fillEl.style.width = pct + '%'; }, 80); }
+      if (labelEl) labelEl.textContent = masteredCt + ' mastered · ' + studiedCt + ' studied';
+    } catch(e){}
+  });
+  if (anyStudied > 0) document.body.classList.add('user-active');
+
+  // ── Surprise Me ──
+  function surpriseMe(){
+    var visible = cardData.filter(function(c){ return c.el.style.display !== 'none'; });
+    if (!visible.length) return;
+    var pick = visible[Math.floor(Math.random() * visible.length)];
+    // Scroll into view, flash, navigate
+    pick.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    pick.el.classList.remove('is-picked'); void pick.el.offsetWidth;
+    pick.el.classList.add('is-picked');
+    setTimeout(function(){
+      pick.el.classList.remove('is-picked');
+      window.location.href = pick.el.getAttribute('href');
+    }, 950);
+  }
+  var btnSurprise = document.getElementById('btn-surprise');
+  if (btnSurprise) btnSurprise.addEventListener('click', surpriseMe);
+
+  // ── Global keyboard shortcuts ──
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable;
+    if (typing) return;
+    // ignore when modifier keys held (avoid clashing with browser shortcuts)
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === '/') {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    } else if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      surpriseMe();
+    }
+  });
+})();
+</script>
+
+<script id="your-progress-js">
+(function(){
+  var xp = parseInt(localStorage.getItem('hosa::xp')||'0', 10);
+  if (xp === 0) return;
+  var lvl = Math.floor(Math.sqrt(xp/50)) + 1;
+  var cur = (lvl-1)*(lvl-1)*50;
+  var next = lvl*lvl*50;
+  var pct = ((xp - cur) / Math.max(1,(next - cur))) * 100;
+  document.getElementById('yp-level').textContent = lvl;
+  document.getElementById('yp-xp').textContent = xp.toLocaleString();
+  document.getElementById('yp-bar-fill').style.width = Math.min(100,pct) + '%';
+  document.getElementById('yp-bar-text').textContent = (xp - cur) + ' / ' + (next - cur) + ' XP to Lv ' + (lvl+1);
+  var mastered = 0, events = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k || k.indexOf('hosa::') !== 0) continue;
+    if (k === 'hosa::xp' || k === 'hosa::daily-goal' || k.indexOf('hosa::daily::') === 0) continue;
+    try {
+      var data = JSON.parse(localStorage.getItem(k));
+      var mc = (data && data.mastered && data.mastered.length) || 0;
+      if (mc > 0) { mastered += mc; events++; }
+    } catch(e) {}
+  }
+  document.getElementById('yp-mastered').textContent = mastered.toLocaleString();
+  document.getElementById('yp-events').textContent = events;
+  document.getElementById('your-progress').classList.add('show');
+})();
+</script>
+
+<script id="totd-js">
+(function(){
+  var TERMS = [
+    {term:'Homeostasis',def:'The body\'s ability to maintain a stable internal environment (temperature, pH, fluid balance) despite external changes — the foundation of all physiology.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
+    {term:'Myocardial Infarction',def:'Death of heart muscle tissue caused by prolonged ischemia due to coronary artery occlusion; commonly called a heart attack.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
+    {term:'Apoptosis',def:'Programmed cell death — a tightly regulated process the body uses to eliminate damaged, infected, or unnecessary cells without triggering inflammation.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Tachycardia',def:'A resting heart rate above 100 beats per minute; may be physiological (exercise, fever) or pathological (arrhythmia, shock).',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Septicemia',def:'Bacteria in the bloodstream causing systemic infection; can rapidly progress to septic shock with multiorgan failure if untreated.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Dyspnea',def:'Subjective sensation of shortness of breath or difficulty breathing; a hallmark symptom of cardiac and pulmonary disease.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
+    {term:'Hematuria',def:'Blood in the urine, classified as gross (visible) or microscopic; may indicate UTI, kidney stones, glomerulonephritis, or malignancy.',event:'Nephrology',slug:'nephrology'},
+    {term:'Anaphylaxis',def:'A rapid, life-threatening systemic allergic reaction triggered by IgE-mediated mast cell degranulation; treated immediately with epinephrine.',event:'Allergy & Immunology',slug:'allergy-immunology'},
+    {term:'Encephalopathy',def:'Any diffuse disease or disorder of the brain causing altered cognition, behavior, or consciousness; etiologies include metabolic, toxic, and infectious causes.',event:'Neurology',slug:'neurology'},
+    {term:'Epistaxis',def:'Nosebleed; most commonly from Kiesselbach\'s plexus in the anterior nasal septum; usually self-limiting but can indicate hypertension or clotting disorders.',event:'Otolaryngology',slug:'otolaryngology'},
+    {term:'Hemostasis',def:'The process that stops bleeding — comprising vasoconstriction, platelet plug formation, and the coagulation cascade to form a stable fibrin clot.',event:'Hematology',slug:'hematology'},
+    {term:'Hyperglycemia',def:'Elevated blood glucose (>126 mg/dL fasting); a hallmark of diabetes mellitus resulting from insufficient insulin action or secretion.',event:'Endocrinology',slug:'endocrinology'},
+    {term:'Cyanosis',def:'A blue-gray discoloration of skin/mucous membranes caused by deoxygenated hemoglobin; indicates hypoxia when >5 g/dL deoxyhemoglobin is present.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Peritonitis',def:'Inflammation of the peritoneum, usually from bacterial infection secondary to bowel perforation, appendicitis, or trauma; a surgical emergency.',event:'Gastroenterology',slug:'gastroenterology'},
+    {term:'Atelectasis',def:'Collapse or incomplete expansion of lung alveoli, leading to reduced gas exchange; common post-surgery or with mucus plugging.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
+    {term:'Diuresis',def:'Increased urine production; stimulated by diuretics, high fluid intake, or conditions such as diabetes insipidus and hyperglycemia.',event:'Pharmacology',slug:'pharmacology'},
+    {term:'Ecchymosis',def:'Bruising — subcutaneous hemorrhage causing a purple/yellow skin discoloration; may signal trauma, coagulopathy, or vasculitis.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Asystole',def:'Complete absence of cardiac electrical activity (flat-line ECG); a non-shockable cardiac arrest rhythm managed with CPR and epinephrine.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Peristalsis',def:'Rhythmic, wave-like contractions of smooth muscle that propel contents through tubular organs — the mechanism moving food through the GI tract.',event:'Gastroenterology',slug:'gastroenterology'},
+    {term:'Intubation',def:'Insertion of an endotracheal tube into the trachea to secure the airway, enable mechanical ventilation, and protect against aspiration.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Neuroplasticity',def:'The brain\'s ability to reorganize synaptic connections in response to learning, experience, or injury — the basis for rehabilitation after stroke.',event:'Neurology',slug:'neurology'},
+    {term:'Osmosis',def:'Net movement of water across a semipermeable membrane from a region of low solute concentration to high solute concentration until equilibrium.',event:'Biochemistry',slug:'biochemistry'},
+    {term:'Thrombocytopenia',def:'A platelet count below 150,000/μL, causing increased bleeding risk; causes include bone marrow suppression, autoimmune destruction (ITP), and heparin-induced types.',event:'Hematology',slug:'hematology'},
+    {term:'Bradycardia',def:'A resting heart rate below 60 beats per minute; normal in athletes but pathological when causing hemodynamic compromise.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
+    {term:'Prion',def:'A misfolded protein capable of inducing other proteins to misfold; responsible for fatal neurodegenerative diseases such as Creutzfeldt-Jakob disease.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Comorbidity',def:'The presence of two or more chronic conditions in the same patient simultaneously; complicates treatment decisions and worsens prognosis.',event:'Healthcare Systems',slug:'healthcare-systems'},
+    {term:'Triage',def:'The process of sorting patients by severity of injury or illness to prioritize emergency care when resources are limited.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
+    {term:'Pharmacokinetics',def:'The study of how the body handles a drug — including absorption, distribution, metabolism, and excretion (ADME) — determining its concentration over time.',event:'Pharmacology',slug:'pharmacology'},
+    {term:'Autopsy',def:'A post-mortem examination of a body to determine cause of death, document pathology, and gather data for medicolegal or research purposes.',event:'Forensic Science',slug:'forensic-science'},
+    {term:'Edema',def:'Accumulation of excess fluid in the interstitial space, causing swelling; results from increased capillary pressure, reduced oncotic pressure, or lymphatic obstruction.',event:'Pathophysiology',slug:'pathophysiology'},
+    {term:'Immunity',def:'The body\'s defense against pathogens, comprising innate (rapid, nonspecific) and adaptive (antigen-specific, memory-forming) branches.',event:'Immunology',slug:'immunology'},
+    {term:'Dehydration',def:'Excessive loss of body water relative to intake, impairing cellular function; classified as mild (<5%), moderate (5-10%), or severe (>10%) by % body weight lost.',event:'Nutrition',slug:'nutrition'},
+    {term:'Pathogen',def:'A microorganism (virus, bacterium, fungus, parasite) capable of causing disease in a susceptible host.',event:'Medical Microbiology',slug:'medical-microbiology'},
+    {term:'Prophylaxis',def:'Preventive treatment or intervention given before a disease or infection occurs to reduce risk; includes vaccines, antibiotics, and surgical preparation.',event:'Public Health',slug:'public-health'},
+    {term:'Iatrogenic',def:'Illness or adverse effect caused by medical examination, treatment, or other healthcare intervention — a key concept in patient safety and medical law.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
+    {term:'Homeostasis',def:'The body\'s ability to regulate its internal environment within narrow parameters despite changing external conditions.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
+    {term:'Remission',def:'A period during which signs and symptoms of a disease decrease significantly or disappear; may be complete or partial and temporary or sustained.',event:'Oncology',slug:'oncology'},
+    {term:'Teratogen',def:'A substance, organism, or physical agent that disrupts normal fetal development when a pregnant person is exposed, causing structural or functional defects.',event:'Human Growth & Development',slug:'human-growth-development'},
+    {term:'Biopsy',def:'Removal of tissue from a living patient for microscopic examination; the definitive method for diagnosing cancer and many other diseases.',event:'Biomedical Lab Science',slug:'biomedical-lab-science'},
+    {term:'Palliative Care',def:'Specialized medical care focused on relief of pain, symptoms, and stress of serious illness — provided alongside curative treatment, not instead of it.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
+  ];
+
+  var d = new Date();
+  var idx = (d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate()) % TERMS.length;
+  var t = TERMS[idx];
+
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  document.getElementById('totd-eyebrow').textContent = 'Clinical Term of the Day · ' + days[d.getDay()];
+  document.getElementById('totd-term').textContent = t.term;
+  document.getElementById('totd-def').textContent = t.def;
+  document.getElementById('totd-event').textContent = t.event;
+  document.getElementById('totd-date-num').textContent = months[d.getMonth()] + ' ' + d.getDate();
+  document.getElementById('totd-date-label').textContent = d.getFullYear();
+  var link = document.getElementById('totd-link');
+  link.href = t.slug + '.html';
+  link.textContent = 'Study ' + t.event + ' →';
 })();
 </script>
 
