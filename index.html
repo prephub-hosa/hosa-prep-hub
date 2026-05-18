@@ -718,6 +718,10 @@
   /* ——— Responsive ——— */
   @media (max-width: 1100px) {
     .categories { grid-template-columns: repeat(2, 1fr); }
+    #continue-list { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 640px) {
+    #continue-list { grid-template-columns: 1fr !important; }
   }
 
   @media (max-width: 900px) {
@@ -752,7 +756,7 @@
   /* ——— Auth ——— */
   #auth-loading {
     position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-    display: flex; justify-content: center; align-items: center;
+    display: none; justify-content: center; align-items: center;
     font-family: 'Fraunces', serif; font-size: 20px; font-style: italic; color: var(--ink-soft);
   }
   #auth-gate {
@@ -804,7 +808,7 @@
     cursor: pointer; color: var(--ink); transition: all 0.15s;
   }
   .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  #main-content { display: none; }
+  #main-content { display: block; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -848,10 +852,11 @@
 </head>
 <body>
 
-<div id="auth-loading">Loading…</div>
+<div id="auth-loading" style="display:none">Loading…</div>
 
 <div id="auth-gate">
-  <div class="auth-card">
+  <div class="auth-card" style="position:relative;">
+    <button type="button" id="btn-close-auth" aria-label="Close" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:24px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:6px 10px;font-family:'Source Serif 4',serif;">&times;</button>
     <div class="auth-brand"><span>✢</span> HOSA Prep Hub</div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-signin">Sign In</button>
@@ -918,7 +923,7 @@
   <!-- HERO -->
   <section class="hero">
     <div>
-      <div class="eyebrow">A Study Companion for HOSA</div>
+      <div class="eyebrow">60 HOSA events &middot; Free &middot; No signup required</div>
       <h1 class="hero-title">Train like <em>competition day.</em></h1>
 
       <div class="hero-tagline">
@@ -926,9 +931,41 @@
         <span>Review <strong>misses.</strong></span>
         <span>Improve <strong>faster.</strong></span>
       </div>
+
+      <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Start studying →</a>
+        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:13px 26px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Try a card</a>
+      </div>
     </div>
     <aside class="hero-aside">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">60</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">HOSA Events</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">2,800+</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Flashcards</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">3</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Study Modes</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:400;line-height:1;letter-spacing:-0.03em;color:var(--accent);font-variant-numeric:tabular-nums;">$0</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-variant:small-caps;letter-spacing:0.08em;color:var(--ink-soft);margin-top:6px;">Cost, ever</div>
+        </div>
+      </div>
     </aside>
+  </section>
+
+  <!-- CONTINUE STUDYING (rendered by JS if localStorage has progress) -->
+  <section id="continue-studying" style="display:none;margin-bottom:64px;">
+    <div class="section-head" style="margin-bottom:24px;">
+      <h2>Continue <em>where you left off.</em></h2>
+      <div class="section-label" id="continue-meta"></div>
+    </div>
+    <div id="continue-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;"></div>
   </section>
 
   <!-- DEMO FLASHCARD -->
@@ -2264,20 +2301,73 @@ const authGateEl    = document.getElementById('auth-gate');
 const mainEl        = document.getElementById('main-content');
 const userEmailEl   = document.getElementById('user-email');
 
+function renderContinueStudying() {
+  try {
+    var entries = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (!key || key.indexOf('hosa::') !== 0) continue;
+      var slug = key.slice(6);
+      try {
+        var raw = localStorage.getItem(key);
+        if (!raw) continue;
+        var data = JSON.parse(raw);
+        var studiedCount  = (data.studied  || []).length;
+        var masteredCount = (data.mastered || []).length;
+        if (studiedCount === 0 && masteredCount === 0) continue;
+        entries.push({
+          slug: slug,
+          studied: studiedCount,
+          mastered: masteredCount,
+          lastStudyDate: data.lastStudyDate || ''
+        });
+      } catch(e) {}
+    }
+    if (entries.length === 0) return;
+    entries.sort(function(a,b){ return (b.lastStudyDate || '').localeCompare(a.lastStudyDate || ''); });
+    var top = entries.slice(0, 3);
+
+    var section = document.getElementById('continue-studying');
+    var list    = document.getElementById('continue-list');
+    var meta    = document.getElementById('continue-meta');
+    var cardEls = document.querySelectorAll('.categories .category-card');
+    var labelMap = {};
+    cardEls.forEach(function(card){
+      var href = card.getAttribute('href') || '';
+      var slug = href.replace('.html','');
+      var h3 = card.querySelector('h3');
+      labelMap[slug] = h3 ? h3.textContent.trim() : slug;
+    });
+
+    list.innerHTML = top.map(function(e){
+      var label = labelMap[e.slug] || e.slug;
+      return '<a href="' + e.slug + '.html" style="display:block;background:var(--bg-card);border:1px solid var(--rule);border-top:3px solid var(--accent);padding:18px 18px 16px;text-decoration:none;color:var(--ink);transition:transform 0.2s, box-shadow 0.25s;" onmouseenter="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 10px 24px -12px rgba(0,0,0,0.18)\'" onmouseleave="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+        '<div style="font-family:\'Cormorant Garamond\',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.1em;color:var(--ink-faint);margin-bottom:8px;">Resume</div>' +
+        '<div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:400;letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px;">' + label + '</div>' +
+        '<div style="font-family:\'Source Serif 4\',serif;font-size:13px;color:var(--ink-soft);">' + e.mastered + ' mastered &middot; ' + e.studied + ' studied</div>' +
+      '</a>';
+    }).join('');
+    meta.textContent = top.length + (top.length === 1 ? ' event in progress' : ' events in progress');
+    section.style.display = 'block';
+  } catch(e) {}
+}
+
 function showGuestMode() {
   authGateEl.style.display = 'none';
   mainEl.style.display = 'block';
-  userEmailEl.textContent = 'Guest';
-  document.getElementById('guest-banner').style.display = '';
+  userEmailEl.textContent = '';
+  // Hide the alarming orange banner — replace with a subtle header CTA
+  document.getElementById('guest-banner').style.display = 'none';
   const signoutBtn = document.getElementById('btn-signout');
-  signoutBtn.textContent = 'Sign In';
-  signoutBtn.style.cssText += ';background:var(--accent);color:#fff;border-color:var(--accent);';
-  signoutBtn.onclick = () => { authGateEl.style.display = 'flex'; mainEl.style.display = 'none'; document.getElementById('guest-banner').style.display = 'none'; signoutBtn.textContent = 'Sign Out'; signoutBtn.style.background = ''; signoutBtn.style.color = ''; signoutBtn.style.borderColor = ''; };
-  // Disable forms that require auth
-  var notifyMsg = document.getElementById('newsletter-msg');
-  var requestMsg = document.getElementById('request-msg');
-  if (notifyMsg) { notifyMsg.textContent = 'Sign in to subscribe.'; notifyMsg.style.color = 'var(--ink-soft)'; }
-  if (requestMsg) { requestMsg.textContent = 'Sign in to submit a request.'; requestMsg.style.color = 'var(--ink-soft)'; }
+  signoutBtn.textContent = 'Sign in';
+  signoutBtn.style.cssText += ';background:transparent;color:var(--ink);border-color:var(--rule);font-weight:600;';
+  signoutBtn.onclick = () => {
+    authGateEl.style.display = 'flex';
+    signoutBtn.textContent = 'Sign Out';
+    signoutBtn.style.background = '';
+    signoutBtn.style.color = '';
+    signoutBtn.style.borderColor = '';
+  };
 }
 
 auth.onAuthStateChanged(user => {
@@ -2318,12 +2408,19 @@ auth.onAuthStateChanged(user => {
         document.body.classList.add('user-active');
       }).catch(function(){ document.body.classList.add('user-active'); });
     } catch(e) { document.body.classList.add('user-active'); }
+    renderContinueStudying();
   } else {
-    authGateEl.style.display = 'flex';
+    // Default to guest mode — no auth wall. Users can sign in via header.
+    showGuestMode();
+    renderContinueStudying();
   }
 });
 
 document.getElementById('btn-guest').addEventListener('click', showGuestMode);
+document.getElementById('btn-close-auth').addEventListener('click', function(){
+  authGateEl.style.display = 'none';
+  if (!firebase.auth().currentUser) showGuestMode();
+});
 document.getElementById('guest-banner-signin').addEventListener('click', function(e) {
   e.preventDefault();
   mainEl.style.display = 'none';
