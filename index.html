@@ -1024,37 +1024,69 @@
     #continue-list { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; margin-bottom: 48px; }
-    .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 32px; }
+    .hero { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; margin-bottom: 40px; }
+    .hero-aside { border-left: none; border-top: 1px solid var(--ink); padding-left: 0; padding-top: 28px; }
     .testimonials { grid-template-columns: 1fr 1fr; }
     .testimonials .testimonial:last-child { display: none; }
-    .how { grid-template-columns: repeat(2, 1fr); gap: 28px; }
-    .newsletter { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
-    main { padding: 48px 24px; }
-    header { padding: 16px 24px; }
-    footer { padding: 32px 24px; flex-direction: column; gap: 24px; }
+    .how { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .newsletter { grid-template-columns: 1fr; gap: 24px; padding: 28px 22px; }
+    main { padding: 40px 22px; }
+    header { padding: 14px 22px; }
+    footer { padding: 28px 22px; flex-direction: column; gap: 20px; }
     .footer-nav { align-items: flex-start; }
-    .how { grid-template-columns: 1fr 1fr; }
+    .section-head h2 { font-size: clamp(28px, 5vw, 48px); }
+    h1.hero-title { font-size: clamp(42px, 7vw, 92px); }
   }
 
   @media (max-width: 640px) {
     .categories { grid-template-columns: 1fr; }
-    .filter-bar { gap: 6px; }
+    .filter-bar { gap: 6px; flex-wrap: wrap; }
     .filter-btn { font-size: 12px; padding: 6px 12px; }
     .how { grid-template-columns: 1fr; }
+    .testimonials { grid-template-columns: 1fr; }
+    .testimonials .testimonial:last-child { display: block; }
+    .starter-grid { grid-template-columns: 1fr; gap: 16px; }
+    .section-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .section-head h2 { font-size: clamp(26px, 7vw, 40px); }
+    .totd-card { padding: 20px 18px; }
+    main { padding: 28px 16px; }
+    header { padding: 12px 16px; }
+    .brand { font-size: 17px; }
   }
 
   @media (max-width: 480px) {
-    header { padding: 12px 16px; }
-    main { padding: 32px 16px; }
-    .category-card { padding: 18px 16px 14px; }
-    .category-card h3 { font-size: 22px; }
-    .card-number { font-size: 32px; }
-    .newsletter { padding: 24px 16px; }
-    .event-search-wrap { margin-bottom: 32px; }
-    #event-search { font-size: 16px; padding: 14px 16px 14px 46px; }
-    .auth-card { padding: 36px 20px; }
-    footer { padding: 20px 16px; }
+    header { padding: 10px 14px; }
+    .brand { font-size: 16px; }
+    main { padding: 20px 12px 48px; }
+    h1.hero-title { font-size: clamp(34px, 9vw, 58px); line-height: 1; }
+    .hero-sub { font-size: 15px; }
+    .hero-stats-grid { grid-template-columns: 1fr 1fr; gap: 20px 16px; }
+    .hero-stat-num { font-size: 38px; }
+    .category-card { padding: 16px 14px 12px; }
+    .category-card h3 { font-size: 20px; }
+    .card-number { font-size: 28px; }
+    .card-desc { font-size: 13px; }
+    .newsletter { padding: 20px 14px; }
+    .event-search-wrap { margin-bottom: 28px; }
+    #event-search { font-size: 16px; padding: 12px 14px 12px 42px; }
+    .auth-card { padding: 28px 16px; }
+    footer { padding: 18px 14px; }
+    /* Starter path */
+    .starter-card { padding: 20px 16px 16px; }
+    .starter-num { font-size: 28px; }
+    /* How it works */
+    .how-item { padding: 20px 0; border-top: 1px solid var(--rule); }
+    /* Testimonials */
+    .testimonial { padding: 0 0 0 20px; }
+    .testimonial blockquote { font-size: 18px; }
+    /* TOTD */
+    .totd-card { padding: 18px 14px; gap: 16px; }
+    .totd-term { font-size: clamp(22px, 6vw, 30px); }
+    .totd-def { font-size: 14px; }
+    .totd-aside { padding-left: 0; border-left: none; border-top: 1px solid var(--rule); padding-top: 14px; flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; }
+    .totd-card { grid-template-columns: 1fr; }
+    /* Section heads */
+    .section-head h2 { font-size: clamp(24px, 7vw, 36px); }
   }
   /* ——— Auth ——— */
   #auth-loading {
