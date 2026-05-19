@@ -116,6 +116,8 @@
   }
   .user-pill { display: flex; align-items: center; gap: 14px; }
   .user-email { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+  @media (max-width: 640px) { .user-email { display: none; } }
+  @media (max-width: 480px) { .xp-pill { padding: 3px 8px; font-size: 11px; } .user-pill { gap: 8px; } }
   .btn-signout { background: none; border: 1px solid var(--rule); padding: 5px 14px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); transition: all 0.15s; }
   .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .brand-link:hover { opacity: 0.65; }
@@ -195,8 +197,10 @@
 
   .masthead h1 {
     font-family: 'Fraunces', serif;
-    font-size: clamp(48px, 7vw, 88px);
+    font-size: clamp(36px, 6vw, 84px);
     font-weight: 400;
+    word-break: break-word;
+    overflow-wrap: break-word;
     line-height: 0.95;
     letter-spacing: -0.04em;
   }
@@ -226,6 +230,10 @@
     border: 1px solid var(--rule);
     background: var(--rule);
     width: fit-content;
+    max-width: 100%;
+    overflow-y: hidden;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
   }
 
   nav.tabs button {
@@ -325,6 +333,7 @@
 
   .flashcard {
     aspect-ratio: 8 / 5;
+    min-height: 320px;
     background: var(--bg-card);
     border: 1px solid var(--rule);
     position: relative;
@@ -347,9 +356,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 48px;
+    padding: 40px 44px;
     text-align: center;
     transition: opacity 0.25s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .face.front { opacity: 1; }
@@ -386,10 +397,14 @@
 
   .term {
     font-family: 'Fraunces', serif;
-    font-size: clamp(40px, 6vw, 68px);
+    font-size: clamp(28px, 4.5vw, 56px);
     font-weight: 400;
-    line-height: 1.05;
+    line-height: 1.1;
     letter-spacing: -0.03em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
   }
 
   .term em {
@@ -400,11 +415,13 @@
 
   .definition {
     font-family: 'Source Serif 4', Georgia, serif;
-    font-size: clamp(22px, 3vw, 30px);
+    font-size: clamp(17px, 2.2vw, 24px);
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.45;
     max-width: 600px;
     color: var(--ink);
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .example {
@@ -626,10 +643,12 @@
 
   .quiz-term {
     font-family: 'Fraunces', serif;
-    font-size: clamp(36px, 5vw, 56px);
+    font-size: clamp(26px, 4vw, 48px);
     font-weight: 400;
-    line-height: 1.05;
+    line-height: 1.1;
     letter-spacing: -0.03em;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .quiz-term em { color: var(--accent); font-style: normal; font-weight: 600; }
@@ -647,6 +666,8 @@
     cursor: pointer;
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 17px;
+    word-break: break-word;
+    overflow-wrap: break-word;
     font-weight: 500;
     color: var(--ink);
     transition: all 0.15s;
@@ -790,10 +811,12 @@
 
   .test-intro h2 {
     font-family: 'Fraunces', serif;
-    font-size: 36px;
+    font-size: clamp(24px, 3.5vw, 36px);
     font-weight: 500;
     margin-bottom: 20px;
     letter-spacing: -0.02em;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .test-intro p {
@@ -1078,7 +1101,7 @@
     .masthead { grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; padding-bottom: 20px; }
     .masthead .subtitle { text-align: left; max-width: 100%; font-size: 15px; }
     .masthead h1 { font-size: clamp(36px, 9vw, 72px); }
-    nav.tabs { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; white-space: nowrap; display: flex; flex-wrap: nowrap; }
+    nav.tabs { width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; white-space: nowrap; display: flex; flex-wrap: nowrap; touch-action: pan-x; overscroll-behavior: contain; }
     nav.tabs::-webkit-scrollbar { display: none; }
     nav.tabs button { flex: 0 0 auto; padding: 13px 18px; font-size: 14px; white-space: nowrap; min-height: 48px; }
     .test-specs { grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -1113,53 +1136,54 @@
     main { padding: 16px 12px 48px; }
 
     /* Masthead */
-    .masthead h1 { font-size: clamp(30px, 8vw, 48px); line-height: 1; }
+    .masthead h1 { font-size: clamp(28px, 7vw, 44px); line-height: 1; }
     .masthead { margin-bottom: 20px; padding-bottom: 16px; }
     .category-eyebrow { font-size: 11px; margin-bottom: 12px; }
 
-    /* Tabs: scrollable row, never clip text */
-    nav.tabs { margin-bottom: 20px; }
+    /* Tabs: scrollable row, never clip text, horizontal-only touch */
+    nav.tabs { margin-bottom: 20px; overflow-y: hidden; touch-action: pan-x; overscroll-behavior: contain; }
     nav.tabs button { padding: 11px 14px; font-size: 13px; min-height: 44px; }
 
     /* Flashcard face: no clipping, grows with content */
-    .flashcard { aspect-ratio: unset; min-height: 200px; overflow: hidden; perspective: none; }
-    .flashcard-inner { min-height: 200px; height: auto !important; transform-style: flat !important; transition: none !important; }
+    .flashcard { aspect-ratio: unset !important; min-height: 220px !important; overflow: hidden; perspective: none; }
+    .flashcard-inner { min-height: 220px; height: auto !important; transform-style: flat !important; transition: none !important; }
     .flashcard.flipped .flashcard-inner { transform: none !important; }
     .face {
       position: relative !important; inset: auto !important;
       width: 100%; box-sizing: border-box;
-      min-height: 200px; height: auto !important; max-height: 55vh;
-      padding: 20px 16px; overflow-y: auto; overflow-x: hidden;
+      min-height: 220px; height: auto !important; max-height: 60vh;
+      padding: 24px 20px; overflow-y: auto; overflow-x: hidden;
       word-break: break-word; overflow-wrap: break-word; hyphens: auto;
       transform: none !important; backface-visibility: visible !important;
+      justify-content: center;
     }
+    .face::before { top: 12px; left: 12px; right: 12px; bottom: 12px; }
     .face.back { display: none !important; }
     .flashcard.flipped .face.front { display: none !important; }
     .flashcard.flipped .face.back  { display: flex !important; }
 
     /* Card text */
-    .term { font-size: clamp(17px, 5vw, 24px); word-break: break-word; }
-    .definition { font-size: 14px; line-height: 1.55; word-break: break-word; overflow-wrap: break-word; }
-    .example { font-size: 13px; }
+    .term { font-size: clamp(18px, 5.5vw, 28px); word-break: break-word; overflow-wrap: break-word; hyphens: auto; max-width: 100%; }
+    .definition { font-size: 15px; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; }
+    .example { font-size: 13px; margin-top: 14px; padding-top: 12px; }
 
     /* Rating buttons: 2×2 on tiny screens */
-    .rating-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .rating-btns { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8px; }
     .rating-btns .btn { min-height: 48px; font-size: 13px; }
 
     /* Quiz / Test */
-    .quiz-term { font-size: clamp(22px, 7vw, 36px); word-break: break-word; overflow-wrap: break-word; }
+    .quiz-term { font-size: clamp(22px, 6.5vw, 36px); word-break: break-word; overflow-wrap: break-word; }
     .quiz-prompt { font-size: 11px; }
-    .option { padding: 13px 14px; font-size: 15px; word-break: break-word; overflow-wrap: break-word; }
+    .option { padding: 14px 16px; font-size: 15px; word-break: break-word; overflow-wrap: break-word; }
     .quiz-options { gap: 8px; }
-    .quiz-question { margin-bottom: 16px; }
-    .quiz-header { padding-bottom: 12px; margin-bottom: 20px; font-size: 13px; }
-    .quiz-header .meta { font-size: 12px; }
+    .quiz-question { margin-bottom: 18px; }
+    .quiz-header { padding-bottom: 12px; margin-bottom: 22px; font-size: 13px; flex-wrap: wrap; gap: 8px; }
 
     /* Timed test */
-    .timer-bar { top: 48px; padding: 10px 0; margin-bottom: 20px; flex-wrap: wrap; gap: 6px; }
+    .timer-bar { top: 48px; padding: 10px 0; margin-bottom: 22px; flex-wrap: wrap; gap: 8px; }
     .timer { font-size: 22px; }
     .timer-progress { min-width: 0; flex: 1; }
-    .test-intro { padding: 20px 14px; border-left: none; border-right: none; }
+    .test-intro { padding: 22px 16px; border-left: none; border-right: none; }
     .test-intro h2 { font-size: 22px; margin-bottom: 14px; }
     .test-intro p { font-size: 15px; }
     .test-specs { grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; padding: 16px 0; }
@@ -1182,7 +1206,7 @@
     .mk-why { font-size: 13px; }
 
     /* Guide */
-    .guide-layout { gap: 16px; }
+    .guide-layout { gap: 16px; grid-template-columns: 1fr; }
     .guide-panel { padding: 18px 14px; }
     .guide-panel-title { font-size: 18px; }
     .guide-stat { padding: 12px; }
