@@ -745,26 +745,55 @@
   .totd-section { margin-bottom: 80px; }
   .totd-card {
     border: 1px solid var(--rule);
-    padding: 32px 36px;
+    padding: 28px 32px;
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 16px 32px;
-    align-items: start;
+    gap: 24px 40px;
+    align-items: center;
     transition: border-color 0.2s;
   }
   .totd-card:hover { border-color: var(--ink-soft); }
-  .totd-eyebrow { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); margin-bottom: 6px; }
-  .totd-term { font-family: 'Fraunces',serif; font-size: 26px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 12px; color: var(--ink); }
-  .totd-def { font-family: 'Source Serif 4',Georgia,serif; font-size: 15px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 16px; }
-  .totd-meta { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-faint); }
-  .totd-link { display: inline-block; font-family: 'Source Serif 4',Georgia,serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; letter-spacing: 0.01em; white-space: nowrap; padding-top: 4px; }
-  .totd-link:hover { text-decoration: underline; }
-  .totd-date { font-family: 'Fraunces',serif; font-size: 40px; font-weight: 300; color: var(--ink-faint); letter-spacing: -0.04em; line-height: 1; text-align: right; }
-  .totd-date-label { font-family: 'Cormorant Garamond',serif; font-size: 10px; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); text-align: right; margin-top: 2px; }
-  @media (max-width: 640px) {
-    .totd-card { grid-template-columns: 1fr; padding: 24px 20px; }
-    .totd-date { display: none; }
-    .totd-term { font-size: 22px; }
+  .totd-body { min-width: 0; }
+  .totd-eyebrow { font-family: 'Cormorant Garamond',serif; font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 10px; }
+  .totd-term { font-family: 'Fraunces',serif; font-size: clamp(28px, 3.4vw, 36px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 10px; color: var(--ink); }
+  .totd-def { font-family: 'Source Serif 4',Georgia,serif; font-size: 15px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 12px; max-width: 62ch; }
+  .totd-meta { font-family: 'Cormorant Garamond',serif; font-size: 12px; font-variant: small-caps; letter-spacing: 0.1em; color: var(--ink-faint); }
+  .totd-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    border-left: 1px solid var(--rule);
+    padding-left: 32px;
+    white-space: nowrap;
+  }
+  .totd-date {
+    font-family: 'Fraunces',serif;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    text-align: right;
+  }
+  .totd-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Source Serif 4',Georgia,serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .totd-link:hover { border-bottom-color: var(--accent); }
+  @media (max-width: 760px) {
+    .totd-card { grid-template-columns: 1fr; padding: 24px 22px; gap: 18px; align-items: stretch; }
+    .totd-aside { border-left: none; border-top: 1px solid var(--rule); padding-left: 0; padding-top: 16px; align-items: flex-start; }
+    .totd-def { font-size: 14px; }
   }
 
   /* ——— Starter / beginner path ——— */
@@ -1625,15 +1654,14 @@
       <div class="section-label">One clinical term, every day</div>
     </div>
     <div class="totd-card" id="totd-card">
-      <div>
+      <div class="totd-body">
         <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
         <h3 class="totd-term" id="totd-term"></h3>
         <p class="totd-def" id="totd-def"></p>
         <div class="totd-meta" id="totd-event"></div>
       </div>
-      <div style="text-align:right;">
+      <div class="totd-aside">
         <div class="totd-date" id="totd-date-num"></div>
-        <div class="totd-date-label" id="totd-date-label"></div>
         <a class="totd-link" id="totd-link" href="#">Study this event →</a>
       </div>
     </div>
@@ -3472,12 +3500,13 @@ document.getElementById('request-btn').onclick = function() {
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  document.getElementById('totd-eyebrow').textContent = 'Clinical Term of the Day · ' + days[d.getDay()];
+  document.getElementById('totd-eyebrow').textContent = days[d.getDay()] + ' · Clinical Term';
   document.getElementById('totd-term').textContent = t.term;
   document.getElementById('totd-def').textContent = t.def;
   document.getElementById('totd-event').textContent = t.event;
-  document.getElementById('totd-date-num').textContent = months[d.getMonth()] + ' ' + d.getDate();
-  document.getElementById('totd-date-label').textContent = d.getFullYear();
+  document.getElementById('totd-date-num').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  var dateLabel = document.getElementById('totd-date-label');
+  if (dateLabel) dateLabel.remove();
   var link = document.getElementById('totd-link');
   link.href = t.slug + '.html';
   link.textContent = 'Study ' + t.event + ' →';
