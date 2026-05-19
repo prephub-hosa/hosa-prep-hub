@@ -1189,24 +1189,10 @@
     line-height: 1.6;
     color: var(--ink);
   }
-  @media (max-width: 760px) {
-    .guide-layout { grid-template-columns: 1fr; gap: 24px; }
-    .guide-panel { padding: 24px 20px; }
-  }
+  /* Guide responsive: handled in main 760px block above */
 
-  /* ——— Test section responsive fixes ——— */
+  /* ——— Test section base ——— */
   .test-intro { box-sizing: border-box; width: 100%; }
-  @media (max-width: 480px) {
-    .test-intro { padding: 24px 16px; border-left: none; border-right: none; }
-    .test-intro h2 { font-size: 24px; }
-    .test-specs { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .spec-item .spec-val { font-size: 20px; }
-    .timer-bar { top: 52px; padding: 12px 0; }
-    .quiz-term { font-size: clamp(24px, 6vw, 40px); }
-    .option { padding: 14px 16px; font-size: 15px; }
-    nav.tabs button { padding: 12px 18px; font-size: 14px; }
-    .quiz-header { flex-wrap: wrap; gap: 8px; }
-  }
 
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1294,11 +1280,11 @@
   </div>
 
   <nav class="tabs" id="tabs">
-    <button class="active" data-view="flashcards">Flashcards</button>
-    <button data-view="quiz">Practice Quiz</button>
-    <button data-view="test">Timed Test</button>
-    <button data-view="progress">Progress</button>
-    <button data-view="guide">Guide</button>
+    <button class="active" data-view="flashcards" aria-label="Flashcards">Cards</button>
+    <button data-view="quiz" aria-label="Practice Quiz">Quiz</button>
+    <button data-view="test" aria-label="Timed Test">Test</button>
+    <button data-view="progress" aria-label="Progress">Progress</button>
+    <button data-view="guide" aria-label="Guide">Guide</button>
   </nav>
 
   <!-- FLASHCARDS VIEW -->
