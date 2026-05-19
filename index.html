@@ -1362,7 +1362,190 @@
 </head>
 <body>
 
-<!-- Onboarding & Recommendation Modal -->
+<!-- ═══════════════════════════════════════════════
+     INTRO SPLASH — new users only, CSS-animated
+     Only opacity + transform used (always GPU)
+     ═══════════════════════════════════════════════ -->
+<div id="intro-splash" aria-hidden="true">
+  <div class="is-inner">
+    <div class="is-ornament">✢</div>
+    <div class="is-headline">
+      <span class="is-line1">Win your</span>
+      <span class="is-line2">HOSA <em>event.</em></span>
+    </div>
+    <p class="is-sub">The study tool built for HOSA competitors.<br>60 events. Smart review. Real results.</p>
+    <div class="is-pills">
+      <span>60 Events</span>
+      <span class="is-dot">·</span>
+      <span>Spaced Repetition</span>
+      <span class="is-dot">·</span>
+      <span>Timed Tests</span>
+      <span class="is-dot">·</span>
+      <span>Free</span>
+    </div>
+    <button id="is-begin" class="is-cta" type="button">Start studying →</button>
+    <button id="is-skip"  class="is-skip" type="button">Skip intro</button>
+  </div>
+</div>
+<!-- Hide splash for returning users before first paint (no flash) -->
+<script>try{var _is=localStorage.getItem('hosa-intro-v1')||localStorage.getItem('hosa-onboard-v1');var _ip=false;for(var _ii=0;_ii<localStorage.length;_ii++){var _ik=localStorage.key(_ii);if(_ik&&_ik.indexOf('hosa::')===0){_ip=true;break;}}if(_is||_ip){document.getElementById('intro-splash').style.display='none';}}catch(e){document.getElementById('intro-splash').style.display='none';}</script>
+
+<style>
+/* ── Intro splash ── */
+#intro-splash {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+}
+#intro-splash.is-out {
+  pointer-events: none;
+  animation: is-fade-out 0.55s ease forwards;
+}
+@keyframes is-fade-out {
+  to { opacity: 0; }
+}
+
+.is-inner {
+  text-align: center;
+  max-width: 680px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Each element fades + rises; stagger via animation-delay */
+.is-ornament,
+.is-line1,
+.is-line2,
+.is-sub,
+.is-pills,
+.is-cta,
+.is-skip {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.is-ornament {
+  font-size: 22px;
+  color: var(--accent);
+  margin-bottom: 28px;
+  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+}
+
+.is-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+  line-height: 1;
+}
+
+.is-line1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  animation: is-up 0.55s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+}
+
+.is-line2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  animation: is-up 0.55s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+}
+
+.is-line2 em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.is-sub {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+}
+
+.is-pills {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-bottom: 40px;
+  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.95s forwards;
+}
+
+.is-dot { color: var(--accent); font-size: 11px; }
+
+.is-cta {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 16px 40px;
+  cursor: pointer;
+  min-width: 220px;
+  margin-bottom: 16px;
+  transition: filter 0.15s;
+  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 1.2s forwards;
+}
+.is-cta:hover { filter: brightness(1.1); }
+
+.is-skip {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 6px 12px;
+  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 1.5s forwards;
+  transition: color 0.15s;
+}
+.is-skip:hover { color: var(--ink); }
+
+@keyframes is-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .is-pills { gap: 8px; font-size: 11px; }
+  .is-dot { display: none; }
+  .is-pills span { background: var(--bg-card); border: 1px solid var(--rule); padding: 4px 10px; font-size: 10px; }
+  .is-cta { padding: 14px 28px; font-size: 15px; width: 100%; }
+  .is-ornament { margin-bottom: 20px; }
+  .is-headline { margin-bottom: 20px; }
+  .is-sub { font-size: 14px; margin-bottom: 22px; }
+  .is-pills { margin-bottom: 28px; }
+}
+</style>
+
+
 <div id="onboard" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
   <div class="onboard-card">
     <button type="button" class="onboard-close" id="onboard-close" aria-label="Close">&times;</button>
@@ -3688,9 +3871,44 @@ document.getElementById('request-btn').onclick = function() {
       if (k && k.indexOf('hosa::') === 0) { hasProgress = true; break; }
     }
   } catch(e) {}
+  // Intro splash handles the delay for new users; modal opens after splash exits
   if (!seen && !hasProgress) {
-    setTimeout(function(){ openModal(1); }, 1200);
+    // openModal is called by the intro splash JS below
+  } else {
+    // Returning user — no splash, no modal auto-open
   }
+})();
+</script>
+
+<script id="intro-splash-js">
+(function(){
+  var splash = document.getElementById('intro-splash');
+  // If inline script already hid it (returning user), nothing to do
+  if (!splash || splash.style.display === 'none') return;
+
+  // Mark intro as seen so it never shows again
+  try { localStorage.setItem('hosa-intro-v1', '1'); } catch(e){}
+
+  function exitSplash(thenOpenModal) {
+    splash.classList.add('is-out');
+    setTimeout(function(){
+      splash.style.display = 'none';
+      if (thenOpenModal) {
+        setTimeout(function(){
+          var openBtn = document.getElementById('open-onboard');
+          if (openBtn) openBtn.click();
+        }, 200);
+      }
+    }, 560);
+  }
+
+  document.getElementById('is-begin').addEventListener('click', function(){ exitSplash(true); });
+  document.getElementById('is-skip').addEventListener('click', function(){ exitSplash(false); });
+
+  // Auto-advance after 5.5s
+  var t = setTimeout(function(){ exitSplash(true); }, 5500);
+  document.getElementById('is-begin').addEventListener('click', function(){ clearTimeout(t); }, {once:true});
+  document.getElementById('is-skip').addEventListener('click',  function(){ clearTimeout(t); }, {once:true});
 })();
 </script>
 
