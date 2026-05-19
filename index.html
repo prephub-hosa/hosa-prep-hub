@@ -1387,8 +1387,8 @@
     <button id="is-skip"  class="is-skip" type="button">Skip intro</button>
   </div>
 </div>
-<!-- Hide splash for returning users before first paint (no flash) -->
-<script>try{var _is=localStorage.getItem('hosa-intro-v1')||localStorage.getItem('hosa-onboard-v1');var _ip=false;for(var _ii=0;_ii<localStorage.length;_ii++){var _ik=localStorage.key(_ii);if(_ik&&_ik.indexOf('hosa::')===0){_ip=true;break;}}if(_is||_ip){document.getElementById('intro-splash').style.display='none';}}catch(e){document.getElementById('intro-splash').style.display='none';}</script>
+<!-- Hide splash for returning users before first paint (no flash). ?intro=1 forces it. -->
+<script>try{var _force=location.search.indexOf('intro=1')!==-1;var _is=localStorage.getItem('hosa-intro-v1')||localStorage.getItem('hosa-onboard-v1');var _ip=false;for(var _ii=0;_ii<localStorage.length;_ii++){var _ik=localStorage.key(_ii);if(_ik&&_ik.indexOf('hosa::')===0){_ip=true;break;}}if(!_force&&(_is||_ip)){document.getElementById('intro-splash').style.display='none';}}catch(e){document.getElementById('intro-splash').style.display='none';}</script>
 
 <style>
 /* ── Intro splash ── */
@@ -3886,8 +3886,10 @@ document.getElementById('request-btn').onclick = function() {
   // If inline script already hid it (returning user), nothing to do
   if (!splash || splash.style.display === 'none') return;
 
-  // Mark intro as seen so it never shows again
-  try { localStorage.setItem('hosa-intro-v1', '1'); } catch(e){}
+  // Mark intro as seen so it never shows again (unless ?intro=1 forces a preview)
+  if (location.search.indexOf('intro=1') === -1) {
+    try { localStorage.setItem('hosa-intro-v1', '1'); } catch(e){}
+  }
 
   function exitSplash(thenOpenModal) {
     splash.classList.add('is-out');
