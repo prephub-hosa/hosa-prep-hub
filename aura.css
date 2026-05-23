@@ -978,3 +978,81 @@ a[href="#categories-section"]:hover,
 .category-card[data-aura-reveal] {
   transition-delay: calc(var(--card-i, 0) * 40ms) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Event page: Quizlet-style mode button grid
+   Replaces horizontal tab bar with prominent card buttons
+   ═══════════════════════════════════════════════════════════════ */
+nav.tabs {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
+  gap: 12px !important;
+  border-bottom: none !important;
+  margin-bottom: 36px !important;
+  padding: 0 !important;
+}
+nav.tabs button {
+  padding: 20px 18px !important;
+  border-radius: 12px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--rule) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--ink) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease !important;
+  position: relative;
+  letter-spacing: -0.01em !important;
+}
+nav.tabs button::before {
+  font-size: 20px;
+  line-height: 1;
+  display: inline-block;
+}
+nav.tabs button[data-view="flashcards"]::before { content: "🃏"; }
+nav.tabs button[data-view="quiz"]::before       { content: "📝"; }
+nav.tabs button[data-view="test"]::before       { content: "⏱"; }
+nav.tabs button[data-view="progress"]::before   { content: "📊"; }
+nav.tabs button[data-view="guide"]::before      { content: "📖"; }
+
+nav.tabs button:hover {
+  background: var(--bg-card) !important;
+  border-color: var(--accent) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -12px var(--accent-glow), 0 2px 8px -4px rgba(0,0,0,0.15) !important;
+}
+nav.tabs button.active {
+  background: var(--bg-card) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 20px -8px var(--accent-glow), inset 0 0 0 1px var(--accent) !important;
+  color: var(--accent) !important;
+}
+nav.tabs button.active::after { display: none !important; }
+
+/* Hide topic filter inside event pages — study all by default */
+.category-bar { display: none !important; }
+#cat-screen { display: none !important; }
+/* Force flashcard stage to stay visible even when JS tries to hide it
+   to show the now-hidden category picker */
+.flashcard-stage { display: grid !important; }
+
+@media (max-width: 640px) {
+  nav.tabs {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
+  }
+  nav.tabs button {
+    padding: 14px 8px !important;
+    font-size: 13px !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+  nav.tabs button::before { font-size: 22px; }
+}
+
