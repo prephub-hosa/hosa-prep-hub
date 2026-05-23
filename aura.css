@@ -813,3 +813,168 @@ em, i { font-style: normal; }
 @media (max-width: 960px) and (min-width: 721px) {
   .categories { grid-template-columns: repeat(2, 1fr) !important; }
 }
+
+/* ══════════════════════════════════════════════════════
+   AURA v4 additions — Mobile depth, XP polish, glow+
+   ══════════════════════════════════════════════════════ */
+
+/* ── Mobile: surface events faster ─────────────────────────── */
+@media (max-width: 640px) {
+  /* Hide pre-category filler so events are reachable in ~2 scrolls */
+  #demo-section  { display: none !important; }
+  #start-here    { display: none !important; }
+  .totd-section  { display: none !important; }
+  /* Collapse hero stats aside — keep title + CTA only */
+  .hero-aside    { display: none !important; }
+  .hero {
+    padding-bottom: 24px !important;
+    margin-bottom: 24px !important;
+    gap: 0 !important;
+  }
+  main { padding-top: 24px !important; }
+  .your-progress.show {
+    padding: 16px 18px !important;
+    gap: 16px !important;
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+  }
+}
+
+/* ── XP / Level badge polish ────────────────────────────────── */
+.yp-level-badge {
+  font-size: 22px !important;
+  padding: 6px 20px !important;
+  line-height: 1.35 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  box-shadow: 0 0 22px -5px var(--accent-glow) !important;
+}
+.yp-level-label {
+  font-family: 'Geist Mono', monospace !important;
+  font-variant: normal !important;
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-faint) !important;
+  margin-top: 8px !important;
+}
+.yp-stat-num {
+  font-size: 28px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.03em !important;
+}
+.yp-stat-label { margin-top: 6px !important; }
+.yp-bar-track {
+  height: 6px !important;
+  border-radius: 100px !important;
+  overflow: hidden !important;
+  background: var(--rule-strong) !important;
+}
+.yp-bar-fill {
+  border-radius: 100px !important;
+  box-shadow: 0 0 10px var(--accent-glow) !important;
+}
+.yp-bar-label {
+  font-family: 'Geist Mono', monospace !important;
+  font-variant: normal !important;
+  font-size: 10px !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-faint) !important;
+  margin-top: 8px !important;
+}
+
+/* ── Aurora: richer multi-layer glow backdrop ───────────────── */
+:root {
+  --grad-aurora-a: radial-gradient(ellipse at 18% -15%, rgba(239,68,68,0.14) 0%, transparent 55%);
+  --grad-aurora-b: radial-gradient(ellipse at 78% 92%, rgba(99,102,241,0.07) 0%, transparent 52%);
+  --grad-aurora-c: radial-gradient(ellipse at 55% 35%, rgba(239,68,68,0.05) 0%, transparent 42%);
+}
+
+/* Hero: ambient glow orb (uses ::before; ::after is the bottom rule line) */
+.hero::before {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  top: -120px !important;
+  left: -100px !important;
+  width: 640px !important;
+  height: 540px !important;
+  background: radial-gradient(circle, rgba(239,68,68,0.07) 0%, transparent 65%) !important;
+  pointer-events: none !important;
+  animation: hero-orb 9s ease-in-out infinite !important;
+  z-index: 0 !important;
+}
+.hero > * { position: relative; z-index: 1; }
+
+@keyframes hero-orb {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+  33%       { transform: scale(1.1) translate(24px, -12px); opacity: 1; }
+  66%       { transform: scale(0.94) translate(-12px, 18px); opacity: 0.75; }
+}
+
+/* Section heads: gradient underline (replaces plain rule) */
+.section-head {
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(90deg, var(--accent) 0%, rgba(239,68,68,0.35) 40%, transparent 72%) 1 !important;
+}
+[data-theme="light"] .section-head {
+  border-image: linear-gradient(90deg, var(--accent) 0%, rgba(185,28,28,0.3) 40%, transparent 72%) 1 !important;
+}
+
+/* Card hover: more depth and glow */
+.category-card:hover {
+  box-shadow:
+    0 28px 56px -16px rgba(0,0,0,0.65),
+    0 0 70px -8px var(--card-glow, var(--accent-glow)),
+    inset 0 0 0 1px rgba(239,68,68,0.12) !important;
+}
+
+/* CTA button: pulsing glow */
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 8px 28px -8px var(--accent-glow), 0 0 0 1px rgba(239,68,68,0.4); }
+  50%       { box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset, 0 12px 48px -6px var(--accent-glow), 0 0 50px -6px var(--accent-glow), 0 0 0 1px rgba(239,68,68,0.65); }
+}
+a[href="#categories-section"],
+.aura-btn-primary {
+  animation: cta-pulse 3.5s ease-in-out infinite !important;
+  border-radius: 14px !important;
+}
+a[href="#categories-section"]:hover,
+.aura-btn-primary:hover {
+  animation: none !important;
+  box-shadow: 0 16px 52px -8px var(--accent-glow), 0 0 72px -8px var(--accent-glow) !important;
+}
+
+/* Intro splash CTA: glow + pill */
+.is-cta {
+  box-shadow: 0 8px 36px -8px var(--accent-glow), 0 0 0 1px rgba(239,68,68,0.4) !important;
+  border-radius: 14px !important;
+  animation: cta-pulse 3.5s ease-in-out infinite !important;
+}
+.is-cta:hover {
+  animation: none !important;
+  box-shadow: 0 14px 56px -8px var(--accent-glow), 0 0 72px -8px var(--accent-glow) !important;
+}
+
+/* TOTD: glowing left border */
+.totd-card {
+  border-left: 3px solid var(--accent) !important;
+  box-shadow: -8px 0 32px -10px var(--accent-glow), inset 4px 0 24px -16px var(--accent-glow) !important;
+}
+
+/* Filter active: subtle glow */
+.filter-btn.active {
+  box-shadow: 0 0 16px -3px rgba(255,255,255,0.1) !important;
+}
+
+/* Search: stronger glow ring on focus */
+#event-search:focus {
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 56px -8px var(--accent-glow) !important;
+}
+
+/* Staggered card entrance (JS sets --card-i on each .category-card) */
+.category-card[data-aura-reveal] {
+  transition-delay: calc(var(--card-i, 0) * 40ms) !important;
+}

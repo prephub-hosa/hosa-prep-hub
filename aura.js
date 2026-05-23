@@ -22,6 +22,12 @@
       }
     });
 
+    // Stagger category cards specifically with --card-i CSS variable
+    document.querySelectorAll('.category-card').forEach(function(el, i) {
+      el.style.setProperty('--card-i', i);
+      el.style.transitionDelay = Math.min(i * 40, 480) + 'ms';
+    });
+
     // Reveal on scroll
     if ('IntersectionObserver' in window) {
       var obs = new IntersectionObserver(function(entries) {
