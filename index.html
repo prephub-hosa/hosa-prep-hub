@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
 <script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
@@ -1363,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=8">
+<link rel="stylesheet" href="aura.css?v=9">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -1501,16 +1502,6 @@ body { display: flex; min-height: 100vh; overflow-x: hidden; }
 }
 #event-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,40,31,0.1); }
 .topbar-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-#topbar-level {
-  background: var(--highlight);
-  border: 1px solid var(--rule);
-  padding: 4px 12px;
-  border-radius: 100px;
-  font-family: 'Source Serif 4', serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-}
 
 /* Jump back in cards */
 .jbi-row {
@@ -2177,7 +2168,7 @@ footer { display: none; }
     </button>
   </div>
   <div class="sb-footer">
-    <button id="theme-toggle" style="background:none;border:1px solid var(--rule);color:var(--ink-soft);padding:8px 14px;border-radius:8px;font-family:'Source Serif 4',serif;font-size:13px;cursor:pointer;width:100%;text-align:left;">🌙 Dark mode</button>
+    <button id="theme-toggle">🌙 Dark mode</button>
   </div>
 </nav>
 <div id="sb-overlay"></div>
@@ -2192,12 +2183,12 @@ footer { display: none; }
       <input type="search" id="event-search" placeholder="Search events — try &ldquo;cardio&rdquo; or &ldquo;pharm&rdquo;&hellip;" autocomplete="off" spellcheck="false">
     </div>
     <div class="topbar-right">
-      <div id="topbar-level" style="display:none">Lv <span id="tb-level">1</span></div>
-      <div class="user-pill" style="display:none;" id="topbar-user-pill">
-        <span class="user-email" id="user-email" style="font-size:12px;"></span>
-        <button class="btn-signout" id="btn-signout" style="font-size:12px;padding:4px 10px;">Sign Out</button>
+      <div id="topbar-level">Lv <span id="tb-level">1</span></div>
+      <div class="user-pill" id="topbar-user-pill">
+        <span class="user-email" id="user-email"></span>
+        <button class="btn-signout" id="btn-signout">Sign Out</button>
       </div>
-      <button id="theme-btn" style="background:none;border:1px solid var(--rule);color:var(--ink-soft);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;" title="Toggle theme">🌙</button>
+      <button id="theme-btn" title="Toggle theme">🌙</button>
     </div>
   </header>
 
@@ -2265,7 +2256,7 @@ footer { display: none; }
 
       <!-- Jump back in — shown only when user has progress -->
       <section id="jbi-section" style="display:none;margin-bottom:48px;">
-        <h2 class="page-title">Jump back in</h2>
+        <h2 class="section-title">Jump back in</h2>
         <div id="jbi-row" class="jbi-row"></div>
       </section>
 
@@ -2390,7 +2381,6 @@ footer { display: none; }
       <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
 
       <div class="categories">
-    <div class="categories">
 
       <a href="medical-terminology.html" class="category-card" data-group="basic">
         <div class="card-number">01</div>
@@ -3544,9 +3534,8 @@ footer { display: none; }
         <div class="card-progress-wrap" id="cp-global-health"><div class="cp-bar-track"><div class="cp-bar-fill"></div></div><div class="cp-label"></div></div>
       </a>
 
-    </div>
-    <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
-      </div>
+      </div><!-- /categories -->
+
     </div><!-- /tab-inner -->
     </div><!-- /tab-events -->
 
@@ -3572,8 +3561,8 @@ footer { display: none; }
         </div>
       </div>
 
-      <div id="library-empty" style="padding:48px 0;text-align:center;color:var(--ink-soft);font-family:'Fraunces',serif;font-size:20px;font-weight:400;display:none;">
-        Nothing here yet — <a href="#" data-tab="events" style="color:var(--accent)">start studying an event</a> to build your library.
+      <div id="library-empty" style="display:none;">
+        Nothing here yet — <a href="#" data-tab="events">start studying an event</a> to build your library.
       </div>
       <div id="library-grid" class="library-grid"></div>
       <div id="lib-achievements">
@@ -3667,7 +3656,7 @@ function showGuestMode() {
     signoutBtn.onclick = () => { authGateEl.style.display = 'flex'; };
   }
   const pill = document.getElementById('topbar-user-pill');
-  if (pill) pill.style.display = 'none';
+  if (pill) pill.classList.remove('visible');
 }
 
 auth.onAuthStateChanged(user => {
@@ -3675,7 +3664,7 @@ auth.onAuthStateChanged(user => {
   if (user) {
     if (userEmailEl) userEmailEl.textContent = user.email;
     const pill = document.getElementById('topbar-user-pill');
-    if (pill) pill.style.display = 'flex';
+    if (pill) pill.classList.add('visible');
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
     try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
     if (authGateEl) authGateEl.style.display = 'none';
@@ -4236,12 +4225,15 @@ function friendlyError(code) {
 
 <script id="app-tabs-js">
 (function(){
-  // Tab switching — syncs sidebar, bottom nav, and panes
+  // Tab switching — syncs sidebar, bottom nav, panes, and entrance animation
   function switchTab(id) {
-    document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active', 'tab-entering'); });
     document.querySelectorAll('[data-tab]').forEach(function(b){ b.classList.remove('active'); });
     var pane = document.getElementById('tab-' + id);
-    if (pane) pane.classList.add('active');
+    if (pane) {
+      pane.classList.add('active');
+      requestAnimationFrame(function(){ pane.classList.add('tab-entering'); });
+    }
     document.querySelectorAll('[data-tab="' + id + '"]').forEach(function(b){ b.classList.add('active'); });
     try { localStorage.setItem('hosa-tab', id); } catch(e) {}
   }
@@ -4489,7 +4481,7 @@ function friendlyError(code) {
       var tbLevel = document.getElementById('tb-level');
       var tbLevelWrap = document.getElementById('topbar-level');
       if (tbLevel) tbLevel.textContent = lvl;
-      if (tbLevelWrap) tbLevelWrap.style.display = 'flex';
+      if (tbLevelWrap) tbLevelWrap.classList.add('visible');
     }
 
     // ── Jump back in ──
@@ -4583,8 +4575,8 @@ function friendlyError(code) {
     var eventsInner = document.querySelector('#tab-events .tab-inner');
     if (eventsInner && studied.length > 0) {
       var yourEvSection = document.createElement('div');
-      yourEvSection.style.marginBottom = '36px';
-      yourEvSection.innerHTML = '<h2 class="section-title" style="margin-bottom:14px;">Continue studying</h2>' +
+      yourEvSection.id = 'your-events-section';
+      yourEvSection.innerHTML = '<h2 class="section-title">Continue studying</h2>' +
         '<div id="your-events-row" class="jbi-row" style="margin-bottom:0"></div>';
       // Insert before the filter bar
       var filterBar = eventsInner.querySelector('.event-search-wrap');

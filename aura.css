@@ -1191,6 +1191,110 @@ nav.tabs button.active::after { display: none !important; }
 /* Hide A/H/G/E keyboard-hint row when only 2 buttons shown */
 .rating-btns-simple + .rating-label-row { display: none !important; }
 
+/* ── Tab content fade-in animation ─────────────────────────── */
+@keyframes _tab-in {
+  from { opacity: 0.5; transform: translateY(10px); }
+  to   { opacity: 1;   transform: translateY(0);    }
+}
+.tab-pane.tab-entering { animation: _tab-in 0.2s cubic-bezier(0.2, 0, 0, 1); }
+
+/* ── Universal card lift on hover ───────────────────────────── */
+.jbi-card, .lib-card, .recent-item, .category-card {
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.2s !important;
+}
+.jbi-card:hover, .lib-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px -8px rgba(0,0,0,0.28), 0 0 0 1px var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+.recent-item:hover {
+  transform: translateX(3px) !important;
+  border-color: var(--accent) !important;
+}
+
+/* ── Topbar CSS classes (replaces inline styles) ───────────── */
+#topbar-level {
+  background: var(--highlight);
+  border: 1px solid var(--rule);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  display: none;
+  align-items: center;
+}
+#topbar-level.visible { display: flex; }
+#topbar-user-pill { display: none; }
+#topbar-user-pill.visible { display: flex; align-items: center; gap: 14px; }
+#theme-btn {
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+#theme-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+#theme-toggle {
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: border-color 0.15s, color 0.15s;
+}
+#theme-toggle:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+/* ── Better empty library state ─────────────────────────────── */
+#library-empty {
+  padding: 64px 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+#library-empty::before {
+  content: '📚';
+  display: block;
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+#library-empty a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(168,40,31,0.3); }
+#library-empty a:hover { border-bottom-color: var(--accent); }
+
+/* ── Section title consistency ───────────────────────────────── */
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+
+/* ── "Your events" section separator ────────────────────────── */
+#your-events-section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--rule);
+}
+
 @media (max-width: 640px) {
   nav.tabs {
     grid-template-columns: repeat(3, 1fr) !important;
@@ -1205,4 +1309,3 @@ nav.tabs button.active::after { display: none !important; }
   }
   nav.tabs button::before { font-size: 22px; }
 }
-
