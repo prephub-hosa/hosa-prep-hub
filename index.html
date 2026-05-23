@@ -1363,7 +1363,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=7">
+<link rel="stylesheet" href="aura.css?v=8">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -1604,6 +1604,130 @@ body { display: flex; min-height: 100vh; overflow-x: hidden; }
 #tab-about .how-item p { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
 #tab-about .how-num { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
 #tab-about .how-detail { font-size: 12px; color: var(--ink-faint); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); letter-spacing: 0.01em; }
+
+/* Home stats hero */
+#home-stats-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+  padding: 18px 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+}
+#home-stats-bar.visible { display: flex; }
+.hs-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 0 0;
+  border-right: 1px solid var(--rule);
+}
+.hs-stat:last-child { border-right: none; padding-right: 0; }
+.hs-stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1;
+}
+.hs-stat-label { font-size: 12px; color: var(--ink-soft); line-height: 1.3; }
+.hs-streak { color: #f97316; }
+.hs-xp-bar-wrap {
+  flex: 1;
+  min-width: 140px;
+}
+.hs-xp-label { font-size: 11px; color: var(--ink-faint); margin-bottom: 6px; letter-spacing: 0.04em; }
+.hs-xp-track { height: 5px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+.hs-xp-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.6s ease; }
+
+/* Library stats header */
+#lib-stats-header {
+  margin-bottom: 32px;
+  padding: 24px 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  display: none;
+}
+#lib-stats-header.visible { display: block; }
+.lib-level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.lib-level-badge {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+.lib-level-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.lib-xp-track { height: 6px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+.lib-xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #f97316); border-radius: 100px; transition: width 0.7s ease; }
+.lib-xp-caption { font-size: 11px; color: var(--ink-faint); margin-top: 6px; }
+.lib-stat-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.lib-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--highlight);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+}
+.lib-pill-streak { background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.3); color: #f97316; }
+.lib-pill-mastered { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.3); color: #4ade80; }
+
+/* Mobile bottom navigation */
+#bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--rule);
+  z-index: 400;
+  align-items: stretch;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  backdrop-filter: blur(8px);
+}
+.bn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.12s;
+  padding: 0;
+}
+.bn-item svg { flex-shrink: 0; }
+.bn-item.active { color: var(--accent); }
+.bn-item.active svg { stroke: var(--accent); }
+@media (max-width: 768px) {
+  #bottom-nav { display: flex; }
+  .tab-inner { padding-bottom: 80px; }
+}
 
 /* Library grid */
 .library-grid {
@@ -2083,6 +2207,32 @@ footer { display: none; }
     <div class="tab-pane active" id="tab-home">
     <div class="tab-inner">
 
+      <!-- Stats hero — shown when user has XP -->
+      <div id="home-stats-bar">
+        <div class="hs-stat">
+          <div>
+            <div class="hs-stat-num" id="hs-level">1</div>
+            <div class="hs-stat-label">Level</div>
+          </div>
+        </div>
+        <div class="hs-stat">
+          <div>
+            <div class="hs-stat-num" id="hs-mastered">0</div>
+            <div class="hs-stat-label">Cards mastered</div>
+          </div>
+        </div>
+        <div class="hs-stat" id="hs-streak-stat" style="display:none">
+          <div>
+            <div class="hs-stat-num hs-streak" id="hs-streak">0</div>
+            <div class="hs-stat-label">Day streak 🔥</div>
+          </div>
+        </div>
+        <div class="hs-xp-bar-wrap">
+          <div class="hs-xp-label" id="hs-xp-label">XP to next level</div>
+          <div class="hs-xp-track"><div class="hs-xp-fill" id="hs-xp-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
       <!-- Jump back in — shown only when user has progress -->
       <section id="jbi-section" style="display:none;margin-bottom:48px;">
         <h2 class="page-title">Jump back in</h2>
@@ -2167,7 +2317,7 @@ footer { display: none; }
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
             <div style="font-size:22px;margin-bottom:10px;">🃏</div>
             <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:6px;">Flashcards</div>
-            <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">SM-2 spaced repetition. Rate each card Again / Hard / Good / Easy and the algorithm schedules your reviews automatically.</div>
+            <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">SM-2 spaced repetition. Rate each card Know it or Don't know it — the algorithm automatically schedules when to review each term again.</div>
           </div>
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
             <div style="font-size:22px;margin-bottom:10px;">📝</div>
@@ -3374,6 +3524,24 @@ footer { display: none; }
     <div class="tab-pane" id="tab-library">
     <div class="tab-inner">
       <h1 class="page-title">Your Library</h1>
+
+      <!-- Stats header — shown when user has XP -->
+      <div id="lib-stats-header">
+        <div class="lib-level-row">
+          <div>
+            <div class="lib-level-badge" id="lib-level-badge">Level 1</div>
+            <div class="lib-level-sub" id="lib-level-sub">Keep studying to level up</div>
+          </div>
+        </div>
+        <div class="lib-xp-track"><div class="lib-xp-fill" id="lib-xp-fill" style="width:0%"></div></div>
+        <div class="lib-xp-caption" id="lib-xp-caption"></div>
+        <div class="lib-stat-pills">
+          <span class="lib-pill lib-pill-mastered" id="lib-mastered-pill">0 cards mastered</span>
+          <span class="lib-pill lib-pill-streak" id="lib-streak-pill" style="display:none">🔥 0-day streak</span>
+          <span class="lib-pill" id="lib-events-pill">0 events studied</span>
+        </div>
+      </div>
+
       <div id="library-empty" style="padding:48px 0;text-align:center;color:var(--ink-soft);font-family:'Fraunces',serif;font-size:20px;font-weight:400;display:none;">
         Nothing here yet — <a href="#" data-tab="events" style="color:var(--accent)">start studying an event</a> to build your library.
       </div>
@@ -3423,7 +3591,7 @@ footer { display: none; }
         <div class="how-item">
           <div class="how-num how-num-1">i. Learn</div>
           <h4>Flashcards</h4>
-          <p>Spaced-repetition cards with a 4-point rating (Again / Hard / Good / Easy) so the algorithm knows exactly how well you know each term and when to show it again.</p>
+          <p>Spaced-repetition flashcards. Rate each card <em>Know it</em> or <em>Don't know it</em> — the algorithm schedules when to show it again, surfacing weak cards more often until they stick.</p>
           <div class="how-detail">Smart Review · SM-2 algorithm · 20 cards/session</div>
         </div>
         <div class="how-item">
@@ -4038,10 +4206,10 @@ function friendlyError(code) {
 
 <script id="app-tabs-js">
 (function(){
-  // Tab switching
+  // Tab switching — syncs sidebar, bottom nav, and panes
   function switchTab(id) {
     document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
-    document.querySelectorAll('.sb-item[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('[data-tab]').forEach(function(b){ b.classList.remove('active'); });
     var pane = document.getElementById('tab-' + id);
     if (pane) pane.classList.add('active');
     document.querySelectorAll('[data-tab="' + id + '"]').forEach(function(b){ b.classList.add('active'); });
@@ -4052,7 +4220,7 @@ function friendlyError(code) {
     el.addEventListener('click', function(){ switchTab(el.getAttribute('data-tab')); });
   });
 
-  // Restore last tab
+  // Restore last tab (bottom nav starts with home active by default in HTML)
   try {
     var saved = localStorage.getItem('hosa-tab');
     if (saved) switchTab(saved);
@@ -4182,8 +4350,68 @@ function friendlyError(code) {
     } catch(e){}
   });
 
+  // XP / level helpers
+  function xpLevel(xp) { return Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1; }
+  function xpForLevel(lvl) { return (lvl - 1) * (lvl - 1) * 50; }
+
+  // Read streak from localStorage
+  function getBestStreak() {
+    var best = 0;
+    try {
+      var SKIP = new Set(['xp','achievements','theme','onboard-v1','intro-v1','tab','theme','guest-id']);
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('hosa::') !== 0) continue;
+        var slug = k.slice(6);
+        if (!slug || SKIP.has(slug) || slug.startsWith('daily')) continue;
+        try {
+          var d = JSON.parse(localStorage.getItem(k) || '{}');
+          if ((d.streak || 0) > best) best = d.streak;
+        } catch(e) {}
+      }
+    } catch(e) {}
+    return best;
+  }
+
   if (studied.length > 0) {
-    // Jump back in
+    var totalMastered = studied.reduce(function(s, ev){ return s + ev.mastered; }, 0);
+    var xp = 0;
+    try { xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10); } catch(e) {}
+    var lvl = xpLevel(xp);
+    var streak = getBestStreak();
+
+    // ── Home stats bar ──
+    var statsBar = document.getElementById('home-stats-bar');
+    if (statsBar && xp > 0) {
+      statsBar.classList.add('visible');
+      var hsLevel = document.getElementById('hs-level');
+      var hsMastered = document.getElementById('hs-mastered');
+      var hsStreak = document.getElementById('hs-streak');
+      var hsStreakStat = document.getElementById('hs-streak-stat');
+      var hsXpFill = document.getElementById('hs-xp-fill');
+      var hsXpLabel = document.getElementById('hs-xp-label');
+      if (hsLevel) hsLevel.textContent = lvl;
+      if (hsMastered) hsMastered.textContent = totalMastered.toLocaleString();
+      if (streak > 0 && hsStreak && hsStreakStat) {
+        hsStreak.textContent = streak;
+        hsStreakStat.style.display = 'flex';
+      }
+      var xpThis = xp - xpForLevel(lvl);
+      var xpNext = xpForLevel(lvl + 1) - xpForLevel(lvl);
+      var pctXp = Math.min(100, Math.round(xpThis / xpNext * 100));
+      if (hsXpFill) setTimeout(function(){ hsXpFill.style.width = pctXp + '%'; }, 100);
+      if (hsXpLabel) hsXpLabel.textContent = xp.toLocaleString() + ' XP · ' + (xpForLevel(lvl + 1) - xp) + ' to Level ' + (lvl + 1);
+    }
+
+    // ── Topbar level badge ──
+    if (xp > 0) {
+      var tbLevel = document.getElementById('tb-level');
+      var tbLevelWrap = document.getElementById('topbar-level');
+      if (tbLevel) tbLevel.textContent = lvl;
+      if (tbLevelWrap) tbLevelWrap.style.display = 'flex';
+    }
+
+    // ── Jump back in ──
     var jbiSection = document.getElementById('jbi-section');
     var jbiRow = document.getElementById('jbi-row');
     if (jbiSection && jbiRow) {
@@ -4198,13 +4426,13 @@ function friendlyError(code) {
           '<div class="jbi-card-eyebrow">HOSA Event</div>' +
           '<div class="jbi-card-title">' + ev.name + '</div>' +
           '<div class="jbi-progress-track"><div class="jbi-progress-fill" style="width:' + pct + '%"></div></div>' +
-          '<div class="jbi-progress-label">' + ev.mastered + ' mastered · ' + ev.studied + ' studied</div>' +
+          '<div class="jbi-progress-label">' + ev.mastered + ' mastered · ' + ev.studied + ' seen</div>' +
           '<div class="jbi-cta">Continue →</div>';
         jbiRow.appendChild(card);
       });
     }
 
-    // Recents
+    // ── Recents ──
     if (studied.length > 4) {
       var recentsSection = document.getElementById('recents-section');
       var recentsGrid = document.getElementById('recents-grid');
@@ -4222,7 +4450,36 @@ function friendlyError(code) {
       }
     }
 
-    // Library tab
+    // ── Library stats header ──
+    var libStatsHeader = document.getElementById('lib-stats-header');
+    if (libStatsHeader) {
+      libStatsHeader.classList.add('visible');
+      var libLevelBadge = document.getElementById('lib-level-badge');
+      var libLevelSub = document.getElementById('lib-level-sub');
+      var libXpFill = document.getElementById('lib-xp-fill');
+      var libXpCaption = document.getElementById('lib-xp-caption');
+      var libMasteredPill = document.getElementById('lib-mastered-pill');
+      var libStreakPill = document.getElementById('lib-streak-pill');
+      var libEventsPill = document.getElementById('lib-events-pill');
+      if (libLevelBadge) libLevelBadge.textContent = 'Level ' + lvl;
+      if (libLevelSub) {
+        var xpToNext = xpForLevel(lvl + 1) - xp;
+        libLevelSub.textContent = xp.toLocaleString() + ' XP total · ' + xpToNext + ' XP to Level ' + (lvl + 1);
+      }
+      var xpThis2 = xp - xpForLevel(lvl);
+      var xpNext2 = xpForLevel(lvl + 1) - xpForLevel(lvl);
+      var pctXp2 = Math.min(100, Math.round(xpThis2 / xpNext2 * 100));
+      if (libXpFill) setTimeout(function(){ libXpFill.style.width = pctXp2 + '%'; }, 200);
+      if (libXpCaption) libXpCaption.textContent = pctXp2 + '% to Level ' + (lvl + 1);
+      if (libMasteredPill) libMasteredPill.textContent = totalMastered.toLocaleString() + ' cards mastered';
+      if (streak > 0 && libStreakPill) {
+        libStreakPill.style.display = 'inline-flex';
+        libStreakPill.textContent = '🔥 ' + streak + '-day streak';
+      }
+      if (libEventsPill) libEventsPill.textContent = studied.length + ' event' + (studied.length === 1 ? '' : 's') + ' studied';
+    }
+
+    // ── Library grid ──
     var libGrid = document.getElementById('library-grid');
     var libEmpty = document.getElementById('library-empty');
     if (libGrid) {
@@ -4236,22 +4493,39 @@ function friendlyError(code) {
         card.innerHTML =
           '<div class="lib-card-title">' + ev.name + '</div>' +
           '<div class="lib-progress-track"><div class="lib-progress-fill" style="width:' + pct + '%"></div></div>' +
-          '<div class="lib-meta">' + ev.mastered + ' mastered · ' + ev.studied + ' studied · ' + pct + '% complete</div>';
+          '<div class="lib-meta">' + ev.mastered + ' mastered · ' + ev.studied + ' seen · ' + pct + '% done</div>';
         libGrid.appendChild(card);
       });
     }
 
-    // Topbar level badge
-    try {
-      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
-      if (xp > 0) {
-        var lvl = Math.floor(Math.sqrt(xp / 50)) + 1;
-        var tbLevel = document.getElementById('tb-level');
-        var tbLevelWrap = document.getElementById('topbar-level');
-        if (tbLevel) tbLevel.textContent = lvl;
-        if (tbLevelWrap) tbLevelWrap.style.display = 'flex';
+    // ── Events tab: "Your Events" section ──
+    var eventsInner = document.querySelector('#tab-events .tab-inner');
+    if (eventsInner && studied.length > 0) {
+      var yourEvSection = document.createElement('div');
+      yourEvSection.style.marginBottom = '36px';
+      yourEvSection.innerHTML = '<h2 class="section-title" style="margin-bottom:14px;">Continue studying</h2>' +
+        '<div id="your-events-row" class="jbi-row" style="margin-bottom:0"></div>';
+      // Insert before the filter bar
+      var filterBar = eventsInner.querySelector('.event-search-wrap');
+      if (filterBar) eventsInner.insertBefore(yourEvSection, filterBar);
+      var yourRow = document.getElementById('your-events-row');
+      if (yourRow) {
+        studied.slice(0, 4).forEach(function(ev){
+          var pct = Math.min(100, Math.round(ev.mastered / Math.max(ev.studied, 1) * 100));
+          var card = document.createElement('a');
+          card.className = 'jbi-card';
+          card.href = ev.slug + '.html';
+          card.innerHTML =
+            '<div class="jbi-card-eyebrow">In progress</div>' +
+            '<div class="jbi-card-title">' + ev.name + '</div>' +
+            '<div class="jbi-progress-track"><div class="jbi-progress-fill" style="width:' + pct + '%"></div></div>' +
+            '<div class="jbi-progress-label">' + ev.mastered + ' mastered · ' + pct + '%</div>' +
+            '<div class="jbi-cta">Keep going →</div>';
+          yourRow.appendChild(card);
+        });
       }
-    } catch(e){}
+    }
+
   } else {
     // New user — show library empty state
     var emptyEl = document.getElementById('library-empty');
@@ -4273,5 +4547,25 @@ function friendlyError(code) {
 
 <script src="leaderboard.js"></script>
 <script src="engage.js" defer></script>
+
+<!-- ── Mobile bottom navigation ── -->
+<nav id="bottom-nav" aria-label="Main navigation">
+  <button class="bn-item active" data-tab="home">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </button>
+  <button class="bn-item" data-tab="events">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Events
+  </button>
+  <button class="bn-item" data-tab="library">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    Library
+  </button>
+  <button class="bn-item" data-tab="about">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Guide
+  </button>
+</nav>
 </body>
 </html>
