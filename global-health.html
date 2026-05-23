@@ -2224,13 +2224,24 @@ let _sessHard = 0;
 function rateCard(q) {
   const card = state.flash.deck[state.flash.index];
   if (!card) return;
-  const correct = q >= 3;
   state.progress.studied.add(card.term);
-  if (correct) state.progress.mastered.add(card.term);
-  else { state.progress.mastered.delete(card.term); if (!state.progress.lastMissed) state.progress.lastMissed = []; if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term); }
+  // Good/Easy → mastered; Again → remove from mastered; Hard → no change
+  if (q >= 4) state.progress.mastered.add(card.term);
+  else if (q === 0) { state.progress.mastered.delete(card.term); if (!state.progress.lastMissed) state.progress.lastMissed = []; if (!state.progress.lastMissed.includes(card.term)) state.progress.lastMissed.push(card.term); }
   try{gtag('event','flashcard_rated',{event_category:DB_PATH,quality:q});}catch(e){}
   updateSR(card.term, q);
-  showNextReview((state.progress.srData||{})[card.term]?.interval||1);
+  // Re-queue "Again" cards back into this session (max 2 requeues per card)
+  let _recycled = false;
+  if (q === 0) {
+    if (!window._srRecycles) window._srRecycles = {};
+    window._srRecycles[card.term] = (window._srRecycles[card.term] || 0) + 1;
+    if (window._srRecycles[card.term] <= 2) {
+      const _ins = Math.min(state.flash.deck.length, state.flash.index + 4);
+      state.flash.deck.splice(_ins, 0, card);
+      _recycled = true;
+    }
+  }
+  showNextReview((state.progress.srData||{})[card.term]?.interval||1, _recycled);
   updateStreak();
   recordStudyDate();
   saveProgress();
@@ -3096,30 +3107,63 @@ function getSRLevel(term) {
   return (state.progress.srLevels && state.progress.srLevels[term]) || 0;
 }
 
-// Core SR update — call instead of bumpSRLevel / setSRLevel
+// Core SR update — SM-2 v2 with proper ease bounds, calibrated ratings,
+// fuzz factor, and lapse tracking.
+// q: 0=Again, 2=Hard, 4=Good, 5=Easy  (or boolean for quiz compatibility)
 function updateSR(term, qOrBool) {
   const q = typeof qOrBool === 'boolean' ? (qOrBool ? 4 : 0) : qOrBool;
-  const correct = q >= 3;
   if (!state.progress.srData) state.progress.srData = {};
   const d = getSRData(term);
-  if (correct) {
-    d.reps = (d.reps || 0) + 1;
-    // Ease adjusts by quality: q=4 normal, q=5 boost, q=2 would be < 3 so not here
-    d.ease = Math.max(1.3, (d.ease || 2.5) + 0.1 - (5 - q) * 0.08);
-    if      (d.reps === 1) d.interval = q === 5 ? 3 : 1;
-    else if (d.reps === 2) d.interval = q === 5 ? 6 : 4;
-    else                   d.interval = Math.round((d.interval || 1) * d.ease);
+  // Clamp ease to [1.3, 2.5] — old data may have no upper bound
+  const ease = Math.min(2.5, Math.max(1.3, d.ease || 2.5));
+  const reps = d.reps || 0;
+  const interval = d.interval || 1;
+  let ni, ne, nr; // new interval, ease, reps
+
+  if (q === 0) {
+    // Again: lapse — card goes back to start, ease penalty
+    nr = 0;
+    ne = Math.max(1.3, ease - 0.20);
+    ni = 1;
+  } else if (q === 2) {
+    // Hard: correct but slow — small interval growth, ease drops slightly
+    nr = reps + 1;
+    ne = Math.max(1.3, ease - 0.15);
+    ni = reps === 0 ? 1 : Math.max(1, Math.round(interval * 1.2));
+  } else if (q === 4) {
+    // Good: standard SM-2 — ease unchanged, interval by formula
+    nr = reps + 1;
+    ne = ease;
+    if      (nr === 1) ni = 1;
+    else if (nr === 2) ni = 4;
+    else               ni = Math.max(nr, Math.round(interval * ease));
   } else {
-    d.reps     = 0;
-    d.ease     = Math.max(1.3, (d.ease || 2.5) - 0.2);
-    d.interval = 1;
+    // Easy: fast track — ease bonus, larger initial intervals
+    nr = reps + 1;
+    ne = Math.min(2.5, ease + 0.15);
+    if      (nr === 1) ni = 3;
+    else if (nr === 2) ni = 7;
+    else               ni = Math.max(nr, Math.round(interval * ease * 1.3));
   }
+
+  // Fuzz: ±10% on intervals > 2 days to spread out review load
+  if (ni > 2) {
+    const fuzz = Math.max(1, Math.floor(ni * 0.10));
+    ni += Math.floor(Math.random() * (fuzz * 2 + 1)) - fuzz;
+    ni  = Math.max(1, ni);
+  }
+
   const due = new Date();
-  due.setDate(due.getDate() + d.interval);
-  d.due = due.toISOString().slice(0, 10);
-  state.progress.srData[term] = d;
+  due.setDate(due.getDate() + ni);
+  state.progress.srData[term] = {
+    interval: ni,
+    ease:     ne,
+    reps:     nr,
+    due:      due.toISOString().slice(0, 10),
+    lapses:   (d.lapses || 0) + (q === 0 && reps >= 3 ? 1 : 0),
+  };
   if (!state.progress.srLevels) state.progress.srLevels = {};
-  state.progress.srLevels[term] = Math.min(5, d.reps);
+  state.progress.srLevels[term] = Math.min(5, nr);
 }
 
 // "Already know this" — schedules card 30 days out
@@ -3153,6 +3197,7 @@ function migrateSRData() {
 
 // Override buildSmartDeck — due-date scheduling replaces weight-based picks
 function buildSmartDeck(pool) {
+  window._srRecycles = {}; // reset per-session requeue counts
   if (!state.flash.srEnabled || pool.length === 0)
     return shuffle(pool).slice(0, Math.min(SESSION_SIZE, pool.length));
 
@@ -3180,15 +3225,18 @@ function buildSmartDeck(pool) {
   return shuffle(session).slice(0, SESSION_SIZE);
 }
 
-// Show a brief "next review" hint after rating a card
-function showNextReview(interval) {
+// Show a brief "next review" hint after rating a card.
+// Pass recycled=true when the card was re-queued into this session.
+function showNextReview(interval, recycled) {
   const el = document.getElementById('next-review-badge');
   if (!el) return;
-  el.textContent = interval <= 1 ? '↻ Review again tomorrow'
-    : interval <= 3              ? `↻ See you in ${interval} days`
-    : interval <= 10             ? `↻ Next review in ${interval} days`
-    : interval <= 20             ? `↻ Well spaced — back in ${interval} days`
-    :                              `↻ Mastered! Returning in ${interval} days`;
+  el.textContent = recycled         ? '↻ Showing again this session'
+    : interval <= 1                 ? '↻ Due again tomorrow'
+    : interval <= 3                 ? `↻ Back in ${interval} days`
+    : interval <= 7                 ? `↻ Scheduled — ${interval} days`
+    : interval <= 14                ? `↻ Next review in ${interval} days`
+    : interval <= 30                ? `↻ Well spaced — ${interval} days`
+    :                                 `↻ Mastered — ${interval} days out`;
   el.style.opacity = '1';
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
