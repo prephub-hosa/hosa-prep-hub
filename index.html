@@ -1359,6 +1359,285 @@
 </style>
 <link rel="stylesheet" href="aura.css?v=5">
 <script defer src="aura.js?v=5"></script>
+<style id="app-shell-css">
+/* ── App shell layout ── */
+body { display: flex; min-height: 100vh; overflow-x: hidden; }
+
+#sidebar {
+  width: 240px;
+  min-height: 100vh;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  background: var(--bg-card);
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  z-index: 300;
+  overflow-y: auto;
+}
+#app-shell {
+  margin-left: 240px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+#topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 32px;
+  height: 60px;
+  backdrop-filter: blur(6px);
+}
+#app-content {
+  padding: 40px 48px 80px;
+  max-width: 1200px;
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Sidebar items */
+.sb-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+.sb-brand span { color: var(--accent); font-style: normal; margin-right: 6px; }
+.sb-section { padding: 8px 0; }
+.sb-label {
+  font-family: 'Source Serif 4', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 16px 20px 4px;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: calc(100% - 16px);
+  text-align: left;
+  border-radius: 6px;
+  margin: 1px 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.sb-item:hover { background: var(--highlight); color: var(--ink); }
+.sb-item.active { background: var(--highlight); color: var(--accent); font-weight: 600; }
+.sb-item svg { flex-shrink: 0; opacity: 0.7; }
+.sb-item.active svg { opacity: 1; }
+.sb-footer {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid var(--rule);
+}
+
+/* Top bar */
+#hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 4px 8px;
+  flex-shrink: 0;
+  align-items: center;
+}
+.topbar-search-wrap {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+.topbar-search-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+#event-search {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+#event-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,40,31,0.1); }
+.topbar-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+#topbar-level {
+  background: var(--highlight);
+  border: 1px solid var(--rule);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* Jump back in cards */
+.jbi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.jbi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.jbi-card:hover { border-color: var(--accent); box-shadow: 0 4px 24px -8px rgba(168,40,31,0.25); }
+.jbi-card-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.jbi-card-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 400; letter-spacing: -0.02em; }
+.jbi-progress-track { height: 5px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+.jbi-progress-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.4s ease; }
+.jbi-progress-label { font-size: 12px; color: var(--ink-soft); }
+.jbi-cta { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: auto; }
+
+/* Recents grid */
+.recents-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 48px;
+}
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.12s;
+}
+.recent-item:hover { border-color: var(--accent); }
+.recent-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--highlight);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.recent-name { font-size: 14px; font-weight: 500; }
+.recent-meta { font-size: 12px; color: var(--ink-soft); }
+
+/* Page title */
+.page-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  margin-bottom: 24px;
+}
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+/* Events tab */
+#tab-events .categories {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* Library grid */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.lib-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 18px;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s;
+}
+.lib-card:hover { border-color: var(--accent); }
+.lib-card-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 400; }
+.lib-progress-track { height: 4px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+.lib-progress-fill { height: 100%; background: var(--accent); border-radius: 100px; }
+.lib-meta { font-size: 12px; color: var(--ink-soft); }
+
+/* Fresh finds (shown when no history) */
+#fresh-finds { display: none; }
+body:not(.user-active) #fresh-finds { display: block; }
+body.user-active #fresh-finds { display: none; }
+
+/* Achievements compact in library */
+#lib-achievements { margin-top: 48px; }
+
+/* Mobile */
+#sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 299; }
+@media (max-width: 768px) {
+  #sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
+  #sidebar.open { transform: translateX(0); }
+  #sb-overlay.show { display: block; }
+  #app-shell { margin-left: 0; }
+  #hamburger { display: flex; }
+  #topbar { padding: 0 16px; }
+  #app-content { padding: 24px 20px 60px; }
+  .jbi-row { grid-template-columns: 1fr; }
+  .recents-grid { grid-template-columns: 1fr; }
+}
+/* Override old header/main/footer that no longer exist */
+header:not(#topbar) { display: none; }
+footer { display: none; }
+#guest-banner { display: none !important; }
+</style>
 </head>
 <body>
 
@@ -1613,7 +1892,6 @@
     </div>
   </div>
 </div>
-
 <div id="auth-loading" style="display:none">Loading…</div>
 
 <div id="auth-gate">
@@ -1661,262 +1939,151 @@
   </div>
 </div>
 
-<div id="main-content">
-
-<header>
-  <div class="brand">HOSA Prep Hub</div>
-  <nav class="header-nav">
-    <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;">Events</a>
-    <a href="#how-section" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'});return false;">How it works</a>
-  </nav>
-  <div class="user-pill">
-    <span class="user-email" id="user-email"></span>
-    <button class="btn-signout" id="btn-signout">Sign Out</button>
+<!-- ═══════════════════════════════ APP SHELL ═══════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sb-brand"><span>✢</span>HOSA Prep Hub</div>
+  <div class="sb-section">
+    <button class="sb-item active" data-tab="home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="sb-item" data-tab="library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Your Library
+    </button>
   </div>
-</header>
+  <div class="sb-label">Events</div>
+  <div class="sb-section">
+    <button class="sb-item" data-tab="events">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Browse All Events
+    </button>
+  </div>
+  <div class="sb-label">Info</div>
+  <div class="sb-section">
+    <button class="sb-item" data-tab="about">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      How HOSA Works
+    </button>
+  </div>
+  <div class="sb-footer">
+    <button id="theme-toggle" style="background:none;border:1px solid var(--rule);color:var(--ink-soft);padding:8px 14px;border-radius:8px;font-family:'Source Serif 4',serif;font-size:13px;cursor:pointer;width:100%;text-align:left;">🌙 Dark mode</button>
+  </div>
+</nav>
+<div id="sb-overlay"></div>
 
-<div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
-  ⚠ You're browsing as a <strong>guest</strong> — your progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
-  <a href="#" id="guest-banner-signin" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
-</div>
-
-<main>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <div class="eyebrow">60 HOSA events &middot; Free &middot; No signup required</div>
-      <h1 class="hero-title">Master every <em>HOSA event</em><br>one card at a time.</h1>
-      <p class="hero-sub">Spaced repetition flashcards, practice quizzes, and timed exams — covering all 60 competitive events with 2,800+ clinical terms. Built by a HOSA competitor, for HOSA competitors.</p>
-
-      <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:filter 0.15s;">Start studying — it's free →</a>
-        <a href="#demo-section" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:14px 28px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.01em;transition:border-color 0.15s;">Try a card</a>
-      </div>
-      <button type="button" class="find-event-pill" id="open-onboard">
-        <span>✦</span> Not sure which event? Take the 30-second quiz
-      </button>
+<div id="app-shell">
+  <header id="topbar">
+    <button id="hamburger" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="event-search" placeholder="Search events — try &ldquo;cardio&rdquo; or &ldquo;pharm&rdquo;&hellip;" autocomplete="off" spellcheck="false">
     </div>
-    <aside class="hero-aside">
-      <div class="hero-stats-grid">
-        <div class="hero-stat">
-          <div class="hero-stat-num">60</div>
-          <div class="hero-stat-label">HOSA Events</div>
+    <div class="topbar-right">
+      <div id="topbar-level" style="display:none">Lv <span id="tb-level">1</span></div>
+      <div class="user-pill" style="display:none;" id="topbar-user-pill">
+        <span class="user-email" id="user-email" style="font-size:12px;"></span>
+        <button class="btn-signout" id="btn-signout" style="font-size:12px;padding:4px 10px;">Sign Out</button>
+      </div>
+      <button id="theme-btn" style="background:none;border:1px solid var(--rule);color:var(--ink-soft);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;" title="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <main id="app-content">
+
+    <!-- ══ HOME TAB ══ -->
+    <div class="tab-pane active" id="tab-home">
+
+      <!-- Jump back in — shown only when user has progress -->
+      <section id="jbi-section" style="display:none;margin-bottom:48px;">
+        <h2 class="page-title">Jump back in</h2>
+        <div id="jbi-row" class="jbi-row"></div>
+      </section>
+
+      <!-- Due today from engage.js -->
+      <section id="due-today-section" style="display:none;margin-bottom:48px;">
+        <h2 class="section-title" id="due-headline">Cards due today</h2>
+        <div id="due-streak-pill" style="display:none;background:linear-gradient(135deg,var(--accent),#f97316);color:#fff;font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:100px;letter-spacing:0.02em;box-shadow:0 4px 20px -6px rgba(239,68,68,0.5);white-space:nowrap;margin-bottom:16px;display:inline-block;"></div>
+        <div id="due-today-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;"></div>
+      </section>
+
+      <!-- Recents — shown when user has more than 4 events -->
+      <section id="recents-section" style="display:none;margin-bottom:48px;">
+        <h2 class="section-title">Recents</h2>
+        <div id="recents-grid" class="recents-grid"></div>
+      </section>
+
+      <!-- Term of the Day -->
+      <section class="totd-section" id="totd-section" style="margin-bottom:48px;">
+        <h2 class="section-title">Term of the <em style="font-style:italic;color:var(--accent)">Day.</em></h2>
+        <div class="totd-card" id="totd-card">
+          <div class="totd-body">
+            <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
+            <h3 class="totd-term" id="totd-term"></h3>
+            <p class="totd-def" id="totd-def"></p>
+            <div class="totd-meta" id="totd-event"></div>
+          </div>
+          <div class="totd-aside">
+            <div class="totd-date" id="totd-date-num"></div>
+            <a class="totd-link" id="totd-link" href="#">Study this event →</a>
+          </div>
         </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">2,800+</div>
-          <div class="hero-stat-label">Flashcards</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">4</div>
-          <div class="hero-stat-label">Study Modes</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">$0</div>
-          <div class="hero-stat-label">Cost, ever</div>
-        </div>
-      </div>
-    </aside>
-  </section>
+      </section>
 
-  <!-- YOUR PROGRESS (shown only if user has earned XP) -->
-  <section class="your-progress" id="your-progress">
-    <div class="yp-level-block">
-      <div class="yp-level-badge">Lv <span id="yp-level">1</span></div>
-      <div class="yp-level-label">Your Level</div>
-    </div>
-    <div class="yp-stats">
-      <div>
-        <div class="yp-stat-num" id="yp-xp">0</div>
-        <div class="yp-stat-label">Total XP</div>
-      </div>
-      <div>
-        <div class="yp-stat-num" id="yp-mastered">0</div>
-        <div class="yp-stat-label">Terms Mastered</div>
-      </div>
-      <div>
-        <div class="yp-stat-num" id="yp-events">0</div>
-        <div class="yp-stat-label">Events Studied</div>
-      </div>
-    </div>
-    <div class="yp-bar">
-      <div class="yp-bar-track"><div class="yp-bar-fill" id="yp-bar-fill" style="width:0%"></div></div>
-      <div class="yp-bar-label" id="yp-bar-text">0 XP to next level</div>
-    </div>
-  </section>
-
-  <!-- CONTINUE STUDYING (rendered by JS if localStorage has progress) -->
-  <section id="continue-studying" style="display:none;margin-bottom:64px;">
-    <div class="section-head" style="margin-bottom:24px;">
-      <h2>Continue <em>where you left off.</em></h2>
-      <div class="section-label" id="continue-meta"></div>
-    </div>
-    <div id="continue-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;"></div>
-  </section>
-
-  <!-- DEMO FLASHCARD -->
-  <section id="demo-section" style="margin-bottom:80px;">
-    <div class="section-head" style="margin-bottom:36px;">
-      <h2>Try a card <em>right now.</em></h2>
-      <div class="section-label">No account needed</div>
-    </div>
-    <div style="max-width:540px;">
-      <div id="demo-card" onclick="demoFlip()" style="cursor:pointer;background:var(--bg-card);border:1px solid var(--rule);padding:44px 40px;min-height:150px;display:flex;flex-direction:column;justify-content:center;position:relative;transition:box-shadow 0.2s ease;user-select:none;" onmouseenter="this.style.boxShadow='0 12px 28px -14px rgba(0,0,0,0.2)'" onmouseleave="this.style.boxShadow='none'">
-        <div id="demo-front">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:14px;">Tap to reveal · <span id="demo-counter">Card 1 of 4</span></div>
-          <div id="demo-term" style="font-family:'Fraunces',serif;font-size:32px;font-weight:400;line-height:1.1;letter-spacing:-0.025em;">Myocardial Infarction</div>
-          <div id="demo-subject" style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--ink-faint);margin-top:10px;">Medical Terminology</div>
+      <!-- Fresh finds — shown for new users (no progress) -->
+      <section id="fresh-finds">
+        <h2 class="section-title">Start here</h2>
+        <div class="jbi-row">
+          <a href="medical-terminology.html" class="jbi-card">
+            <div class="jbi-card-eyebrow">Best first event</div>
+            <div class="jbi-card-title">Medical Terminology</div>
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.5">The vocabulary foundation every healthcare field depends on.</p>
+            <div class="jbi-cta">Start studying →</div>
+          </a>
+          <a href="anatomy-physiology.html" class="jbi-card">
+            <div class="jbi-card-eyebrow">Build your foundation</div>
+            <div class="jbi-card-title">Anatomy &amp; Physiology</div>
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.5">Systems, organs, and how the body works.</p>
+            <div class="jbi-cta">Start studying →</div>
+          </a>
+          <a href="pathophysiology.html" class="jbi-card">
+            <div class="jbi-card-eyebrow">Bridge to clinical events</div>
+            <div class="jbi-card-title">Pathophysiology</div>
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.5">Disease mechanisms across every major body system.</p>
+            <div class="jbi-cta">Start studying →</div>
+          </a>
+          <a href="pharmacology.html" class="jbi-card">
+            <div class="jbi-card-eyebrow">High-yield event</div>
+            <div class="jbi-card-title">Pharmacology</div>
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.5">Drug classes, mechanisms, and clinical use.</p>
+            <div class="jbi-cta">Start studying →</div>
+          </a>
         </div>
-        <div id="demo-back" style="display:none;">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.12em;color:var(--success);margin-bottom:14px;">Definition</div>
-          <div id="demo-def" style="font-family:'Source Serif 4',serif;font-size:16px;line-height:1.6;color:var(--ink);">Death of cardiac muscle caused by prolonged blockage of a coronary artery, cutting off blood and oxygen — the clinical term for a heart attack.</div>
+      </section>
+
+    </div><!-- /tab-home -->
+
+    <!-- ══ EVENTS TAB ══ -->
+    <div class="tab-pane" id="tab-events">
+      <h1 class="page-title">Browse Events</h1>
+
+      <div class="event-search-wrap" style="margin-bottom:32px;">
+        <div class="filter-bar" id="filter-bar" style="margin-bottom:16px;">
+          <button class="filter-btn active" data-filter="all">All <span class="filter-count">60</span></button>
+          <button class="filter-btn" data-filter="clinical">Clinical Medicine <span class="filter-count"></span></button>
+          <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
+          <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
+          <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
+          <button class="filter-btn surprise" id="btn-surprise" type="button">Surprise me <span class="kbd">R</span></button>
         </div>
       </div>
-      <div id="demo-btns" style="display:none;gap:10px;margin-top:10px;">
-        <button onclick="demoRate(false)" style="flex:1;padding:13px;background:none;border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink);transition:border-color 0.15s;" onmouseenter="this.style.borderColor='var(--ink)'" onmouseleave="this.style.borderColor='var(--rule)'">✗  Missed it</button>
-        <button onclick="demoRate(true)" style="flex:1;padding:13px;background:var(--accent);border:1px solid var(--accent);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;color:#fff;">✓  Got it</button>
-      </div>
-      <div id="demo-done" style="display:none;background:var(--bg-card);border:1px solid var(--rule);padding:32px 36px;text-align:center;">
-        <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">That's the idea.</div>
-        <div style="font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;">Smart Review tracks which terms you miss and brings them back sooner — so each session targets your weak spots automatically.</div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-          <button type="button" onclick="document.getElementById('open-onboard').click();" style="display:inline-block;padding:12px 24px;background:var(--accent);color:#fff;border:1px solid var(--accent);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.01em;">Find my event →</button>
-          <a href="#categories" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;padding:12px 24px;background:transparent;color:var(--ink);border:1px solid var(--rule);font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.01em;">Browse all 60</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- DUE TODAY (populated by engage.js) -->
-  <section id="due-today-section" style="display:none;margin-bottom:72px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-      <div>
-        <div style="font-family:'Source Serif 4',serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;" id="due-eyebrow">Smart Review Queue</div>
-        <h2 id="due-headline" style="margin:0;font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:400;letter-spacing:-0.02em;">Cards due <em>today.</em></h2>
-      </div>
-      <div id="due-streak-pill" style="display:none;background:linear-gradient(135deg,var(--accent),#f97316);color:#fff;font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:100px;letter-spacing:0.02em;box-shadow:0 4px 20px -6px rgba(239,68,68,0.5);white-space:nowrap;"></div>
-    </div>
-    <div id="due-today-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;"></div>
-  </section>
+      <div id="events-count-label" style="font-size:13px;color:var(--ink-soft);margin-bottom:20px;">60 events available</div>
+      <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
 
-  <script>
-  (function(){
-    const CARDS = [
-      { term:'Myocardial Infarction', subject:'Medical Terminology', def:'Death of cardiac muscle caused by prolonged blockage of a coronary artery, cutting off blood and oxygen — the clinical term for a heart attack.' },
-      { term:'Pharmacokinetics', subject:'Pharmacology', def:'How the body handles a drug: absorption, distribution, metabolism, and excretion (ADME) — determining how much reaches the target and for how long.' },
-      { term:'Homeostasis', subject:'Anatomy & Physiology', def:"The body's ability to maintain a stable internal environment (temperature, pH, glucose) despite external changes — the foundation of all physiology." },
-      { term:'Triage', subject:'Emergency Medical Science', def:'Sorting patients by injury severity to prioritize care when resources are limited — highest priority to those who will die without immediate treatment.' },
-    ];
-    let idx = 0, flipped = false;
-    window.demoFlip = function() {
-      if (flipped) return;
-      flipped = true;
-      document.getElementById('demo-front').style.display = 'none';
-      document.getElementById('demo-back').style.display = 'block';
-      const b = document.getElementById('demo-btns');
-      b.style.display = 'flex';
-    };
-    window.demoRate = function(got) {
-      idx++;
-      if (idx >= CARDS.length) {
-        document.getElementById('demo-card').style.display = 'none';
-        document.getElementById('demo-btns').style.display = 'none';
-        document.getElementById('demo-done').style.display = 'block';
-        return;
-      }
-      flipped = false;
-      const c = CARDS[idx];
-      document.getElementById('demo-term').textContent = c.term;
-      document.getElementById('demo-subject').textContent = c.subject;
-      document.getElementById('demo-def').textContent = c.def;
-      document.getElementById('demo-counter').textContent = 'Card ' + (idx+1) + ' of ' + CARDS.length;
-      document.getElementById('demo-front').style.display = 'block';
-      document.getElementById('demo-back').style.display = 'none';
-      document.getElementById('demo-btns').style.display = 'none';
-    };
-  })();
-  </script>
-
-  <!-- CATEGORIES -->
-  <!-- BEGINNER PATH -->
-  <section id="start-here" style="margin-bottom:80px;">
-    <div class="section-head" style="margin-bottom:28px;">
-      <h2>New to HOSA? <em>Start here.</em></h2>
-      <div class="section-label">Most studied events for first-time competitors</div>
-    </div>
-    <div class="starter-grid">
-      <a href="medical-terminology.html" class="starter-card">
-        <div class="starter-num">01</div>
-        <div class="starter-body">
-          <div class="starter-eyebrow">Best first event</div>
-          <h4>Medical Terminology</h4>
-          <p>The vocabulary foundation every healthcare field depends on — prefixes, suffixes, and roots used across all other events.</p>
-        </div>
-        <div class="starter-cta">Start studying →</div>
-      </a>
-      <a href="anatomy-physiology.html" class="starter-card">
-        <div class="starter-num">02</div>
-        <div class="starter-body">
-          <div class="starter-eyebrow">Build your foundation</div>
-          <h4>Anatomy &amp; Physiology</h4>
-          <p>Systems, organs, and how the body works — essential background for clinical events from emergency medicine to surgery.</p>
-        </div>
-        <div class="starter-cta">Start studying →</div>
-      </a>
-      <a href="pathophysiology.html" class="starter-card">
-        <div class="starter-num">03</div>
-        <div class="starter-body">
-          <div class="starter-eyebrow">Bridge to clinical events</div>
-          <h4>Pathophysiology</h4>
-          <p>Disease mechanisms, from cellular injury to systemic failures — the reasoning layer that links anatomy to clinical diagnosis.</p>
-        </div>
-        <div class="starter-cta">Start studying →</div>
-      </a>
-    </div>
-  </section>
-
-  <!-- TERM OF THE DAY -->
-  <section class="totd-section" id="totd-section">
-    <div class="section-head" style="margin-bottom:20px;">
-      <h2>Term of the <em>Day.</em></h2>
-      <div class="section-label">One clinical term, every day</div>
-    </div>
-    <div class="totd-card" id="totd-card">
-      <div class="totd-body">
-        <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
-        <h3 class="totd-term" id="totd-term"></h3>
-        <p class="totd-def" id="totd-def"></p>
-        <div class="totd-meta" id="totd-event"></div>
-      </div>
-      <div class="totd-aside">
-        <div class="totd-date" id="totd-date-num"></div>
-        <a class="totd-link" id="totd-link" href="#">Study this event →</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="categories-section">
-    <div class="section-head">
-      <h2>Choose your <em>event.</em></h2>
-      <div class="section-label" id="events-count-label">60 events available</div>
-    </div>
-
-    <div class="event-search-wrap">
-      <div class="filter-bar" id="filter-bar">
-        <button class="filter-btn active" data-filter="all">All <span class="filter-count">60</span></button>
-        <button class="filter-btn" data-filter="clinical">Clinical Medicine <span class="filter-count"></span></button>
-        <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
-        <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
-        <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
-        <button class="filter-btn surprise" id="btn-surprise" type="button" title="Pick a random event">Surprise me <span class="kbd">R</span></button>
-      </div>
-      <div class="event-search-box">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" id="event-search" placeholder="Search events — try &ldquo;nursing&rdquo; or &ldquo;path&rdquo;&hellip;" autocomplete="off" spellcheck="false">
-        <span class="search-kbd-hint">/</span>
-      </div>
-    </div>
-
+      <div class="categories">
     <div class="categories">
 
       <a href="medical-terminology.html" class="category-card" data-group="basic">
@@ -3073,275 +3240,138 @@
 
     </div>
     <p class="search-no-results" id="search-no-results">No events match &ldquo;<span id="search-query-display"></span>&rdquo; — try a shorter term.</p>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section>
-    <div class="section-head">
-      <h2>What early users <em>are saying.</em></h2>
-      <div class="section-label">Feedback from HOSA competitors</div>
-    </div>
-    <div class="testimonials">
-      <div class="testimonial">
-        <blockquote>The timed tests helped me stop panicking. I walked into my regional feeling calm because the practice felt exactly like the real thing.</blockquote>
-        <div class="attribution">HOSA Competitor &mdash; Medical Terminology</div>
       </div>
-      <div class="testimonial">
-        <blockquote>Smart Review actually made studying feel efficient. The cards I kept missing showed up more, and the ones I knew just faded away.</blockquote>
-        <div class="attribution">HOSA Competitor &mdash; Pathophysiology</div>
+    </div><!-- /tab-events -->
+
+    <!-- ══ LIBRARY TAB ══ -->
+    <div class="tab-pane" id="tab-library">
+      <h1 class="page-title">Your Library</h1>
+      <div id="library-empty" style="padding:48px 0;text-align:center;color:var(--ink-soft);font-family:'Fraunces',serif;font-size:20px;font-weight:400;display:none;">
+        Nothing here yet — <a href="#" data-tab="events" style="color:var(--accent)">start studying an event</a> to build your library.
       </div>
-      <div class="testimonial">
-        <blockquote>I went from 60% on practice tests to placing at state. The 4-button rating makes a huge difference — you can actually tell the algorithm you're struggling.</blockquote>
-        <div class="attribution">HOSA Competitor &mdash; Anatomy &amp; Physiology</div>
+      <div id="library-grid" class="library-grid"></div>
+      <div id="lib-achievements">
+        <h2 class="section-title" style="margin-top:48px;">Achievements</h2>
+        <div id="ach-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
       </div>
-    </div>
-  </section>
+    </div><!-- /tab-library -->
 
-  <!-- HOW HOSA WORKS -->
-  <section id="hosa-explained" style="margin-bottom:96px;">
-    <div class="section-head">
-      <h2>How HOSA <em>competitions work.</em></h2>
-      <div class="section-label">For anyone new to the organization</div>
-    </div>
+    <!-- ══ ABOUT TAB ══ -->
+    <div class="tab-pane" id="tab-about">
+      <h1 class="page-title">How HOSA Works</h1>
 
-    <div class="how">
-      <div class="how-item">
-        <div class="how-num how-num-1">What is HOSA?</div>
-        <h4>The Organization</h4>
-        <p>HOSA – Future Health Professionals is a national career-technical student organization for health science students. With 300,000+ members and chapters in most US high schools and colleges, it's one of the largest pre-health pipelines in the country.</p>
-        <div class="how-detail">300,000+ members · All 50 states · High school &amp; collegiate</div>
+      <h2 class="section-title" style="margin-bottom:24px;">The Organization &amp; Competitions</h2>
+      <div class="how" style="margin-bottom:64px;">
+        <div class="how-item">
+          <div class="how-num how-num-1">What is HOSA?</div>
+          <h4>The Organization</h4>
+          <p>HOSA – Future Health Professionals is a national career-technical student organization for health science students. With 300,000+ members and chapters in most US high schools and colleges, it's one of the largest pre-health pipelines in the country.</p>
+          <div class="how-detail">300,000+ members · All 50 states · High school &amp; collegiate</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-2">Pick Your Event</div>
+          <h4>60+ Competitive Events</h4>
+          <p>Each member competes in one or more events from five categories — Health Science, Health Professions, Leadership, Recognition, and Service. The knowledge-based events on this site (Medical Terminology, Pathophysiology, Pharmacology, and more) are all written exam competitions.</p>
+          <div class="how-detail">Knowledge · Skills · Prepared · Leadership · Recognition</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-3">The Exam Format</div>
+          <h4>100 Questions, 60 Minutes</h4>
+          <p>Written knowledge events are 100 multiple-choice questions completed in 60 minutes. Questions test your event's specific content scope — so focused preparation on the right terms and concepts matters far more than general studying.</p>
+          <div class="how-detail">100 questions · 60-minute time limit · Multiple choice</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-4">Compete to Advance</div>
+          <h4>Chapter → State → Nationals</h4>
+          <p>You compete at your chapter or area conference first, then the top scorers advance to the State Leadership Conference. State winners earn a spot at the National Leadership Conference (NLC) held each June — where medals and scholarships are awarded.</p>
+          <div class="how-detail">Chapter → Area → State → NLC · June nationals</div>
+        </div>
       </div>
-      <div class="how-item">
-        <div class="how-num how-num-2">Pick Your Event</div>
-        <h4>60+ Competitive Events</h4>
-        <p>Each member competes in one or more events from five categories — Health Science, Health Professions, Leadership, Recognition, and Service. The knowledge-based events on this site (Medical Terminology, Pathophysiology, Pharmacology, and more) are all written exam competitions.</p>
-        <div class="how-detail">Knowledge · Skills · Prepared · Leadership · Recognition</div>
+
+      <h2 class="section-title" style="margin-bottom:24px;">Four modes, one <em style="color:var(--accent);font-style:italic;">system.</em></h2>
+      <div class="how">
+        <div class="how-item">
+          <div class="how-num how-num-1">i. Learn</div>
+          <h4>Flashcards</h4>
+          <p>Spaced-repetition cards with a 4-point rating (Again / Hard / Good / Easy) so the algorithm knows exactly how well you know each term and when to show it again.</p>
+          <div class="how-detail">Smart Review · SM-2 algorithm · 20 cards/session</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-2">ii. Confirm</div>
+          <h4>Practice Quiz</h4>
+          <p>Ten-question multiple-choice sets with immediate right/wrong feedback after each answer. When you finish, jump straight into reviewing your misses.</p>
+          <div class="how-detail">10 questions · Instant feedback · Miss review mode</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-3">iii. Perform</div>
+          <h4>Timed Test</h4>
+          <p>25 questions in 12 minutes with per-question feedback — right/wrong shown after each answer, then full results at the end. Mirrors HOSA competition conditions.</p>
+          <div class="how-detail">25 questions · 12-minute clock · Category breakdown</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num how-num-4">iv. Track</div>
+          <h4>Progress</h4>
+          <p>See your mastery by category, review score history, track your study streak, and see exactly which cards are due for review today based on your spaced repetition schedule.</p>
+          <div class="how-detail">Study heatmap · Quiz history · Due-today queue</div>
+        </div>
       </div>
-      <div class="how-item">
-        <div class="how-num how-num-3">The Exam Format</div>
-        <h4>100 Questions, 60 Minutes</h4>
-        <p>Written knowledge events are 100 multiple-choice questions completed in 60 minutes. Questions test your event's specific content scope — so focused preparation on the right terms and concepts matters far more than general studying.</p>
-        <div class="how-detail">100 questions · 60-minute time limit · Multiple choice</div>
-      </div>
-      <div class="how-item">
-        <div class="how-num how-num-4">Compete to Advance</div>
-        <h4>Chapter → State → Nationals</h4>
-        <p>You compete at your chapter or area conference first, then the top scorers advance to the State Leadership Conference. State winners earn a spot at the National Leadership Conference (NLC) held each June — where medals and scholarships are awarded.</p>
-        <div class="how-detail">Chapter → Area → State → NLC · June nationals</div>
-      </div>
-    </div>
-  </section>
+    </div><!-- /tab-about -->
 
-  <!-- ACHIEVEMENTS (populated by engage.js) -->
-  <section id="achievements-section" style="display:none;margin-bottom:96px;">
-    <div class="section-head" style="margin-bottom:32px;">
-      <h2>Your <em>achievements.</em></h2>
-      <div class="section-label">Unlock badges as you study</div>
-    </div>
-    <div id="ach-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;"></div>
-  </section>
+  </main>
+</div><!-- /app-shell -->
 
-  <!-- HOW IT WORKS -->
-  <section id="how-section">
-    <div class="section-head">
-      <h2>Four modes, one <em>system.</em></h2>
-      <div class="section-label">Each event includes all four</div>
-    </div>
-
-    <div class="how">
-      <div class="how-item">
-        <div class="how-num how-num-1">i. Learn</div>
-        <h4>Flashcards</h4>
-        <p>Spaced-repetition cards with a 4-point rating (Again / Hard / Good / Easy) so the algorithm knows exactly how well you know each term and when to show it again.</p>
-        <div class="how-detail">Smart Review · SM-2 algorithm · 20 cards/session</div>
-      </div>
-      <div class="how-item">
-        <div class="how-num how-num-2">ii. Confirm</div>
-        <h4>Practice Quiz</h4>
-        <p>Ten-question multiple-choice sets with immediate right/wrong feedback after each answer. When you finish, jump straight into reviewing your misses.</p>
-        <div class="how-detail">10 questions · Instant feedback · Miss review mode</div>
-      </div>
-      <div class="how-item">
-        <div class="how-num how-num-3">iii. Perform</div>
-        <h4>Timed Test</h4>
-        <p>25 questions in 12 minutes with per-question feedback — right/wrong shown after each answer, then full results at the end. Mirrors HOSA competition conditions.</p>
-        <div class="how-detail">25 questions · 12-minute clock · Category breakdown</div>
-      </div>
-      <div class="how-item">
-        <div class="how-num how-num-4">iv. Track</div>
-        <h4>Progress</h4>
-        <p>See your mastery by category, review score history, track your study streak, and see exactly which cards are due for review today based on your spaced repetition schedule.</p>
-        <div class="how-detail">Study heatmap · Quiz history · Due-today queue</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- EMAIL CAPTURE + EVENT REQUEST -->
-  <section class="newsletter">
-    <div class="newsletter-copy">
-      <h3>Get notified when <em>new events</em> drop.</h3>
-      <p>More study modules are on the way. Drop your email and I'll let you know the moment a new one goes live. One email per launch, nothing else.</p>
-    </div>
-    <div class="newsletter-form">
-      <input type="email" id="notify-email" placeholder="your.email@school.edu">
-      <button type="button" id="notify-btn">Notify me when new events launch</button>
-      <div class="newsletter-msg" id="newsletter-msg"></div>
-    </div>
-  </section>
-
-  <section class="newsletter" style="margin-top: 16px;">
-    <div class="newsletter-copy">
-      <h3>Want a specific <em>event?</em></h3>
-      <p>Request a HOSA competitive event and I'll prioritize building it. Tell me exactly what you need — I read every submission.</p>
-    </div>
-    <div class="newsletter-form">
-      <input type="text" id="request-event" placeholder="e.g. Medical Math, Health Career Display…">
-      <input type="email" id="request-email" placeholder="your.email@school.edu (optional)">
-      <button type="button" id="request-btn">Submit request →</button>
-      <div class="newsletter-msg" id="request-msg"></div>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="footer-left">
-    <div class="footer-brand"><span class="footer-mark">✢</span> HOSA Prep Hub</div>
-    <div class="footer-copy">A study companion, not an official HOSA publication. Free to use, forever.</div>
-  </div>
-  <nav class="footer-nav">
-    <a href="medical-terminology.html">Medical Terminology</a>
-    <a href="anatomy-physiology.html">Anatomy &amp; Physiology</a>
-    <a href="emergency-medical-science.html">Emergency Medicine</a>
-    <a href="pathophysiology.html">Pathophysiology</a>
-    <a href="#categories-section" onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});return false;">All 60 events →</a>
-  </nav>
-</footer>
-
-
-</div><!-- /main-content -->
 
 <script>
 const auth = firebase.auth();
 const authLoadingEl = document.getElementById('auth-loading');
 const authGateEl    = document.getElementById('auth-gate');
-const mainEl        = document.getElementById('main-content');
+const mainEl        = document.getElementById('app-shell');
 const userEmailEl   = document.getElementById('user-email');
-
-function renderContinueStudying() {
-  try {
-    var entries = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var key = localStorage.key(i);
-      if (!key || key.indexOf('hosa::') !== 0) continue;
-      var slug = key.slice(6);
-      try {
-        var raw = localStorage.getItem(key);
-        if (!raw) continue;
-        var data = JSON.parse(raw);
-        var studiedCount  = (data.studied  || []).length;
-        var masteredCount = (data.mastered || []).length;
-        if (studiedCount === 0 && masteredCount === 0) continue;
-        entries.push({
-          slug: slug,
-          studied: studiedCount,
-          mastered: masteredCount,
-          lastStudyDate: data.lastStudyDate || ''
-        });
-      } catch(e) {}
-    }
-    if (entries.length === 0) return;
-    entries.sort(function(a,b){ return (b.lastStudyDate || '').localeCompare(a.lastStudyDate || ''); });
-    var top = entries.slice(0, 3);
-
-    var section = document.getElementById('continue-studying');
-    var list    = document.getElementById('continue-list');
-    var meta    = document.getElementById('continue-meta');
-    var cardEls = document.querySelectorAll('.categories .category-card');
-    var labelMap = {};
-    cardEls.forEach(function(card){
-      var href = card.getAttribute('href') || '';
-      var slug = href.replace('.html','');
-      var h3 = card.querySelector('h3');
-      labelMap[slug] = h3 ? h3.textContent.trim() : slug;
-    });
-
-    list.innerHTML = top.map(function(e){
-      var label = labelMap[e.slug] || e.slug;
-      return '<a href="' + e.slug + '.html" style="display:block;background:var(--bg-card);border:1px solid var(--rule);border-top:3px solid var(--accent);padding:18px 18px 16px;text-decoration:none;color:var(--ink);transition:transform 0.2s, box-shadow 0.25s;" onmouseenter="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 10px 24px -12px rgba(0,0,0,0.18)\'" onmouseleave="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
-        '<div style="font-family:\'Cormorant Garamond\',serif;font-size:12px;font-variant:small-caps;letter-spacing:0.1em;color:var(--ink-faint);margin-bottom:8px;">Resume</div>' +
-        '<div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:400;letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px;">' + label + '</div>' +
-        '<div style="font-family:\'Source Serif 4\',serif;font-size:13px;color:var(--ink-soft);">' + e.mastered + ' mastered &middot; ' + e.studied + ' studied</div>' +
-      '</a>';
-    }).join('');
-    var totalCards = entries.reduce(function(s,x){ return s + x.studied; }, 0);
-    meta.textContent = top.length + (top.length === 1 ? ' event in progress' : ' events in progress');
-    section.style.display = 'block';
-
-    // Soft signup prompt if guest with substantial progress and not dismissed
-    var dismissed = false;
-    try { dismissed = !!localStorage.getItem('hosa-save-prompt-dismissed'); } catch(e) {}
-    if (!dismissed && !firebase.auth().currentUser && totalCards >= 8) {
-      var prompt = document.createElement('div');
-      prompt.style.cssText = 'margin-top:18px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--accent);border-left:3px solid var(--accent);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-family:"Source Serif 4",serif;font-size:14px;';
-      prompt.innerHTML =
-        '<div><strong>You\'ve studied ' + totalCards + ' cards on this browser.</strong> ' +
-        '<span style="color:var(--ink-soft);">Create a free account to sync across devices and never lose your progress.</span></div>' +
-        '<div style="display:flex;gap:8px;flex-shrink:0;"><button id="save-prompt-signin" style="padding:8px 16px;background:var(--accent);color:#fff;border:1px solid var(--accent);font:inherit;font-weight:600;cursor:pointer;">Save progress →</button>' +
-        '<button id="save-prompt-dismiss" style="padding:8px 12px;background:transparent;color:var(--ink-soft);border:none;cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px;">Not now</button></div>';
-      section.appendChild(prompt);
-      document.getElementById('save-prompt-signin').addEventListener('click', function(){
-        document.getElementById('auth-gate').style.display = 'flex';
-      });
-      document.getElementById('save-prompt-dismiss').addEventListener('click', function(){
-        try { localStorage.setItem('hosa-save-prompt-dismissed', '1'); } catch(e) {}
-        prompt.remove();
-      });
-    }
-  } catch(e) {}
-}
 
 function showGuestMode() {
   authGateEl.style.display = 'none';
-  mainEl.style.display = 'block';
+  mainEl.style.display = 'flex';
   userEmailEl.textContent = '';
-  // Hide the alarming orange banner — replace with a subtle header CTA
-  document.getElementById('guest-banner').style.display = 'none';
   const signoutBtn = document.getElementById('btn-signout');
-  signoutBtn.textContent = 'Sign in';
-  signoutBtn.style.cssText += ';background:transparent;color:var(--ink);border-color:var(--rule);font-weight:600;';
-  signoutBtn.onclick = () => {
-    authGateEl.style.display = 'flex';
-    signoutBtn.textContent = 'Sign Out';
-    signoutBtn.style.background = '';
-    signoutBtn.style.color = '';
-    signoutBtn.style.borderColor = '';
-  };
+  if (signoutBtn) {
+    signoutBtn.textContent = 'Sign in';
+    signoutBtn.onclick = () => { authGateEl.style.display = 'flex'; };
+  }
+  const pill = document.getElementById('topbar-user-pill');
+  if (pill) pill.style.display = 'none';
 }
 
 auth.onAuthStateChanged(user => {
-  authLoadingEl.style.display = 'none';
+  if (authLoadingEl) authLoadingEl.style.display = 'none';
   if (user) {
-    userEmailEl.textContent = user.email;
+    if (userEmailEl) userEmailEl.textContent = user.email;
+    const pill = document.getElementById('topbar-user-pill');
+    if (pill) pill.style.display = 'flex';
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
     try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
-    authGateEl.style.display = 'none';
-    mainEl.style.display = 'block';
-    document.getElementById('guest-banner').style.display = 'none';
-    const notifyEl = document.getElementById('notify-email');
-    const requestEl = document.getElementById('request-email');
-    if (notifyEl) notifyEl.value = user.email;
-    if (requestEl) requestEl.value = user.email;
+    if (authGateEl) authGateEl.style.display = 'none';
+    if (mainEl) mainEl.style.display = 'flex';
     // Load per-category mastery progress
     try {
       firebase.database().ref('users/' + user.uid + '/progress').get().then(function(snap) {
         if (!snap.exists()) { document.body.classList.add('user-active'); return; }
         var data = snap.val();
         var totals = {
-      'medical-terminology':216,      'pathophysiology':147,      'nutrition':127,      'biochemistry':112,      'anatomy-physiology':96,      'pharmacology':72,      'medical-math':75,      'medical-law-ethics':69,      'human-growth-development':78,      'behavioral-health':77,      'clinical-nursing':87,      'public-health':80,      'sports-medicine':73,      'biomedical-lab-science':68,      'biotechnology':80,      'emergency-medical-science':69,      'physical-therapy':72,      'dental-science':67,      'veterinary-science':68,      'epidemiology':58,      'phlebotomy':60,      'medical-assisting':51,      'radiologic-science':43,      'medical-microbiology':56,      'pharmacy-science':47,      'forensic-science':38,      'occupational-therapy':34,      'optometry':30,      'genetics':33,      'health-informatics':28,      'respiratory-therapy':30,      'nursing-assisting':27,      'cardiovascular-science':30,      'endocrinology':24,      'neurology':25,      'oncology':26,      'immunology':27,      'hematology':26,      'dermatology':25,      'gastroenterology':26,      'surgical-technology':25,      'nephrology':19,      'obstetrics-gynecology':21,      'pediatrics':20,      'geriatrics':18,      'infectious-disease':17,      'rheumatology':17,      'otolaryngology':18,      'urology':18,      'sleep-medicine':15,      'pain-management':18,      'trauma-critical-care':19,      'speech-language-pathology':21,      'audiology':22,      'healthcare-systems':20,
-      'psychiatry':15,      'neonatology':13,      'physical-medicine-rehabilitation':12,
-      'allergy-immunology':11,      'global-health':12,
-    };
+          'medical-terminology':216,'pathophysiology':147,'nutrition':127,'biochemistry':112,
+          'anatomy-physiology':96,'pharmacology':72,'medical-math':75,'medical-law-ethics':69,
+          'human-growth-development':78,'behavioral-health':77,'clinical-nursing':87,'public-health':80,
+          'sports-medicine':73,'biomedical-lab-science':68,'biotechnology':80,'emergency-medical-science':69,
+          'physical-therapy':72,'dental-science':67,'veterinary-science':68,'epidemiology':58,
+          'phlebotomy':60,'medical-assisting':51,'radiologic-science':43,'medical-microbiology':56,
+          'pharmacy-science':47,'forensic-science':38,'occupational-therapy':34,'optometry':30,
+          'genetics':33,'health-informatics':28,'respiratory-therapy':30,'nursing-assisting':27,
+          'cardiovascular-science':30,'endocrinology':24,'neurology':25,'oncology':26,'immunology':27,
+          'hematology':26,'dermatology':25,'gastroenterology':26,'surgical-technology':25,'nephrology':19,
+          'obstetrics-gynecology':21,'pediatrics':20,'geriatrics':18,'infectious-disease':17,
+          'rheumatology':17,'otolaryngology':18,'urology':18,'sleep-medicine':15,'pain-management':18,
+          'trauma-critical-care':19,'speech-language-pathology':21,'audiology':22,'healthcare-systems':20,
+          'psychiatry':15,'neonatology':13,'physical-medicine-rehabilitation':12,'allergy-immunology':11,'global-health':12,
+        };
         Object.keys(data).forEach(function(cat) {
           var el = document.getElementById('cp-' + cat);
           if (!el) return;
@@ -3357,41 +3387,39 @@ auth.onAuthStateChanged(user => {
         document.body.classList.add('user-active');
       }).catch(function(){ document.body.classList.add('user-active'); });
     } catch(e) { document.body.classList.add('user-active'); }
-    renderContinueStudying();
   } else {
-    // Default to guest mode — no auth wall. Users can sign in via header.
     showGuestMode();
-    renderContinueStudying();
   }
 });
 
-document.getElementById('btn-guest').addEventListener('click', showGuestMode);
-document.getElementById('btn-close-auth').addEventListener('click', function(){
-  authGateEl.style.display = 'none';
+var btnGuest = document.getElementById('btn-guest');
+if (btnGuest) btnGuest.addEventListener('click', showGuestMode);
+var btnCloseAuth = document.getElementById('btn-close-auth');
+if (btnCloseAuth) btnCloseAuth.addEventListener('click', function(){
+  if (authGateEl) authGateEl.style.display = 'none';
   if (!firebase.auth().currentUser) showGuestMode();
 });
-document.getElementById('guest-banner-signin').addEventListener('click', function(e) {
-  e.preventDefault();
-  mainEl.style.display = 'none';
-  document.getElementById('guest-banner').style.display = 'none';
-  authGateEl.style.display = 'flex';
+var btnSignout = document.getElementById('btn-signout');
+if (btnSignout) btnSignout.addEventListener('click', function(){
+  if (firebase.auth().currentUser) auth.signOut();
+  else authGateEl.style.display = 'flex';
 });
-document.getElementById('btn-signout').addEventListener('click', () => auth.signOut());
 
-document.getElementById('tab-signin').addEventListener('click', () => {
-  document.getElementById('tab-signin').classList.add('active');
-  document.getElementById('tab-signup').classList.remove('active');
+var tabSignin = document.getElementById('tab-signin');
+var tabSignup = document.getElementById('tab-signup');
+if (tabSignin) tabSignin.addEventListener('click', () => {
+  tabSignin.classList.add('active'); tabSignup.classList.remove('active');
   document.getElementById('form-signin').style.display = 'block';
   document.getElementById('form-signup').style.display = 'none';
 });
-document.getElementById('tab-signup').addEventListener('click', () => {
-  document.getElementById('tab-signup').classList.add('active');
-  document.getElementById('tab-signin').classList.remove('active');
+if (tabSignup) tabSignup.addEventListener('click', () => {
+  tabSignup.classList.add('active'); tabSignin.classList.remove('active');
   document.getElementById('form-signup').style.display = 'block';
   document.getElementById('form-signin').style.display = 'none';
 });
 
-document.getElementById('btn-forgot').addEventListener('click', async () => {
+var btnForgot = document.getElementById('btn-forgot');
+if (btnForgot) btnForgot.addEventListener('click', async () => {
   const email = document.getElementById('signin-email').value.trim();
   const resetMsg = document.getElementById('reset-msg');
   const errorEl = document.getElementById('signin-error');
@@ -3403,7 +3431,8 @@ document.getElementById('btn-forgot').addEventListener('click', async () => {
   } catch (err) { errorEl.textContent = friendlyError(err.code); }
 });
 
-document.getElementById('form-signin').addEventListener('submit', async e => {
+var formSignin = document.getElementById('form-signin');
+if (formSignin) formSignin.addEventListener('submit', async e => {
   e.preventDefault();
   const errorEl = document.getElementById('signin-error');
   errorEl.textContent = '';
@@ -3416,7 +3445,8 @@ document.getElementById('form-signin').addEventListener('submit', async e => {
   } catch (err) { errorEl.textContent = friendlyError(err.code); }
 });
 
-document.getElementById('form-signup').addEventListener('submit', async e => {
+var formSignup = document.getElementById('form-signup');
+if (formSignup) formSignup.addEventListener('submit', async e => {
   e.preventDefault();
   const password = document.getElementById('signup-password').value;
   const confirm  = document.getElementById('signup-confirm').value;
@@ -3443,111 +3473,8 @@ function friendlyError(code) {
     'auth/too-many-requests':    'Too many attempts. Please try again later.',
   })[code] || 'Something went wrong. Please try again.';
 }
-
 </script>
 
-<script>
-document.getElementById('notify-btn').onclick = function() {
-  var msg   = document.getElementById('newsletter-msg');
-  var email = document.getElementById('notify-email').value.trim();
-  msg.textContent = 'Saving…';
-  msg.style.color = 'var(--ink-soft)';
-  var user = firebase.auth().currentUser;
-  if (!user)  { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
-  if (!email) { msg.textContent = 'Please enter your email.'; msg.style.color = 'var(--accent)'; return; }
-  var data = { email: email, uid: user.uid, subscribedAt: new Date().toISOString() };
-  var p1 = firebase.database().ref('users/' + user.uid + '/subscribed').set(data);
-  var p2 = firebase.database().ref('subscribers/' + user.uid).set(data);
-  Promise.all([p1, p2]).then(function() {
-    msg.textContent = "You're on the list — I'll email you when the next event goes live.";
-    msg.style.color = 'var(--success)';
-  }).catch(function(err) {
-    msg.textContent = 'Error: ' + err.message;
-    msg.style.color = 'var(--accent)';
-  });
-};
-
-document.getElementById('request-btn').onclick = function() {
-  var msg       = document.getElementById('request-msg');
-  var eventName = document.getElementById('request-event').value.trim();
-  var email     = document.getElementById('request-email').value.trim();
-  msg.textContent = 'Saving…';
-  msg.style.color = 'var(--ink-soft)';
-  var user = firebase.auth().currentUser;
-  if (!user)      { msg.textContent = 'Please sign in first.'; msg.style.color = 'var(--accent)'; return; }
-  if (!eventName) { msg.textContent = 'Please describe the event you want.'; msg.style.color = 'var(--accent)'; return; }
-  var key  = Date.now();
-  var data = { event: eventName, email: email || null, uid: user.uid, requestedAt: new Date().toISOString() };
-  var p1 = firebase.database().ref('users/' + user.uid + '/requests/' + key).set(data);
-  var p2 = firebase.database().ref('requests/' + key).set(data);
-  Promise.all([p1, p2]).then(function() {
-    msg.textContent = "Request received — thank you. I'll look into it.";
-    msg.style.color = 'var(--success)';
-    document.getElementById('request-event').value = '';
-  }).catch(function(err) {
-    msg.textContent = 'Error: ' + err.message;
-    msg.style.color = 'var(--accent)';
-  });
-};
-</script>
-
-<script id="scroll-reveal">
-(function() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var targets = document.querySelectorAll('.hero, .section-head, .event-search-wrap, .categories, .testimonials, .how, .newsletter, .starter-grid');
-  targets.forEach(function(el){ el.classList.add('reveal'); });
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
-    });
-  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
-  targets.forEach(function(el){ io.observe(el); });
-})();
-</script>
-<script id="dark-mode-toggle">
-(function(){
-  var SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>';
-  var MOON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-
-  function isDark(){ return document.documentElement.getAttribute('data-theme')!=='light'; }
-
-  function mount(){
-    if(document.getElementById('theme-toggle')) return;
-    var btn = document.createElement('button');
-    btn.id = 'theme-toggle';
-    btn.setAttribute('aria-label','Toggle dark mode');
-    btn.style.cssText = [
-      'background:none',
-      'border:1px solid var(--rule)',
-      'width:34px','height:34px','padding:0',
-      'display:inline-flex','align-items:center','justify-content:center',
-      'cursor:pointer','color:var(--ink)','flex-shrink:0',
-      'border-radius:3px','margin-left:10px','vertical-align:middle'
-    ].join(';');
-    btn.innerHTML = isDark() ? SUN : MOON;
-
-    btn.onclick = function(){
-      if(isDark()){
-        document.documentElement.setAttribute('data-theme','light');
-        try{localStorage.setItem('hosa-theme','light');}catch(e){}
-        btn.innerHTML = MOON;
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        try{localStorage.setItem('hosa-theme','dark');}catch(e){}
-        btn.innerHTML = SUN;
-      }
-    };
-
-    var target = document.querySelector('.user-pill') || document.querySelector('header');
-    if(target) target.appendChild(btn);
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
-  else mount();
-})();
-</script>
-
-<script src="leaderboard.js"></script>
 <script id="event-search-js">
 (function(){
   var input    = document.getElementById('event-search');
@@ -3691,34 +3618,6 @@ document.getElementById('request-btn').onclick = function() {
 })();
 </script>
 
-<script id="your-progress-js">
-(function(){
-  var xp = parseInt(localStorage.getItem('hosa::xp')||'0', 10);
-  if (xp === 0) return;
-  var lvl = Math.floor(Math.sqrt(xp/50)) + 1;
-  var cur = (lvl-1)*(lvl-1)*50;
-  var next = lvl*lvl*50;
-  var pct = ((xp - cur) / Math.max(1,(next - cur))) * 100;
-  document.getElementById('yp-level').textContent = lvl;
-  document.getElementById('yp-xp').textContent = xp.toLocaleString();
-  document.getElementById('yp-bar-fill').style.width = Math.min(100,pct) + '%';
-  document.getElementById('yp-bar-text').textContent = (xp - cur) + ' / ' + (next - cur) + ' XP to Lv ' + (lvl+1);
-  var mastered = 0, events = 0;
-  for (var i = 0; i < localStorage.length; i++) {
-    var k = localStorage.key(i);
-    if (!k || k.indexOf('hosa::') !== 0) continue;
-    if (k === 'hosa::xp' || k === 'hosa::daily-goal' || k.indexOf('hosa::daily::') === 0) continue;
-    try {
-      var data = JSON.parse(localStorage.getItem(k));
-      var mc = (data && data.mastered && data.mastered.length) || 0;
-      if (mc > 0) { mastered += mc; events++; }
-    } catch(e) {}
-  }
-  document.getElementById('yp-mastered').textContent = mastered.toLocaleString();
-  document.getElementById('yp-events').textContent = events;
-  document.getElementById('your-progress').classList.add('show');
-})();
-</script>
 
 <script id="totd-js">
 (function(){
@@ -3785,6 +3684,7 @@ document.getElementById('request-btn').onclick = function() {
 })();
 </script>
 
+
 <script id="onboarding-rec">
 (function(){
   var ONBOARD_KEY = 'hosa-onboard-v1';
@@ -3848,7 +3748,7 @@ document.getElementById('request-btn').onclick = function() {
       var go = btn.getAttribute('data-go');
       if (go === 'browse') {
         closeModal();
-        document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});
+        
       } else {
         showStep(go);
       }
@@ -3904,7 +3804,7 @@ document.getElementById('request-btn').onclick = function() {
 
   finishBtn.addEventListener('click', function(){
     closeModal();
-    document.getElementById('categories-section').scrollIntoView({behavior:'smooth'});
+    
   });
 
   closeBtn.addEventListener('click', closeModal);
@@ -4004,6 +3904,240 @@ document.getElementById('request-btn').onclick = function() {
   });
 })();
 </script>
+
+<script id="app-tabs-js">
+(function(){
+  // Tab switching
+  function switchTab(id) {
+    document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.sb-item[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+    var pane = document.getElementById('tab-' + id);
+    if (pane) pane.classList.add('active');
+    document.querySelectorAll('[data-tab="' + id + '"]').forEach(function(b){ b.classList.add('active'); });
+    try { localStorage.setItem('hosa-tab', id); } catch(e) {}
+  }
+
+  document.querySelectorAll('[data-tab]').forEach(function(el){
+    el.addEventListener('click', function(){ switchTab(el.getAttribute('data-tab')); });
+  });
+
+  // Restore last tab
+  try {
+    var saved = localStorage.getItem('hosa-tab');
+    if (saved) switchTab(saved);
+  } catch(e){}
+
+  // When event search is focused from home tab, switch to events tab
+  document.getElementById('event-search').addEventListener('focus', function(){
+    var active = document.querySelector('.tab-pane.active');
+    if (active && active.id !== 'tab-events') switchTab('events');
+  });
+
+  // Sidebar mobile toggle
+  var hamburger = document.getElementById('hamburger');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sb-overlay');
+  if (hamburger) {
+    hamburger.addEventListener('click', function(){
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+    overlay.addEventListener('click', function(){
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  }
+
+  // Theme toggle — unified handler for both sidebar and topbar buttons
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('hosa-theme', t); } catch(e) {}
+    var isDark = t !== 'light';
+    var sidebarBtn = document.getElementById('theme-toggle');
+    var topbarBtn  = document.getElementById('theme-btn');
+    if (sidebarBtn) sidebarBtn.textContent = isDark ? '☀️ Light mode' : '🌙 Dark mode';
+    if (topbarBtn)  topbarBtn.textContent  = isDark ? '☀️' : '🌙';
+  }
+  var sidebarToggle = document.getElementById('theme-toggle');
+  var topbarToggle  = document.getElementById('theme-btn');
+  function onThemeClick() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(cur === 'light' ? 'dark' : 'light');
+  }
+  if (sidebarToggle) sidebarToggle.addEventListener('click', onThemeClick);
+  if (topbarToggle)  topbarToggle.addEventListener('click', onThemeClick);
+  // Init label
+  var curTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  if (sidebarToggle) sidebarToggle.textContent = curTheme === 'light' ? '🌙 Dark mode' : '☀️ Light mode';
+  if (topbarToggle)  topbarToggle.textContent  = curTheme === 'light' ? '🌙' : '☀️';
+
+  // Jump back in + recents + library — read localStorage
+  var ALL_EVENTS = [
+    {slug:'medical-terminology',name:'Medical Terminology'},
+    {slug:'pathophysiology',name:'Pathophysiology'},
+    {slug:'nutrition',name:'Nutrition'},
+    {slug:'anatomy-physiology',name:'Anatomy & Physiology'},
+    {slug:'pharmacology',name:'Pharmacology'},
+    {slug:'biochemistry',name:'Biochemistry'},
+    {slug:'medical-math',name:'Medical Math'},
+    {slug:'medical-law-ethics',name:'Medical Law & Ethics'},
+    {slug:'behavioral-health',name:'Behavioral Health'},
+    {slug:'clinical-nursing',name:'Clinical Nursing'},
+    {slug:'public-health',name:'Public Health'},
+    {slug:'sports-medicine',name:'Sports Medicine'},
+    {slug:'biomedical-lab-science',name:'Biomedical Lab Science'},
+    {slug:'human-growth-development',name:'Human Growth & Development'},
+    {slug:'emergency-medical-science',name:'Emergency Medical Science'},
+    {slug:'cardiovascular-science',name:'Cardiovascular Science'},
+    {slug:'allergy-immunology',name:'Allergy & Immunology'},
+    {slug:'audiology',name:'Audiology'},
+    {slug:'biotechnology',name:'Biotechnology'},
+    {slug:'dental-science',name:'Dental Science'},
+    {slug:'dermatology',name:'Dermatology'},
+    {slug:'endocrinology',name:'Endocrinology'},
+    {slug:'epidemiology',name:'Epidemiology'},
+    {slug:'forensic-science',name:'Forensic Science'},
+    {slug:'gastroenterology',name:'Gastroenterology'},
+    {slug:'genetics',name:'Genetics'},
+    {slug:'geriatrics',name:'Geriatrics'},
+    {slug:'global-health',name:'Global Health'},
+    {slug:'health-informatics',name:'Health Informatics'},
+    {slug:'healthcare-systems',name:'Healthcare Systems'},
+    {slug:'hematology',name:'Hematology'},
+    {slug:'immunology',name:'Immunology'},
+    {slug:'infectious-disease',name:'Infectious Disease'},
+    {slug:'medical-assisting',name:'Medical Assisting'},
+    {slug:'medical-microbiology',name:'Medical Microbiology'},
+    {slug:'neonatology',name:'Neonatology'},
+    {slug:'nephrology',name:'Nephrology'},
+    {slug:'neurology',name:'Neurology'},
+    {slug:'nursing-assisting',name:'Nursing Assisting'},
+    {slug:'obstetrics-gynecology',name:'Obstetrics & Gynecology'},
+    {slug:'occupational-therapy',name:'Occupational Therapy'},
+    {slug:'oncology',name:'Oncology'},
+    {slug:'optometry',name:'Optometry'},
+    {slug:'otolaryngology',name:'Otolaryngology'},
+    {slug:'pain-management',name:'Pain Management'},
+    {slug:'pediatrics',name:'Pediatrics'},
+    {slug:'pharmacy-science',name:'Pharmacy Science'},
+    {slug:'phlebotomy',name:'Phlebotomy'},
+    {slug:'physical-medicine-rehabilitation',name:'Physical Medicine & Rehabilitation'},
+    {slug:'physical-therapy',name:'Physical Therapy'},
+    {slug:'psychiatry',name:'Psychiatry'},
+    {slug:'radiologic-science',name:'Radiologic Science'},
+    {slug:'respiratory-therapy',name:'Respiratory Therapy'},
+    {slug:'rheumatology',name:'Rheumatology'},
+    {slug:'sleep-medicine',name:'Sleep Medicine'},
+    {slug:'speech-language-pathology',name:'Speech-Language Pathology'},
+    {slug:'surgical-technology',name:'Surgical Technology'},
+    {slug:'trauma-critical-care',name:'Trauma & Critical Care'},
+    {slug:'urology',name:'Urology'},
+    {slug:'veterinary-science',name:'Veterinary Science'},
+  ];
+
+  var studied = [];
+  ALL_EVENTS.forEach(function(ev){
+    try {
+      var raw = localStorage.getItem('hosa::' + ev.slug);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      var mc = (d.mastered && d.mastered.length) || 0;
+      var sc = (d.studied  && d.studied.length)  || 0;
+      if (sc === 0 && mc === 0) return;
+      studied.push({ slug: ev.slug, name: ev.name, mastered: mc, studied: sc, data: d });
+    } catch(e){}
+  });
+
+  if (studied.length > 0) {
+    // Jump back in
+    var jbiSection = document.getElementById('jbi-section');
+    var jbiRow = document.getElementById('jbi-row');
+    if (jbiSection && jbiRow) {
+      jbiSection.style.display = 'block';
+      studied.slice(0, 4).forEach(function(ev){
+        var totalTerms = Math.max(ev.studied, 1);
+        var pct = Math.min(100, Math.round(ev.mastered / totalTerms * 100));
+        var card = document.createElement('a');
+        card.className = 'jbi-card';
+        card.href = ev.slug + '.html';
+        card.innerHTML =
+          '<div class="jbi-card-eyebrow">HOSA Event</div>' +
+          '<div class="jbi-card-title">' + ev.name + '</div>' +
+          '<div class="jbi-progress-track"><div class="jbi-progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="jbi-progress-label">' + ev.mastered + ' mastered · ' + ev.studied + ' studied</div>' +
+          '<div class="jbi-cta">Continue →</div>';
+        jbiRow.appendChild(card);
+      });
+    }
+
+    // Recents
+    if (studied.length > 4) {
+      var recentsSection = document.getElementById('recents-section');
+      var recentsGrid = document.getElementById('recents-grid');
+      if (recentsSection && recentsGrid) {
+        recentsSection.style.display = 'block';
+        studied.slice(4, 12).forEach(function(ev){
+          var item = document.createElement('a');
+          item.className = 'recent-item';
+          item.href = ev.slug + '.html';
+          item.innerHTML =
+            '<div class="recent-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>' +
+            '<div><div class="recent-name">' + ev.name + '</div><div class="recent-meta">' + ev.mastered + ' mastered</div></div>';
+          recentsGrid.appendChild(item);
+        });
+      }
+    }
+
+    // Library tab
+    var libGrid = document.getElementById('library-grid');
+    var libEmpty = document.getElementById('library-empty');
+    if (libGrid) {
+      if (libEmpty) libEmpty.style.display = 'none';
+      studied.forEach(function(ev){
+        var totalTerms = Math.max(ev.studied, 1);
+        var pct = Math.min(100, Math.round(ev.mastered / totalTerms * 100));
+        var card = document.createElement('a');
+        card.className = 'lib-card';
+        card.href = ev.slug + '.html';
+        card.innerHTML =
+          '<div class="lib-card-title">' + ev.name + '</div>' +
+          '<div class="lib-progress-track"><div class="lib-progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="lib-meta">' + ev.mastered + ' mastered · ' + ev.studied + ' studied · ' + pct + '% complete</div>';
+        libGrid.appendChild(card);
+      });
+    }
+
+    // Topbar level badge
+    try {
+      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      if (xp > 0) {
+        var lvl = Math.floor(Math.sqrt(xp / 50)) + 1;
+        var tbLevel = document.getElementById('tb-level');
+        var tbLevelWrap = document.getElementById('topbar-level');
+        if (tbLevel) tbLevel.textContent = lvl;
+        if (tbLevelWrap) tbLevelWrap.style.display = 'flex';
+      }
+    } catch(e){}
+  } else {
+    // New user — show library empty state
+    var emptyEl = document.getElementById('library-empty');
+    if (emptyEl) emptyEl.style.display = 'block';
+  }
+
+  // Fix onboarding "browse" button target (now scrolls to events tab)
+  var onboardFinish = document.getElementById('onboard-finish');
+  if (onboardFinish) {
+    onboardFinish.addEventListener('click', function(){ switchTab('events'); });
+  }
+  // Also fix data-go="browse" in onboard
+  var browseBtn = document.querySelector('[data-go="browse"]');
+  if (browseBtn) {
+    browseBtn.addEventListener('click', function(){ switchTab('events'); });
+  }
+})();
+</script>
+
+<script src="leaderboard.js"></script>
 <script src="engage.js" defer></script>
 </body>
 </html>
