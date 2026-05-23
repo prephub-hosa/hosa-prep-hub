@@ -700,6 +700,121 @@ nav.tabs button.active::after {
     radial-gradient(circle at 30% 20%, var(--accent-soft), transparent 60%),
     var(--bg-card) !important;
 }
+
+/* ── 3-D card flip — desktop only (mobile keeps display:none/flex) ── */
+@media (min-width: 641px) {
+  .flashcard {
+    perspective: 1400px !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .flashcard-inner {
+    transform-style: preserve-3d !important;
+    transition: transform 0.52s cubic-bezier(0.35, 0, 0.25, 1) !important;
+    border-radius: 20px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 14px 40px -12px rgba(0,0,0,0.22);
+  }
+  .flashcard .face {
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition: none !important;
+  }
+  .flashcard .face.back {
+    transform: rotateY(180deg) !important;
+    pointer-events: none !important;
+  }
+  .flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg) !important;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 24px 56px -12px rgba(0,0,0,0.3), 0 0 60px -20px var(--accent-glow);
+  }
+  .flashcard.flipped .face.front { pointer-events: none !important; }
+  .flashcard.flipped .face.back  { pointer-events: auto !important; }
+}
+
+/* ── Session progress bar (injected by engage.js) ──────────── */
+.hosa-sess-pbar {
+  width: 100%;
+  height: 3px;
+  background: var(--rule);
+  border-radius: 100px;
+  overflow: hidden;
+  margin: 10px 0 0;
+  flex-shrink: 0;
+}
+.hosa-sess-pbar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #f97316);
+  border-radius: 100px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ── Rating button pulse feedback ──────────────────────────── */
+@keyframes _btn-know-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0  0    rgba(52,211,153,0);    }
+  40%  { transform: scale(1.07); box-shadow: 0 0 22px 0px rgba(52,211,153,0.55); }
+  100% { transform: scale(1);    box-shadow: 0 0 0  0    rgba(52,211,153,0);    }
+}
+@keyframes _btn-miss-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0  0    rgba(248,113,113,0);    }
+  40%  { transform: scale(1.07); box-shadow: 0 0 22px 0px rgba(248,113,113,0.55); }
+  100% { transform: scale(1);    box-shadow: 0 0 0  0    rgba(248,113,113,0);    }
+}
+.rate-know.btn-pulsing    { animation: _btn-know-pulse 0.38s ease forwards !important; }
+.rate-dont-know.btn-pulsing { animation: _btn-miss-pulse 0.38s ease forwards !important; }
+
+/* ── Daily goal widget (homepage) ──────────────────────────── */
+#daily-goal-section { margin-bottom: 36px; }
+.dg-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.dg-ring-wrap { flex-shrink: 0; position: relative; width: 54px; height: 54px; }
+.dg-ring-wrap svg { transform: rotate(-90deg); }
+.dg-ring-bg  { fill: none; stroke: var(--rule); stroke-width: 5; }
+.dg-ring-arc { fill: none; stroke: url(#dg-grad); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1); }
+.dg-ring-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  line-height: 1;
+}
+.dg-ring-pct { font-size: 10px; color: var(--ink-faint); font-weight: 500; }
+.dg-body { flex: 1; min-width: 120px; }
+.dg-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 400; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 4px; }
+.dg-sub { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+.dg-cta-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 9px 18px; font-family: 'Source Serif 4', serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  text-decoration: none; flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.dg-cta-btn:hover { opacity: 0.88; }
+.dg-done-badge {
+  background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.3);
+  color: #34d399;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .flashcard .term, .flashcard .definition {
   font-family: 'Inter', sans-serif !important;
   letter-spacing: -0.02em !important;

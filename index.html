@@ -2233,6 +2233,36 @@ footer { display: none; }
         </div>
       </div>
 
+      <!-- Daily goal widget — shown for active users -->
+      <section id="daily-goal-section" style="display:none">
+        <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+          <defs>
+            <linearGradient id="dg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#ef4444"/>
+              <stop offset="100%" stop-color="#f97316"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="dg-card">
+          <div class="dg-ring-wrap">
+            <svg viewBox="0 0 54 54" width="54" height="54">
+              <circle class="dg-ring-bg"  cx="27" cy="27" r="22"/>
+              <circle class="dg-ring-arc" cx="27" cy="27" r="22" id="dg-arc"
+                stroke-dasharray="138.23" stroke-dashoffset="138.23"/>
+            </svg>
+            <div class="dg-ring-text">
+              <span id="dg-done-num">0</span>
+              <span class="dg-ring-pct" id="dg-goal-denom">/20</span>
+            </div>
+          </div>
+          <div class="dg-body">
+            <div class="dg-title" id="dg-title">Today's goal</div>
+            <div class="dg-sub" id="dg-sub">Rate cards to make progress</div>
+          </div>
+          <div id="dg-action"></div>
+        </div>
+      </section>
+
       <!-- Jump back in — shown only when user has progress -->
       <section id="jbi-section" style="display:none;margin-bottom:48px;">
         <h2 class="page-title">Jump back in</h2>
@@ -4379,6 +4409,57 @@ function friendlyError(code) {
     try { xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10); } catch(e) {}
     var lvl = xpLevel(xp);
     var streak = getBestStreak();
+
+    // ── Daily goal widget ──
+    (function() {
+      var today = new Date().toISOString().slice(0,10);
+      var done = parseInt(localStorage.getItem('hosa::daily::' + today) || '0', 10);
+      var goal = parseInt(localStorage.getItem('hosa::daily-goal') || '20', 10);
+      var section = document.getElementById('daily-goal-section');
+      if (!section || done === 0) return;
+      section.style.display = '';
+
+      var doneNum = document.getElementById('dg-done-num');
+      var denom = document.getElementById('dg-goal-denom');
+      var titleEl = document.getElementById('dg-title');
+      var subEl = document.getElementById('dg-sub');
+      var action = document.getElementById('dg-action');
+      var arc = document.getElementById('dg-arc');
+
+      var circumference = 138.23; // 2π × 22
+      var pct = Math.min(1, done / goal);
+      var offset = circumference * (1 - pct);
+
+      if (doneNum) doneNum.textContent = done;
+      if (denom) denom.textContent = '/' + goal;
+
+      if (done >= goal) {
+        if (titleEl) titleEl.textContent = 'Goal reached! 🎉';
+        if (subEl) subEl.textContent = 'You studied ' + done + ' cards today. Amazing work.';
+        if (action) action.innerHTML = '<div class="dg-done-badge">✓ Done</div>';
+      } else {
+        var left = goal - done;
+        if (titleEl) titleEl.textContent = "Today's study goal";
+        if (subEl) subEl.textContent = left + ' more card' + (left === 1 ? '' : 's') + ' to hit your daily goal of ' + goal;
+        if (action) {
+          var btn = document.createElement('a');
+          btn.href = '#';
+          btn.className = 'dg-cta-btn';
+          btn.setAttribute('data-tab', 'events');
+          btn.textContent = 'Keep going →';
+          action.appendChild(btn);
+        }
+      }
+
+      // Animate ring
+      if (arc) {
+        arc.style.strokeDashoffset = circumference;
+        setTimeout(function() {
+          arc.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(0.4,0,0.2,1)';
+          arc.style.strokeDashoffset = offset;
+        }, 120);
+      }
+    })();
 
     // ── Home stats bar ──
     var statsBar = document.getElementById('home-stats-bar');

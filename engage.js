@@ -437,14 +437,60 @@
     });
   }
 
+  /* ─── Session progress bar (injected into flashcard stage) ── */
+  function initSessionProgressBar() {
+    const cardCounter = document.querySelector('.card-counter');
+    if (!cardCounter || document.getElementById('hosa-sess-pbar')) return;
+    const bar = document.createElement('div');
+    bar.id = 'hosa-sess-pbar';
+    bar.className = 'hosa-sess-pbar';
+    bar.innerHTML = '<div class="hosa-sess-pbar-fill" id="hosa-sess-pbar-fill"></div>';
+    cardCounter.parentNode.insertBefore(bar, cardCounter.nextSibling);
+
+    const fpEl = document.getElementById('flash-progress');
+    if (!fpEl) return;
+    function updateBar() {
+      const txt = fpEl.textContent || '';
+      const m = txt.match(/(\d+)\s*[\/]\s*(\d+)/);
+      if (!m) return;
+      const cur = parseInt(m[1], 10), tot = parseInt(m[2], 10);
+      if (!tot) return;
+      const pct = Math.round(Math.max(0, cur - 1) / tot * 100);
+      const fill = document.getElementById('hosa-sess-pbar-fill');
+      if (fill) fill.style.width = pct + '%';
+    }
+    new MutationObserver(updateBar).observe(fpEl, { childList: true, characterData: true, subtree: true });
+    updateBar();
+  }
+
+  /* ─── Rating button pulse feedback ───────────────────────── */
+  function initRatingPulse() {
+    const knowBtn = document.getElementById('flash-good');
+    const missBtn = document.getElementById('flash-again');
+    if (!knowBtn || !missBtn) return;
+    function pulse(btn) {
+      btn.classList.remove('btn-pulsing');
+      void btn.offsetWidth;
+      btn.classList.add('btn-pulsing');
+      setTimeout(() => btn.classList.remove('btn-pulsing'), 420);
+    }
+    knowBtn.addEventListener('click', () => pulse(knowBtn));
+    missBtn.addEventListener('click', () => pulse(missBtn));
+  }
+
   /* ─── Init ────────────────────────────────────────────────── */
   function init() {
     setTimeout(patchAwardXP, 80);
     setTimeout(watchSC, 160);
-    const isHome = !!document.getElementById('categories-section');
+    const isHome = !!document.getElementById('due-today-section');
+    const isEvent = !!document.getElementById('view-flashcards');
     if (isHome) {
       setTimeout(renderDueToday, 250);
       setTimeout(renderAchievements, 260);
+    }
+    if (isEvent) {
+      setTimeout(initSessionProgressBar, 400);
+      setTimeout(initRatingPulse, 400);
     }
   }
 
