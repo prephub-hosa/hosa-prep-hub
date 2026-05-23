@@ -2240,6 +2240,9 @@ let _sessHard = 0;
 function rateCard(q) {
   const card = state.flash.deck[state.flash.index];
   if (!card) return;
+  // Guard: ignore double-clicks on the same card
+  if (state.flash._ratedIndex === state.flash.index) return;
+  state.flash._ratedIndex = state.flash.index;
   state.progress.studied.add(card.term);
   // Good/Easy → mastered; Again → remove from mastered; Hard → no change
   if (q >= 4) state.progress.mastered.add(card.term);
