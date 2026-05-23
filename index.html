@@ -1786,6 +1786,19 @@
       </div>
     </div>
   </section>
+
+  <!-- DUE TODAY (populated by engage.js) -->
+  <section id="due-today-section" style="display:none;margin-bottom:72px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Source Serif 4',serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;" id="due-eyebrow">Smart Review Queue</div>
+        <h2 id="due-headline" style="margin:0;font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:400;letter-spacing:-0.02em;">Cards due <em>today.</em></h2>
+      </div>
+      <div id="due-streak-pill" style="display:none;background:linear-gradient(135deg,var(--accent),#f97316);color:#fff;font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:100px;letter-spacing:0.02em;box-shadow:0 4px 20px -6px rgba(239,68,68,0.5);white-space:nowrap;"></div>
+    </div>
+    <div id="due-today-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;"></div>
+  </section>
+
   <script>
   (function(){
     const CARDS = [
@@ -3119,6 +3132,15 @@
     </div>
   </section>
 
+  <!-- ACHIEVEMENTS (populated by engage.js) -->
+  <section id="achievements-section" style="display:none;margin-bottom:96px;">
+    <div class="section-head" style="margin-bottom:32px;">
+      <h2>Your <em>achievements.</em></h2>
+      <div class="section-label">Unlock badges as you study</div>
+    </div>
+    <div id="ach-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;"></div>
+  </section>
+
   <!-- HOW IT WORKS -->
   <section id="how-section">
     <div class="section-head">
@@ -3982,5 +4004,6 @@ document.getElementById('request-btn').onclick = function() {
   });
 })();
 </script>
+<script src="engage.js" defer></script>
 </body>
 </html>
