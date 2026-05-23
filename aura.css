@@ -1041,6 +1041,41 @@ nav.tabs button.active::after { display: none !important; }
    to show the now-hidden category picker */
 .flashcard-stage { display: grid !important; }
 
+/* ── Simplified 2-button rating ─────────────────────────────── */
+.rating-btns.rating-btns-simple {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+.rating-btns.rating-btns-simple .btn {
+  padding: 14px 12px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  letter-spacing: 0 !important;
+}
+.btn.rate-dont-know {
+  background: rgba(239,68,68,0.08) !important;
+  border: 1px solid rgba(239,68,68,0.35) !important;
+  color: #ef4444 !important;
+}
+.btn.rate-dont-know:hover {
+  background: rgba(239,68,68,0.15) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 4px 16px -6px rgba(239,68,68,0.4) !important;
+}
+.btn.rate-know {
+  background: rgba(74,222,128,0.08) !important;
+  border: 1px solid rgba(74,222,128,0.35) !important;
+  color: #4ade80 !important;
+}
+.btn.rate-know:hover {
+  background: rgba(74,222,128,0.15) !important;
+  border-color: #4ade80 !important;
+  box-shadow: 0 4px 16px -6px rgba(74,222,128,0.4) !important;
+}
+/* Hide A/H/G/E keyboard-hint row when only 2 buttons shown */
+.rating-btns-simple + .rating-label-row { display: none !important; }
+
 @media (max-width: 640px) {
   nav.tabs {
     grid-template-columns: repeat(3, 1fr) !important;

@@ -1301,8 +1301,8 @@
   }
   .flashcard, .flashcard *, .face, .face * { animation: none; }
 </style>
-<link rel="stylesheet" href="aura.css?v=6">
-<script defer src="aura.js?v=6"></script>
+<link rel="stylesheet" href="aura.css?v=7">
+<script defer src="aura.js?v=7"></script>
 <script src="engage.js" defer></script>
 </head>
 <body>
@@ -1437,11 +1437,11 @@
       </div>
       <div class="card-controls">
         <button class="btn" id="flash-prev">← Prev</button>
-        <div class="rating-btns">
-          <button class="btn rate-again" id="flash-again">&#x2717; Again</button>
-          <button class="btn rate-hard"  id="flash-hard">~ Hard</button>
-          <button class="btn rate-good"  id="flash-good">&#x2713; Good</button>
-          <button class="btn rate-easy"  id="flash-easy">&#x2605; Easy</button>
+        <div class="rating-btns rating-btns-simple">
+          <button class="btn rate-dont-know" id="flash-again">&#x2717; Don't know it</button>
+          <button class="btn rate-know" id="flash-good">&#x2713; Know it</button>
+          <button id="flash-hard" style="display:none" aria-hidden="true" tabindex="-1"></button>
+          <button id="flash-easy" style="display:none" aria-hidden="true" tabindex="-1"></button>
         </div>
         <button class="btn primary" id="flash-next">Next →</button>
       </div>
