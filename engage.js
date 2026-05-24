@@ -51,6 +51,13 @@
     // ── XP milestones
     { id:'xp-1000',            icon:'💰', title:'First Thousand',       desc:'Earned 1,000 total XP' },
     { id:'xp-10000',           icon:'💎', title:'Ten Grand',            desc:'Earned 10,000 total XP' },
+    // ── Mock Final Exam
+    { id:'mfe-first',          icon:'📝', title:'Test Taker',           desc:'Completed your first Mock Final Exam' },
+    { id:'mfe-pass',           icon:'🎯', title:'Solid Pass',           desc:'Scored 80%+ on a Mock Final Exam' },
+    { id:'mfe-perfect',        icon:'🏆', title:'Perfect Score',        desc:'Aced a Mock Final Exam (15/15)' },
+    // ── Bookmarks
+    { id:'bmk-10',             icon:'⭐', title:'Curator',              desc:'Bookmarked 10 terms' },
+    { id:'bmk-25',             icon:'🌟', title:'Archivist',            desc:'Bookmarked 25 terms' },
   ];
   window.HOSA_ACH = ACH;
 
@@ -144,6 +151,13 @@
     } catch (e) { return 0; }
   }
 
+  function getBookmarkCount() {
+    try {
+      const arr = JSON.parse(localStorage.getItem('hosa::bookmarks') || '[]');
+      return Array.isArray(arr) ? arr.length : 0;
+    } catch (e) { return 0; }
+  }
+
   function checkAchievements(session) {
     const stats = globalStats();
     const earned = getEarned();
@@ -153,6 +167,7 @@
     const pomoSessions = getPomodoroSessions();
     const spanishLearned = getSpanishLearned();
     const dcStreak = getDCStreak();
+    const bmkCount = getBookmarkCount();
 
     const newly = [];
     const pass = {
@@ -186,6 +201,11 @@
       'early-bird':      (got + missed + hard) >= 1 && hour < 6,
       'xp-1000':         xp >= 1000,
       'xp-10000':        xp >= 10000,
+      'mfe-first':       session.mfeCompleted === true,
+      'mfe-pass':        session.mfeCompleted === true && session.mfePct >= 80,
+      'mfe-perfect':     session.mfeCompleted === true && session.mfePerfect === true,
+      'bmk-10':          bmkCount >= 10,
+      'bmk-25':          bmkCount >= 25,
     };
     for (const a of ACH) {
       if (!earned.has(a.id) && pass[a.id]) {
@@ -586,6 +606,32 @@
     });
   }
   window.hosaCheckDCComplete = checkDCComplete;
+
+  /* ─── Mock Final Exam achievement hook ───────────────────────── */
+  function checkMFE(correct, total) {
+    const pct = Math.round(correct / total * 100);
+    checkAchievements({
+      got: correct,
+      missed: total - correct,
+      hard: 0,
+      mfeCompleted: true,
+      mfePct: pct,
+      mfePerfect: correct === total,
+    });
+  }
+  window.hosaCheckMFE = checkMFE;
+
+  /* ─── Bookmark achievement re-check on bookmark toggle ───────── */
+  setTimeout(function() {
+    const _origToggleBmk = window.hosaToggleBookmark;
+    if (typeof _origToggleBmk === 'function') {
+      window.hosaToggleBookmark = function(term) {
+        const r = _origToggleBmk(term);
+        setTimeout(() => checkAchievements({ got: 0, missed: 0, hard: 0 }), 100);
+        return r;
+      };
+    }
+  }, 600);
 
   /* ─── Activity log on session complete ───────────────────────── */
   function logTodayActivity() {

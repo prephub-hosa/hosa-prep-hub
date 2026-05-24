@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=22">
+<link rel="stylesheet" href="aura.css?v=23">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2346,6 +2346,34 @@ footer { display: none; }
         <div class="dc-card" id="dc-card">
           <div style="padding:32px 24px;text-align:center;color:var(--ink-faint);font-family:'Source Serif 4',serif;font-size:14px;">Loading challenge…</div>
         </div>
+      </section>
+
+      <!-- 🏆 Mock Final Exam -->
+      <section class="mfe-wrap" id="mfe-section">
+        <div class="mfe-header">
+          <div>
+            <div class="mfe-eyebrow">🏆 Mock Final Exam</div>
+            <h2 class="section-title" style="margin:0">Cross-event timed test</h2>
+          </div>
+          <div class="mfe-meta">
+            <span class="mfe-meta-pill">15 questions</span>
+            <span class="mfe-meta-pill">7 minutes</span>
+            <span class="mfe-meta-pill">Up to 200 XP</span>
+          </div>
+        </div>
+        <div class="mfe-card" id="mfe-card">
+          <div class="mfe-intro" id="mfe-intro">
+            <p class="mfe-intro-text">A simulated HOSA-style exam pulling 15 random questions from across every event. Beat the timer, beat your last score.</p>
+            <div class="mfe-best" id="mfe-best" style="display:none"></div>
+            <button class="mfe-btn-start" id="mfe-start" type="button">Start exam →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bookmarked Terms — shown when user has bookmarks -->
+      <section class="bmk-section" id="bmk-section">
+        <h2 class="section-title">⭐ Bookmarked terms</h2>
+        <div class="bmk-grid" id="bmk-grid"></div>
       </section>
 
       <!-- Term of the Day -->
@@ -5816,6 +5844,7 @@ function friendlyError(code) {
     { id:'act-search',    icon:'🔍', name:'Search events',         hint:'/',     run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ var el = document.getElementById('event-search'); if (el) { el.focus(); el.select(); } }, 80); } },
     { id:'act-terms',    icon:'🔬', name:'Search medical terms',  hint:'⌘⇧F', run: function(){ if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch(); } },
     { id:'act-challenge', icon:'⚡', name:'Go to Daily Challenge', hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('dc-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 150); } },
+    { id:'act-mfe',      icon:'🏆', name:'Take Mock Final Exam',  hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('mfe-section'); if(el) el.scrollIntoView({behavior:'smooth'}); var btn=document.getElementById('mfe-start'); if(btn) setTimeout(function(){btn.click();}, 400); }, 150); } },
     { id:'act-pomo',     icon:'⏱',  name:'Open Pomodoro timer',   hint:'',    run: function(){ var fab=document.getElementById('pomo-fab'); if(fab) fab.click(); } },
   ];
 
@@ -7659,6 +7688,376 @@ window.hosaXPFlyup = function(el, amount) {
     setTimeout(function() { syncTokens(); renderTokens(); }, 500);
   });
   if (document.readyState !== 'loading') setTimeout(function() { syncTokens(); renderTokens(); }, 500);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   MOCK FINAL EXAM
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var QUESTIONS_TOTAL = 15;
+  var SECONDS_TOTAL = 7 * 60; // 7 minutes
+  var BEST_KEY = 'hosa::mfe-best';
+
+  var state = null; // { questions:[], answers:[], current, startedAt, timeLeft }
+  var tickInterval = null;
+
+  function pickRandom(pool, n) {
+    var copy = pool.slice();
+    var picked = [];
+    while (picked.length < n && copy.length) {
+      var idx = Math.floor(Math.random() * copy.length);
+      picked.push(copy.splice(idx, 1)[0]);
+    }
+    return picked;
+  }
+  function makeChoices(correct, pool) {
+    var choices = [correct.term];
+    var used = {}; used[correct.term] = true;
+    var attempts = 0;
+    while (choices.length < 4 && attempts < 300) {
+      var c = pool[Math.floor(Math.random() * pool.length)];
+      if (!used[c.term]) { used[c.term] = true; choices.push(c.term); }
+      attempts++;
+    }
+    // Shuffle
+    for (var i = choices.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = choices[i]; choices[i] = choices[j]; choices[j] = t;
+    }
+    return choices;
+  }
+
+  function startExam() {
+    var pool = window.HOSA_TERMS || [];
+    if (pool.length < QUESTIONS_TOTAL) return;
+    var questions = pickRandom(pool, QUESTIONS_TOTAL).map(function(q) {
+      return { term: q.term, def: q.def, event: q.event, slug: q.slug, choices: makeChoices(q, pool) };
+    });
+    state = {
+      questions: questions,
+      answers: new Array(QUESTIONS_TOTAL).fill(null),
+      current: 0,
+      startedAt: Date.now(),
+      timeLeft: SECONDS_TOTAL,
+    };
+    renderExam();
+    startTick();
+  }
+
+  function startTick() {
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = setInterval(function() {
+      var elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
+      state.timeLeft = Math.max(0, SECONDS_TOTAL - elapsed);
+      updateTimer();
+      if (state.timeLeft === 0) {
+        clearInterval(tickInterval);
+        tickInterval = null;
+        finishExam();
+      }
+    }, 1000);
+  }
+
+  function fmtTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function updateTimer() {
+    var t = document.getElementById('mfe-timer');
+    if (!t) return;
+    t.textContent = fmtTime(state.timeLeft);
+    t.classList.remove('warning', 'critical');
+    if (state.timeLeft <= 30) t.classList.add('critical');
+    else if (state.timeLeft <= 60) t.classList.add('warning');
+  }
+
+  function renderExam() {
+    var card = document.getElementById('mfe-card');
+    if (!card || !state) return;
+    var q = state.questions[state.current];
+    var letters = ['A', 'B', 'C', 'D'];
+    var pct = (state.current / QUESTIONS_TOTAL) * 100;
+
+    var opts = q.choices.map(function(ch, idx) {
+      var sel = state.answers[state.current] === ch ? ' selected' : '';
+      return '<button class="mfe-opt' + sel + '" data-ans="' + ch.replace(/"/g,'&quot;') + '">' +
+        '<span class="mfe-opt-letter">' + letters[idx] + '</span>' + ch + '</button>';
+    }).join('');
+
+    var answeredCount = state.answers.filter(function(a){ return a !== null; }).length;
+
+    card.innerHTML =
+      '<div class="mfe-active">' +
+        '<div class="mfe-topbar">' +
+          '<div class="mfe-q-count">Question <strong>' + (state.current + 1) + '</strong> of ' + QUESTIONS_TOTAL + ' · ' + answeredCount + ' answered</div>' +
+          '<div class="mfe-timer" id="mfe-timer">' + fmtTime(state.timeLeft) + '</div>' +
+        '</div>' +
+        '<div class="mfe-pbar-track"><div class="mfe-pbar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="mfe-q">' +
+          '<div class="mfe-q-meta">Which term matches this definition?</div>' +
+          '<div class="mfe-q-text">' + q.def + '</div>' +
+          '<div class="mfe-q-event">from ' + q.event + '</div>' +
+          '<div class="mfe-opts">' + opts + '</div>' +
+        '</div>' +
+        '<div class="mfe-nav">' +
+          '<button class="mfe-btn-nav" id="mfe-prev"' + (state.current === 0 ? ' disabled' : '') + '>← Previous</button>' +
+          (state.current === QUESTIONS_TOTAL - 1
+            ? '<button class="mfe-btn-submit" id="mfe-submit">Submit exam</button>'
+            : '<button class="mfe-btn-nav" id="mfe-next">Next →</button>') +
+        '</div>' +
+      '</div>';
+
+    updateTimer();
+
+    card.querySelectorAll('.mfe-opt').forEach(function(b) {
+      b.addEventListener('click', function() {
+        state.answers[state.current] = b.getAttribute('data-ans');
+        // Update visual selection without full re-render
+        card.querySelectorAll('.mfe-opt').forEach(function(o) { o.classList.remove('selected'); });
+        b.classList.add('selected');
+        // Update answered count
+        var ac = state.answers.filter(function(a){ return a !== null; }).length;
+        var qc = card.querySelector('.mfe-q-count');
+        if (qc) qc.innerHTML = 'Question <strong>' + (state.current + 1) + '</strong> of ' + QUESTIONS_TOTAL + ' · ' + ac + ' answered';
+      });
+    });
+    var prev = document.getElementById('mfe-prev');
+    if (prev) prev.addEventListener('click', function() {
+      if (state.current > 0) { state.current--; renderExam(); }
+    });
+    var next = document.getElementById('mfe-next');
+    if (next) next.addEventListener('click', function() {
+      if (state.current < QUESTIONS_TOTAL - 1) { state.current++; renderExam(); }
+    });
+    var submit = document.getElementById('mfe-submit');
+    if (submit) submit.addEventListener('click', finishExam);
+  }
+
+  function finishExam() {
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    var correct = 0;
+    state.questions.forEach(function(q, i) {
+      if (state.answers[i] === q.term) correct++;
+    });
+    var incorrect = QUESTIONS_TOTAL - correct;
+    var unanswered = state.answers.filter(function(a){ return a === null; }).length;
+    var pct = Math.round(correct / QUESTIONS_TOTAL * 100);
+    var elapsed = SECONDS_TOTAL - state.timeLeft;
+
+    // XP: 10 per correct + 50 bonus if all correct + 25 bonus if pct >= 80
+    var xpEarned = correct * 10;
+    if (correct === QUESTIONS_TOTAL) xpEarned += 50;
+    else if (pct >= 80) xpEarned += 25;
+
+    try {
+      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      localStorage.setItem('hosa::xp', String(xp + xpEarned));
+    } catch(e) {}
+
+    // Update best score
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var isNewBest = !best || pct > best.pct || (pct === best.pct && elapsed < best.time);
+    if (isNewBest) {
+      try { localStorage.setItem(BEST_KEY, JSON.stringify({ pct: pct, score: correct, time: elapsed, date: new Date().toISOString().slice(0,10) })); } catch(e) {}
+    }
+
+    // Track activity
+    try {
+      var act = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      var today = new Date().toISOString().slice(0,10);
+      if (act.indexOf(today) === -1) { act.push(today); localStorage.setItem('hosa::activity', JSON.stringify(act)); }
+    } catch(e) {}
+
+    // Grade
+    var grade;
+    if (pct >= 93) grade = 'A';
+    else if (pct >= 85) grade = 'A−';
+    else if (pct >= 77) grade = 'B+';
+    else if (pct >= 70) grade = 'B';
+    else if (pct >= 60) grade = 'C';
+    else grade = 'D';
+
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    card.innerHTML =
+      '<div class="mfe-result">' +
+        '<div class="mfe-result-grade">' + grade + '</div>' +
+        '<div class="mfe-result-score">' + correct + ' / ' + QUESTIONS_TOTAL + ' correct</div>' +
+        '<div class="mfe-result-pct">' + pct + '% · finished in ' + fmtTime(elapsed) + (isNewBest && best ? ' · new best!' : '') + '</div>' +
+        '<div class="mfe-result-stats">' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num good">' + correct + '</div><div class="mfe-stat-label">Correct</div></div>' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num bad">' + incorrect + '</div><div class="mfe-stat-label">Wrong</div></div>' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num">' + unanswered + '</div><div class="mfe-stat-label">Blank</div></div>' +
+        '</div>' +
+        '<div class="mfe-xp-pill">+' + xpEarned + ' XP earned</div>' +
+        '<div class="mfe-actions">' +
+          '<button class="mfe-btn-primary" id="mfe-again">Take it again</button>' +
+          '<button class="mfe-btn-secondary" id="mfe-review">Review answers</button>' +
+        '</div>' +
+      '</div>';
+
+    if (window._fireConfetti && pct >= 80) window._fireConfetti();
+    if (window.hosaCheckMFE) window.hosaCheckMFE(correct, QUESTIONS_TOTAL);
+
+    document.getElementById('mfe-again').addEventListener('click', resetIntro);
+    document.getElementById('mfe-review').addEventListener('click', function() { showReview(); });
+  }
+
+  function showReview() {
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    var rows = state.questions.map(function(q, i) {
+      var your = state.answers[i] || '(blank)';
+      var ok = state.answers[i] === q.term;
+      var color = ok ? 'var(--success)' : 'var(--error)';
+      return '<div style="padding:14px 0;border-bottom:1px solid var(--rule);">' +
+        '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:12px;color:var(--ink-faint);margin-bottom:6px;">Q' + (i+1) + ' · ' + q.event + '</div>' +
+        '<div style="font-family:\'Source Serif 4\',serif;font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:8px;">' + q.def + '</div>' +
+        '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:11px;letter-spacing:0.04em;color:' + color + ';">' +
+          (ok ? '✓ ' : '✗ ') + 'You: ' + your +
+        '</div>' +
+        (ok ? '' : '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:11px;letter-spacing:0.04em;color:var(--success);margin-top:3px;">✓ Correct: ' + q.term + '</div>') +
+        '</div>';
+    }).join('');
+    card.innerHTML =
+      '<div style="padding:24px 28px 28px;">' +
+        '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;">Answer review</div>' +
+        '<h3 style="font-family:\'Fraunces\',serif;font-size:24px;font-weight:400;letter-spacing:-0.02em;margin:0 0 14px;">Question-by-question</h3>' +
+        rows +
+        '<div style="margin-top:20px;text-align:center;"><button class="mfe-btn-secondary" id="mfe-back-intro">Back to start</button></div>' +
+      '</div>';
+    document.getElementById('mfe-back-intro').addEventListener('click', resetIntro);
+  }
+
+  function resetIntro() {
+    state = null;
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var bestHtml = best
+      ? '<div class="mfe-best">Best score · <strong>' + best.pct + '%</strong> in ' + fmtTime(best.time) + '</div>'
+      : '';
+    card.innerHTML =
+      '<div class="mfe-intro">' +
+        '<p class="mfe-intro-text">A simulated HOSA-style exam pulling 15 random questions from across every event. Beat the timer, beat your last score.</p>' +
+        bestHtml +
+        '<button class="mfe-btn-start" id="mfe-start" type="button">' + (best ? 'Start new exam →' : 'Start exam →') + '</button>' +
+      '</div>';
+    document.getElementById('mfe-start').addEventListener('click', startExam);
+  }
+
+  function init() {
+    var startBtn = document.getElementById('mfe-start');
+    if (startBtn) startBtn.addEventListener('click', startExam);
+    // Restore best score display
+    try {
+      var best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null');
+      if (best) {
+        var b = document.getElementById('mfe-best');
+        if (b) {
+          b.innerHTML = 'Best score · <strong>' + best.pct + '%</strong> in ' + fmtTime(best.time);
+          b.style.display = 'inline-flex';
+        }
+      }
+    } catch(e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
+  if (document.readyState !== 'loading') setTimeout(init, 100);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   TERM BOOKMARKS — star button in global search + home widget
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var KEY = 'hosa::bookmarks';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { return []; }
+  }
+  function save(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+  function isBookmarked(term) { return load().indexOf(term) !== -1; }
+  function toggle(term) {
+    var arr = load();
+    var idx = arr.indexOf(term);
+    if (idx === -1) arr.push(term);
+    else arr.splice(idx, 1);
+    save(arr);
+    renderHomeBookmarks();
+    return idx === -1; // returns true if newly added
+  }
+  window.hosaToggleBookmark = toggle;
+  window.hosaIsBookmarked = isBookmarked;
+
+  function renderHomeBookmarks() {
+    var section = document.getElementById('bmk-section');
+    var grid = document.getElementById('bmk-grid');
+    if (!section || !grid) return;
+    var bms = load();
+    if (bms.length === 0) { section.classList.remove('visible'); return; }
+    var pool = window.HOSA_TERMS || [];
+    var byTerm = {};
+    pool.forEach(function(t) { byTerm[t.term] = t; });
+    var items = bms.map(function(name) { return byTerm[name]; }).filter(Boolean);
+    if (items.length === 0) { section.classList.remove('visible'); return; }
+    section.classList.add('visible');
+    grid.innerHTML = '';
+    items.slice(0, 12).forEach(function(t) {
+      var a = document.createElement('a');
+      a.href = t.slug + '.html';
+      a.className = 'bmk-card';
+      a.innerHTML =
+        '<div class="bmk-term">' + t.term + '</div>' +
+        '<div class="bmk-def">' + t.def + '</div>' +
+        '<span class="bmk-event-tag">' + t.event + '</span>';
+      grid.appendChild(a);
+    });
+  }
+
+  // Inject star buttons into global search results after render
+  function enhanceSearchResults() {
+    var resultsBox = document.getElementById('gsearch-results');
+    if (!resultsBox) return;
+    var obs = new MutationObserver(function() {
+      resultsBox.querySelectorAll('.gsearch-result:not([data-bmk-wired])').forEach(function(row) {
+        row.setAttribute('data-bmk-wired', '1');
+        var termEl = row.querySelector('.gs-term');
+        if (!termEl) return;
+        // Strip <mark>...</mark> to get plain term name
+        var term = (termEl.textContent || '').trim();
+        var star = document.createElement('button');
+        star.className = 'gs-star' + (isBookmarked(term) ? ' active' : '');
+        star.setAttribute('aria-label', 'Bookmark');
+        star.textContent = isBookmarked(term) ? '★' : '☆';
+        star.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var added = toggle(term);
+          star.classList.toggle('active', added);
+          star.textContent = added ? '★' : '☆';
+          if (added && window._showToast) window._showToast('Bookmarked: ' + term, 'success');
+        });
+        // insert star before arrow
+        var arrow = row.querySelector('.gs-arrow');
+        if (arrow) row.insertBefore(star, arrow);
+        else row.appendChild(star);
+      });
+    });
+    obs.observe(resultsBox, { childList: true, subtree: true });
+  }
+
+  function init() {
+    renderHomeBookmarks();
+    enhanceSearchResults();
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 400); });
+  if (document.readyState !== 'loading') setTimeout(init, 400);
 })();
 </script>
 
