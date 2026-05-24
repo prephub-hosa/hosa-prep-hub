@@ -2797,8 +2797,3 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
 /* Ensure body text everywhere has a clear default */
 body, html { color: var(--ink); }
 p { color: var(--ink); }
-
-/* Tone-up dark-mode subtle-text shadows that were too low-contrast */
-:root {
-  --ink: #ece8de;
-}
