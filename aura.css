@@ -2129,3 +2129,152 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
   .nav-due-badge { animation: none !important; }
   .resume-cta-card:hover { transform: none !important; }
 }
+
+/* ══ v15 ══════════════════════════════════════════════════════ */
+
+/* ── "This Week" bar chart in home stats bar ── */
+.hs-week-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 16px;
+  border-left: 1px solid var(--rule);
+}
+.hs-week-label {
+  font-size: 10px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hs-week-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 32px;
+}
+.hs-week-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.hs-week-bar-wrap {
+  height: 30px;
+  display: flex;
+  align-items: flex-end;
+}
+.hs-week-bar {
+  width: 11px;
+  min-height: 3px;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+  opacity: 0.28;
+  transition: height 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.hs-week-bar.has-data { opacity: 0.65; }
+.hs-week-bar.today { opacity: 1; box-shadow: 0 0 8px rgba(201,55,45,0.45); }
+.hs-week-bar.future { opacity: 0.08; }
+.hs-week-day {
+  font-size: 9px;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.hs-week-day.today { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 560px) { .hs-week-wrap { display: none; } }
+
+/* ── "Next Up" recommendation card ── */
+.next-up-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 22px;
+  background:
+    linear-gradient(135deg, rgba(45,90,61,0.08), rgba(74,222,128,0.03) 65%),
+    var(--bg-card);
+  border: 1px solid rgba(74,222,128,0.18);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.18s;
+}
+.next-up-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #4ade80, #22c55e);
+  border-radius: 14px 0 0 14px;
+}
+.next-up-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px -12px rgba(0,0,0,0.35), 0 0 32px -16px rgba(74,222,128,0.3);
+  border-color: rgba(74,222,128,0.35);
+}
+.next-up-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #4ade80;
+  font-family: 'Source Serif 4', serif;
+}
+.next-up-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.next-up-body { flex: 1; min-width: 0; }
+.next-up-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.next-up-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.next-up-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4ade80;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.next-up-arrow {
+  transition: transform 0.18s;
+  display: inline-block;
+}
+.next-up-card:hover .next-up-arrow { transform: translateX(4px); }
+
+/* Light mode for new components */
+[data-theme="light"] .next-up-card {
+  background:
+    linear-gradient(135deg, rgba(22,163,74,0.07), rgba(74,222,128,0.02) 65%),
+    var(--bg-card);
+  border-color: rgba(22,163,74,0.22);
+}
+[data-theme="light"] .next-up-eyebrow,
+[data-theme="light"] .next-up-action { color: #16a34a; }
+[data-theme="light"] .hs-week-bar { background: var(--accent); }
+[data-theme="light"] .hs-week-bar.today { box-shadow: 0 0 8px rgba(168,40,31,0.35); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hs-week-bar { transition: none !important; }
+  .next-up-card:hover { transform: none !important; }
+}
