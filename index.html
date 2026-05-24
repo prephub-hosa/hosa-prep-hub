@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=10">
+<link rel="stylesheet" href="aura.css?v=11">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -3699,7 +3699,11 @@ auth.onAuthStateChanged(user => {
           var pct = Math.min(100, Math.round(mastered / total * 100));
           var fill = el.querySelector('.cp-bar-fill');
           var label = el.querySelector('.cp-label');
-          if (fill) setTimeout(function(){fill.style.width = pct + '%';}, 100);
+          if (fill) {
+            var masteryLevel = pct >= 70 ? 'high' : pct >= 35 ? 'mid' : 'low';
+            fill.setAttribute('data-mastery', masteryLevel);
+            setTimeout(function(){ fill.style.width = pct + '%'; }, 120);
+          }
           if (label) label.textContent = mastered + ' / ' + total + ' mastered';
         });
         document.body.classList.add('user-active');
@@ -4422,7 +4426,11 @@ function friendlyError(code) {
       var pct = Math.min(1, done / goal);
       var offset = circumference * (1 - pct);
 
-      if (doneNum) doneNum.textContent = done;
+      if (doneNum) {
+        doneNum.textContent = done;
+        if (done >= goal) doneNum.classList.add('goal-complete');
+        else if (pct >= 0.7) doneNum.classList.add('near-complete');
+      }
       if (denom) denom.textContent = '/' + goal;
 
       if (done >= goal) {
@@ -4482,6 +4490,7 @@ function friendlyError(code) {
       if (streak > 0 && hsStreak && hsStreakStat) {
         hsStreakStat.style.display = 'flex';
         animateNumber(hsStreak, streak, 800);
+        hsStreak.classList.add('has-streak');
       }
       var xpThis = xp - xpForLevel(lvl);
       var xpNext = xpForLevel(lvl + 1) - xpForLevel(lvl);
