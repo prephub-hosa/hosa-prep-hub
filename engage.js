@@ -11,22 +11,46 @@
 
   /* ─── Achievement definitions ─────────────────────────────── */
   const ACH = [
-    { id:'first-session',   icon:'🎯', title:'First Steps',       desc:'Completed your first study session' },
-    { id:'streak-3',        icon:'🔥', title:'On a Roll',         desc:'3-day study streak' },
-    { id:'streak-7',        icon:'🔥', title:'Week Warrior',      desc:'7-day study streak' },
-    { id:'streak-14',       icon:'💪', title:'Two Weeks Strong',  desc:'14-day study streak' },
-    { id:'streak-30',       icon:'⚡', title:'Unstoppable',       desc:'30-day study streak' },
-    { id:'mastered-10',     icon:'📚', title:'Getting Started',   desc:'Mastered 10 terms' },
-    { id:'mastered-50',     icon:'🧠', title:'Sharp Mind',        desc:'Mastered 50 terms' },
-    { id:'mastered-100',    icon:'🏆', title:'Century Club',      desc:'Mastered 100 terms' },
-    { id:'mastered-250',    icon:'⭐', title:'Scholar',           desc:'Mastered 250 terms' },
-    { id:'mastered-500',    icon:'💎', title:'Elite',             desc:'Mastered 500 terms' },
-    { id:'events-3',        icon:'🗺️', title:'Explorer',          desc:'Studied 3 different events' },
-    { id:'events-10',       icon:'🌟', title:'All-Rounder',       desc:'Studied 10 different HOSA events' },
-    { id:'perfect-session', icon:'✨', title:'Perfect Session',   desc:'Finished a session with only Good & Easy' },
-    { id:'level-5',         icon:'🚀', title:'Rising Star',       desc:'Reached Level 5' },
-    { id:'level-10',        icon:'🎓', title:'Expert',            desc:'Reached Level 10' },
-    { id:'level-20',        icon:'👑', title:'Master',            desc:'Reached Level 20' },
+    // ── Study streaks
+    { id:'first-session',      icon:'🎯', title:'First Steps',           desc:'Completed your first study session' },
+    { id:'streak-3',           icon:'🔥', title:'On a Roll',             desc:'3-day study streak' },
+    { id:'streak-7',           icon:'🔥', title:'Week Warrior',          desc:'7-day study streak' },
+    { id:'streak-14',          icon:'💪', title:'Two Weeks Strong',      desc:'14-day study streak' },
+    { id:'streak-30',          icon:'⚡', title:'Unstoppable',           desc:'30-day study streak' },
+    // ── Mastery
+    { id:'mastered-10',        icon:'📚', title:'Getting Started',       desc:'Mastered 10 terms' },
+    { id:'mastered-50',        icon:'🧠', title:'Sharp Mind',            desc:'Mastered 50 terms' },
+    { id:'mastered-100',       icon:'🏆', title:'Century Club',          desc:'Mastered 100 terms' },
+    { id:'mastered-250',       icon:'⭐', title:'Scholar',               desc:'Mastered 250 terms' },
+    { id:'mastered-500',       icon:'💎', title:'Elite',                 desc:'Mastered 500 terms' },
+    // ── Events
+    { id:'events-3',           icon:'🗺️',  title:'Explorer',             desc:'Studied 3 different events' },
+    { id:'events-10',          icon:'🌟', title:'All-Rounder',           desc:'Studied 10 different HOSA events' },
+    { id:'events-25',          icon:'🎖️',  title:'Generalist',           desc:'Studied 25 different HOSA events' },
+    { id:'events-50',          icon:'🦅', title:'Comprehensive',         desc:'Studied 50 different HOSA events' },
+    // ── Session quality
+    { id:'perfect-session',    icon:'✨', title:'Perfect Session',       desc:'Finished a session with only Good & Easy' },
+    // ── Levels
+    { id:'level-5',            icon:'🚀', title:'Rising Star',           desc:'Reached Level 5' },
+    { id:'level-10',           icon:'🎓', title:'Expert',               desc:'Reached Level 10' },
+    { id:'level-20',           icon:'👑', title:'Master',               desc:'Reached Level 20' },
+    { id:'level-50',           icon:'🌌', title:'Legend',               desc:'Reached Level 50' },
+    // ── Daily Challenge
+    { id:'dc-first',           icon:'⚡', title:'Challenge Accepted',   desc:'Completed your first Daily Challenge' },
+    { id:'dc-perfect',         icon:'💥', title:'Flawless',             desc:'Scored 5/5 on a Daily Challenge' },
+    { id:'dc-streak-7',        icon:'📅', title:'Daily Champion',       desc:'Completed the Daily Challenge 7 days in a row' },
+    // ── Pomodoro
+    { id:'pomo-5',             icon:'⏱',  title:'Focused',              desc:'Completed 5 Pomodoro focus sessions' },
+    { id:'pomo-25',            icon:'🍅', title:'Pomodoro Pro',         desc:'Completed 25 Pomodoro focus sessions' },
+    // ── Medical Spanish
+    { id:'spanish-10',         icon:'🌎', title:'Hola Médico',          desc:'Learned 10 Medical Spanish terms' },
+    { id:'spanish-all',        icon:'🏥', title:'Bilingüe',             desc:'Mastered all Medical Spanish terms' },
+    // ── Time-based
+    { id:'night-owl',          icon:'🦉', title:'Night Owl',            desc:'Studied after midnight' },
+    { id:'early-bird',         icon:'🌅', title:'Early Bird',           desc:'Studied before 6 AM' },
+    // ── XP milestones
+    { id:'xp-1000',            icon:'💰', title:'First Thousand',       desc:'Earned 1,000 total XP' },
+    { id:'xp-10000',           icon:'💎', title:'Ten Grand',            desc:'Earned 10,000 total XP' },
   ];
   window.HOSA_ACH = ACH;
 
@@ -99,10 +123,37 @@
   window.hosaDueToday = getDueToday;
 
   /* ─── Achievement check ───────────────────────────────────── */
+  function getPomodoroSessions() {
+    try {
+      const stats = JSON.parse(localStorage.getItem('hosa::pomo-stats') || '{}');
+      return Object.values(stats.days || {}).reduce((s, d) => s + (d.sessions || 0), 0);
+    } catch (e) { return 0; }
+  }
+
+  function getSpanishLearned() {
+    try {
+      const arr = JSON.parse(localStorage.getItem('hosa::sp-learned') || '[]');
+      return Array.isArray(arr) ? arr.length : 0;
+    } catch (e) { return 0; }
+  }
+
+  function getDCStreak() {
+    try {
+      const s = JSON.parse(localStorage.getItem('hosa::dc-streak') || '{"streak":0}');
+      return s.streak || 0;
+    } catch (e) { return 0; }
+  }
+
   function checkAchievements(session) {
     const stats = globalStats();
     const earned = getEarned();
     const got = session.got || 0, missed = session.missed || 0, hard = session.hard || 0;
+    const hour = new Date().getHours();
+    const xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    const pomoSessions = getPomodoroSessions();
+    const spanishLearned = getSpanishLearned();
+    const dcStreak = getDCStreak();
+
     const newly = [];
     const pass = {
       'first-session':   (got + missed + hard) >= 1,
@@ -117,10 +168,24 @@
       'mastered-500':    stats.mastered >= 500,
       'events-3':        stats.events >= 3,
       'events-10':       stats.events >= 10,
+      'events-25':       stats.events >= 25,
+      'events-50':       stats.events >= 50,
       'perfect-session': missed === 0 && hard === 0 && got >= 5,
       'level-5':         stats.level >= 5,
       'level-10':        stats.level >= 10,
       'level-20':        stats.level >= 20,
+      'level-50':        stats.level >= 50,
+      'dc-first':        session.dcCompleted === true,
+      'dc-perfect':      session.dcPerfect === true,
+      'dc-streak-7':     dcStreak >= 7,
+      'pomo-5':          pomoSessions >= 5,
+      'pomo-25':         pomoSessions >= 25,
+      'spanish-10':      spanishLearned >= 10,
+      'spanish-all':     spanishLearned >= 68,
+      'night-owl':       (got + missed + hard) >= 1 && (hour === 0 || hour === 1 || hour === 23),
+      'early-bird':      (got + missed + hard) >= 1 && hour < 6,
+      'xp-1000':         xp >= 1000,
+      'xp-10000':        xp >= 10000,
     };
     for (const a of ACH) {
       if (!earned.has(a.id) && pass[a.id]) {
@@ -494,7 +559,74 @@
     }
   }
 
+  /* ─── Daily challenge achievement check hook ─────────────────── */
+  function checkDCComplete(score) {
+    const QUESTIONS = 5;
+    // Update DC streak
+    try {
+      const today = getTodayStr();
+      let ds = JSON.parse(localStorage.getItem('hosa::dc-streak') || '{"streak":0,"last":""}');
+      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+      const yStr = yesterday.toISOString().slice(0, 10);
+      if (ds.last === yStr) {
+        ds.streak = (ds.streak || 0) + 1;
+      } else if (ds.last !== today) {
+        ds.streak = 1;
+      }
+      ds.last = today;
+      localStorage.setItem('hosa::dc-streak', JSON.stringify(ds));
+    } catch(e) {}
+
+    checkAchievements({
+      got: score,
+      missed: QUESTIONS - score,
+      hard: 0,
+      dcCompleted: true,
+      dcPerfect: score === QUESTIONS,
+    });
+  }
+  window.hosaCheckDCComplete = checkDCComplete;
+
+  /* ─── Activity log on session complete ───────────────────────── */
+  function logTodayActivity() {
+    try {
+      const today = getTodayStr();
+      let act = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      if (!act.includes(today)) {
+        act.push(today);
+        localStorage.setItem('hosa::activity', JSON.stringify(act));
+      }
+    } catch(e) {}
+  }
+
+  /* ─── Homepage: re-render heatmap after activity log ─────────── */
+  function initDCHook() {
+    // Wire up the daily challenge hook now that checkDCComplete is defined
+    if (window.hosaCheckDCComplete !== checkDCComplete) {
+      window.hosaCheckDCComplete = checkDCComplete;
+    }
+  }
+
   document.readyState === 'loading'
     ? document.addEventListener('DOMContentLoaded', init)
     : init();
+
+  // Wire DC hook immediately
+  initDCHook();
+
+  // Log activity whenever a session completes
+  const _origPopulateSC = populateSC;
+  /* We already have populateSC defined above — patch it to also log activity */
+  // Use MutationObserver approach: log whenever session-complete becomes visible
+  (function() {
+    function tryLog() {
+      const sc = document.getElementById('session-complete');
+      if (!sc) return;
+      const obs2 = new MutationObserver(() => {
+        if (sc.style.display !== 'none') logTodayActivity();
+      });
+      obs2.observe(sc, { attributes: true, attributeFilter: ['style'] });
+    }
+    setTimeout(tryLog, 500);
+  })();
 })();

@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=21">
+<link rel="stylesheet" href="aura.css?v=22">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2331,6 +2331,23 @@ footer { display: none; }
         <div id="recents-grid" class="recents-grid"></div>
       </section>
 
+      <!-- ⚡ Daily Challenge -->
+      <section class="dc-wrap" id="dc-section">
+        <div class="dc-header">
+          <div>
+            <div class="dc-eyebrow">⚡ Daily Challenge</div>
+            <h2 class="section-title" style="margin:0">5 questions. 2× XP.</h2>
+          </div>
+          <div class="dc-timer-wrap" id="dc-timer-wrap" style="display:none">
+            <div class="dc-timer-label">Next challenge in</div>
+            <div class="dc-timer-val" id="dc-timer-val">--:--:--</div>
+          </div>
+        </div>
+        <div class="dc-card" id="dc-card">
+          <div style="padding:32px 24px;text-align:center;color:var(--ink-faint);font-family:'Source Serif 4',serif;font-size:14px;">Loading challenge…</div>
+        </div>
+      </section>
+
       <!-- Term of the Day -->
       <section class="totd-section" id="totd-section" style="margin-bottom:48px;">
         <h2 class="section-title">Term of the <em style="font-style:italic;color:var(--accent)">Day.</em></h2>
@@ -2344,6 +2361,27 @@ footer { display: none; }
           <div class="totd-aside">
             <div class="totd-date" id="totd-date-num"></div>
             <a class="totd-link" id="totd-link" href="#">Study this event →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity Heatmap — shown for users with study history -->
+      <section class="heatmap-outer" id="heatmap-section" style="display:none">
+        <h2 class="section-title">Study activity</h2>
+        <div class="hm-container">
+          <div class="hm-months" id="hm-months"></div>
+          <div class="hm-body">
+            <div class="hm-days" id="hm-days"></div>
+            <div class="hm-cols" id="hm-cols"></div>
+          </div>
+          <div class="hm-legend">
+            <span class="hm-legend-label">Less</span>
+            <div class="hm-legend-swatch hm-sw0"></div>
+            <div class="hm-legend-swatch hm-sw1"></div>
+            <div class="hm-legend-swatch hm-sw2"></div>
+            <div class="hm-legend-swatch hm-sw3"></div>
+            <div class="hm-legend-swatch hm-sw4"></div>
+            <span class="hm-legend-label">More</span>
           </div>
         </div>
       </section>
@@ -4957,6 +4995,12 @@ function friendlyError(code) {
       var tbLevelWrap = document.getElementById('topbar-level');
       if (tbLevel) tbLevel.textContent = lvl;
       if (tbLevelWrap) tbLevelWrap.classList.add('visible');
+      // Seed activity log with today if user has XP (so heatmap shows current day)
+      try {
+        var _today = new Date().toISOString().slice(0, 10);
+        var _act = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+        if (_act.indexOf(_today) === -1) { _act.push(_today); localStorage.setItem('hosa::activity', JSON.stringify(_act)); }
+      } catch(_e) {}
     }
 
     // ── Jump back in ──
@@ -5111,8 +5155,9 @@ function friendlyError(code) {
         <div class="shortcut-row"><kbd>2</kbd> Events</div>
         <div class="shortcut-row"><kbd>3</kbd> Library</div>
         <div class="shortcut-row"><kbd>4</kbd> Medical Spanish</div>
+        <div class="shortcut-row"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>F</kbd> Search terms</div>
         <div class="shortcut-row"><kbd>R</kbd> Surprise me</div>
-        <div class="shortcut-row"><kbd>/</kbd> Search</div>
+        <div class="shortcut-row"><kbd>/</kbd> Search events</div>
         <div class="shortcut-row"><kbd>?</kbd> Shortcuts</div>
       </div>
       <div>
@@ -5769,6 +5814,9 @@ function friendlyError(code) {
     { id:'act-surprise', icon:'🎲', name:'Surprise me — random event', hint:'R',  run: function(){ var btn = document.getElementById('btn-surprise'); if (btn) { if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ btn.click(); }, 120); } } },
     { id:'act-shortcuts', icon:'⌨', name:'Show keyboard shortcuts', hint:'?',    run: function(){ var ov = document.getElementById('shortcuts-overlay'); if (ov) ov.classList.add('open'); } },
     { id:'act-search',    icon:'🔍', name:'Search events',         hint:'/',     run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ var el = document.getElementById('event-search'); if (el) { el.focus(); el.select(); } }, 80); } },
+    { id:'act-terms',    icon:'🔬', name:'Search medical terms',  hint:'⌘⇧F', run: function(){ if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch(); } },
+    { id:'act-challenge', icon:'⚡', name:'Go to Daily Challenge', hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('dc-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 150); } },
+    { id:'act-pomo',     icon:'⏱',  name:'Open Pomodoro timer',   hint:'',    run: function(){ var fab=document.getElementById('pomo-fab'); if(fab) fab.click(); } },
   ];
 
   var events = [];
@@ -6946,6 +6994,671 @@ function friendlyError(code) {
   });
 
   render();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     GLOBAL TERM SEARCH MODAL
+     ═══════════════════════════════════════════════ -->
+<div id="gsearch-overlay" aria-hidden="true" role="dialog" aria-label="Search medical terms">
+  <div class="gsearch-modal">
+    <div class="gsearch-hd">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="gsearch-input" placeholder="Search 100+ medical terms across all events…" autocomplete="off" spellcheck="false">
+      <button class="gsearch-close" id="gsearch-close" aria-label="Close">✕</button>
+    </div>
+    <div id="gsearch-results" class="gsearch-results"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   HOSA TERMS POOL — used by Daily Challenge + Global Search
+   ═══════════════════════════════════════════════════════════════ */
+var HOSA_TERMS = [
+  // Medical Terminology
+  {term:'Tachycardia',       def:'Heart rate greater than 100 BPM at rest', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Bradycardia',       def:'Heart rate less than 60 BPM at rest', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Hypertension',      def:'Blood pressure consistently above 140/90 mmHg', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Dyspnea',           def:'Difficult or labored breathing; shortness of breath', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Edema',             def:'Abnormal fluid accumulation in tissues causing swelling', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Diuresis',          def:'Increased production and excretion of urine', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Syncope',           def:'Transient loss of consciousness due to reduced cerebral perfusion (fainting)', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Cyanosis',          def:'Bluish discoloration of skin and mucous membranes due to insufficient oxygenation', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Febrile',           def:'Relating to or characterized by fever', event:'Medical Terminology', slug:'medical-terminology'},
+  {term:'Pallor',            def:'Abnormal paleness of the skin, often indicating anemia or shock', event:'Medical Terminology', slug:'medical-terminology'},
+  // Pathophysiology
+  {term:'Myocardial Infarction', def:'Death of cardiac muscle due to prolonged ischemia; a heart attack', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Ischemia',          def:'Insufficient blood supply to a tissue causing oxygen deprivation', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Atherosclerosis',   def:'Hardening and narrowing of arteries due to cholesterol plaque buildup', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Necrosis',          def:'Premature cell death due to injury, infection, or disease', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Thrombosis',        def:'Formation of a blood clot (thrombus) inside a blood vessel', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Embolism',          def:'Blockage of a blood vessel by material that has traveled from elsewhere', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Infarction',        def:'Death of tissue due to loss of blood supply', event:'Pathophysiology', slug:'pathophysiology'},
+  {term:'Aneurysm',          def:'Abnormal bulging or ballooning of an artery wall due to weakness', event:'Pathophysiology', slug:'pathophysiology'},
+  // Anatomy & Physiology
+  {term:'Homeostasis',       def:'Self-regulating process by which an organism maintains internal stability', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Mitosis',           def:'Cell division producing two genetically identical daughter cells', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Osmosis',           def:'Movement of water across a semipermeable membrane from low to high solute concentration', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Action Potential',  def:'Electrical signal that travels along a neuron when it is stimulated above threshold', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Cardiac Output',    def:'Volume of blood pumped by the heart per minute (Heart Rate × Stroke Volume)', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Peristalsis',       def:'Wave-like muscular contractions that propel food through the digestive tract', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Meiosis',           def:'Cell division that reduces chromosome number by half, producing four gametes', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  {term:'Negative Feedback', def:'Regulatory mechanism where the output of a system inhibits further output to maintain homeostasis', event:'Anatomy & Physiology', slug:'anatomy-physiology'},
+  // Pharmacology
+  {term:'Half-life',         def:'Time required for plasma concentration of a drug to decrease by 50%', event:'Pharmacology', slug:'pharmacology'},
+  {term:'Bioavailability',   def:'Fraction of an administered drug that reaches systemic circulation unchanged', event:'Pharmacology', slug:'pharmacology'},
+  {term:'Antagonist',        def:'Drug that blocks a receptor without activating it, reducing agonist effects', event:'Pharmacology', slug:'pharmacology'},
+  {term:'Agonist',           def:'Drug that binds and activates a receptor to produce a biological response', event:'Pharmacology', slug:'pharmacology'},
+  {term:'Therapeutic Index', def:'Ratio of the toxic dose to the therapeutic dose of a drug (wide = safer)', event:'Pharmacology', slug:'pharmacology'},
+  {term:'First-pass Effect', def:'Drug metabolism in the liver before reaching systemic circulation, reducing bioavailability', event:'Pharmacology', slug:'pharmacology'},
+  {term:'Synergism',         def:'Two drugs producing a combined effect greater than the sum of their individual effects', event:'Pharmacology', slug:'pharmacology'},
+  // Nutrition
+  {term:'BMI',               def:'Body Mass Index: weight (kg) ÷ height² (m²); 18.5–24.9 is normal range', event:'Nutrition', slug:'nutrition'},
+  {term:'Kwashiorkor',       def:'Severe protein deficiency causing edema, liver enlargement, and skin lesions', event:'Nutrition', slug:'nutrition'},
+  {term:'Marasmus',          def:'Severe caloric malnutrition causing extreme muscle wasting without edema', event:'Nutrition', slug:'nutrition'},
+  {term:'Glycemic Index',    def:'Measure of how quickly a food raises blood glucose relative to pure glucose (100)', event:'Nutrition', slug:'nutrition'},
+  {term:'Pellagra',          def:'Niacin (B3) deficiency causing the 4 Ds: Dermatitis, Diarrhea, Dementia, Death', event:'Nutrition', slug:'nutrition'},
+  {term:'Scurvy',            def:'Vitamin C deficiency causing bleeding gums, poor wound healing, and petechiae', event:'Nutrition', slug:'nutrition'},
+  // Biochemistry
+  {term:'ATP',               def:'Adenosine triphosphate — the primary energy currency of the cell', event:'Biochemistry', slug:'biochemistry'},
+  {term:'Glycolysis',        def:'Metabolic pathway breaking glucose into two pyruvate molecules, yielding 2 net ATP', event:'Biochemistry', slug:'biochemistry'},
+  {term:'Enzyme',            def:'Biological catalyst (usually protein) that speeds reactions without being consumed', event:'Biochemistry', slug:'biochemistry'},
+  {term:'pH',                def:'Measure of acidity or alkalinity; 7.0 is neutral, <7 acidic, >7 basic; blood is ~7.4', event:'Biochemistry', slug:'biochemistry'},
+  {term:'Denaturation',      def:'Loss of protein structure and function due to heat, pH extremes, or chemicals', event:'Biochemistry', slug:'biochemistry'},
+  // Emergency Medical Science
+  {term:'Triage',            def:'Sorting patients by urgency to prioritize treatment during mass casualty events', event:'Emergency Medical Science', slug:'emergency-medical-science'},
+  {term:'GCS',               def:'Glasgow Coma Scale — 3–15 score assessing eye, verbal, and motor responses', event:'Emergency Medical Science', slug:'emergency-medical-science'},
+  {term:'Anaphylaxis',       def:'Severe, life-threatening allergic reaction requiring immediate epinephrine', event:'Emergency Medical Science', slug:'emergency-medical-science'},
+  {term:'Shock',             def:'Life-threatening condition of inadequate tissue perfusion and oxygen delivery', event:'Emergency Medical Science', slug:'emergency-medical-science'},
+  // Cardiovascular Science
+  {term:'Arrhythmia',        def:'Abnormal heart rhythm due to disrupted electrical conduction in the heart', event:'Cardiovascular Science', slug:'cardiovascular-science'},
+  {term:'Ejection Fraction', def:'Percentage of blood pumped from the left ventricle each beat; normal >55%', event:'Cardiovascular Science', slug:'cardiovascular-science'},
+  {term:'Angina Pectoris',   def:'Chest pain from myocardial ischemia, typically triggered by exertion or stress', event:'Cardiovascular Science', slug:'cardiovascular-science'},
+  {term:'Systole',           def:'Phase of the cardiac cycle when ventricles contract and eject blood', event:'Cardiovascular Science', slug:'cardiovascular-science'},
+  {term:'Diastole',          def:'Phase of the cardiac cycle when ventricles relax and fill with blood', event:'Cardiovascular Science', slug:'cardiovascular-science'},
+  // Clinical Nursing
+  {term:'Asepsis',           def:'Absence of pathogenic microorganisms; techniques used to prevent infection', event:'Clinical Nursing', slug:'clinical-nursing'},
+  {term:'NPO',               def:'Nil per os — nothing by mouth; order to withhold all food and fluids', event:'Clinical Nursing', slug:'clinical-nursing'},
+  {term:'SOAP Note',         def:'Clinical documentation format: Subjective, Objective, Assessment, Plan', event:'Clinical Nursing', slug:'clinical-nursing'},
+  {term:'Turgor',            def:'Elasticity of skin; decreased skin turgor indicates dehydration', event:'Clinical Nursing', slug:'clinical-nursing'},
+  // Human Growth & Development
+  {term:'Apgar Score',       def:'0–10 newborn assessment at 1 and 5 min: Appearance, Pulse, Grimace, Activity, Respiration', event:'Human Growth & Development', slug:'human-growth-development'},
+  {term:'Menarche',          def:'First menstrual period, marking onset of reproductive capacity in females', event:'Human Growth & Development', slug:'human-growth-development'},
+  {term:'Neuroplasticity',   def:"Brain's ability to reorganize and form new neural connections throughout life", event:'Human Growth & Development', slug:'human-growth-development'},
+  // Public Health
+  {term:'Incidence',         def:'Number of NEW cases of a disease in a population over a specific time period', event:'Public Health', slug:'public-health'},
+  {term:'Prevalence',        def:'Total proportion of EXISTING cases in a population at a given point in time', event:'Public Health', slug:'public-health'},
+  {term:'Herd Immunity',     def:'Community protection from disease when enough individuals are immune', event:'Public Health', slug:'public-health'},
+  {term:'R0 (R-naught)',     def:'Basic reproduction number — average new cases caused by one infected person in a susceptible population', event:'Public Health', slug:'public-health'},
+  // Behavioral Health
+  {term:'Cognitive Distortion', def:'Inaccurate negative thought pattern that reinforces maladaptive behaviors', event:'Behavioral Health', slug:'behavioral-health'},
+  {term:'PTSD',              def:'Post-traumatic stress disorder — anxiety triggered by exposure to traumatic events', event:'Behavioral Health', slug:'behavioral-health'},
+  {term:'CBT',               def:'Cognitive Behavioral Therapy — evidence-based treatment targeting thought-behavior links', event:'Behavioral Health', slug:'behavioral-health'},
+  {term:'Psychosis',         def:'Disconnection from reality involving hallucinations, delusions, or disorganized thinking', event:'Behavioral Health', slug:'behavioral-health'},
+  // Sports Medicine
+  {term:'RICE Protocol',     def:'Rest, Ice, Compression, Elevation — first-aid for acute musculoskeletal injuries', event:'Sports Medicine', slug:'sports-medicine'},
+  {term:'Sprain',            def:'Ligament injury caused by overstretching or tearing at a joint', event:'Sports Medicine', slug:'sports-medicine'},
+  {term:'Concussion',        def:'Mild traumatic brain injury from impact causing temporary neurological dysfunction', event:'Sports Medicine', slug:'sports-medicine'},
+  {term:'VO2 Max',           def:'Maximum oxygen uptake — the gold standard measure of aerobic fitness capacity', event:'Sports Medicine', slug:'sports-medicine'},
+  // Medical Law & Ethics
+  {term:'Informed Consent',  def:"Patient's voluntary agreement to treatment after full disclosure of risks and alternatives", event:'Medical Law & Ethics', slug:'medical-law-ethics'},
+  {term:'HIPAA',             def:'Health Insurance Portability and Accountability Act — protects patient health information', event:'Medical Law & Ethics', slug:'medical-law-ethics'},
+  {term:'Negligence',        def:'Failure to exercise reasonable care that results in harm to a patient', event:'Medical Law & Ethics', slug:'medical-law-ethics'},
+  {term:'Beneficence',       def:'Ethical principle of acting in the patient\'s best interest', event:'Medical Law & Ethics', slug:'medical-law-ethics'},
+  {term:'Autonomy',          def:'Ethical principle respecting the patient\'s right to make their own healthcare decisions', event:'Medical Law & Ethics', slug:'medical-law-ethics'},
+  // Biomedical Lab Science
+  {term:'PCR',               def:'Polymerase Chain Reaction — technique that amplifies specific DNA sequences for analysis', event:'Biomedical Lab Science', slug:'biomedical-lab-science'},
+  {term:'Sensitivity',       def:'Diagnostic test ability to correctly identify TRUE positives (disease present)', event:'Biomedical Lab Science', slug:'biomedical-lab-science'},
+  {term:'Specificity',       def:'Diagnostic test ability to correctly identify TRUE negatives (no disease)', event:'Biomedical Lab Science', slug:'biomedical-lab-science'},
+  // Sleep Medicine
+  {term:'Polysomnography',   def:'Overnight sleep study recording EEG, EOG, EMG, ECG, and respiratory signals', event:'Sleep Medicine', slug:'sleep-medicine'},
+  {term:'Sleep Apnea',       def:'Breathing disorder with repeated airflow pauses during sleep, causing hypoxia', event:'Sleep Medicine', slug:'sleep-medicine'},
+  {term:'Circadian Rhythm',  def:'Internal 24-hour biological clock regulated by light-dark cycles and the SCN', event:'Sleep Medicine', slug:'sleep-medicine'},
+  {term:'REM Sleep',         def:'Rapid Eye Movement sleep — stage of vivid dreaming, muscle paralysis, memory consolidation', event:'Sleep Medicine', slug:'sleep-medicine'},
+  // Neurology
+  {term:'Meningitis',        def:'Inflammation of brain/spinal cord membranes, often caused by bacteria or viruses', event:'Neurology', slug:'neurology'},
+  {term:'Stroke',            def:'Brain damage caused by interrupted blood flow — ischemic (clot) or hemorrhagic (bleed)', event:'Neurology', slug:'neurology'},
+  {term:'Epilepsy',          def:'Neurological disorder characterized by recurrent, unprovoked seizures', event:'Neurology', slug:'neurology'},
+  {term:"Parkinson's Disease", def:'Neurodegenerative disorder from dopaminergic neuron loss causing tremor and rigidity', event:'Neurology', slug:'neurology'},
+  // Toxicology
+  {term:'LD50',              def:'Lethal Dose 50 — dose that kills 50% of test subjects in controlled conditions', event:'Toxicology', slug:'toxicology'},
+  {term:'Toxidrome',         def:'Cluster of signs and symptoms characteristic of a specific class of poisoning', event:'Toxicology', slug:'toxicology'},
+  {term:'Antidote',          def:'Substance that counteracts the effects of a poison or drug overdose', event:'Toxicology', slug:'toxicology'},
+  // Anesthesiology
+  {term:'MAC',               def:'Minimum Alveolar Concentration — inhaled anesthetic dose preventing movement in 50% of patients', event:'Anesthesiology', slug:'anesthesiology'},
+  {term:'Malignant Hyperthermia', def:'Life-threatening hyperthermia triggered by volatile anesthetics in susceptible patients', event:'Anesthesiology', slug:'anesthesiology'},
+  // Palliative Care
+  {term:'Hospice',           def:'Comfort-focused care for terminally ill patients with ≤6-month prognosis', event:'Palliative Care', slug:'palliative-care'},
+  {term:'Palliative Sedation', def:'Sedating medications to relieve refractory suffering in terminally ill patients', event:'Palliative Care', slug:'palliative-care'},
+  // Patient Safety
+  {term:'Root Cause Analysis', def:'Systematic process for identifying the underlying cause of an adverse event', event:'Patient Safety', slug:'patient-safety'},
+  {term:'Never Events',      def:'Serious preventable patient safety incidents (e.g., wrong-site surgery)', event:'Patient Safety', slug:'patient-safety'},
+  // Pulmonology
+  {term:'FEV1',              def:'Forced Expiratory Volume in 1 second — key spirometry measure, reduced in obstructive disease', event:'Pulmonology', slug:'pulmonology'},
+  {term:'ARDS',              def:'Acute Respiratory Distress Syndrome — severe hypoxemic respiratory failure from diffuse lung injury', event:'Pulmonology', slug:'pulmonology'},
+  // Pediatric Emergency
+  {term:'Febrile Seizure',   def:'Seizure triggered by fever in children 6 months–5 years, usually benign', event:'Pediatric Emergency', slug:'pediatric-emergency'},
+  {term:'Pediatric Assessment Triangle', def:'Rapid PAT evaluation of appearance, work of breathing, and circulation to skin', event:'Pediatric Emergency', slug:'pediatric-emergency'},
+  // Hepatology
+  {term:'Cirrhosis',         def:'Irreversible liver scarring from chronic damage causing loss of normal liver function', event:'Hepatology', slug:'hepatology'},
+  {term:'Jaundice',          def:'Yellow discoloration of skin and sclera from elevated bilirubin (>2.5 mg/dL)', event:'Hepatology', slug:'hepatology'},
+  // Vascular Medicine
+  {term:'DVT',               def:'Deep Vein Thrombosis — blood clot in a deep vein, usually in the leg', event:'Vascular Medicine', slug:'vascular-medicine'},
+  {term:'Pulmonary Embolism', def:'Blockage of pulmonary artery by a thrombus, causing sudden dyspnea and chest pain', event:'Vascular Medicine', slug:'vascular-medicine'},
+];
+window.HOSA_TERMS = HOSA_TERMS;
+
+/* ═══════════════════════════════════════════════════════════════
+   XP FLYUP — global utility
+   ═══════════════════════════════════════════════════════════════ */
+window.hosaXPFlyup = function(el, amount) {
+  var rect = el ? el.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0 };
+  var node = document.createElement('div');
+  node.className = 'xp-flyup';
+  node.textContent = '+' + amount + ' XP';
+  node.style.left = (rect.left + rect.width / 2 - 32) + 'px';
+  node.style.top  = (rect.top + window.scrollY - 10) + 'px';
+  document.body.appendChild(node);
+  setTimeout(function() { if (node.parentNode) node.parentNode.removeChild(node); }, 1400);
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DAILY CHALLENGE
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var STORAGE_KEY = 'hosa::daily-challenge';
+  var XP_PER_CORRECT = 30; // 2x of normal 15
+  var QUESTIONS_PER_DAY = 5;
+
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+  }
+  function saveState(s) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e) {}
+  }
+
+  /* Seeded random using date string so everyone gets same questions per day */
+  function seededRand(seed, max) {
+    var x = Math.sin(seed + 1) * 10000;
+    return Math.floor((x - Math.floor(x)) * max);
+  }
+  function selectDailyTerms(dateKey) {
+    var pool = window.HOSA_TERMS || [];
+    if (!pool.length) return [];
+    var seed = 0;
+    for (var i = 0; i < dateKey.length; i++) seed += dateKey.charCodeAt(i);
+    var indices = [], used = {};
+    var attempts = 0;
+    while (indices.length < QUESTIONS_PER_DAY && attempts < 200) {
+      var idx = seededRand(seed + attempts, pool.length);
+      if (!used[idx]) { used[idx] = true; indices.push(idx); }
+      attempts++;
+    }
+    return indices.map(function(i) { return pool[i]; });
+  }
+  function buildChoices(correct, allTerms, seed) {
+    var choices = [correct.term];
+    var used = {};
+    used[correct.term] = true;
+    var attempts = 0;
+    while (choices.length < 4 && attempts < 300) {
+      var idx = seededRand(seed + attempts + 77, allTerms.length);
+      var t = allTerms[idx].term;
+      if (!used[t]) { used[t] = true; choices.push(t); }
+      attempts++;
+    }
+    // Shuffle choices (seeded)
+    for (var i = choices.length - 1; i > 0; i--) {
+      var j = seededRand(seed + i * 13, i + 1);
+      var tmp = choices[i]; choices[i] = choices[j]; choices[j] = tmp;
+    }
+    return choices;
+  }
+
+  var questions = [], currentQ = 0, score = 0, answered = false;
+  var state = null;
+
+  function init() {
+    var today = todayKey();
+    state = loadState();
+
+    if (!state || state.date !== today) {
+      var terms = selectDailyTerms(today);
+      if (!terms.length) return;
+      state = { date: today, score: 0, current: 0, done: false, answers: [] };
+      saveState(state);
+    }
+
+    questions = selectDailyTerms(state.date);
+    currentQ = state.current;
+    score = state.score;
+    answered = false;
+
+    if (state.done) {
+      renderComplete();
+    } else {
+      renderQuestion();
+    }
+    startCountdown();
+  }
+
+  function renderQuestion() {
+    var card = document.getElementById('dc-card');
+    if (!card || !questions.length) return;
+    var q = questions[currentQ];
+    if (!q) { renderComplete(); return; }
+    var today = todayKey();
+    var seed = 0;
+    for (var i = 0; i < today.length; i++) seed += today.charCodeAt(i);
+    var choices = buildChoices(q, window.HOSA_TERMS || [], seed + currentQ * 31);
+
+    var segs = '';
+    for (var s = 0; s < QUESTIONS_PER_DAY; s++) {
+      segs += '<div class="dc-prog-seg' + (s < currentQ ? ' done' : '') + '"></div>';
+    }
+
+    var letters = ['A', 'B', 'C', 'D'];
+    var opts = choices.map(function(ch, idx) {
+      return '<button class="dc-opt" data-ans="' + ch.replace(/"/g,'&quot;') + '">' +
+        '<span class="dc-opt-letter">' + letters[idx] + '</span>' + ch + '</button>';
+    }).join('');
+
+    card.innerHTML =
+      '<div class="dc-progress-bar">' + segs + '</div>' +
+      '<div class="dc-q-wrap">' +
+        '<div class="dc-q-meta">Question ' + (currentQ + 1) + ' of ' + QUESTIONS_PER_DAY + ' · What term matches this definition?</div>' +
+        '<div class="dc-q-text">' + q.def + '</div>' +
+        '<div class="dc-q-event">from ' + q.event + '</div>' +
+        '<div class="dc-opts">' + opts + '</div>' +
+      '</div>' +
+      '<div class="dc-feedback" id="dc-feedback"></div>';
+
+    card.querySelectorAll('.dc-opt').forEach(function(btn) {
+      btn.addEventListener('click', function() { handleAnswer(btn.getAttribute('data-ans'), q.term, btn); });
+    });
+    answered = false;
+  }
+
+  function handleAnswer(chosen, correct, btn) {
+    if (answered) return;
+    answered = true;
+
+    var isCorrect = chosen === correct;
+    var fb = document.getElementById('dc-feedback');
+    var opts = document.querySelectorAll('.dc-opt');
+
+    opts.forEach(function(b) {
+      b.disabled = true;
+      if (b.getAttribute('data-ans') === correct) b.classList.add('correct');
+      else if (b === btn && !isCorrect) b.classList.add('wrong');
+    });
+
+    if (isCorrect) {
+      score++;
+      if (fb) { fb.className = 'dc-feedback correct'; fb.textContent = '✓ Correct! +' + XP_PER_CORRECT + ' XP'; }
+      if (window.hosaXPFlyup) window.hosaXPFlyup(btn, XP_PER_CORRECT);
+      try {
+        var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+        localStorage.setItem('hosa::xp', String(xp + XP_PER_CORRECT));
+      } catch(e) {}
+    } else {
+      if (fb) { fb.className = 'dc-feedback wrong'; fb.textContent = '✗ The answer was: ' + correct; }
+    }
+
+    state.score = score;
+    state.current = currentQ + 1;
+    state.answers.push({ q: currentQ, correct: isCorrect });
+    saveState(state);
+
+    // Track activity
+    try {
+      var act = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      var today = todayKey();
+      if (act.indexOf(today) === -1) act.push(today);
+      localStorage.setItem('hosa::activity', JSON.stringify(act));
+    } catch(e) {}
+
+    setTimeout(function() {
+      currentQ++;
+      if (currentQ >= QUESTIONS_PER_DAY) {
+        state.done = true;
+        saveState(state);
+        // Check daily challenge achievements
+        if (window.hosaCheckDCComplete) window.hosaCheckDCComplete(score);
+        renderComplete();
+      } else {
+        renderQuestion();
+      }
+    }, 1600);
+  }
+
+  function renderComplete() {
+    var card = document.getElementById('dc-card');
+    if (!card) return;
+    var icons = ['😐','🙂','😊','😄','🔥','⚡'];
+    var icon = icons[Math.min(score, 5)];
+    var titles = ['Keep going!', 'Decent start.', 'Solid effort.', 'Nice work!', 'Great job!', 'Perfect!'];
+    var title = titles[Math.min(score, 5)];
+    var total = score * XP_PER_CORRECT;
+    card.innerHTML =
+      '<div class="dc-complete">' +
+        '<div class="dc-complete-icon">' + icon + '</div>' +
+        '<div class="dc-complete-title">' + title + '</div>' +
+        '<div class="dc-complete-sub">' + score + ' of ' + QUESTIONS_PER_DAY + ' correct</div>' +
+        '<div class="dc-complete-score">' + score + '/' + QUESTIONS_PER_DAY + '</div>' +
+        '<div class="dc-complete-xp">+' + total + ' XP earned</div>' +
+      '</div>';
+    var timerWrap = document.getElementById('dc-timer-wrap');
+    if (timerWrap) timerWrap.style.display = '';
+    if (score === QUESTIONS_PER_DAY && window._fireConfetti) window._fireConfetti();
+  }
+
+  function startCountdown() {
+    var val = document.getElementById('dc-timer-val');
+    if (!val) return;
+    function update() {
+      var now = new Date();
+      var tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      var diff = Math.floor((tomorrow - now) / 1000);
+      var h = Math.floor(diff / 3600);
+      var m = Math.floor((diff % 3600) / 60);
+      var s = diff % 60;
+      val.textContent = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      if (state && state.done) {
+        var timerWrap = document.getElementById('dc-timer-wrap');
+        if (timerWrap) timerWrap.style.display = '';
+      }
+    }
+    update();
+    setInterval(update, 1000);
+  }
+
+  // Expose for achievement checking
+  window.hosaCheckDCComplete = null; // will be set by engage.js
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(init, 100);
+  });
+  if (document.readyState !== 'loading') setTimeout(init, 100);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIVITY HEATMAP
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function getActivityMap() {
+    try {
+      var raw = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      var map = {};
+      raw.forEach(function(d) { map[d] = (map[d] || 0) + 1; });
+      return map;
+    } catch(e) { return {}; }
+  }
+
+  function render() {
+    var section = document.getElementById('heatmap-section');
+    var actMap = getActivityMap();
+    var dates = Object.keys(actMap);
+
+    // Also count days where any daily:: key has data (from existing tracking)
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.startsWith('hosa::daily::')) {
+          var d = k.slice(13);
+          if (d && parseInt(localStorage.getItem(k), 10) > 0) {
+            actMap[d] = (actMap[d] || 0) + parseInt(localStorage.getItem(k), 10);
+            if (dates.indexOf(d) === -1) dates.push(d);
+          }
+        }
+      }
+    } catch(e) {}
+
+    if (dates.length === 0 || !section) return;
+    section.style.display = '';
+
+    var cols = document.getElementById('hm-cols');
+    var daysEl = document.getElementById('hm-days');
+    var monthsEl = document.getElementById('hm-months');
+    if (!cols || !daysEl || !monthsEl) return;
+
+    var WEEKS = 13;
+    var today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    // Start from WEEKS*7 days ago, aligned to Sunday
+    var startDate = new Date(today);
+    startDate.setDate(today.getDate() - (WEEKS * 7 - 1));
+
+    // Day labels (Mon, Wed, Fri)
+    daysEl.innerHTML = '';
+    var dayNames = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
+    dayNames.forEach(function(label) {
+      var el = document.createElement('div');
+      el.className = 'hm-day-label';
+      el.textContent = label;
+      daysEl.appendChild(el);
+    });
+
+    var maxVal = Math.max.apply(null, dates.map(function(d) { return actMap[d] || 0; }));
+
+    cols.innerHTML = '';
+    var monthsSeen = {};
+    var monthPositions = [];
+    var weekIdx = 0;
+
+    for (var w = 0; w < WEEKS; w++) {
+      var col = document.createElement('div');
+      col.className = 'hm-col';
+      for (var d = 0; d < 7; d++) {
+        var cellDate = new Date(startDate);
+        cellDate.setDate(startDate.getDate() + w * 7 + d);
+        var key = cellDate.toISOString().slice(0, 10);
+        var val = actMap[key] || 0;
+        var level = 0;
+        if (val > 0) {
+          if (maxVal <= 1) level = 4;
+          else if (val >= maxVal * 0.75) level = 4;
+          else if (val >= maxVal * 0.50) level = 3;
+          else if (val >= maxVal * 0.25) level = 2;
+          else level = 1;
+        }
+        var cell = document.createElement('div');
+        cell.className = 'hm-cell';
+        if (level > 0) cell.setAttribute('data-level', level);
+        cell.title = key + (val ? ': ' + val + ' session' + (val > 1 ? 's' : '') : ': no activity');
+        col.appendChild(cell);
+
+        // Track month label positions
+        if (cellDate <= today) {
+          var month = cellDate.getMonth();
+          var year = cellDate.getFullYear();
+          var monthKey = year + '-' + month;
+          if (!monthsSeen[monthKey]) {
+            monthsSeen[monthKey] = true;
+            monthPositions.push({ w: w, month: month });
+          }
+        }
+      }
+      cols.appendChild(col);
+    }
+
+    // Render month labels
+    var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    monthsEl.innerHTML = '';
+    var lastW = -3;
+    monthPositions.forEach(function(mp) {
+      if (mp.w - lastW < 2) return; // avoid crowding
+      lastW = mp.w;
+      var span = document.createElement('span');
+      span.className = 'hm-month-label';
+      span.textContent = MONTH_NAMES[mp.month];
+      span.style.width = '52px'; // roughly 4 cells wide
+      monthsEl.appendChild(span);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(render, 300); });
+  if (document.readyState !== 'loading') setTimeout(render, 300);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL TERM SEARCH
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = document.getElementById('gsearch-overlay');
+  var input   = document.getElementById('gsearch-input');
+  var results = document.getElementById('gsearch-results');
+  var closeBtn = document.getElementById('gsearch-close');
+  if (!overlay || !input) return;
+
+  function open() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    renderResults('');
+    setTimeout(function() { input.focus(); }, 40);
+  }
+  function close() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  window.__hosaOpenSearch = open;
+
+  function highlight(text, q) {
+    if (!q) return text;
+    var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return text.replace(re, '<mark>$1</mark>');
+  }
+
+  function renderResults(q) {
+    var pool = window.HOSA_TERMS || [];
+    q = q.trim().toLowerCase();
+    var matches;
+    if (!q) {
+      matches = pool.slice(0, 20);
+    } else {
+      matches = pool.filter(function(t) {
+        return t.term.toLowerCase().indexOf(q) >= 0 ||
+               t.def.toLowerCase().indexOf(q) >= 0 ||
+               t.event.toLowerCase().indexOf(q) >= 0;
+      }).sort(function(a, b) {
+        var ai = a.term.toLowerCase().indexOf(q);
+        var bi = b.term.toLowerCase().indexOf(q);
+        if (ai === 0 && bi !== 0) return -1;
+        if (bi === 0 && ai !== 0) return 1;
+        return 0;
+      }).slice(0, 25);
+    }
+
+    results.innerHTML = '';
+    if (!matches.length) {
+      var em = document.createElement('div');
+      em.className = 'gsearch-empty';
+      em.textContent = q ? 'No terms found for "' + q + '"' : 'Start typing to search…';
+      results.appendChild(em);
+      return;
+    }
+
+    // Group by event
+    var byEvent = {};
+    matches.forEach(function(t) {
+      if (!byEvent[t.event]) byEvent[t.event] = [];
+      byEvent[t.event].push(t);
+    });
+
+    Object.keys(byEvent).forEach(function(eventName) {
+      var h = document.createElement('div');
+      h.className = 'gsearch-section-h';
+      h.textContent = eventName;
+      results.appendChild(h);
+
+      byEvent[eventName].forEach(function(t) {
+        var a = document.createElement('a');
+        a.href = t.slug + '.html';
+        a.className = 'gsearch-result';
+        a.innerHTML =
+          '<div class="gs-body">' +
+            '<div class="gs-term">' + highlight(t.term, q) + '</div>' +
+            '<div class="gs-def">' + t.def + '</div>' +
+            '<span class="gs-event-tag">' + t.event + '</span>' +
+          '</div>' +
+          '<span class="gs-arrow">→</span>';
+        a.addEventListener('click', function() { close(); });
+        results.appendChild(a);
+      });
+    });
+  }
+
+  input.addEventListener('input', function() { renderResults(input.value); });
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+      e.preventDefault();
+      if (overlay.classList.contains('open')) close(); else open();
+    }
+    if (e.key === 'Escape' && overlay.classList.contains('open')) { e.preventDefault(); close(); }
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   STREAK FREEZE TOKENS — shown in home stats bar
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var MAX_TOKENS = 3;
+  var XP_PER_TOKEN = 750;
+
+  function getTokens() {
+    try { return parseInt(localStorage.getItem('hosa::freeze-tokens') || '0', 10); } catch(e) { return 0; }
+  }
+  function setTokens(n) {
+    try { localStorage.setItem('hosa::freeze-tokens', String(Math.max(0, Math.min(MAX_TOKENS, n)))); } catch(e) {}
+  }
+
+  function syncTokens() {
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    var earned = Math.min(MAX_TOKENS, Math.floor(xp / XP_PER_TOKEN));
+    var current = getTokens();
+    if (earned > current) setTokens(earned);
+  }
+
+  function renderTokens() {
+    var statBar = document.getElementById('home-stats-bar');
+    if (!statBar) return;
+    if (document.getElementById('hs-freeze')) return; // already rendered
+    var tokens = getTokens();
+    if (tokens === 0) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'hs-stat';
+    wrap.id = 'hs-freeze';
+    var inner = document.createElement('div');
+    var label = document.createElement('div');
+    label.className = 'hs-freeze-label hs-stat-label';
+    label.style.marginBottom = '4px';
+    label.textContent = 'Streak Freeze';
+    var tokenRow = document.createElement('div');
+    tokenRow.className = 'hs-freeze-wrap';
+    for (var i = 0; i < MAX_TOKENS; i++) {
+      var t = document.createElement('span');
+      t.className = 'hs-freeze-token' + (i >= tokens ? ' empty' : '');
+      t.title = i < tokens ? 'Active freeze token' : 'Locked — earn more XP';
+      t.textContent = '🧊';
+      tokenRow.appendChild(t);
+    }
+    inner.appendChild(label);
+    inner.appendChild(tokenRow);
+    wrap.appendChild(inner);
+    statBar.insertBefore(wrap, statBar.lastElementChild);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { syncTokens(); renderTokens(); }, 500);
+  });
+  if (document.readyState !== 'loading') setTimeout(function() { syncTokens(); renderTokens(); }, 500);
 })();
 </script>
 
