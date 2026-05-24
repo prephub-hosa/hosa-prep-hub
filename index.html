@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=12">
+<link rel="stylesheet" href="aura.css?v=13">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2224,6 +2224,9 @@ footer { display: none; }
           <div class="hs-xp-track"><div class="hs-xp-fill" id="hs-xp-fill" style="width:0%"></div></div>
         </div>
       </div>
+
+      <!-- Exam countdown — shown for active users who set a date -->
+      <section id="exam-countdown-section" style="display:none;margin-bottom:24px;"></section>
 
       <!-- Daily goal widget — shown for active users -->
       <section id="daily-goal-section" style="display:none">
@@ -3599,6 +3602,23 @@ footer { display: none; }
         <h2 class="section-title" style="margin-top:48px;">Achievements</h2>
         <div id="ach-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
       </div>
+
+      <!-- Study activity heatmap -->
+      <div id="study-heatmap-wrap" style="display:none;margin-top:48px;">
+        <h2 class="section-title">Study Activity</h2>
+        <p class="heatmap-label">Cards rated per day — last 15 weeks</p>
+        <div class="heatmap-scroll" id="study-heatmap"></div>
+        <div class="heatmap-legend">
+          <span class="heatmap-legend-label">Less</span>
+          <div class="heatmap-legend-cells">
+            <div class="heatmap-cell level-0"></div>
+            <div class="heatmap-cell level-1"></div>
+            <div class="heatmap-cell level-2"></div>
+            <div class="heatmap-cell level-3"></div>
+          </div>
+          <span class="heatmap-legend-label">More</span>
+        </div>
+      </div>
     </div><!-- /tab-inner -->
     </div><!-- /tab-library -->
 
@@ -3660,6 +3680,78 @@ footer { display: none; }
           <h4>Progress</h4>
           <p>See your mastery by category, review score history, track your study streak, and see exactly which cards are due for review today based on your spaced repetition schedule.</p>
           <div class="how-detail">Study heatmap · Quiz history · Due-today queue</div>
+        </div>
+      </div>
+
+      <!-- ── Competition Strategy Guide ── -->
+      <h2 class="section-title" style="margin-bottom:24px;">Competition <em style="color:var(--accent);font-style:italic">Strategy.</em></h2>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="strategy-icon">📋</div>
+          <div class="strategy-title">Start with the official test plan</div>
+          <div class="strategy-text">HOSA publishes a detailed test plan for every event listing exact topic areas and their percentage weight. Every question on the exam comes from this plan — study the plan, not just random content.</div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-icon">🔗</div>
+          <div class="strategy-title">Stack events for shared vocabulary</div>
+          <div class="strategy-text">Medical Terminology → Anatomy &amp; Physiology → Pathophysiology is the strongest stack. Each event reinforces the previous one. If you're doing Pharmacology, pair it with Pathophysiology — diseases and drugs share the same vocabulary.</div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-icon">⏱</div>
+          <div class="strategy-title">Practice the pace, not just the content</div>
+          <div class="strategy-text">100 questions in 60 minutes is 36 seconds per question. Students who can't maintain pace leave points on the table. Use Timed Test mode regularly — even if you know the content, racing the clock is a separate skill.</div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-icon">🔁</div>
+          <div class="strategy-title">Review misses immediately, every time</div>
+          <div class="strategy-text">After every quiz, read every wrong answer before you do anything else. The emotional sting of a wrong answer is your brain's fastest encoding trigger. Re-reading the right answer immediately is 3–4x more effective than reviewing it the next day.</div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-icon">📅</div>
+          <div class="strategy-title">Build the daily habit, not the cram session</div>
+          <div class="strategy-text">15 focused minutes every day for 8 weeks beats 6-hour cramming the week before. The SM-2 algorithm is designed for distributed practice — it only works if you show up daily. Set a study goal, track your streak, protect it.</div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-icon">🎯</div>
+          <div class="strategy-title">Know your advancement target</div>
+          <div class="strategy-text">Top 15% of scorers typically advance from area to state; top 10–15% advance from state to NLC. That usually means a score of 85–88+ for most events. Track your timed test scores in Your Library and trend them week over week.</div>
+        </div>
+      </div>
+
+      <!-- ── FAQ ── -->
+      <h2 class="section-title" style="margin-bottom:24px;">Frequently Asked <em style="color:var(--accent);font-style:italic">Questions.</em></h2>
+      <div class="faq-list" id="faq-list">
+        <div class="faq-item">
+          <div class="faq-q"><span>How many events can I compete in?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">Most HOSA conferences allow members to compete in up to two competitive events. Check your state or chapter guidelines — some area conferences limit to one. Strategy tip: pick one knowledge event you're strong in and one you want to develop for the long run.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>What score do I need to advance?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">It depends on your state and the year's competition. Generally: top 15% of scorers advance from area/chapter to state, and top 10–15% advance from state to NLC. In practice, that's usually 83–90+ for most written events. Some states are more competitive than others — aim for 88+ and you'll be safe in most states.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>Does this site cover everything on the HOSA exam?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">HOSA Prep Hub covers the key terms, concepts, and clinical knowledge from each event's official test plan. The flashcards and quizzes target the highest-yield content — the stuff most likely to appear on your exam. That said, no prep site is exhaustive. Review the official HOSA test plan for your event and cross-reference with what you've studied here.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>How long should I prepare?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">8–12 weeks of consistent daily study (15–20 min/day) is solid preparation for most events. 3+ months is ideal. If you're starting 2 weeks out, don't panic — switch to intensive mode: do two Timed Tests per day, review every miss, and drill your weakest cards. You can still make significant gains in two weeks.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>What's the difference between area, state, and NLC?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">HOSA competition runs in three tiers. (1) Chapter or Area Conference: your first competition, usually held November–February. Top scorers advance. (2) State Leadership Conference (SLC): state-level competition, usually February–April. Top scorers advance. (3) National Leadership Conference (NLC): held each June, this is the national championship. Medalists and scholarship recipients are recognized here.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>What is spaced repetition and why does it matter?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">Spaced repetition is a study method where you review material at increasing intervals over time — just before you'd normally forget it. HOSA Prep Hub uses the SM-2 algorithm (the same one used by Anki, the leading memory tool). When you rate a card "Know it," the algorithm shows it again in 4 days, then 10, then 25, etc. Cards you miss get shown sooner. This is why daily study beats cramming — the algorithm can only work if you come back.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>Which event should I pick as a beginner?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">Start with Medical Terminology. It's the vocabulary foundation for every other event, it has a well-defined test plan, and it's the most beginner-accessible knowledge event. If you're interested in clinical medicine, pair it with Anatomy &amp; Physiology or Pathophysiology as a second event. Events like Pharmacology or Biochemistry have higher ceilings and reward deeper preparation.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>Is this site free? Do I need an account?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a"><div class="faq-a-inner">Completely free. You can study all 60 events without creating an account — your progress saves to your browser's local storage automatically. Creating an account (also free) lets you sync your progress across devices through Firebase. No subscription, no paywall.</div></div>
         </div>
       </div>
     </div><!-- /tab-inner -->
@@ -4871,6 +4963,227 @@ function friendlyError(code) {
       showToast('🎉 Daily goal reached! Keep that streak alive.', 'success');
     }, 800);
   }
+})();
+</script>
+
+<script>
+// ── Study heatmap ─────────────────────────────────────────────
+(function() {
+  function renderHeatmap() {
+    var wrap = document.getElementById('study-heatmap-wrap');
+    var container = document.getElementById('study-heatmap');
+    if (!container) return;
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var todayStr = today.toISOString().slice(0,10);
+    var WEEKS = 15;
+    // Start on Sunday, 14 full weeks back from the start of current week
+    var startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - today.getDay() - (WEEKS-1)*7);
+
+    var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dayLabels  = ['S','M','T','W','T','F','S'];
+    var hasAny = false;
+
+    // Build columns (each = one week, 7 days Sun→Sat)
+    var cols = [];
+    for (var w = 0; w < WEEKS; w++) {
+      var col = [];
+      for (var d = 0; d < 7; d++) {
+        var dt = new Date(startDate);
+        dt.setDate(dt.getDate() + w*7 + d);
+        var ds = dt.toISOString().slice(0,10);
+        var count = parseInt(localStorage.getItem('hosa::daily::' + ds) || '0', 10);
+        if (count > 0) hasAny = true;
+        col.push({ ds:ds, count:count, isToday:ds===todayStr, isFuture:dt>today, month:dt.getMonth(), mday:dt.getDate() });
+      }
+      cols.push(col);
+    }
+
+    if (!hasAny) return; // nothing to show
+    if (wrap) wrap.style.display = '';
+
+    // Month labels row
+    var mHtml = '<div class="heatmap-months">';
+    var lastM = -1;
+    cols.forEach(function(col) {
+      var m = col[0].month;
+      if (col[0].mday <= 7 && m !== lastM) {
+        mHtml += '<div class="heatmap-month-slot">' + monthNames[m] + '</div>';
+        lastM = m;
+      } else {
+        mHtml += '<div class="heatmap-month-slot"></div>';
+      }
+    });
+    mHtml += '</div>';
+
+    // Day-of-week labels
+    var dHtml = '<div class="heatmap-day-labels">';
+    dayLabels.forEach(function(l) { dHtml += '<div class="heatmap-day-label">' + l + '</div>'; });
+    dHtml += '</div>';
+
+    // Grid columns
+    var gHtml = '<div class="heatmap-cols">';
+    cols.forEach(function(col) {
+      gHtml += '<div class="heatmap-col">';
+      col.forEach(function(c) {
+        var cls = 'heatmap-cell ';
+        if (c.isFuture)       cls += 'future';
+        else if (c.count === 0) cls += 'level-0';
+        else if (c.count <= 5)  cls += 'level-1';
+        else if (c.count <= 15) cls += 'level-2';
+        else                    cls += 'level-3';
+        if (c.isToday) cls += ' today';
+        var title = c.ds + (c.count ? ': ' + c.count + ' card' + (c.count===1?'':'s') : '');
+        gHtml += '<div class="' + cls + '" title="' + title + '"></div>';
+      });
+      gHtml += '</div>';
+    });
+    gHtml += '</div>';
+
+    container.innerHTML = mHtml + '<div class="heatmap-body">' + dHtml + gHtml + '</div>';
+  }
+
+  // Run when Library tab becomes visible, and once at load
+  renderHeatmap();
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-tab') === 'library') {
+      setTimeout(renderHeatmap, 80);
+    }
+  });
+  var libItems = document.querySelectorAll('[data-tab="library"]');
+  libItems.forEach(function(el) { el.addEventListener('click', function() { setTimeout(renderHeatmap, 80); }); });
+})();
+
+// ── Difficulty badges on event cards ─────────────────────────
+(function() {
+  var DIFF = {
+    'medical-terminology':'beginner','nutrition':'beginner','medical-math':'beginner',
+    'medical-law-ethics':'beginner','human-growth-development':'beginner',
+    'public-health':'beginner','dental-science':'beginner','medical-assisting':'beginner',
+    'nursing-assisting':'beginner','healthcare-systems':'beginner','global-health':'beginner',
+    'health-informatics':'beginner','phlebotomy':'beginner','veterinary-science':'beginner',
+
+    'anatomy-physiology':'intermediate','pathophysiology':'intermediate',
+    'pharmacology':'intermediate','biochemistry':'intermediate',
+    'behavioral-health':'intermediate','clinical-nursing':'intermediate',
+    'sports-medicine':'intermediate','emergency-medical-science':'intermediate',
+    'cardiovascular-science':'intermediate','epidemiology':'intermediate',
+    'biomedical-lab-science':'intermediate','endocrinology':'intermediate',
+    'gastroenterology':'intermediate','hematology':'intermediate',
+    'infectious-disease':'intermediate','medical-microbiology':'intermediate',
+    'pharmacy-science':'intermediate','geriatrics':'intermediate',
+    'dermatology':'intermediate','radiologic-science':'intermediate',
+    'psychiatry':'intermediate','pediatrics':'intermediate',
+    'obstetrics-gynecology':'intermediate','occupational-therapy':'intermediate',
+    'physical-therapy':'intermediate','respiratory-therapy':'intermediate',
+    'surgical-technology':'intermediate','pain-management':'intermediate',
+
+    'allergy-immunology':'advanced','immunology':'advanced','genetics':'advanced',
+    'biotechnology':'advanced','neurology':'advanced','nephrology':'advanced',
+    'oncology':'advanced','rheumatology':'advanced','optometry':'advanced',
+    'otolaryngology':'advanced','neonatology':'advanced','forensic-science':'advanced',
+    'physical-medicine-rehabilitation':'advanced','sleep-medicine':'advanced',
+    'trauma-critical-care':'advanced','urology':'advanced',
+    'speech-language-pathology':'advanced','audiology':'advanced',
+  };
+  var LABEL = { beginner:'Beginner', intermediate:'Intermediate', advanced:'Advanced' };
+
+  document.querySelectorAll('.category-card[href]').forEach(function(card) {
+    var href = card.getAttribute('href') || '';
+    var slug = href.replace('.html','').replace(/^.*\//,'');
+    var diff = DIFF[slug];
+    if (!diff) return;
+    var meta = card.querySelector('.card-meta');
+    if (!meta) return;
+    var badge = document.createElement('span');
+    badge.className = 'diff-badge diff-' + diff;
+    badge.textContent = LABEL[diff];
+    meta.appendChild(badge);
+  });
+})();
+
+// ── Exam countdown widget ─────────────────────────────────────
+(function() {
+  var section = document.getElementById('exam-countdown-section');
+  if (!section) return;
+
+  function render() {
+    var examDate = localStorage.getItem('hosa::exam-date');
+    var today = new Date(); today.setHours(0,0,0,0);
+    var todayStr = today.toISOString().slice(0,10);
+
+    if (examDate) {
+      var exam = new Date(examDate); exam.setHours(0,0,0,0);
+      var days = Math.round((exam - today) / 86400000);
+      if (days < 0) { localStorage.removeItem('hosa::exam-date'); examDate = null; }
+      else {
+        var urgCls = days <= 14 ? 'exam-cd-urgent' : days <= 30 ? 'exam-cd-soon' : 'exam-cd-relaxed';
+        var urgTxt = days <= 14 ? '⚠ Exam soon — focus up' : days <= 30 ? '📅 One month out — keep pace' : '✓ On track — build the habit';
+        var daysPerWk = days > 0 ? Math.min(20, Math.round(140 / days)) : 20;
+        section.innerHTML =
+          '<div class="exam-cd-card">' +
+            '<div class="exam-cd-days"><div class="exam-cd-num">' + days + '</div><div class="exam-cd-unit">days left</div></div>' +
+            '<div class="exam-cd-body">' +
+              '<div class="exam-cd-urgency ' + urgCls + '">' + urgTxt + '</div>' +
+              '<div class="exam-cd-title">Until your HOSA exam</div>' +
+              '<div class="exam-cd-sub">Study ' + daysPerWk + '+ cards today to stay on pace.</div>' +
+              '<div class="exam-cd-actions"><button class="exam-cd-clear" id="exam-cd-clear">Remove date</button></div>' +
+            '</div>' +
+          '</div>';
+        document.getElementById('exam-cd-clear').addEventListener('click', function() {
+          localStorage.removeItem('hosa::exam-date'); render();
+        });
+        section.style.display = '';
+        return;
+      }
+    }
+
+    // Show set-date form
+    section.innerHTML =
+      '<div class="exam-cd-card">' +
+        '<div class="exam-cd-body" style="width:100%">' +
+          '<div class="exam-cd-title">When is your exam?</div>' +
+          '<div class="exam-cd-sub">Set your state conference or NLC date for a live countdown.</div>' +
+          '<div class="exam-cd-set-wrap">' +
+            '<input type="date" class="exam-cd-date-input" id="exam-cd-picker" min="' + todayStr + '">' +
+            '<button class="exam-cd-save-btn" id="exam-cd-save">Set date →</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('exam-cd-save').addEventListener('click', function() {
+      var val = document.getElementById('exam-cd-picker').value;
+      if (val) { localStorage.setItem('hosa::exam-date', val); render(); }
+    });
+    section.style.display = '';
+  }
+
+  // Only show once user is active
+  if (document.body.classList.contains('user-active')) {
+    render();
+  } else {
+    document.addEventListener('userActive', render);
+    // Fallback: check after auth loads
+    var _orig = Object.getOwnPropertyDescriptor(document.body.classList, 'add');
+    var observer = new MutationObserver(function() {
+      if (document.body.classList.contains('user-active')) { observer.disconnect(); render(); }
+    });
+    observer.observe(document.body, { attributes:true, attributeFilter:['class'] });
+  }
+})();
+
+// ── FAQ accordion ─────────────────────────────────────────────
+(function() {
+  document.querySelectorAll('.faq-item').forEach(function(item) {
+    var q = item.querySelector('.faq-q');
+    if (!q) return;
+    q.addEventListener('click', function() {
+      var isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(function(o) { o.classList.remove('open'); });
+      if (!isOpen) item.classList.add('open');
+    });
+  });
 })();
 </script>
 
