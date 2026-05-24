@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=19">
+<link rel="stylesheet" href="aura.css?v=20">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2166,6 +2166,13 @@ footer { display: none; }
     <button class="sb-item" data-tab="about">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       How HOSA Works
+    </button>
+  </div>
+  <div class="sb-label">Bonus</div>
+  <div class="sb-section">
+    <button class="sb-item" data-tab="spanish">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Medical Spanish
     </button>
   </div>
   <div class="sb-footer">
@@ -3836,6 +3843,90 @@ footer { display: none; }
     </div><!-- /tab-inner -->
     </div><!-- /tab-about -->
 
+    <!-- ══ SPANISH TAB ══ -->
+    <div class="tab-pane" id="tab-spanish">
+    <div class="tab-inner">
+
+      <!-- Hero -->
+      <div class="sp-hero">
+        <div class="sp-hero-eyebrow">🌎 Bonus Section</div>
+        <h1 class="page-title">Medical Spanish</h1>
+        <p class="sp-hero-sub">Essential vocabulary and clinical phrases for healthcare professionals. Flip each card to reveal the Spanish translation and pronunciation guide.</p>
+        <div class="sp-hero-stats">
+          <div class="sp-stat-item">
+            <div class="sp-stat-num">68</div>
+            <div class="sp-stat-label">terms &amp; phrases</div>
+          </div>
+          <div class="sp-stat-item">
+            <div class="sp-stat-num">5</div>
+            <div class="sp-stat-label">categories</div>
+          </div>
+          <div class="sp-stat-item">
+            <div class="sp-stat-num" id="sp-learned-num">0</div>
+            <div class="sp-stat-label">learned</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="sp-progress-wrap">
+        <div class="sp-progress-label">
+          <span id="sp-prog-text">0 of 68 terms learned</span>
+          <span id="sp-prog-pct">0%</span>
+        </div>
+        <div class="sp-progress-track"><div class="sp-progress-fill" id="sp-prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- Category filter -->
+      <nav class="sp-cat-nav" id="sp-cat-nav" aria-label="Filter by category">
+        <button class="sp-cat-btn active" data-cat="all">All <span class="sp-cat-count">(68)</span></button>
+        <button class="sp-cat-btn" data-cat="phrases">Clinical Phrases <span class="sp-cat-count">(15)</span></button>
+        <button class="sp-cat-btn" data-cat="anatomy">Body &amp; Anatomy <span class="sp-cat-count">(20)</span></button>
+        <button class="sp-cat-btn" data-cat="vitals">Vital Signs <span class="sp-cat-count">(8)</span></button>
+        <button class="sp-cat-btn" data-cat="conditions">Conditions <span class="sp-cat-count">(15)</span></button>
+        <button class="sp-cat-btn" data-cat="procedures">Procedures <span class="sp-cat-count">(10)</span></button>
+      </nav>
+
+      <!-- Cards grid (rendered by JS) -->
+      <div class="sp-cards-grid" id="sp-cards-grid"></div>
+
+      <!-- Clinical scenario scripts -->
+      <section class="sp-scenarios-section">
+        <h2 class="section-title" style="margin-bottom:6px;">Clinical Conversation Scripts</h2>
+        <p class="sp-section-sub">Common patient interactions from intake to discharge. Click to expand.</p>
+        <div class="sp-scenarios-list" id="sp-scenarios-list"></div>
+      </section>
+
+      <!-- Tips -->
+      <section class="sp-tips-section">
+        <h2 class="section-title" style="margin-bottom:20px;">Clinical Communication Tips</h2>
+        <div class="sp-tips-grid">
+          <div class="sp-tip-card">
+            <div class="sp-tip-icon">🤝</div>
+            <div class="sp-tip-head">Use "usted," not "tú"</div>
+            <div class="sp-tip-body">Always use the formal "usted" register with patients. This is the clinical standard across all Spanish-speaking regions and shows professional respect.</div>
+          </div>
+          <div class="sp-tip-card">
+            <div class="sp-tip-icon">🔊</div>
+            <div class="sp-tip-head">Speak slowly and clearly</div>
+            <div class="sp-tip-body">Speak at a moderate pace and avoid idioms. Many patients may have limited health literacy — direct, simple language protects patient safety.</div>
+          </div>
+          <div class="sp-tip-card">
+            <div class="sp-tip-icon">✅</div>
+            <div class="sp-tip-head">Confirm understanding</div>
+            <div class="sp-tip-body">Always verify comprehension with "¿Me entiende?" and ask the patient to repeat instructions back. Don't rely on a nod — confirm with words.</div>
+          </div>
+          <div class="sp-tip-card">
+            <div class="sp-tip-icon">⚠️</div>
+            <div class="sp-tip-head">Know your limits</div>
+            <div class="sp-tip-body">For complex medical discussions, use a certified medical interpreter. These phrases are for initial patient comfort — not a substitute for professional interpretation in critical situations.</div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /tab-inner -->
+    </div><!-- /tab-spanish -->
+
   </main>
 </div><!-- /app-shell -->
 
@@ -4879,6 +4970,7 @@ function friendlyError(code) {
         <div class="shortcut-row"><kbd>1</kbd> Home</div>
         <div class="shortcut-row"><kbd>2</kbd> Events</div>
         <div class="shortcut-row"><kbd>3</kbd> Library</div>
+        <div class="shortcut-row"><kbd>4</kbd> Medical Spanish</div>
         <div class="shortcut-row"><kbd>R</kbd> Surprise me</div>
         <div class="shortcut-row"><kbd>/</kbd> Search</div>
         <div class="shortcut-row"><kbd>?</kbd> Shortcuts</div>
@@ -4913,6 +5005,10 @@ function friendlyError(code) {
   <button class="bn-item" data-tab="about">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     Guide
+  </button>
+  <button class="bn-item" data-tab="spanish">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Español
   </button>
 </nav>
 <div id="toast-container"></div>
@@ -5022,6 +5118,7 @@ function friendlyError(code) {
     if (e.key === '1') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('home'); }
     else if (e.key === '2') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('events'); }
     else if (e.key === '3') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('library'); }
+    else if (e.key === '4') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('spanish'); }
   });
 
   // ── Study tips ────────────────────────────────────────────
@@ -5520,6 +5617,7 @@ function friendlyError(code) {
     { id:'act-events',   icon:'🗂', name:'Go to Browse Events',   hint:'Tab 2',  run: function(){ if (typeof switchTab==='function') switchTab('events'); } },
     { id:'act-library',  icon:'📚', name:'Go to Your Library',    hint:'Tab 3',  run: function(){ if (typeof switchTab==='function') switchTab('library'); } },
     { id:'act-about',    icon:'ℹ',  name:'Go to How HOSA Works',  hint:'',       run: function(){ if (typeof switchTab==='function') switchTab('about'); } },
+    { id:'act-spanish',  icon:'🌎', name:'Go to Medical Spanish', hint:'Tab 4',  run: function(){ if (typeof switchTab==='function') switchTab('spanish'); } },
     { id:'act-theme',    icon:'🎨', name:'Cycle theme (dark / light / sepia)', hint:'',  run: function(){ if (typeof window.__hosaCycleTheme==='function') window.__hosaCycleTheme(); } },
     { id:'act-surprise', icon:'🎲', name:'Surprise me — random event', hint:'R',  run: function(){ var btn = document.getElementById('btn-surprise'); if (btn) { if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ btn.click(); }, 120); } } },
     { id:'act-shortcuts', icon:'⌨', name:'Show keyboard shortcuts', hint:'?',    run: function(){ var ov = document.getElementById('shortcuts-overlay'); if (ov) ov.classList.add('open'); } },
@@ -6076,6 +6174,325 @@ function friendlyError(code) {
   }
 
   init();
+})();
+</script>
+
+<!-- ── Medical Spanish IIFE ─────────────────────────────────── -->
+<script>
+(function(){
+  var TOTAL = 68;
+  var LS_KEY = 'hosa::sp-learned';
+
+  var SP_VOCAB = [
+    // ── Clinical Phrases (15) ──────────────────────────────
+    { id:'sp-p01', cat:'phrases',    en:'Where does it hurt?',                   es:'¿Dónde le duele?',                    pron:'DON-deh leh DWEH-leh' },
+    { id:'sp-p02', cat:'phrases',    en:'How bad is the pain? (1–10)',            es:'¿Cuánto le duele del 1 al 10?',       pron:'KWAHN-toh leh DWEH-leh' },
+    { id:'sp-p03', cat:'phrases',    en:'Are you allergic to any medications?',   es:'¿Es alérgico a algún medicamento?',   pron:'es ah-LEHR-hee-ko' },
+    { id:'sp-p04', cat:'phrases',    en:'Do you take any medications?',           es:'¿Toma algún medicamento?',            pron:'TOH-mah al-GOON meh-dee-kah-MEN-toh' },
+    { id:'sp-p05', cat:'phrases',    en:'Breathe deeply, please.',                es:'Respire profundo, por favor.',        pron:'res-PEE-reh pro-FOON-doh' },
+    { id:'sp-p06', cat:'phrases',    en:'I need to take your blood pressure.',    es:'Necesito tomarle la presión.',        pron:'neh-seh-SEE-toh toh-MAR-leh' },
+    { id:'sp-p07', cat:'phrases',    en:'When did this start?',                   es:'¿Cuándo empezó esto?',                pron:'KWAHN-doh em-peh-ZOH ES-toh' },
+    { id:'sp-p08', cat:'phrases',    en:'Do you have other symptoms?',            es:'¿Tiene otros síntomas?',              pron:'TYEH-neh OH-tros SEEN-toh-mas' },
+    { id:'sp-p09', cat:'phrases',    en:'Have you had this before?',              es:'¿Ha tenido esto antes?',              pron:'ah teh-NEE-doh ES-toh AHN-tes' },
+    { id:'sp-p10', cat:'phrases',    en:'Do not eat or drink anything.',          es:'No coma ni beba nada.',               pron:'noh KOH-mah nee BEH-bah NAH-dah' },
+    { id:'sp-p11', cat:'phrases',    en:'I am going to give you an injection.',   es:'Le voy a poner una inyección.',       pron:'leh BOY ah po-NEHR OO-nah een-yek-SYON' },
+    { id:'sp-p12', cat:'phrases',    en:'You need to rest.',                      es:'Necesita descansar.',                 pron:'neh-seh-SEE-tah des-kan-SAR' },
+    { id:'sp-p13', cat:'phrases',    en:'Call us if you need anything.',          es:'Llámenos si necesita algo.',          pron:'YAH-meh-nos see neh-seh-SEE-tah AL-go' },
+    { id:'sp-p14', cat:'phrases',    en:'Do you understand?',                     es:'¿Me entiende?',                       pron:'meh en-TYEN-deh' },
+    { id:'sp-p15', cat:'phrases',    en:'Sign here, please.',                     es:'Firme aquí, por favor.',              pron:'FEER-meh ah-KEE, por fah-BOR' },
+
+    // ── Body & Anatomy (20) ───────────────────────────────
+    { id:'sp-a01', cat:'anatomy',    en:'Head',                                   es:'Cabeza',                              pron:'kah-BEH-sah' },
+    { id:'sp-a02', cat:'anatomy',    en:'Brain',                                  es:'Cerebro',                             pron:'seh-REH-bro' },
+    { id:'sp-a03', cat:'anatomy',    en:'Neck',                                   es:'Cuello',                              pron:'KWEH-yoh' },
+    { id:'sp-a04', cat:'anatomy',    en:'Chest',                                  es:'Pecho',                               pron:'PEH-cho' },
+    { id:'sp-a05', cat:'anatomy',    en:'Heart',                                  es:'Corazón',                             pron:'ko-rah-SON' },
+    { id:'sp-a06', cat:'anatomy',    en:'Lungs',                                  es:'Pulmones',                            pron:'pool-MOH-nes' },
+    { id:'sp-a07', cat:'anatomy',    en:'Stomach',                                es:'Estómago',                            pron:'es-TOH-mah-go' },
+    { id:'sp-a08', cat:'anatomy',    en:'Abdomen',                                es:'Abdomen',                             pron:'ab-DOH-men' },
+    { id:'sp-a09', cat:'anatomy',    en:'Liver',                                  es:'Hígado',                              pron:'EE-gah-doh' },
+    { id:'sp-a10', cat:'anatomy',    en:'Kidney',                                 es:'Riñón',                               pron:'ree-NYON' },
+    { id:'sp-a11', cat:'anatomy',    en:'Back',                                   es:'Espalda',                             pron:'es-PAHL-dah' },
+    { id:'sp-a12', cat:'anatomy',    en:'Arm',                                    es:'Brazo',                               pron:'BRAH-so' },
+    { id:'sp-a13', cat:'anatomy',    en:'Hand',                                   es:'Mano',                                pron:'MAH-no' },
+    { id:'sp-a14', cat:'anatomy',    en:'Leg',                                    es:'Pierna',                              pron:'PYEHR-nah' },
+    { id:'sp-a15', cat:'anatomy',    en:'Foot',                                   es:'Pie',                                 pron:'pyeh' },
+    { id:'sp-a16', cat:'anatomy',    en:'Skin',                                   es:'Piel',                                pron:'pyel' },
+    { id:'sp-a17', cat:'anatomy',    en:'Bone',                                   es:'Hueso',                               pron:'WEH-so' },
+    { id:'sp-a18', cat:'anatomy',    en:'Muscle',                                 es:'Músculo',                             pron:'MOOS-koo-lo' },
+    { id:'sp-a19', cat:'anatomy',    en:'Blood',                                  es:'Sangre',                              pron:'SAHN-greh' },
+    { id:'sp-a20', cat:'anatomy',    en:'Nerve',                                  es:'Nervio',                              pron:'NEHR-byoh' },
+
+    // ── Vital Signs (8) ───────────────────────────────────
+    { id:'sp-v01', cat:'vitals',     en:'Blood pressure',                         es:'Presión arterial',                    pron:'pre-SYON ar-teh-RYAL' },
+    { id:'sp-v02', cat:'vitals',     en:'Heart rate',                             es:'Frecuencia cardíaca',                 pron:'freh-KWEN-syah kar-DYAH-kah' },
+    { id:'sp-v03', cat:'vitals',     en:'Pulse',                                  es:'Pulso',                               pron:'POOL-so' },
+    { id:'sp-v04', cat:'vitals',     en:'Temperature',                            es:'Temperatura',                         pron:'tem-peh-rah-TOO-rah' },
+    { id:'sp-v05', cat:'vitals',     en:'Respiratory rate',                       es:'Frecuencia respiratoria',             pron:'freh-KWEN-syah res-pee-rah-TOH-ryah' },
+    { id:'sp-v06', cat:'vitals',     en:'Oxygen saturation',                      es:'Saturación de oxígeno',               pron:'sah-too-rah-SYON deh ok-SEE-heh-no' },
+    { id:'sp-v07', cat:'vitals',     en:'Weight',                                 es:'Peso',                                pron:'PEH-so' },
+    { id:'sp-v08', cat:'vitals',     en:'Height',                                 es:'Estatura',                            pron:'es-tah-TOO-rah' },
+
+    // ── Conditions (15) ───────────────────────────────────
+    { id:'sp-c01', cat:'conditions', en:'Fever',                                  es:'Fiebre',                              pron:'FYEH-breh' },
+    { id:'sp-c02', cat:'conditions', en:'Pain',                                   es:'Dolor',                               pron:'do-LOR' },
+    { id:'sp-c03', cat:'conditions', en:'Headache',                               es:'Dolor de cabeza',                     pron:'do-LOR deh kah-BEH-sah' },
+    { id:'sp-c04', cat:'conditions', en:'Nausea',                                 es:'Náuseas',                             pron:'NAH-oo-seh-as' },
+    { id:'sp-c05', cat:'conditions', en:'Vomiting',                               es:'Vómito',                              pron:'BOH-mee-to' },
+    { id:'sp-c06', cat:'conditions', en:'Diarrhea',                               es:'Diarrea',                             pron:'dyah-RREH-ah' },
+    { id:'sp-c07', cat:'conditions', en:'Hypertension',                           es:'Hipertensión',                        pron:'ee-pehr-ten-SYON' },
+    { id:'sp-c08', cat:'conditions', en:'Diabetes',                               es:'Diabetes',                            pron:'dyah-BEH-tes' },
+    { id:'sp-c09', cat:'conditions', en:'Heart attack',                           es:'Infarto / Ataque al corazón',         pron:'een-FAR-to' },
+    { id:'sp-c10', cat:'conditions', en:'Stroke',                                 es:'Derrame cerebral',                    pron:'deh-RRAH-meh seh-reh-BRAL' },
+    { id:'sp-c11', cat:'conditions', en:'Asthma',                                 es:'Asma',                                pron:'AZ-mah' },
+    { id:'sp-c12', cat:'conditions', en:'Fracture',                               es:'Fractura',                            pron:'frak-TOO-rah' },
+    { id:'sp-c13', cat:'conditions', en:'Infection',                              es:'Infección',                           pron:'een-fek-SYON' },
+    { id:'sp-c14', cat:'conditions', en:'Allergy',                                es:'Alergia',                             pron:'ah-LEHR-hyah' },
+    { id:'sp-c15', cat:'conditions', en:'Anemia',                                 es:'Anemia',                              pron:'ah-NEH-myah' },
+
+    // ── Procedures (10) ───────────────────────────────────
+    { id:'sp-r01', cat:'procedures', en:'Blood draw',                             es:'Extracción de sangre',                pron:'eks-trak-SYON deh SAHN-greh' },
+    { id:'sp-r02', cat:'procedures', en:'Injection',                              es:'Inyección',                           pron:'een-yek-SYON' },
+    { id:'sp-r03', cat:'procedures', en:'X-ray',                                  es:'Radiografía',                         pron:'rah-dyoh-grah-FEE-ah' },
+    { id:'sp-r04', cat:'procedures', en:'Surgery',                                es:'Cirugía',                             pron:'see-roo-HEE-ah' },
+    { id:'sp-r05', cat:'procedures', en:'Physical exam',                          es:'Examen físico',                       pron:'ek-SAH-men FEE-see-ko' },
+    { id:'sp-r06', cat:'procedures', en:'Prescription',                           es:'Receta',                              pron:'reh-SEH-tah' },
+    { id:'sp-r07', cat:'procedures', en:'IV / Intravenous',                       es:'Suero / Intravenoso',                 pron:'SWEH-ro / een-trah-beh-NOH-so' },
+    { id:'sp-r08', cat:'procedures', en:'Blood test / Lab work',                  es:'Análisis de sangre',                  pron:'ah-NAH-lee-sees deh SAHN-greh' },
+    { id:'sp-r09', cat:'procedures', en:'Suture',                                 es:'Sutura',                              pron:'soo-TOO-rah' },
+    { id:'sp-r10', cat:'procedures', en:'Biopsy',                                 es:'Biopsia',                             pron:'byop-SYAH' },
+  ];
+
+  var SP_SCENARIOS = [
+    {
+      title: 'Patient Intake Assessment',
+      icon: '📋',
+      desc: 'Greeting and chief complaint collection',
+      lines: [
+        { role:'nurse',   en:'Good morning, my name is [Name]. I am your nurse today.',  es:'Buenos días, me llamo [Nombre]. Soy su enfermero/a hoy.' },
+        { role:'nurse',   en:'What brings you in today?',                                 es:'¿Qué le trae por aquí hoy?' },
+        { role:'patient', en:'I have a bad pain in my chest.',                            es:'Tengo un dolor fuerte en el pecho.' },
+        { role:'nurse',   en:'When did the pain start?',                                  es:'¿Cuándo empezó el dolor?' },
+        { role:'patient', en:'It started this morning, about two hours ago.',             es:'Empezó esta mañana, hace unas dos horas.' },
+        { role:'nurse',   en:'On a scale of 1 to 10, how bad is the pain?',               es:'Del 1 al 10, ¿cuánto le duele?' },
+      ]
+    },
+    {
+      title: 'Pain Assessment (OPQRST)',
+      icon: '🩺',
+      desc: 'Onset, provocation, quality, radiation, severity, time',
+      lines: [
+        { role:'nurse',   en:'Does anything make the pain better or worse?',              es:'¿Algo mejora o empeora el dolor?' },
+        { role:'nurse',   en:'Is the pain sharp, burning, or pressure-like?',             es:'¿El dolor es agudo, ardor, o presión?' },
+        { role:'nurse',   en:'Does the pain spread to any other area?',                   es:'¿Se extiende el dolor a otra parte del cuerpo?' },
+        { role:'nurse',   en:'Is the pain constant or does it come and go?',              es:'¿El dolor es constante o va y viene?' },
+        { role:'patient', en:'It comes and goes, and spreads to my left arm.',            es:'Va y viene, y se extiende a mi brazo izquierdo.' },
+      ]
+    },
+    {
+      title: 'Medication Review',
+      icon: '💊',
+      desc: 'Allergies and current medications',
+      lines: [
+        { role:'nurse',   en:'Are you allergic to any medications?',                      es:'¿Es alérgico a algún medicamento?' },
+        { role:'patient', en:'Yes, I am allergic to penicillin.',                         es:'Sí, soy alérgico a la penicilina.' },
+        { role:'nurse',   en:'Do you currently take any medications?',                    es:'¿Toma algún medicamento actualmente?' },
+        { role:'patient', en:'I take metformin for diabetes.',                            es:'Tomo metformina para la diabetes.' },
+        { role:'nurse',   en:'When did you last take your medication?',                   es:'¿Cuándo tomó su medicamento por última vez?' },
+        { role:'patient', en:'This morning with breakfast.',                              es:'Esta mañana con el desayuno.' },
+      ]
+    },
+    {
+      title: 'Discharge Instructions',
+      icon: '📄',
+      desc: 'Post-visit instructions and follow-up',
+      lines: [
+        { role:'nurse',   en:'You are ready to go home.',                                 es:'Ya puede irse a casa.' },
+        { role:'nurse',   en:'Take your medication twice a day with food.',               es:'Tome su medicamento dos veces al día con comida.' },
+        { role:'nurse',   en:'Rest and drink plenty of fluids.',                          es:'Descanse y tome bastante líquido.' },
+        { role:'nurse',   en:'Return to the ER if symptoms worsen.',                      es:'Regrese a urgencias si los síntomas empeoran.' },
+        { role:'nurse',   en:'Do you have any questions?',                                es:'¿Tiene alguna pregunta?' },
+        { role:'patient', en:'No, thank you very much.',                                  es:'No, muchas gracias.' },
+      ]
+    },
+  ];
+
+  var CAT_LABELS = { phrases:'Clinical Phrase', anatomy:'Body & Anatomy', vitals:'Vital Sign', conditions:'Condition', procedures:'Procedure' };
+
+  // Load learned state
+  function loadLearned() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveLearned(arr) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+
+  function updateProgress(learned) {
+    var n = learned.length;
+    var pct = Math.round((n / TOTAL) * 100);
+    var numEl = document.getElementById('sp-learned-num');
+    var progText = document.getElementById('sp-prog-text');
+    var progPct = document.getElementById('sp-prog-pct');
+    var progFill = document.getElementById('sp-prog-fill');
+    if (numEl) numEl.textContent = n;
+    if (progText) progText.textContent = n + ' of ' + TOTAL + ' terms learned';
+    if (progPct) progPct.textContent = pct + '%';
+    if (progFill) progFill.style.width = pct + '%';
+  }
+
+  function renderCards(filter) {
+    var grid = document.getElementById('sp-cards-grid');
+    if (!grid) return;
+    var learned = loadLearned();
+    var items = filter === 'all' ? SP_VOCAB : SP_VOCAB.filter(function(v){ return v.cat === filter; });
+
+    grid.innerHTML = items.map(function(v) {
+      var isLearned = learned.indexOf(v.id) !== -1;
+      var learnedClass = isLearned ? ' learned' : '';
+      var checkMark = isLearned ? '✓ Learned' : '☐ Mark as learned';
+      return [
+        '<div class="sp-card' + learnedClass + '" data-id="' + v.id + '" data-cat="' + v.cat + '">',
+          '<div class="sp-card-inner">',
+            '<div class="sp-card-front">',
+              '<div class="sp-card-badge sp-badge-' + v.cat + '">' + (CAT_LABELS[v.cat] || v.cat) + '</div>',
+              isLearned ? '<div class="sp-card-learned-mark">✓</div>' : '',
+              '<div class="sp-card-en">' + v.en + '</div>',
+              '<div class="sp-card-tap-hint">tap to reveal →</div>',
+            '</div>',
+            '<div class="sp-card-back">',
+              '<div class="sp-card-badge sp-badge-' + v.cat + '">' + (CAT_LABELS[v.cat] || v.cat) + '</div>',
+              '<div class="sp-card-es">' + v.es + '</div>',
+              '<div class="sp-card-pron">' + v.pron + '</div>',
+              '<button class="sp-learn-btn' + (isLearned ? ' is-learned' : '') + '" data-id="' + v.id + '">' + checkMark + '</button>',
+            '</div>',
+          '</div>',
+        '</div>'
+      ].join('');
+    }).join('');
+
+    // Flip on card click
+    grid.querySelectorAll('.sp-card').forEach(function(card) {
+      card.addEventListener('click', function(e) {
+        if (e.target.classList.contains('sp-learn-btn')) return;
+        card.classList.toggle('flipped');
+      });
+    });
+
+    // Learn button
+    grid.querySelectorAll('.sp-learn-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var id = btn.getAttribute('data-id');
+        var learned = loadLearned();
+        var idx = learned.indexOf(id);
+        if (idx === -1) {
+          learned.push(id);
+          btn.textContent = '✓ Learned';
+          btn.classList.add('is-learned');
+          var card = btn.closest('.sp-card');
+          if (card) {
+            card.classList.add('learned');
+            var front = card.querySelector('.sp-card-front');
+            if (front && !front.querySelector('.sp-card-learned-mark')) {
+              var mark = document.createElement('div');
+              mark.className = 'sp-card-learned-mark';
+              mark.textContent = '✓';
+              front.insertBefore(mark, front.firstChild.nextSibling);
+            }
+          }
+        } else {
+          learned.splice(idx, 1);
+          btn.textContent = '☐ Mark as learned';
+          btn.classList.remove('is-learned');
+          var card = btn.closest('.sp-card');
+          if (card) {
+            card.classList.remove('learned');
+            var mark = card.querySelector('.sp-card-learned-mark');
+            if (mark) mark.remove();
+          }
+        }
+        saveLearned(learned);
+        updateProgress(learned);
+      });
+    });
+
+    updateProgress(loadLearned());
+  }
+
+  function renderScenarios() {
+    var list = document.getElementById('sp-scenarios-list');
+    if (!list) return;
+    list.innerHTML = SP_SCENARIOS.map(function(sc, i) {
+      var lines = sc.lines.map(function(ln) {
+        return [
+          '<div class="sp-dialog-line sp-role-' + ln.role + '">',
+            '<div class="sp-dialog-role">' + (ln.role === 'nurse' ? 'Clinician' : 'Patient') + '</div>',
+            '<div class="sp-dialog-en">' + ln.en + '</div>',
+            '<div class="sp-dialog-es">' + ln.es + '</div>',
+          '</div>'
+        ].join('');
+      }).join('');
+      return [
+        '<div class="sp-scenario-item" id="sp-sc-' + i + '">',
+          '<button class="sp-scenario-hd" aria-expanded="false" aria-controls="sp-sc-body-' + i + '">',
+            '<div class="sp-scenario-left">',
+              '<span class="sp-scenario-icon">' + sc.icon + '</span>',
+              '<div>',
+                '<div class="sp-scenario-title">' + sc.title + '</div>',
+                '<div class="sp-scenario-desc">' + sc.desc + '</div>',
+              '</div>',
+            '</div>',
+            '<span class="sp-scenario-chevron">›</span>',
+          '</button>',
+          '<div class="sp-scenario-body" id="sp-sc-body-' + i + '" hidden>',
+            '<div class="sp-dialog">' + lines + '</div>',
+          '</div>',
+        '</div>'
+      ].join('');
+    }).join('');
+
+    list.querySelectorAll('.sp-scenario-hd').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = btn.closest('.sp-scenario-item');
+        var body = item.querySelector('.sp-scenario-body');
+        var open = item.classList.contains('open');
+        if (open) {
+          item.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          body.hidden = true;
+        } else {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          body.hidden = false;
+        }
+      });
+    });
+  }
+
+  // Category filter
+  function initFilter() {
+    var nav = document.getElementById('sp-cat-nav');
+    if (!nav) return;
+    nav.addEventListener('click', function(e) {
+      var btn = e.target.closest('.sp-cat-btn');
+      if (!btn) return;
+      nav.querySelectorAll('.sp-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderCards(btn.getAttribute('data-cat'));
+    });
+  }
+
+  function init() {
+    renderCards('all');
+    renderScenarios();
+    initFilter();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 

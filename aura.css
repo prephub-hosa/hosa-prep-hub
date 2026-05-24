@@ -3009,3 +3009,409 @@ p { color: var(--ink); }
   .tl-row { animation: none !important; opacity: 1 !important; transform: none !important; }
   .pr-card:hover { transform: none !important; }
 }
+
+/* ── v20 — Medical Spanish Tab ─────────────────────────────────
+   All colors use existing CSS variables; themes apply automatically.
+   ──────────────────────────────────────────────────────────────── */
+
+/* Hero */
+.sp-hero {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 36px 32px 28px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.sp-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 90% 20%, rgba(45,90,61,0.10) 0%, transparent 60%),
+              radial-gradient(ellipse at 10% 80%, rgba(168,40,31,0.07) 0%, transparent 55%);
+  pointer-events: none;
+}
+.sp-hero-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--success);
+  margin-bottom: 10px;
+}
+.sp-hero-sub {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  max-width: 620px;
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+.sp-hero-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.sp-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sp-stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+}
+.sp-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Progress bar */
+.sp-progress-wrap {
+  margin-bottom: 24px;
+}
+.sp-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.sp-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sp-progress-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* Category filter nav */
+.sp-cat-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.sp-cat-btn {
+  padding: 7px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.sp-cat-btn:hover {
+  background: var(--highlight);
+  color: var(--ink);
+}
+.sp-cat-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sp-cat-count {
+  opacity: 0.65;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* Cards grid */
+.sp-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+/* Flip card */
+.sp-card {
+  perspective: 900px;
+  cursor: pointer;
+  height: 180px;
+}
+.sp-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sp-card.flipped .sp-card-inner {
+  transform: rotateY(180deg);
+}
+.sp-card-front,
+.sp-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.sp-card-back {
+  transform: rotateY(180deg);
+  border-color: var(--accent-soft);
+}
+.sp-card.learned .sp-card-front {
+  border-color: var(--success);
+}
+.sp-card.learned .sp-card-back {
+  border-color: var(--success);
+}
+
+/* Front content */
+.sp-card-en {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-top: 6px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.sp-card-tap-hint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-style: italic;
+  text-align: right;
+  margin-top: auto;
+}
+.sp-card-learned-mark {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--success);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Back content */
+.sp-card-es {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 6px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.sp-card-pron {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-family: 'Source Serif 4', serif;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.sp-learn-btn {
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.sp-learn-btn:hover {
+  background: var(--highlight);
+  color: var(--ink);
+}
+.sp-learn-btn.is-learned {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+/* Category badges */
+.sp-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-bottom: 2px;
+}
+.sp-badge-phrases   { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.sp-badge-anatomy   { background: rgba(59,130,246,0.12); color: #3b82f6; }
+.sp-badge-vitals    { background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--success); }
+.sp-badge-conditions{ background: rgba(234,88,12,0.12); color: #ea580c; }
+.sp-badge-procedures{ background: rgba(139,92,246,0.12); color: #8b5cf6; }
+
+/* Scenario scripts */
+.sp-scenarios-section { margin-bottom: 52px; }
+.sp-section-sub {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  margin-top: 4px;
+}
+.sp-scenarios-list { display: flex; flex-direction: column; gap: 10px; }
+.sp-scenario-item {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.sp-scenario-item.open { border-color: var(--accent-soft); }
+.sp-scenario-hd {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 16px;
+  text-align: left;
+}
+.sp-scenario-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.sp-scenario-icon { font-size: 22px; flex-shrink: 0; }
+.sp-scenario-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.sp-scenario-desc {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+.sp-scenario-chevron {
+  font-size: 20px;
+  color: var(--ink-faint);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.sp-scenario-item.open .sp-scenario-chevron { transform: rotate(90deg); }
+.sp-scenario-body {
+  padding: 0 20px 20px;
+}
+.sp-dialog { display: flex; flex-direction: column; gap: 12px; }
+.sp-dialog-line {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.sp-dialog-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 68px;
+  padding-top: 3px;
+  flex-shrink: 0;
+}
+.sp-role-nurse .sp-dialog-role   { color: var(--accent); }
+.sp-role-patient .sp-dialog-role { color: #3b82f6; }
+.sp-dialog-en {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.sp-dialog-es {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 1px;
+}
+
+/* Tips section */
+.sp-tips-section { margin-bottom: 40px; }
+.sp-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.sp-tip-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 22px 20px;
+}
+.sp-tip-icon { font-size: 24px; margin-bottom: 10px; }
+.sp-tip-head {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.sp-tip-body {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sp-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .sp-tips-grid  { grid-template-columns: 1fr; }
+}
+@media (max-width: 540px) {
+  .sp-cards-grid { grid-template-columns: 1fr; }
+  .sp-hero { padding: 24px 18px 20px; }
+  .sp-card { height: 160px; }
+  .sp-card-en { font-size: 16px; }
+  .sp-card-es { font-size: 17px; }
+}
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sp-card-inner { transition: none !important; }
+  .sp-progress-fill { transition: none !important; }
+  .sp-scenario-chevron { transition: none !important; }
+}
