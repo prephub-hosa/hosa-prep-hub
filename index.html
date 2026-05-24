@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=18">
+<link rel="stylesheet" href="aura.css?v=19">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -3637,10 +3637,50 @@ footer { display: none; }
         </div>
       </div>
       <div id="library-grid" class="library-grid"></div>
+
+      <!-- Personal records — best-ever stats -->
+      <section id="personal-records-section" style="display:none;margin-top:48px;">
+        <h2 class="section-title">Personal records</h2>
+        <div class="pr-grid">
+          <div class="pr-card">
+            <div class="pr-icon">🔥</div>
+            <div class="pr-val" id="pr-longest-streak">—</div>
+            <div class="pr-lbl">Longest streak</div>
+          </div>
+          <div class="pr-card">
+            <div class="pr-icon">📈</div>
+            <div class="pr-val" id="pr-best-day">—</div>
+            <div class="pr-lbl">Best single day</div>
+          </div>
+          <div class="pr-card">
+            <div class="pr-icon">📅</div>
+            <div class="pr-val" id="pr-active-days">—</div>
+            <div class="pr-lbl">Days active</div>
+          </div>
+          <div class="pr-card">
+            <div class="pr-icon">🎯</div>
+            <div class="pr-val" id="pr-events-touched">—</div>
+            <div class="pr-lbl">Events studied</div>
+          </div>
+        </div>
+      </section>
+
       <div id="lib-achievements">
         <h2 class="section-title" style="margin-top:48px;">Achievements</h2>
         <div id="ach-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
       </div>
+
+      <!-- Achievement progress — closest-to-unlock -->
+      <section id="ach-progress-section" style="display:none;margin-top:24px;">
+        <h3 class="ach-progress-head">Closest to unlocking</h3>
+        <div id="ach-progress-list" class="ach-progress-list"></div>
+      </section>
+
+      <!-- Activity timeline — recent milestones -->
+      <section id="activity-timeline-section" style="display:none;margin-top:48px;">
+        <h2 class="section-title">Recent activity</h2>
+        <div id="activity-timeline" class="activity-timeline"></div>
+      </section>
 
       <!-- Study activity heatmap -->
       <div id="study-heatmap-wrap" style="display:none;margin-top:48px;">
@@ -5796,6 +5836,246 @@ function friendlyError(code) {
   }
   // Set initial label correctly
   apply(current());
+})();
+
+// ── Personal Records + Achievement Progress + Activity Timeline ──
+(function() {
+  var ACH = window.HOSA_ACH || [];
+
+  function collectStats() {
+    var SKIP = new Set(['xp','achievements','theme','onboard-v1','intro-v1']);
+    var stats = {
+      longestStreak: 0,
+      bestDay: 0,
+      activeDays: 0,
+      eventsTouched: 0,
+      mastered: 0,
+      events: 0,
+      streak: 0,
+      perEventMastery: {}, // slug → mastered count
+    };
+
+    var bestDayDate = null;
+    var streakMaxDate = null;
+
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || !k.startsWith('hosa::')) continue;
+        var slug = k.slice(6);
+        if (!slug || SKIP.has(slug)) continue;
+
+        if (slug.startsWith('daily::')) {
+          var n = parseInt(localStorage.getItem(k) || '0', 10);
+          if (n > 0) stats.activeDays++;
+          if (n > stats.bestDay) {
+            stats.bestDay = n;
+            bestDayDate = slug.slice(7);
+          }
+          continue;
+        }
+        if (slug.indexOf('::') !== -1) continue; // skip composite keys
+
+        try {
+          var d = JSON.parse(localStorage.getItem(k));
+          if (!d) continue;
+          var m = Array.isArray(d.mastered) ? d.mastered.length : 0;
+          var s = Array.isArray(d.studied)  ? d.studied.length  : 0;
+          if (m > 0 || s > 0) {
+            stats.eventsTouched++;
+            stats.perEventMastery[slug] = m;
+          }
+          stats.mastered += m;
+          if ((d.streak || 0) > stats.longestStreak) {
+            stats.longestStreak = d.streak;
+          }
+          if ((d.streak || 0) > stats.streak) stats.streak = d.streak;
+        } catch(_) {}
+      }
+    } catch(_) {}
+
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    stats.xp = xp;
+    stats.level = Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1;
+    stats.events = stats.eventsTouched;
+    stats.bestDayDate = bestDayDate;
+    return stats;
+  }
+
+  function renderPersonalRecords() {
+    var section = document.getElementById('personal-records-section');
+    if (!section) return;
+    var stats = collectStats();
+    if (stats.eventsTouched === 0 && stats.activeDays === 0) return;
+
+    var els = {
+      streak:   document.getElementById('pr-longest-streak'),
+      bestDay:  document.getElementById('pr-best-day'),
+      active:   document.getElementById('pr-active-days'),
+      events:   document.getElementById('pr-events-touched'),
+    };
+    if (els.streak)  els.streak.textContent  = stats.longestStreak;
+    if (els.bestDay) els.bestDay.textContent = stats.bestDay;
+    if (els.active)  els.active.textContent  = stats.activeDays;
+    if (els.events)  els.events.textContent  = stats.eventsTouched;
+    section.style.display = '';
+  }
+
+  function renderAchievementProgress() {
+    var section = document.getElementById('ach-progress-section');
+    var list    = document.getElementById('ach-progress-list');
+    if (!section || !list || !ACH.length) return;
+    var stats = collectStats();
+    var earned;
+    try { earned = new Set(JSON.parse(localStorage.getItem('hosa::achievements') || '[]')); }
+    catch(e) { earned = new Set(); }
+
+    function pctFor(a) {
+      var id = a.id;
+      if (id === 'first-session')   return Math.min(100, stats.activeDays > 0 ? 100 : 0);
+      if (id === 'streak-3')        return Math.min(100, stats.longestStreak / 3 * 100);
+      if (id === 'streak-7')        return Math.min(100, stats.longestStreak / 7 * 100);
+      if (id === 'streak-14')       return Math.min(100, stats.longestStreak / 14 * 100);
+      if (id === 'streak-30')       return Math.min(100, stats.longestStreak / 30 * 100);
+      if (id === 'mastered-10')     return Math.min(100, stats.mastered / 10 * 100);
+      if (id === 'mastered-50')     return Math.min(100, stats.mastered / 50 * 100);
+      if (id === 'mastered-100')    return Math.min(100, stats.mastered / 100 * 100);
+      if (id === 'mastered-250')    return Math.min(100, stats.mastered / 250 * 100);
+      if (id === 'mastered-500')    return Math.min(100, stats.mastered / 500 * 100);
+      if (id === 'events-3')        return Math.min(100, stats.eventsTouched / 3 * 100);
+      if (id === 'events-10')       return Math.min(100, stats.eventsTouched / 10 * 100);
+      if (id === 'level-5')         return Math.min(100, stats.level / 5 * 100);
+      if (id === 'level-10')        return Math.min(100, stats.level / 10 * 100);
+      if (id === 'level-20')        return Math.min(100, stats.level / 20 * 100);
+      return 0;
+    }
+
+    function progressText(a) {
+      var id = a.id;
+      var m;
+      if ((m = id.match(/^streak-(\d+)$/)))   return stats.longestStreak + ' / ' + m[1] + ' days';
+      if ((m = id.match(/^mastered-(\d+)$/))) return stats.mastered + ' / ' + m[1] + ' cards';
+      if ((m = id.match(/^events-(\d+)$/)))   return stats.eventsTouched + ' / ' + m[1] + ' events';
+      if ((m = id.match(/^level-(\d+)$/)))    return 'Level ' + stats.level + ' / ' + m[1];
+      if (id === 'first-session')   return 'Rate any card to unlock';
+      if (id === 'perfect-session') return 'Finish a session with only Good & Easy';
+      return '';
+    }
+
+    var locked = ACH
+      .filter(function(a){ return !earned.has(a.id); })
+      .map(function(a){ return { a: a, pct: pctFor(a) }; })
+      .filter(function(x){ return x.pct > 0 && x.pct < 100; })
+      .sort(function(a,b){ return b.pct - a.pct; })
+      .slice(0, 4);
+
+    if (!locked.length) return;
+
+    list.innerHTML = '';
+    locked.forEach(function(x) {
+      var row = document.createElement('div');
+      row.className = 'ach-prog-row';
+      row.innerHTML =
+        '<div class="ach-prog-icon">' + x.a.icon + '</div>' +
+        '<div class="ach-prog-body">' +
+          '<div class="ach-prog-title">' + x.a.title + '</div>' +
+          '<div class="ach-prog-desc">' + x.a.desc + '</div>' +
+          '<div class="ach-prog-track"><div class="ach-prog-fill" style="width:0%"></div></div>' +
+        '</div>' +
+        '<div class="ach-prog-meta">' +
+          '<div class="ach-prog-pct">' + Math.round(x.pct) + '%</div>' +
+          '<div class="ach-prog-count">' + progressText(x.a) + '</div>' +
+        '</div>';
+      list.appendChild(row);
+      setTimeout((function(r, p){ return function(){
+        var fill = r.querySelector('.ach-prog-fill');
+        if (fill) fill.style.width = p + '%';
+      }; })(row, x.pct), 200);
+    });
+    section.style.display = '';
+  }
+
+  function renderActivityTimeline() {
+    var section = document.getElementById('activity-timeline-section');
+    var feed    = document.getElementById('activity-timeline');
+    if (!section || !feed) return;
+
+    var entries = [];
+    var earned;
+    try { earned = JSON.parse(localStorage.getItem('hosa::achievements') || '[]'); }
+    catch(e) { earned = []; }
+
+    // Recent achievements (no timestamp — show as a single "Unlocked" cluster)
+    var achMap = {};
+    ACH.forEach(function(a){ achMap[a.id] = a; });
+    earned.slice(-3).reverse().forEach(function(id) {
+      var a = achMap[id]; if (!a) return;
+      entries.push({ icon: a.icon, kind: 'Achievement', title: a.title, sub: a.desc });
+    });
+
+    // Recent daily activity — last 5 days with activity
+    var today = new Date(); today.setHours(0,0,0,0);
+    for (var i = 0; i < 30 && entries.length < 8; i++) {
+      var d = new Date(today); d.setDate(today.getDate() - i);
+      var ds = d.toISOString().slice(0, 10);
+      var c = parseInt(localStorage.getItem('hosa::daily::' + ds) || '0', 10);
+      if (c > 0) {
+        var dayLbl = i === 0 ? 'Today' : i === 1 ? 'Yesterday' : (i + ' days ago');
+        entries.push({
+          icon: c >= 30 ? '🔥' : c >= 15 ? '📚' : '✏',
+          kind: dayLbl,
+          title: c + ' card' + (c === 1 ? '' : 's') + ' rated',
+          sub: ds
+        });
+        if (entries.length >= 8) break;
+      }
+    }
+
+    if (entries.length === 0) return;
+
+    feed.innerHTML = '';
+    entries.forEach(function(e, idx) {
+      var row = document.createElement('div');
+      row.className = 'tl-row';
+      row.style.animationDelay = (idx * 60) + 'ms';
+      row.innerHTML =
+        '<div class="tl-icon">' + e.icon + '</div>' +
+        '<div class="tl-body">' +
+          '<div class="tl-kind">' + e.kind + '</div>' +
+          '<div class="tl-title">' + e.title + '</div>' +
+          '<div class="tl-sub">' + e.sub + '</div>' +
+        '</div>';
+      feed.appendChild(row);
+    });
+    section.style.display = '';
+  }
+
+  function renderAll() {
+    renderPersonalRecords();
+    renderAchievementProgress();
+    renderActivityTimeline();
+  }
+
+  function init() {
+    if (document.body.classList.contains('user-active')) {
+      setTimeout(renderAll, 500); // wait for engage.js to populate HOSA_ACH
+    } else {
+      var obs = new MutationObserver(function() {
+        if (document.body.classList.contains('user-active')) {
+          obs.disconnect();
+          setTimeout(renderAll, 500);
+        }
+      });
+      obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // Re-render when library tab opens
+    document.querySelectorAll('[data-tab="library"]').forEach(function(el) {
+      el.addEventListener('click', function() { setTimeout(renderAll, 120); });
+    });
+  }
+
+  init();
 })();
 </script>
 
