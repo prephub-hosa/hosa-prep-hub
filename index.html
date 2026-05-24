@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=11">
+<link rel="stylesheet" href="aura.css?v=12">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2183,6 +2183,7 @@ footer { display: none; }
       <input type="search" id="event-search" placeholder="Search events — try &ldquo;cardio&rdquo; or &ldquo;pharm&rdquo;&hellip;" autocomplete="off" spellcheck="false">
     </div>
     <div class="topbar-right">
+      <button id="shortcuts-btn" title="Keyboard shortcuts (?)">? shortcuts</button>
       <div id="topbar-level">Lv <span id="tb-level">1</span></div>
       <div class="user-pill" id="topbar-user-pill">
         <span class="user-email" id="user-email"></span>
@@ -2254,6 +2255,19 @@ footer { display: none; }
         </div>
       </section>
 
+      <!-- Study tip widget — always shown -->
+      <div class="stip-wrap" id="stip-wrap">
+        <div class="stip-card" id="stip-card">
+          <div class="stip-icon" id="stip-icon"></div>
+          <div class="stip-body">
+            <div class="stip-tag" id="stip-tag"></div>
+            <div class="stip-text" id="stip-text"></div>
+          </div>
+          <button class="stip-next" id="stip-next" title="Next tip" aria-label="Next tip">→</button>
+        </div>
+        <div class="stip-dots" id="stip-dots"></div>
+      </div>
+
       <!-- Jump back in — shown only when user has progress -->
       <section id="jbi-section" style="display:none;margin-bottom:48px;">
         <h2 class="section-title">Jump back in</h2>
@@ -2294,6 +2308,17 @@ footer { display: none; }
 
       <!-- Fresh finds — shown for new users (no progress) -->
       <section id="fresh-finds">
+        <div class="site-hero">
+          <div class="site-hero-eyebrow">Built for serious competitors</div>
+          <h1 class="site-hero-title">60 HOSA events.<br><em>One focused system.</em></h1>
+          <p class="site-hero-sub">Spaced-repetition flashcards, timed practice exams, and daily review queues built specifically for HOSA written knowledge events. Pick your event and start — no account required.</p>
+          <div class="site-hero-pills">
+            <span class="site-hero-pill">✓ 60 events covered</span>
+            <span class="site-hero-pill">✓ SM-2 spaced repetition</span>
+            <span class="site-hero-pill">✓ Mirrors HOSA exam format</span>
+            <span class="site-hero-pill">✓ Free, no sign-up needed</span>
+          </div>
+        </div>
         <h2 class="section-title">Recommended for new competitors</h2>
         <div class="jbi-row" style="margin-bottom:48px;">
           <a href="medical-terminology.html" class="jbi-card">
@@ -3562,7 +3587,12 @@ footer { display: none; }
       </div>
 
       <div id="library-empty" style="display:none;">
-        Nothing here yet — <a href="#" data-tab="events">start studying an event</a> to build your library.
+        <div class="lib-empty-state">
+          <div class="lib-empty-icon">📚</div>
+          <h3 class="lib-empty-title">Your library is waiting</h3>
+          <p class="lib-empty-sub">Study any event to start building your progress library. Cards you rate will be tracked here with mastery scores, streaks, and review schedules.</p>
+          <button class="lib-empty-cta" data-tab="events">Browse events and start →</button>
+        </div>
       </div>
       <div id="library-grid" class="library-grid"></div>
       <div id="lib-achievements">
@@ -4644,6 +4674,36 @@ function friendlyError(code) {
 <script src="leaderboard.js"></script>
 <script src="engage.js" defer></script>
 
+<!-- ── Keyboard shortcuts overlay ── -->
+<div id="shortcuts-overlay">
+  <div class="shortcuts-modal">
+    <div class="shortcuts-header">
+      <div class="shortcuts-title">Keyboard Shortcuts</div>
+      <button class="shortcuts-close" id="shortcuts-close" aria-label="Close">✕</button>
+    </div>
+    <div class="shortcuts-body">
+      <div>
+        <div class="shortcuts-section-head">Navigation</div>
+        <div class="shortcut-row"><kbd>1</kbd> Home</div>
+        <div class="shortcut-row"><kbd>2</kbd> Events</div>
+        <div class="shortcut-row"><kbd>3</kbd> Library</div>
+        <div class="shortcut-row"><kbd>R</kbd> Surprise me</div>
+        <div class="shortcut-row"><kbd>/</kbd> Search</div>
+        <div class="shortcut-row"><kbd>?</kbd> Shortcuts</div>
+      </div>
+      <div>
+        <div class="shortcuts-section-head">Flashcards</div>
+        <div class="shortcut-row"><kbd>Space</kbd> Flip card</div>
+        <div class="shortcut-row"><kbd>G</kbd> Know it</div>
+        <div class="shortcut-row"><kbd>A</kbd> Don't know</div>
+        <div class="shortcut-row"><kbd>←</kbd> Previous</div>
+        <div class="shortcut-row"><kbd>→</kbd> Next</div>
+      </div>
+    </div>
+    <div class="shortcuts-footer">Press <kbd>Esc</kbd> or click outside to close</div>
+  </div>
+</div>
+
 <!-- ── Mobile bottom navigation ── -->
 <nav id="bottom-nav" aria-label="Main navigation">
   <button class="bn-item active" data-tab="home">
@@ -4663,5 +4723,156 @@ function friendlyError(code) {
     Guide
   </button>
 </nav>
+<div id="toast-container"></div>
+
+<script>
+(function() {
+  // ── Confetti ──────────────────────────────────────────────
+  function fireConfetti() {
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var colors = ['#ef4444','#f97316','#fbbf24','#22c55e','#3b82f6','#a855f7','#ec4899'];
+    var particles = [];
+    for (var i = 0; i < 90; i++) {
+      particles.push({
+        x: canvas.width * (0.3 + Math.random() * 0.4),
+        y: canvas.height * 0.55,
+        vx: (Math.random() - 0.5) * 14,
+        vy: -(Math.random() * 14 + 4),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        w: Math.random() * 9 + 5,
+        h: Math.random() * 5 + 3,
+        rot: Math.random() * 360,
+        rotV: (Math.random() - 0.5) * 18,
+        gravity: 0.38
+      });
+    }
+    var start = performance.now();
+    function draw(now) {
+      var elapsed = now - start;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var alive = false;
+      particles.forEach(function(p) {
+        p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.rot += p.rotV;
+        var alpha = Math.max(0, 1 - elapsed / 2400);
+        if (alpha > 0) alive = true;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      if (alive) requestAnimationFrame(draw);
+      else canvas.remove();
+    }
+    requestAnimationFrame(draw);
+  }
+  window._fireConfetti = fireConfetti;
+
+  // ── Toast ─────────────────────────────────────────────────
+  function showToast(html, type) {
+    var container = document.getElementById('toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'toast' + (type ? ' toast-' + type : '');
+    t.innerHTML = html;
+    container.appendChild(t);
+    requestAnimationFrame(function() { requestAnimationFrame(function() { t.classList.add('toast-visible'); }); });
+    setTimeout(function() {
+      t.classList.remove('toast-visible');
+      setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
+    }, 3400);
+  }
+  window._showToast = showToast;
+
+  // ── Keyboard shortcuts modal ──────────────────────────────
+  var overlay = document.getElementById('shortcuts-overlay');
+  function openShortcuts() { if (overlay) overlay.classList.add('open'); }
+  function closeShortcuts() { if (overlay) overlay.classList.remove('open'); }
+  var shortcutsBtn = document.getElementById('shortcuts-btn');
+  var shortcutsClose = document.getElementById('shortcuts-close');
+  if (shortcutsBtn) shortcutsBtn.addEventListener('click', openShortcuts);
+  if (shortcutsClose) shortcutsClose.addEventListener('click', closeShortcuts);
+  if (overlay) overlay.addEventListener('click', function(e) { if (e.target === overlay) closeShortcuts(); });
+
+  // ── Global keyboard shortcuts ─────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    var tag = (e.target && e.target.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'Escape') { closeShortcuts(); return; }
+    if (e.key === '?') { e.preventDefault(); if (overlay && overlay.classList.contains('open')) closeShortcuts(); else openShortcuts(); return; }
+    if (typing) return;
+    if (e.key === '1') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('home'); }
+    else if (e.key === '2') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('events'); }
+    else if (e.key === '3') { e.preventDefault(); if (typeof switchTab === 'function') switchTab('library'); }
+  });
+
+  // ── Study tips ────────────────────────────────────────────
+  var TIPS = [
+    { icon: '⏱', tag: 'Exam Strategy', tip: 'HOSA written exams are 100 questions in 60 minutes — 36 seconds per question. Practice under timed pressure, not just content recall.' },
+    { icon: '📖', tag: 'Study Order', tip: 'Start with Medical Terminology before any clinical event. It unlocks the vocabulary used across all other events.' },
+    { icon: '🔁', tag: 'Flashcard Science', tip: 'Rate cards honestly. "Don\'t Know" is how the algorithm finds your weak spots — overrating leads to false confidence on exam day.' },
+    { icon: '🎯', tag: 'Competition', tip: 'Top 15% of scorers typically advance at state. A score of 85+ is your target for most events. Track your quiz average in Your Library.' },
+    { icon: '💊', tag: 'Pharmacology', tip: 'The Pharmacology exam tests drug class mechanisms more than individual drug names. Learn the category, then drill the exceptions.' },
+    { icon: '🧬', tag: 'Pathophysiology', tip: 'Group diseases by body system. Mastering one system deeply beats shallow coverage of all nine — start with cardiovascular.' },
+    { icon: '🧠', tag: 'Study Science', tip: 'Spaced repetition works best when practiced daily. 15 focused minutes every day beats a 3-hour cram session the night before the exam.' },
+    { icon: '📊', tag: 'Quiz Strategy', tip: 'Review your missed quiz questions immediately after finishing. The sting of a wrong answer anchors the correct one faster than re-reading.' },
+  ];
+  var stipIdx = Math.floor(Math.random() * TIPS.length);
+  var stipTimer;
+  function renderTip(idx) {
+    var tip = TIPS[idx];
+    var iconEl = document.getElementById('stip-icon');
+    var tagEl = document.getElementById('stip-tag');
+    var textEl = document.getElementById('stip-text');
+    var dotsEl = document.getElementById('stip-dots');
+    if (!iconEl) return;
+    iconEl.textContent = tip.icon;
+    tagEl.textContent = tip.tag;
+    textEl.textContent = tip.tip;
+    if (dotsEl) {
+      dotsEl.innerHTML = '';
+      TIPS.forEach(function(_, i) {
+        var d = document.createElement('div');
+        d.className = 'stip-dot' + (i === idx ? ' active' : '');
+        dotsEl.appendChild(d);
+      });
+    }
+  }
+  function nextTip() {
+    stipIdx = (stipIdx + 1) % TIPS.length;
+    renderTip(stipIdx);
+    clearInterval(stipTimer);
+    stipTimer = setInterval(function() { stipIdx = (stipIdx + 1) % TIPS.length; renderTip(stipIdx); }, 12000);
+  }
+  var stipNextBtn = document.getElementById('stip-next');
+  if (stipNextBtn) stipNextBtn.addEventListener('click', nextTip);
+  renderTip(stipIdx);
+  stipTimer = setInterval(function() { stipIdx = (stipIdx + 1) % TIPS.length; renderTip(stipIdx); }, 12000);
+
+  // ── Library empty state CTA ───────────────────────────────
+  var libEmptyCta = document.querySelector('.lib-empty-cta');
+  if (libEmptyCta) libEmptyCta.addEventListener('click', function() { if (typeof switchTab === 'function') switchTab('events'); });
+
+  // ── Confetti + toast on goal completion ───────────────────
+  var today = new Date().toISOString().slice(0, 10);
+  var done = parseInt(localStorage.getItem('hosa::daily::' + today) || '0', 10);
+  var goal = parseInt(localStorage.getItem('hosa::daily-goal') || '20', 10);
+  if (done >= goal && done > 0) {
+    setTimeout(function() {
+      fireConfetti();
+      showToast('🎉 Daily goal reached! Keep that streak alive.', 'success');
+    }, 800);
+  }
+})();
+</script>
+
 </body>
 </html>
