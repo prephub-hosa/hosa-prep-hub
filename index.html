@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
-<script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+<script>try{var t=localStorage.getItem("hosa-theme");if(t==="light"||t==="sepia")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=15">
+<link rel="stylesheet" href="aura.css?v=16">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2232,6 +2232,31 @@ footer { display: none; }
         </div>
       </div>
 
+      <!-- Weekly improvement card — shown for users with 2+ weeks of data -->
+      <section id="weekly-improve-section" style="display:none;margin-bottom:24px;"></section>
+
+      <!-- Quick actions strip -->
+      <section id="quick-actions-section" style="display:none;margin-bottom:32px;">
+        <div class="qa-strip">
+          <button class="qa-btn" data-action="palette" type="button">
+            <span class="qa-icon">⌘</span>
+            <div class="qa-body"><div class="qa-title">Command palette</div><div class="qa-sub">Jump to anywhere</div></div>
+          </button>
+          <button class="qa-btn" data-action="surprise" type="button">
+            <span class="qa-icon">🎲</span>
+            <div class="qa-body"><div class="qa-title">Surprise me</div><div class="qa-sub">Random event</div></div>
+          </button>
+          <button class="qa-btn" data-action="due" type="button">
+            <span class="qa-icon">🔥</span>
+            <div class="qa-body"><div class="qa-title">Continue streak</div><div class="qa-sub">Top due event</div></div>
+          </button>
+          <button class="qa-btn" data-action="library" type="button">
+            <span class="qa-icon">📊</span>
+            <div class="qa-body"><div class="qa-title">Your library</div><div class="qa-sub">Stats &amp; history</div></div>
+          </button>
+        </div>
+      </section>
+
       <!-- Exam countdown — shown for active users who set a date -->
       <section id="exam-countdown-section" style="display:none;margin-bottom:24px;"></section>
 
@@ -2402,13 +2427,20 @@ footer { display: none; }
       <h1 class="page-title">Browse Events</h1>
 
       <div class="event-search-wrap" style="margin-bottom:32px;">
-        <div class="filter-bar" id="filter-bar" style="margin-bottom:16px;">
+        <div class="filter-bar" id="filter-bar" style="margin-bottom:10px;">
           <button class="filter-btn active" data-filter="all">All <span class="filter-count">60</span></button>
           <button class="filter-btn" data-filter="clinical">Clinical Medicine <span class="filter-count"></span></button>
           <button class="filter-btn" data-filter="basic">Basic Sciences <span class="filter-count"></span></button>
           <button class="filter-btn" data-filter="allied">Allied Health <span class="filter-count"></span></button>
           <button class="filter-btn" data-filter="systems">Systems &amp; Admin <span class="filter-count"></span></button>
           <button class="filter-btn surprise" id="btn-surprise" type="button">Surprise me <span class="kbd">R</span></button>
+        </div>
+        <div class="filter-bar diff-filter-bar" id="diff-filter-bar" style="margin-bottom:16px;">
+          <span class="diff-filter-label">Difficulty:</span>
+          <button class="diff-filter-btn active" data-diff="all">All</button>
+          <button class="diff-filter-btn" data-diff="beginner"><span class="diff-dot diff-dot-beg"></span>Beginner</button>
+          <button class="diff-filter-btn" data-diff="intermediate"><span class="diff-dot diff-dot-int"></span>Intermediate</button>
+          <button class="diff-filter-btn" data-diff="advanced"><span class="diff-dot diff-dot-adv"></span>Advanced</button>
         </div>
       </div>
 
@@ -3935,13 +3967,15 @@ function friendlyError(code) {
   var label    = document.getElementById('events-count-label');
   var total    = cards.length;
   var activeGroup = 'all';
+  var activeDiff  = 'all';
 
   // Build per-card data once
   var cardData = Array.from(cards).map(function(card) {
     return {
       el: card,
       text: card.textContent.toLowerCase(),
-      group: card.getAttribute('data-group') || 'basic'
+      group: card.getAttribute('data-group') || 'basic',
+      diff:  card.getAttribute('data-difficulty') || ''
     };
   });
 
@@ -3960,13 +3994,14 @@ function friendlyError(code) {
 
     cardData.forEach(function(c) {
       var matchGroup = (activeGroup === 'all') || (c.group === activeGroup);
+      var matchDiff  = (activeDiff === 'all') || (c.diff === activeDiff);
       var matchText  = !q || c.text.indexOf(q) !== -1;
-      var show = matchGroup && matchText;
+      var show = matchGroup && matchDiff && matchText;
       c.el.style.display = show ? '' : 'none';
       if (show) visible++;
     });
 
-    if (!q && activeGroup === 'all') {
+    if (!q && activeGroup === 'all' && activeDiff === 'all') {
       noRes.style.display = 'none';
       label.textContent = '60 events available';
     } else if (visible === 0) {
@@ -3979,7 +4014,7 @@ function friendlyError(code) {
     }
   }
 
-  // Filter buttons
+  // Filter buttons (group)
   document.querySelectorAll('.filter-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -3988,6 +4023,23 @@ function friendlyError(code) {
       applyFilters();
     });
   });
+
+  // Filter buttons (difficulty)
+  document.querySelectorAll('.diff-filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.diff-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeDiff = btn.getAttribute('data-diff');
+      applyFilters();
+    });
+  });
+
+  // Expose so the difficulty-badge IIFE can refresh cardData.diff after it sets data-difficulty
+  window.__hosaRefreshDiff = function() {
+    cardData.forEach(function(c) {
+      c.diff = c.el.getAttribute('data-difficulty') || '';
+    });
+  };
 
   input.addEventListener('input', applyFilters);
 
@@ -4783,6 +4835,7 @@ function friendlyError(code) {
     <div class="shortcuts-body">
       <div>
         <div class="shortcuts-section-head">Navigation</div>
+        <div class="shortcut-row"><kbd>⌘</kbd><kbd>K</kbd> Command palette</div>
         <div class="shortcut-row"><kbd>1</kbd> Home</div>
         <div class="shortcut-row"><kbd>2</kbd> Events</div>
         <div class="shortcut-row"><kbd>3</kbd> Library</div>
@@ -4823,6 +4876,24 @@ function friendlyError(code) {
   </button>
 </nav>
 <div id="toast-container"></div>
+
+<!-- ── Command Palette (Cmd+K / Ctrl+K) ── -->
+<div id="cmd-palette" aria-hidden="true">
+  <div class="cmdp-modal" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="cmdp-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="cmdp-input" type="text" placeholder="Search events, run actions, jump anywhere…" autocomplete="off" spellcheck="false">
+      <kbd class="cmdp-esc">esc</kbd>
+    </div>
+    <div class="cmdp-list" id="cmdp-list" role="listbox"></div>
+    <div class="cmdp-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Select</span>
+      <span><kbd>esc</kbd> Close</span>
+      <span style="margin-left:auto;opacity:0.6">HOSA Prep Hub</span>
+    </div>
+  </div>
+</div>
 
 <script>
 (function() {
@@ -5108,6 +5179,7 @@ function friendlyError(code) {
     var slug = href.replace('.html','').replace(/^.*\//,'');
     var diff = DIFF[slug];
     if (!diff) return;
+    card.setAttribute('data-difficulty', diff);
     var meta = card.querySelector('.card-meta');
     if (!meta) return;
     var badge = document.createElement('span');
@@ -5115,6 +5187,7 @@ function friendlyError(code) {
     badge.textContent = LABEL[diff];
     meta.appendChild(badge);
   });
+  if (typeof window.__hosaRefreshDiff === 'function') window.__hosaRefreshDiff();
 })();
 
 // ── Exam countdown widget ─────────────────────────────────────
@@ -5393,6 +5466,336 @@ function friendlyError(code) {
     if (++tries < 25) setTimeout(waitForEngage, 200);
   }
   waitForEngage();
+})();
+
+// ── Command Palette (Cmd+K / Ctrl+K) ──────────────────────────
+(function() {
+  var palette = document.getElementById('cmd-palette');
+  var input   = document.getElementById('cmdp-input');
+  var list    = document.getElementById('cmdp-list');
+  if (!palette || !input || !list) return;
+
+  var ACTIONS = [
+    { id:'act-home',     icon:'🏠', name:'Go to Home',            hint:'Tab 1',  run: function(){ if (typeof switchTab==='function') switchTab('home'); } },
+    { id:'act-events',   icon:'🗂', name:'Go to Browse Events',   hint:'Tab 2',  run: function(){ if (typeof switchTab==='function') switchTab('events'); } },
+    { id:'act-library',  icon:'📚', name:'Go to Your Library',    hint:'Tab 3',  run: function(){ if (typeof switchTab==='function') switchTab('library'); } },
+    { id:'act-about',    icon:'ℹ',  name:'Go to How HOSA Works',  hint:'',       run: function(){ if (typeof switchTab==='function') switchTab('about'); } },
+    { id:'act-theme',    icon:'🎨', name:'Cycle theme (dark / light / sepia)', hint:'',  run: function(){ if (typeof window.__hosaCycleTheme==='function') window.__hosaCycleTheme(); } },
+    { id:'act-surprise', icon:'🎲', name:'Surprise me — random event', hint:'R',  run: function(){ var btn = document.getElementById('btn-surprise'); if (btn) { if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ btn.click(); }, 120); } } },
+    { id:'act-shortcuts', icon:'⌨', name:'Show keyboard shortcuts', hint:'?',    run: function(){ var ov = document.getElementById('shortcuts-overlay'); if (ov) ov.classList.add('open'); } },
+    { id:'act-search',    icon:'🔍', name:'Search events',         hint:'/',     run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ var el = document.getElementById('event-search'); if (el) { el.focus(); el.select(); } }, 80); } },
+  ];
+
+  var events = [];
+  function buildEvents() {
+    events = Array.from(document.querySelectorAll('.category-card[href]')).map(function(card) {
+      var href = card.getAttribute('href') || '';
+      var slug = href.replace('.html','').replace(/^.*\//,'');
+      var titleEl = card.querySelector('h3');
+      var name = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ').replace(/\n/g,' ') : slug;
+      var diff = card.getAttribute('data-difficulty') || '';
+      return { id:'ev-'+slug, name:name, slug:slug, href:href, diff:diff, icon:'✚' };
+    });
+  }
+
+  var selectedIdx = 0;
+  var currentItems = [];
+
+  function score(item, q) {
+    if (!q) return 1;
+    var n = (item.name || '').toLowerCase();
+    if (n.indexOf(q) === 0) return 100;
+    if (n.indexOf(' ' + q) !== -1) return 80;
+    if (n.indexOf(q) !== -1) return 50;
+    // Fuzzy character order
+    var qi = 0, ni = 0;
+    while (qi < q.length && ni < n.length) {
+      if (n[ni] === q[qi]) qi++;
+      ni++;
+    }
+    return qi === q.length ? 10 : 0;
+  }
+
+  function render(q) {
+    q = (q || '').trim().toLowerCase();
+    list.innerHTML = '';
+    currentItems = [];
+
+    var actMatches = ACTIONS.map(function(a){ return { item:a, type:'action', s:score(a, q) }; }).filter(function(x){ return x.s > 0; });
+    var evMatches  = events.map(function(e){ return { item:e, type:'event',  s:score(e, q) }; }).filter(function(x){ return x.s > 0; });
+
+    actMatches.sort(function(a,b){ return b.s - a.s; });
+    evMatches.sort(function(a,b){ return b.s - a.s; });
+
+    if (!q) {
+      // No query — show actions then a few popular events
+      var popular = ['medical-terminology','pathophysiology','anatomy-physiology','pharmacology','nutrition','cardiovascular-science'];
+      evMatches = events.filter(function(e){ return popular.indexOf(e.slug) !== -1; }).map(function(e){ return { item:e, type:'event', s:1 }; });
+    }
+
+    if (actMatches.length) {
+      var h1 = document.createElement('div');
+      h1.className = 'cmdp-section-h';
+      h1.textContent = 'Actions';
+      list.appendChild(h1);
+      actMatches.slice(0, 6).forEach(function(m){
+        var row = makeRow(m.item, 'action');
+        list.appendChild(row);
+        currentItems.push({ el: row, item: m.item, type:'action' });
+      });
+    }
+
+    if (evMatches.length) {
+      var h2 = document.createElement('div');
+      h2.className = 'cmdp-section-h';
+      h2.textContent = q ? 'Events' : 'Popular events';
+      list.appendChild(h2);
+      evMatches.slice(0, 14).forEach(function(m){
+        var row = makeRow(m.item, 'event');
+        list.appendChild(row);
+        currentItems.push({ el: row, item: m.item, type:'event' });
+      });
+    }
+
+    if (!currentItems.length) {
+      var empty = document.createElement('div');
+      empty.className = 'cmdp-empty';
+      empty.textContent = 'No matches for "' + q + '"';
+      list.appendChild(empty);
+    }
+
+    selectedIdx = 0;
+    highlightRow();
+  }
+
+  function makeRow(item, type) {
+    var row = document.createElement('div');
+    row.className = 'cmdp-row cmdp-row-' + type;
+    row.setAttribute('role', 'option');
+    var diffPill = (type === 'event' && item.diff)
+      ? '<span class="cmdp-diff cmdp-diff-' + item.diff + '">' + item.diff.charAt(0).toUpperCase() + '</span>'
+      : '';
+    var hintHtml = item.hint ? '<kbd class="cmdp-hint">' + item.hint + '</kbd>' : '';
+    row.innerHTML =
+      '<span class="cmdp-row-icon">' + item.icon + '</span>' +
+      '<span class="cmdp-row-name">' + item.name + '</span>' +
+      diffPill + hintHtml +
+      '<span class="cmdp-row-arrow">↵</span>';
+    row.addEventListener('click', function(){ runItem(item, type); });
+    row.addEventListener('mouseenter', function(){
+      selectedIdx = currentItems.findIndex(function(ci){ return ci.el === row; });
+      if (selectedIdx >= 0) highlightRow();
+    });
+    return row;
+  }
+
+  function highlightRow() {
+    currentItems.forEach(function(ci, i){
+      ci.el.classList.toggle('selected', i === selectedIdx);
+    });
+    var sel = currentItems[selectedIdx];
+    if (sel && sel.el && sel.el.scrollIntoView) {
+      sel.el.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function runItem(item, type) {
+    closePalette();
+    if (type === 'event') {
+      setTimeout(function(){ window.location.href = item.href; }, 60);
+    } else if (typeof item.run === 'function') {
+      setTimeout(item.run, 40);
+    }
+  }
+
+  function openPalette() {
+    if (!events.length) buildEvents();
+    palette.classList.add('open');
+    palette.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    render('');
+    setTimeout(function(){ input.focus(); }, 30);
+  }
+  function closePalette() {
+    palette.classList.remove('open');
+    palette.setAttribute('aria-hidden', 'true');
+  }
+  window.__hosaOpenPalette = openPalette;
+
+  input.addEventListener('input', function(){ render(input.value); });
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { e.preventDefault(); closePalette(); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (currentItems.length) { selectedIdx = (selectedIdx + 1) % currentItems.length; highlightRow(); } return; }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); if (currentItems.length) { selectedIdx = (selectedIdx - 1 + currentItems.length) % currentItems.length; highlightRow(); } return; }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var sel = currentItems[selectedIdx];
+      if (sel) runItem(sel.item, sel.type);
+    }
+  });
+
+  palette.addEventListener('click', function(e){
+    if (e.target === palette) closePalette();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      if (palette.classList.contains('open')) closePalette();
+      else openPalette();
+    }
+  });
+})();
+
+// ── Weekly improvement card ───────────────────────────────────
+(function() {
+  function render() {
+    var section = document.getElementById('weekly-improve-section');
+    if (!section) return;
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var dow = today.getDay();
+    var thisMon = new Date(today);
+    thisMon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+    var lastMon = new Date(thisMon);
+    lastMon.setDate(thisMon.getDate() - 7);
+
+    function sumWeek(start) {
+      var s = 0;
+      for (var i = 0; i < 7; i++) {
+        var d = new Date(start);
+        d.setDate(start.getDate() + i);
+        s += parseInt(localStorage.getItem('hosa::daily::' + d.toISOString().slice(0,10)) || '0', 10);
+      }
+      return s;
+    }
+
+    var thisTotal = sumWeek(thisMon);
+    var lastTotal = sumWeek(lastMon);
+
+    if (thisTotal === 0 && lastTotal === 0) return;
+
+    var delta = thisTotal - lastTotal;
+    var direction, label, cls;
+    if (lastTotal === 0) {
+      direction = '🌱'; label = 'First week studying — keep building'; cls = 'wi-neutral';
+    } else if (delta > 0) {
+      var pct = Math.round(delta / lastTotal * 100);
+      direction = '↗'; label = '+' + delta + ' card' + (delta === 1 ? '' : 's') + ' vs last week (+' + pct + '%)'; cls = 'wi-up';
+    } else if (delta < 0) {
+      direction = '↘'; label = delta + ' card' + (delta === -1 ? '' : 's') + ' vs last week — push hard today'; cls = 'wi-down';
+    } else {
+      direction = '→'; label = 'Matching last week\'s pace — keep it consistent'; cls = 'wi-flat';
+    }
+
+    section.innerHTML =
+      '<div class="wi-card ' + cls + '">' +
+        '<div class="wi-arrow">' + direction + '</div>' +
+        '<div class="wi-body">' +
+          '<div class="wi-eyebrow">Weekly progress</div>' +
+          '<div class="wi-total">' + thisTotal + ' card' + (thisTotal === 1 ? '' : 's') + ' this week</div>' +
+          '<div class="wi-delta">' + label + '</div>' +
+        '</div>' +
+      '</div>';
+    section.style.display = '';
+  }
+
+  function init() { if (document.body.classList.contains('user-active')) render(); }
+  var obs = new MutationObserver(function() {
+    if (document.body.classList.contains('user-active')) { obs.disconnect(); render(); }
+  });
+  obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  init();
+})();
+
+// ── Quick Actions strip ───────────────────────────────────────
+(function() {
+  var section = document.getElementById('quick-actions-section');
+  if (!section) return;
+
+  function topDueSlug() {
+    if (typeof window.hosaDueToday !== 'function') return null;
+    var due = window.hosaDueToday();
+    return due.length ? due[0].slug : null;
+  }
+
+  function init() {
+    section.style.display = '';
+    section.querySelectorAll('.qa-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var act = btn.getAttribute('data-action');
+        if (act === 'palette') {
+          if (typeof window.__hosaOpenPalette === 'function') window.__hosaOpenPalette();
+        } else if (act === 'surprise') {
+          var sb = document.getElementById('btn-surprise');
+          if (sb) {
+            if (typeof switchTab === 'function') switchTab('events');
+            setTimeout(function(){ sb.click(); }, 120);
+          }
+        } else if (act === 'due') {
+          var slug = topDueSlug();
+          if (slug) window.location.href = slug + '.html';
+          else if (typeof window._showToast === 'function') window._showToast('No cards due today — pick any event to keep studying.', 'success');
+        } else if (act === 'library') {
+          if (typeof switchTab === 'function') switchTab('library');
+        }
+      });
+    });
+  }
+
+  if (document.body.classList.contains('user-active')) init();
+  else {
+    var obs = new MutationObserver(function() {
+      if (document.body.classList.contains('user-active')) { obs.disconnect(); init(); }
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+
+// ── Theme cycle (dark → light → sepia) ────────────────────────
+(function() {
+  var ORDER = ['dark', 'light', 'sepia'];
+  var LABELS = { dark: '☀️ Light mode', light: '📜 Sepia mode', sepia: '🌙 Dark mode' };
+  var ICONS  = { dark: '☀️', light: '📜', sepia: '🌙' };
+
+  function apply(t) {
+    if (t === 'dark') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('hosa-theme', t); } catch(e) {}
+    var sb = document.getElementById('theme-toggle');
+    var tb = document.getElementById('theme-btn');
+    if (sb) sb.textContent = LABELS[t] || LABELS.dark;
+    if (tb) tb.textContent = ICONS[t] || ICONS.dark;
+  }
+
+  function current() {
+    return document.documentElement.getAttribute('data-theme') || 'dark';
+  }
+
+  function cycle() {
+    var cur = current();
+    var idx = ORDER.indexOf(cur);
+    var next = ORDER[(idx + 1) % ORDER.length];
+    apply(next);
+  }
+  window.__hosaCycleTheme = cycle;
+
+  // Replace existing click handlers (which only toggle dark/light) with cycle
+  var sb = document.getElementById('theme-toggle');
+  var tb = document.getElementById('theme-btn');
+  // Clone-and-replace strips all previous listeners
+  if (sb) {
+    var nb = sb.cloneNode(true);
+    sb.parentNode.replaceChild(nb, sb);
+    nb.addEventListener('click', cycle);
+  }
+  if (tb) {
+    var ntb = tb.cloneNode(true);
+    tb.parentNode.replaceChild(ntb, tb);
+    ntb.addEventListener('click', cycle);
+  }
+  // Set initial label correctly
+  apply(current());
 })();
 </script>
 
