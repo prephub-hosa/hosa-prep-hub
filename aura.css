@@ -1839,3 +1839,59 @@ nav.tabs button.active::after { display: none !important; }
   .hs-streak.has-streak { animation: none !important; }
   .how-item:hover { transform: none !important; }
 }
+
+/* ══ Toast notification system ══ */
+#toast-container { position:fixed; bottom:28px; right:28px; z-index:9990; display:flex; flex-direction:column; gap:10px; align-items:flex-end; pointer-events:none; }
+.toast { background:var(--bg-card); border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:10px; padding:13px 18px; font-family:'Source Serif 4',serif; font-size:14px; color:var(--ink); box-shadow:0 8px 30px -8px rgba(0,0,0,0.35); transform:translateX(12px); opacity:0; transition:transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.28s; max-width:300px; line-height:1.45; pointer-events:auto; }
+.toast.toast-visible { transform:translateX(0); opacity:1; }
+.toast-success { border-left-color:#22c55e !important; }
+.toast-achievement { border-left-color:#f59e0b !important; }
+@media (max-width:768px) { #toast-container { bottom:80px; right:16px; } }
+
+/* ══ Keyboard shortcuts overlay ══ */
+#shortcuts-overlay { position:fixed; inset:0; z-index:9980; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); opacity:0; pointer-events:none; transition:opacity 0.2s; }
+#shortcuts-overlay.open { opacity:1; pointer-events:auto; }
+.shortcuts-modal { background:var(--bg-card); border:1px solid var(--rule); border-radius:16px; padding:28px 32px; max-width:580px; width:calc(100% - 40px); box-shadow:0 24px 80px -20px rgba(0,0,0,0.5); }
+.shortcuts-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.shortcuts-title { font-family:'Fraunces',serif; font-size:22px; font-weight:500; letter-spacing:-0.02em; }
+.shortcuts-close { background:none; border:none; font-size:22px; color:var(--ink-soft); cursor:pointer; padding:4px 8px; line-height:1; }
+.shortcuts-close:hover { color:var(--ink); }
+.shortcuts-body { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+.shortcuts-section-head { font-family:'Cormorant Garamond',serif; font-size:11px; font-weight:600; font-variant:small-caps; letter-spacing:0.12em; color:var(--accent); margin-bottom:12px; }
+.shortcut-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:13px; color:var(--ink-soft); }
+.shortcut-row kbd { font-family:'Source Serif 4',monospace; font-size:11px; font-weight:600; background:var(--highlight); border:1px solid var(--rule); border-radius:5px; padding:2px 7px; color:var(--ink); min-width:26px; text-align:center; }
+.shortcuts-footer { margin-top:22px; padding-top:16px; border-top:1px solid var(--rule); font-size:12px; color:var(--ink-faint); text-align:center; }
+.shortcuts-footer kbd { font-family:'Source Serif 4',monospace; font-size:10px; background:var(--highlight); border:1px solid var(--rule); border-radius:4px; padding:1px 5px; }
+#shortcuts-btn { background:none; border:1px solid var(--rule); border-radius:6px; padding:4px 8px; font-family:'Source Serif 4',serif; font-size:12px; color:var(--ink-soft); cursor:pointer; transition:border-color 0.15s, color 0.15s; white-space:nowrap; }
+#shortcuts-btn:hover { border-color:var(--accent); color:var(--ink); }
+@media (max-width:560px) { .shortcuts-body { grid-template-columns:1fr; gap:20px; } }
+
+/* ══ Site hero (new-user homepage) ══ */
+.site-hero { padding:48px 0 40px; margin-bottom:20px; }
+.site-hero-eyebrow { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; font-variant:small-caps; letter-spacing:0.14em; color:var(--accent); margin-bottom:16px; }
+.site-hero-title { font-family:'Fraunces',serif; font-size:clamp(38px,6vw,64px); font-weight:400; letter-spacing:-0.035em; line-height:1.05; margin-bottom:20px; color:var(--ink); }
+.site-hero-title em { color:var(--accent); font-style:italic; }
+.site-hero-sub { font-family:'Source Serif 4',serif; font-size:16px; line-height:1.65; color:var(--ink-soft); max-width:58ch; margin-bottom:28px; }
+.site-hero-pills { display:flex; flex-wrap:wrap; gap:10px; }
+.site-hero-pill { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:var(--highlight); border:1px solid var(--rule); border-radius:100px; font-family:'Source Serif 4',serif; font-size:13px; color:var(--ink-soft); }
+
+/* ══ Study tip rotating widget ══ */
+.stip-wrap { margin-bottom:32px; }
+.stip-card { display:flex; align-items:flex-start; gap:16px; padding:18px 20px; background:var(--bg-card); border:1px solid var(--rule); border-radius:12px; border-left:3px solid var(--accent); position:relative; min-height:72px; }
+.stip-icon { font-size:22px; flex-shrink:0; line-height:1; margin-top:2px; }
+.stip-body { flex:1; min-width:0; }
+.stip-tag { font-family:'Cormorant Garamond',serif; font-size:11px; font-weight:600; font-variant:small-caps; letter-spacing:0.1em; color:var(--accent); margin-bottom:5px; }
+.stip-text { font-family:'Source Serif 4',serif; font-size:14px; line-height:1.6; color:var(--ink-soft); }
+.stip-next { flex-shrink:0; background:none; border:1px solid var(--rule); border-radius:6px; padding:6px 10px; font-family:'Source Serif 4',serif; font-size:14px; color:var(--ink-faint); cursor:pointer; transition:border-color 0.15s, color 0.15s; margin-top:2px; }
+.stip-next:hover { border-color:var(--accent); color:var(--ink); }
+.stip-dots { display:flex; gap:5px; margin-top:10px; justify-content:center; }
+.stip-dot { width:5px; height:5px; border-radius:50%; background:var(--rule); transition:background 0.2s; }
+.stip-dot.active { background:var(--accent); }
+
+/* ══ Library empty state redesign ══ */
+.lib-empty-state { text-align:center; padding:64px 24px; }
+.lib-empty-icon { font-size:48px; margin-bottom:20px; opacity:0.6; }
+.lib-empty-title { font-family:'Fraunces',serif; font-size:26px; font-weight:400; letter-spacing:-0.02em; margin-bottom:12px; }
+.lib-empty-sub { font-family:'Source Serif 4',serif; font-size:15px; line-height:1.65; color:var(--ink-soft); max-width:46ch; margin:0 auto 28px; }
+.lib-empty-cta { background:linear-gradient(135deg,var(--accent),#f97316); color:#fff; border:none; border-radius:8px; padding:12px 24px; font-family:'Source Serif 4',serif; font-size:15px; font-weight:600; cursor:pointer; letter-spacing:0.01em; box-shadow:0 4px 14px -4px rgba(239,68,68,0.5); transition:transform 0.15s, box-shadow 0.15s; }
+.lib-empty-cta:hover { transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(239,68,68,0.6); }
