@@ -1972,3 +1972,160 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
 .faq-a { max-height:0; overflow:hidden; transition:max-height 0.32s cubic-bezier(0.4,0,0.2,1); }
 .faq-item.open .faq-a { max-height:400px; }
 .faq-a-inner { padding:0 0 20px; font-family:'Source Serif 4',serif; font-size:14px; line-height:1.75; color:var(--ink-soft); max-width:72ch; }
+
+/* ══ Resume hero CTA (top of Home tab) ════════════════════════ */
+.resume-cta-card {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(239,68,68,0.10), rgba(249,115,22,0.03) 65%),
+    var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 22px 26px 22px 30px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s, box-shadow 0.22s, border-color 0.18s;
+}
+.resume-cta-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--accent), #f97316);
+  box-shadow: 0 0 14px var(--accent);
+}
+.resume-cta-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px -18px rgba(239,68,68,0.45);
+  border-color: rgba(239,68,68,0.35);
+}
+.resume-cta-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant: small-caps;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.resume-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.resume-cta-body { flex: 1; min-width: 200px; }
+.resume-cta-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.resume-cta-sub {
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.resume-cta-sub strong { color: var(--accent); font-weight: 700; }
+.resume-cta-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  color: #fff;
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.resume-cta-card:hover .resume-cta-action {
+  transform: translateX(2px);
+  box-shadow: 0 8px 22px -6px rgba(239,68,68,0.65);
+}
+.resume-cta-arrow {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1;
+}
+
+/* ══ Sidebar / bottom-nav due-cards badge ════════════════════ */
+.nav-due-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 18px;
+  padding: 0 6px;
+  margin-left: auto;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Source Serif 4', serif;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 100px;
+  box-shadow: 0 0 8px rgba(239,68,68,0.5);
+  animation: _badge-pulse 2.4s ease-in-out infinite;
+  line-height: 1;
+}
+@keyframes _badge-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+  50%      { box-shadow: 0 0 14px rgba(239,68,68,0.75); }
+}
+.bn-item { position: relative; }
+.bn-item .nav-due-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 22px);
+  margin-left: 0;
+  min-width: 16px;
+  height: 15px;
+  font-size: 9px;
+  padding: 0 4px;
+}
+
+/* ══ Mobile topbar polish ════════════════════════════════════ */
+@media (max-width: 900px) {
+  #shortcuts-btn { display: none !important; }
+}
+@media (max-width: 768px) {
+  .user-email { display: none !important; }
+}
+@media (max-width: 560px) {
+  #topbar-level { display: none !important; }
+  #topbar { gap: 8px !important; }
+}
+
+/* ══ Light-mode polish for new components ════════════════════ */
+[data-theme="light"] .heatmap-cell.level-1 { background: rgba(168,40,31,0.20); }
+[data-theme="light"] .heatmap-cell.level-2 { background: rgba(168,40,31,0.50); }
+[data-theme="light"] .heatmap-cell.level-3 { background: rgba(168,40,31,0.80); }
+[data-theme="light"] .resume-cta-card {
+  background:
+    linear-gradient(135deg, rgba(168,40,31,0.07), rgba(217,119,87,0.03) 65%),
+    var(--bg-card);
+}
+[data-theme="light"] .exam-cd-days {
+  background: linear-gradient(135deg, rgba(168,40,31,0.08), rgba(217,119,87,0.04));
+}
+[data-theme="light"] .diff-beginner { color: #16a34a; background: rgba(22,163,74,0.10); border-color: rgba(22,163,74,0.35); }
+[data-theme="light"] .diff-intermediate { color: #b45309; background: rgba(180,83,9,0.10); border-color: rgba(180,83,9,0.35); }
+[data-theme="light"] .diff-advanced { color: #b91c1c; background: rgba(185,28,28,0.10); border-color: rgba(185,28,28,0.35); }
+
+/* ══ Reduced motion ══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .nav-due-badge { animation: none !important; }
+  .resume-cta-card:hover { transform: none !important; }
+}

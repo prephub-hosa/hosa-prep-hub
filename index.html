@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=13">
+<link rel="stylesheet" href="aura.css?v=14">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2199,6 +2199,9 @@ footer { display: none; }
     <!-- ══ HOME TAB ══ -->
     <div class="tab-pane active" id="tab-home">
     <div class="tab-inner">
+
+      <!-- Resume hero CTA — shown when user has due cards -->
+      <section id="resume-cta-section" style="display:none;margin-bottom:32px;"></section>
 
       <!-- Stats hero — shown when user has XP -->
       <div id="home-stats-bar">
@@ -5180,11 +5183,68 @@ function friendlyError(code) {
     if (!q) return;
     q.addEventListener('click', function() {
       var isOpen = item.classList.contains('open');
-      // Close all
       document.querySelectorAll('.faq-item.open').forEach(function(o) { o.classList.remove('open'); });
       if (!isOpen) item.classList.add('open');
     });
   });
+})();
+
+// ── Resume CTA + sidebar/bottom-nav due-cards badge ──────────
+(function() {
+  function renderResumeCta() {
+    var section = document.getElementById('resume-cta-section');
+    if (!section || typeof window.hosaDueToday !== 'function') return;
+    var due = window.hosaDueToday();
+    if (!due.length) { section.style.display = 'none'; return; }
+    var top = due[0];
+    var moreCount = due.length - 1;
+    var moreText = moreCount > 0
+      ? ' · ' + moreCount + ' other event' + (moreCount === 1 ? '' : 's') + ' also due'
+      : '';
+    section.innerHTML =
+      '<a href="' + top.slug + '.html" class="resume-cta-card">' +
+        '<div class="resume-cta-eyebrow">⚡ Resume now</div>' +
+        '<div class="resume-cta-row">' +
+          '<div class="resume-cta-body">' +
+            '<div class="resume-cta-title">' + top.name + '</div>' +
+            '<div class="resume-cta-sub"><strong>' + top.due + '</strong> card' + (top.due === 1 ? '' : 's') + ' due today' + moreText + '</div>' +
+          '</div>' +
+          '<div class="resume-cta-action">Continue<span class="resume-cta-arrow">→</span></div>' +
+        '</div>' +
+      '</a>';
+    section.style.display = '';
+  }
+
+  function updateDueBadge() {
+    if (typeof window.hosaDueToday !== 'function') return;
+    var due = window.hosaDueToday();
+    var total = due.reduce(function(s, e) { return s + e.due; }, 0);
+    document.querySelectorAll('[data-tab="library"]').forEach(function(el) {
+      var existing = el.querySelector('.nav-due-badge');
+      if (existing) existing.remove();
+      if (total > 0) {
+        var badge = document.createElement('span');
+        badge.className = 'nav-due-badge';
+        badge.textContent = total > 99 ? '99+' : String(total);
+        el.appendChild(badge);
+      }
+    });
+  }
+
+  function run() {
+    if (typeof window.hosaDueToday === 'function') {
+      renderResumeCta();
+      updateDueBadge();
+    }
+  }
+
+  // engage.js is deferred — poll briefly until it exposes hosaDueToday
+  var tries = 0;
+  function waitForEngage() {
+    if (typeof window.hosaDueToday === 'function') { run(); return; }
+    if (++tries < 25) setTimeout(waitForEngage, 200);
+  }
+  waitForEngage();
 })();
 </script>
 
