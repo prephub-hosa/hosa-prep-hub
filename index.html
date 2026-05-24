@@ -4428,6 +4428,18 @@ function friendlyError(code) {
 
   // ── Surprise Me ──
   function surpriseMe(){
+    // Reset any active filters so all cards are candidates
+    activeGroup = 'all';
+    activeDiff  = 'all';
+    if (input) input.value = '';
+    document.querySelectorAll('.filter-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-filter') === 'all');
+    });
+    document.querySelectorAll('.diff-filter-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-diff') === 'all');
+    });
+    applyFilters();
+
     var visible = cardData.filter(function(c){ return c.el.style.display !== 'none'; });
     if (!visible.length) return;
     var pick = visible[Math.floor(Math.random() * visible.length)];
@@ -4440,6 +4452,8 @@ function friendlyError(code) {
       window.location.href = pick.el.getAttribute('href');
     }, 950);
   }
+  // Expose so home quick-action can call directly
+  window.__hosaSurpriseMe = surpriseMe;
   var btnSurprise = document.getElementById('btn-surprise');
   if (btnSurprise) btnSurprise.addEventListener('click', surpriseMe);
 
@@ -5853,7 +5867,7 @@ function friendlyError(code) {
     { id:'act-about',    icon:'ℹ',  name:'Go to How HOSA Works',  hint:'',       run: function(){ if (typeof switchTab==='function') switchTab('about'); } },
     { id:'act-spanish',  icon:'🌎', name:'Go to Medical Spanish', hint:'Tab 4',  run: function(){ if (typeof switchTab==='function') switchTab('spanish'); } },
     { id:'act-theme',    icon:'🎨', name:'Cycle theme (dark / light / sepia)', hint:'',  run: function(){ if (typeof window.__hosaCycleTheme==='function') window.__hosaCycleTheme(); } },
-    { id:'act-surprise', icon:'🎲', name:'Surprise me — random event', hint:'R',  run: function(){ var btn = document.getElementById('btn-surprise'); if (btn) { if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ btn.click(); }, 120); } } },
+    { id:'act-surprise', icon:'🎲', name:'Surprise me — random event', hint:'R',  run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ if (typeof window.__hosaSurpriseMe==='function') window.__hosaSurpriseMe(); else { var btn=document.getElementById('btn-surprise'); if(btn) btn.click(); } }, 80); } },
     { id:'act-shortcuts', icon:'⌨', name:'Show keyboard shortcuts', hint:'?',    run: function(){ var ov = document.getElementById('shortcuts-overlay'); if (ov) ov.classList.add('open'); } },
     { id:'act-search',    icon:'🔍', name:'Search events',         hint:'/',     run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ var el = document.getElementById('event-search'); if (el) { el.focus(); el.select(); } }, 80); } },
     { id:'act-terms',    icon:'🔬', name:'Search medical terms',  hint:'⌘⇧F', run: function(){ if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch(); } },
@@ -6103,11 +6117,11 @@ function friendlyError(code) {
         if (act === 'palette') {
           if (typeof window.__hosaOpenPalette === 'function') window.__hosaOpenPalette();
         } else if (act === 'surprise') {
-          var sb = document.getElementById('btn-surprise');
-          if (sb) {
-            if (typeof switchTab === 'function') switchTab('events');
-            setTimeout(function(){ sb.click(); }, 120);
-          }
+          if (typeof switchTab === 'function') switchTab('events');
+          setTimeout(function(){
+            if (typeof window.__hosaSurpriseMe === 'function') window.__hosaSurpriseMe();
+            else { var sb = document.getElementById('btn-surprise'); if (sb) sb.click(); }
+          }, 80);
         } else if (act === 'due') {
           var slug = topDueSlug();
           if (slug) window.location.href = slug + '.html';
