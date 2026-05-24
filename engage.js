@@ -356,7 +356,10 @@
   }
   window.hosaShowLevelUp = showLevelUp;
 
-  /* ─── Patch awardXP to track session XP + trigger level-up ─ */
+  /* ─── Patch awardXP to track session XP + trigger level-up ─
+     NOTE: event pages declare `function awardXP()` lexically, so
+     monkey-patching window.awardXP doesn't intercept their calls.
+     We ALSO track XP via localStorage delta as a fallback. */
   function patchAwardXP() {
     if (typeof window.awardXP !== 'function' || window._hosaXPPatched) return;
     window._hosaXPPatched = true;
@@ -369,6 +372,9 @@
       if (newLvl > prevLvl) setTimeout(() => showLevelUp(newLvl), 500);
     };
   }
+
+  /* ─── Snapshot baseline XP for delta-based session tracking ── */
+  window._hosaSessBaseXP = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
 
   /* ─── Animate counter ─────────────────────────────────────── */
   function animCount(el, from, to, dur, fmt) {
@@ -418,7 +424,12 @@
     const forLvl = xpForLevel(lvl);
     const forNxt = xpForLevel(lvl + 1);
     const pct    = Math.min(100, ((xp - forLvl) / Math.max(1, forNxt - forLvl)) * 100);
-    const sessXP = window._hosaSessXP || 0;
+    // Use whichever is larger: tracked sessXP (from patched awardXP) OR delta
+    // from baseline (fallback when event-page awardXP is locally-bound).
+    const trackedXP = window._hosaSessXP || 0;
+    const baseXP    = window._hosaSessBaseXP != null ? window._hosaSessBaseXP : xp;
+    const deltaXP   = Math.max(0, xp - baseXP);
+    const sessXP    = Math.max(trackedXP, deltaXP);
     const streak = (window.state && window.state.progress && window.state.progress.streak) || 0;
 
     // Animate XP
@@ -444,8 +455,9 @@
     const hard   = window._sessHard   || 0;
     setTimeout(() => checkAchievements({ got, missed, hard }), 900);
 
-    // Reset session tracker
+    // Reset session trackers (next session starts from here)
     window._hosaSessXP = 0;
+    window._hosaSessBaseXP = xp;
   }
 
   /* ─── Watch #session-complete visibility ──────────────────── */
