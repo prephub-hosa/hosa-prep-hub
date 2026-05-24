@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=24">
+<link rel="stylesheet" href="aura.css?v=25">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2269,6 +2269,14 @@ footer { display: none; }
             <span class="qa-icon">🔬</span>
             <div class="qa-body"><div class="qa-title">Search terms</div><div class="qa-sub">100+ medical terms</div></div>
           </button>
+          <button class="qa-btn" data-action="match" type="button">
+            <span class="qa-icon">🧩</span>
+            <div class="qa-body"><div class="qa-title">Match Game</div><div class="qa-sub">Pair terms &amp; defs</div></div>
+          </button>
+          <button class="qa-btn" data-action="speed" type="button">
+            <span class="qa-icon">⏱</span>
+            <div class="qa-body"><div class="qa-title">Speed Drill</div><div class="qa-sub">60-second sprint</div></div>
+          </button>
         </div>
       </section>
 
@@ -2386,8 +2394,14 @@ footer { display: none; }
 
       <!-- Bookmarked Terms — shown when user has bookmarks -->
       <section class="bmk-section" id="bmk-section">
-        <h2 class="section-title">⭐ Bookmarked terms</h2>
+        <h2 class="section-title">⭐ Bookmarked terms<button class="bmk-export-btn" id="bmk-export" type="button" title="Open printable cheat sheet">📄 Cheat Sheet</button></h2>
         <div class="bmk-grid" id="bmk-grid"></div>
+      </section>
+
+      <!-- 🏆 Hall of Fame -->
+      <section class="hof-section" id="hof-section" style="display:none">
+        <h2 class="section-title">🏆 Hall of Fame</h2>
+        <div class="hof-grid" id="hof-grid"></div>
       </section>
 
       <!-- Term of the Day -->
@@ -5874,6 +5888,9 @@ function friendlyError(code) {
     { id:'act-challenge', icon:'⚡', name:'Go to Daily Challenge', hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('dc-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 150); } },
     { id:'act-mfe',      icon:'🏆', name:'Take Mock Final Exam',  hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('mfe-section'); if(el) el.scrollIntoView({behavior:'smooth'}); var btn=document.getElementById('mfe-start'); if(btn) setTimeout(function(){btn.click();}, 400); }, 150); } },
     { id:'act-pomo',     icon:'⏱',  name:'Open Pomodoro timer',   hint:'',    run: function(){ var fab=document.getElementById('pomo-fab'); if(fab) fab.click(); } },
+    { id:'act-match',    icon:'🧩', name:'Play Match Game',        hint:'',    run: function(){ if (typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch(); } },
+    { id:'act-speed',    icon:'⏱',  name:'Start Speed Drill',      hint:'',    run: function(){ if (typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill(); } },
+    { id:'act-qr',       icon:'⚡', name:'Quick Review session',   hint:'',    run: function(){ if (typeof window.__hosaOpenQR === 'function') window.__hosaOpenQR(); } },
   ];
 
   var events = [];
@@ -6132,6 +6149,10 @@ function friendlyError(code) {
           if (typeof window.__hosaOpenQR === 'function') window.__hosaOpenQR();
         } else if (act === 'search') {
           if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch();
+        } else if (act === 'match') {
+          if (typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch();
+        } else if (act === 'speed') {
+          if (typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill();
         }
       });
     });
@@ -8713,6 +8734,556 @@ window.hosaXPFlyup = function(el, amount) {
       window._showAchievement._patched = true;
     }
   }, 800);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   MATCH GAME — click-to-pair term/definition minigame
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = document.createElement('div');
+  overlay.id = 'mg-overlay';
+  overlay.innerHTML =
+    '<div class="mg-modal">' +
+      '<div class="mg-header">' +
+        '<span class="mg-eyebrow">🧩 Match Game</span>' +
+        '<div class="mg-title">Pair terms with definitions</div>' +
+        '<div class="mg-stat" id="mg-stat">Matched <strong id="mg-matched">0</strong>/<strong id="mg-total">6</strong> · <strong id="mg-time">0:00</strong></div>' +
+        '<button class="mg-close" id="mg-close" aria-label="Close">✕</button>' +
+      '</div>' +
+      '<div class="mg-board" id="mg-board"></div>' +
+      '<div class="mg-result" id="mg-result"></div>' +
+      '<div class="mg-footer">' +
+        '<span class="mg-stat">Click a term, then its definition</span>' +
+        '<div><button class="mg-btn" id="mg-new">New round</button><button class="mg-btn primary" id="mg-done">Done</button></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  var state = { pairs: [], matched: 0, selected: null, started: 0, tickI: null, total: 6 };
+  var BEST_KEY = 'hosa::match-best';
+
+  function open() {
+    var pool = window.HOSA_TERMS || [];
+    if (pool.length < 6) return;
+    var picks = pool.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 6);
+    state.pairs = picks;
+    state.total = picks.length;
+    state.matched = 0;
+    state.selected = null;
+    state.started = Date.now();
+    document.getElementById('mg-matched').textContent = '0';
+    document.getElementById('mg-total').textContent = state.total;
+    document.getElementById('mg-time').textContent = '0:00';
+    document.getElementById('mg-result').classList.remove('show');
+    document.getElementById('mg-result').innerHTML = '';
+    document.getElementById('mg-board').style.display = 'grid';
+    renderBoard();
+    overlay.classList.add('open');
+    startTimer();
+  }
+  window.__hosaOpenMatch = open;
+
+  function close() {
+    overlay.classList.remove('open');
+    stopTimer();
+  }
+  function startTimer() {
+    stopTimer();
+    state.tickI = setInterval(function() {
+      var sec = Math.floor((Date.now() - state.started) / 1000);
+      var m = Math.floor(sec / 60), s = sec % 60;
+      document.getElementById('mg-time').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }, 250);
+  }
+  function stopTimer() { if (state.tickI) { clearInterval(state.tickI); state.tickI = null; } }
+
+  function renderBoard() {
+    var board = document.getElementById('mg-board');
+    board.innerHTML = '';
+    // Build two columns: terms (shuffled) on left, defs (shuffled separately) on right
+    var terms = state.pairs.slice().sort(function() { return Math.random() - 0.5; });
+    var defs  = state.pairs.slice().sort(function() { return Math.random() - 0.5; });
+    // Render alternating: term, def, term, def...
+    var rows = [];
+    for (var i = 0; i < state.total; i++) {
+      rows.push({ side: 'term', data: terms[i] });
+      rows.push({ side: 'def',  data: defs[i] });
+    }
+    rows.forEach(function(r) {
+      var t = document.createElement('div');
+      t.className = 'mg-tile ' + (r.side === 'term' ? 'term-tile' : 'def-tile');
+      t.setAttribute('data-pair', r.data.term);
+      t.setAttribute('data-side', r.side);
+      t.textContent = r.side === 'term' ? r.data.term : r.data.def;
+      t.addEventListener('click', function() { onTileClick(t); });
+      board.appendChild(t);
+    });
+  }
+
+  function onTileClick(tile) {
+    if (tile.classList.contains('correct')) return;
+    if (!state.selected) {
+      state.selected = tile;
+      tile.classList.add('selected');
+      return;
+    }
+    if (state.selected === tile) {
+      tile.classList.remove('selected');
+      state.selected = null;
+      return;
+    }
+    // Must be one term + one def
+    if (state.selected.getAttribute('data-side') === tile.getAttribute('data-side')) {
+      state.selected.classList.remove('selected');
+      state.selected = tile;
+      tile.classList.add('selected');
+      return;
+    }
+    // Check match
+    var a = state.selected.getAttribute('data-pair');
+    var b = tile.getAttribute('data-pair');
+    if (a === b) {
+      state.selected.classList.remove('selected'); state.selected.classList.add('correct');
+      tile.classList.add('correct');
+      state.matched++;
+      document.getElementById('mg-matched').textContent = state.matched;
+      if (window.hosaPlaySound) window.hosaPlaySound('correct');
+      state.selected = null;
+      if (state.matched === state.total) finishGame();
+    } else {
+      var bad1 = state.selected, bad2 = tile;
+      bad1.classList.add('wrong'); bad2.classList.add('wrong');
+      bad1.classList.remove('selected');
+      if (window.hosaPlaySound) window.hosaPlaySound('wrong');
+      state.selected = null;
+      setTimeout(function() { bad1.classList.remove('wrong'); bad2.classList.remove('wrong'); }, 480);
+    }
+  }
+
+  function finishGame() {
+    stopTimer();
+    var sec = Math.floor((Date.now() - state.started) / 1000);
+    var m = Math.floor(sec / 60), s = sec % 60;
+    var timeStr = m + ':' + (s < 10 ? '0' : '') + s;
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var isNewBest = !best || sec < best.time;
+    if (isNewBest) {
+      try { localStorage.setItem(BEST_KEY, JSON.stringify({ time: sec, date: Date.now() })); } catch(e) {}
+    }
+    var xpEarned = Math.max(20, 80 - sec); // faster = more XP, min 20
+    try {
+      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      localStorage.setItem('hosa::xp', String(xp + xpEarned));
+    } catch(e) {}
+
+    document.getElementById('mg-board').style.display = 'none';
+    var r = document.getElementById('mg-result');
+    r.classList.add('show');
+    r.innerHTML =
+      '<div class="mg-result-grade">' + timeStr + '</div>' +
+      '<div class="mg-result-time">' + state.total + ' pairs matched · +' + xpEarned + ' XP' +
+        (isNewBest ? ' · <strong style="color:#fbbf24">NEW BEST!</strong>' : (best ? ' · best ' + Math.floor(best.time/60) + ':' + ((best.time%60)<10?'0':'') + (best.time%60) : '')) +
+      '</div>' +
+      '<button class="mg-btn primary" id="mg-again">Play again</button>';
+    document.getElementById('mg-again').addEventListener('click', open);
+
+    if (window.hosaConfetti) window.hosaConfetti({ count: 60, colors: ['#60a5fa','#a78bfa','#fbbf24'], x: window.innerWidth/2, y: window.innerHeight*0.4 });
+    if (window.hosaPlaySound) window.hosaPlaySound('complete');
+    if (window.hosaToast) {
+      window.hosaToast('🧩', 'Match Game complete!', timeStr + ' · +' + xpEarned + ' XP' + (isNewBest ? ' (new best!)' : ''), 'good');
+    }
+    // Re-render HoF so the new best score appears
+    if (window.__hosaRenderHoF) window.__hosaRenderHoF();
+  }
+
+  document.getElementById('mg-close').addEventListener('click', close);
+  document.getElementById('mg-done').addEventListener('click', close);
+  document.getElementById('mg-new').addEventListener('click', open);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SPEED DRILL — 60-second sprint, +2s per correct, -3s per wrong
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var TIME_START = 60;
+  var BEST_KEY = 'hosa::speed-best';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'sd-overlay';
+  overlay.innerHTML =
+    '<div class="sd-modal">' +
+      '<div class="sd-header">' +
+        '<span class="sd-eyebrow">⏱ Speed Drill</span>' +
+        '<div class="sd-title">60-second sprint</div>' +
+        '<button class="sd-close" id="sd-close" aria-label="Close">✕</button>' +
+      '</div>' +
+      '<div id="sd-content"></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  var state = null;
+  var tick = null;
+
+  function intro() {
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    document.getElementById('sd-content').innerHTML =
+      '<div class="sd-intro">' +
+        '<p class="sd-intro-text">As many correct answers as you can in <strong>60 seconds</strong>. Each correct adds +2s, each wrong subtracts -3s. Go for high score!</p>' +
+        (best ? '<div class="sd-result-best">Best: <strong>' + best.score + '</strong> correct</div>' : '') +
+        '<button class="sd-btn-start" id="sd-start">Start drill →</button>' +
+      '</div>';
+    document.getElementById('sd-start').addEventListener('click', startDrill);
+  }
+
+  function open() {
+    overlay.classList.add('open');
+    intro();
+  }
+  window.__hosaOpenSpeedDrill = open;
+  function close() { overlay.classList.remove('open'); stopTick(); }
+
+  function startDrill() {
+    state = { score: 0, wrong: 0, timeLeft: TIME_START, startedAt: Date.now() };
+    document.getElementById('sd-content').innerHTML =
+      '<div class="sd-stats">' +
+        '<div class="sd-stat-time" id="sd-stat-time">Time<strong id="sd-time">' + TIME_START + 's</strong></div>' +
+        '<div class="sd-stat-score">Score<strong id="sd-score">0</strong></div>' +
+      '</div>' +
+      '<div class="sd-timer-bar"><div class="sd-timer-fill" id="sd-fill" style="width:100%"></div></div>' +
+      '<div class="sd-q"><div class="sd-q-text" id="sd-q-text"></div></div>' +
+      '<div class="sd-opts" id="sd-opts"></div>';
+    nextQ();
+    startTick();
+  }
+
+  function startTick() {
+    stopTick();
+    var lastSec = state.timeLeft;
+    tick = setInterval(function() {
+      var elapsed = (Date.now() - state.startedAt) / 1000;
+      var remaining = Math.max(0, state.timeLeft - elapsed);
+      var displaySec = Math.ceil(remaining);
+      document.getElementById('sd-time').textContent = displaySec + 's';
+      document.getElementById('sd-fill').style.width = (remaining / TIME_START * 100) + '%';
+      if (displaySec <= 5 && displaySec !== lastSec) {
+        document.getElementById('sd-stat-time').classList.add('warning');
+        setTimeout(function() { document.getElementById('sd-stat-time').classList.remove('warning'); }, 400);
+        lastSec = displaySec;
+      }
+      if (remaining <= 0) finishDrill();
+    }, 250);
+  }
+  function stopTick() { if (tick) { clearInterval(tick); tick = null; } }
+
+  function addTime(secs) {
+    var elapsed = (Date.now() - state.startedAt) / 1000;
+    var remaining = state.timeLeft - elapsed;
+    state.timeLeft = remaining + secs;
+    state.startedAt = Date.now();
+  }
+
+  function pickQ() {
+    var pool = window.HOSA_TERMS || [];
+    if (pool.length < 4) return null;
+    var correct = pool[Math.floor(Math.random() * pool.length)];
+    var choices = [correct.term];
+    var used = {}; used[correct.term] = true;
+    var attempts = 0;
+    while (choices.length < 4 && attempts < 200) {
+      var c = pool[Math.floor(Math.random() * pool.length)];
+      if (!used[c.term]) { used[c.term] = true; choices.push(c.term); }
+      attempts++;
+    }
+    // shuffle
+    for (var i = choices.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = choices[i]; choices[i] = choices[j]; choices[j] = t;
+    }
+    return { def: correct.def, term: correct.term, choices: choices };
+  }
+
+  function nextQ() {
+    var q = pickQ();
+    if (!q) return;
+    document.getElementById('sd-q-text').textContent = q.def;
+    var opts = document.getElementById('sd-opts');
+    opts.innerHTML = '';
+    q.choices.forEach(function(c) {
+      var b = document.createElement('button');
+      b.className = 'sd-opt'; b.textContent = c;
+      b.addEventListener('click', function() { answer(b, c === q.term); });
+      opts.appendChild(b);
+    });
+  }
+
+  function answer(btn, isCorrect) {
+    if (isCorrect) {
+      btn.classList.add('correct'); state.score++;
+      document.getElementById('sd-score').textContent = state.score;
+      addTime(2);
+      if (window.hosaPlaySound) window.hosaPlaySound('correct');
+    } else {
+      btn.classList.add('wrong'); state.wrong++;
+      addTime(-3);
+      if (window.hosaPlaySound) window.hosaPlaySound('wrong');
+    }
+    setTimeout(nextQ, 250);
+  }
+
+  function finishDrill() {
+    stopTick();
+    var score = state.score;
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var isNewBest = !best || score > best.score;
+    if (isNewBest) { try { localStorage.setItem(BEST_KEY, JSON.stringify({ score: score, date: Date.now() })); } catch(e) {} }
+    var xp = score * 6;
+    try {
+      var cur = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      localStorage.setItem('hosa::xp', String(cur + xp));
+    } catch(e) {}
+    document.getElementById('sd-content').innerHTML =
+      '<div class="sd-result">' +
+        '<div class="sd-result-num">' + score + '</div>' +
+        '<div class="sd-result-label">CORRECT IN 60 SECONDS</div>' +
+        '<div class="sd-result-best">+' + xp + ' XP earned' + (isNewBest ? ' · <strong>NEW BEST!</strong>' : (best ? ' · best ' + best.score : '')) + '</div>' +
+        '<button class="sd-btn-start" id="sd-again">Try again →</button>' +
+      '</div>';
+    document.getElementById('sd-again').addEventListener('click', startDrill);
+    if (window.hosaConfetti && score >= 10) window.hosaConfetti({ count: 60, colors: ['#f97316','#ef4444','#fbbf24'], x: window.innerWidth/2, y: window.innerHeight*0.4 });
+    if (window.hosaPlaySound) window.hosaPlaySound('complete');
+    if (window.hosaToast) window.hosaToast('⏱', 'Speed Drill done!', score + ' correct · +' + xp + ' XP' + (isNewBest ? ' (new best!)' : ''), 'good');
+    if (window.__hosaRenderHoF) window.__hosaRenderHoF();
+  }
+
+  document.getElementById('sd-close').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   HALL OF FAME — personal records widget
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function getMastered() {
+    var total = 0;
+    try {
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.indexOf('hosa::') === 0 && k.indexOf('::') !== -1) {
+          try {
+            var d = JSON.parse(localStorage.getItem(k) || 'null');
+            if (d && d.mastered && Array.isArray(d.mastered)) total += d.mastered.length;
+          } catch(e) {}
+        }
+      });
+    } catch(e) {}
+    return total;
+  }
+
+  function render() {
+    var section = document.getElementById('hof-section');
+    var grid = document.getElementById('hof-grid');
+    if (!section || !grid) return;
+
+    var xp = 0, streak = 0, longestStreak = 0;
+    try { xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10); } catch(e) {}
+    try { streak = parseInt(localStorage.getItem('hosa::streak') || '0', 10); } catch(e) {}
+    try { longestStreak = parseInt(localStorage.getItem('hosa::streak-longest') || '0', 10); } catch(e) {}
+    if (streak > longestStreak) { longestStreak = streak; try { localStorage.setItem('hosa::streak-longest', String(streak)); } catch(e) {} }
+
+    var mfeBest = null, matchBest = null, speedBest = null;
+    try { mfeBest = JSON.parse(localStorage.getItem('hosa::mfe-best') || 'null'); } catch(e) {}
+    try { matchBest = JSON.parse(localStorage.getItem('hosa::match-best') || 'null'); } catch(e) {}
+    try { speedBest = JSON.parse(localStorage.getItem('hosa::speed-best') || 'null'); } catch(e) {}
+
+    var mastered = getMastered();
+    var bookmarks = 0;
+    try { bookmarks = (JSON.parse(localStorage.getItem('hosa::bookmarks') || '[]')).length; } catch(e) {}
+
+    var records = [
+      { icon: '💎', label: 'Total XP', val: xp.toLocaleString(), color: '#fbbf24' },
+      { icon: '🔥', label: 'Longest streak', val: longestStreak ? longestStreak + 'd' : '—', color: '#ef4444' },
+      { icon: '📚', label: 'Cards mastered', val: mastered, color: '#22c55e' },
+      { icon: '🏆', label: 'Best Mock Exam', val: mfeBest ? mfeBest.pct + '%' : '—', sub: mfeBest ? Math.floor(mfeBest.time/60)+':'+((mfeBest.time%60)<10?'0':'')+(mfeBest.time%60) : '', color: '#f97316' },
+      { icon: '🧩', label: 'Match Game best', val: matchBest ? Math.floor(matchBest.time/60) + ':' + ((matchBest.time%60)<10?'0':'') + (matchBest.time%60) : '—', color: '#60a5fa' },
+      { icon: '⏱', label: 'Speed Drill best', val: speedBest ? speedBest.score : '—', sub: speedBest ? 'correct' : '', color: '#a78bfa' },
+      { icon: '⭐', label: 'Bookmarks', val: bookmarks, color: '#fbbf24' },
+    ];
+    // Only show if there's any meaningful data
+    var hasData = xp > 0 || mastered > 0 || mfeBest || matchBest || speedBest || longestStreak > 0 || bookmarks > 0;
+    if (!hasData) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    grid.innerHTML = '';
+    records.forEach(function(r) {
+      var c = document.createElement('div');
+      c.className = 'hof-card' + (r.val === '—' || r.val === 0 ? ' hof-empty' : '');
+      c.style.setProperty('--c', r.color);
+      c.innerHTML =
+        '<div class="hof-icon">' + r.icon + '</div>' +
+        '<div class="hof-label">' + r.label + '</div>' +
+        '<div class="hof-val">' + r.val + '</div>' +
+        (r.sub ? '<div class="hof-sub">' + r.sub + '</div>' : '');
+      grid.appendChild(c);
+    });
+  }
+  window.__hosaRenderHoF = render;
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(render, 700); });
+  if (document.readyState !== 'loading') setTimeout(render, 700);
+  // Re-render every 5s in case stats change
+  setInterval(render, 5000);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   STREAK CALENDAR POPUP — click streak number to see 28-day grid
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var popup = null;
+  function getActivityDates() {
+    var set = {};
+    try {
+      var arr = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      arr.forEach(function(d) { set[d] = true; });
+    } catch(e) {}
+    // Also scan hosa::daily-* keys
+    try {
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.indexOf('hosa::daily::') === 0) {
+          set[k.replace('hosa::daily::', '')] = true;
+        }
+      });
+    } catch(e) {}
+    return set;
+  }
+
+  function showPopup(anchor) {
+    closePopup();
+    var streak = 0;
+    try { streak = parseInt(localStorage.getItem('hosa::streak') || '0', 10); } catch(e) {}
+    var dates = getActivityDates();
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    popup = document.createElement('div');
+    popup.className = 'streak-cal-popup';
+    var html =
+      '<div class="streak-cal-title">Activity · last 28 days</div>' +
+      '<div class="streak-cal-headline">' + streak + '-day <em>streak</em> 🔥</div>' +
+      '<div class="streak-cal-grid">';
+    // 4 weeks = 28 days; show day labels then 28 cells going backward from today
+    for (var i = 27; i >= 0; i--) {
+      var d = new Date(today); d.setDate(today.getDate() - i);
+      var key = d.toISOString().slice(0, 10);
+      var cls = 'streak-cal-day';
+      if (dates[key]) cls += ' active';
+      if (i === 0) cls += ' today';
+      html += '<div class="' + cls + '" title="' + key + '">' + d.getDate() + '</div>';
+    }
+    html += '</div>';
+    popup.innerHTML = html;
+    document.body.appendChild(popup);
+
+    var rect = anchor.getBoundingClientRect();
+    var top = rect.bottom + 8;
+    var left = rect.left + rect.width / 2 - popup.offsetWidth / 2;
+    left = Math.max(12, Math.min(left, window.innerWidth - popup.offsetWidth - 12));
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+
+    setTimeout(function() {
+      document.addEventListener('click', clickOutside, { once: true });
+    }, 50);
+  }
+  function closePopup() {
+    if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+    popup = null;
+  }
+  function clickOutside(e) {
+    if (popup && !popup.contains(e.target)) closePopup();
+  }
+
+  function wire() {
+    var streakEl = document.getElementById('hs-streak');
+    if (!streakEl || streakEl._calWired) return;
+    streakEl._calWired = true;
+    streakEl.style.cursor = 'pointer';
+    streakEl.title = 'Click to see calendar';
+    streakEl.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (popup) closePopup();
+      else showPopup(streakEl);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(wire, 600); });
+  if (document.readyState !== 'loading') setTimeout(wire, 600);
+  setInterval(wire, 2000); // in case streak element appears later
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   CHEAT SHEET EXPORT — printable bookmark sheet in new window
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function wire() {
+    var btn = document.getElementById('bmk-export');
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var bookmarks = [];
+      try { bookmarks = JSON.parse(localStorage.getItem('hosa::bookmarks') || '[]'); } catch(e) {}
+      if (!bookmarks.length) {
+        if (window.hosaToast) window.hosaToast('⭐', 'No bookmarks yet', 'Star terms in the search modal to add them here.', 'info');
+        return;
+      }
+      var pool = window.HOSA_TERMS || [];
+      var byTerm = {}; pool.forEach(function(t) { byTerm[t.term] = t; });
+      var items = bookmarks.map(function(n) { return byTerm[n]; }).filter(Boolean);
+      // Group by event
+      var byEvent = {};
+      items.forEach(function(t) { if (!byEvent[t.event]) byEvent[t.event] = []; byEvent[t.event].push(t); });
+
+      var html =
+        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HOSA Cheat Sheet — ' + items.length + ' terms</title>' +
+        '<style>' +
+          '@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:wght@500;700&display=swap");' +
+          'body { font-family: Inter, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px; color: #1a1a1a; line-height: 1.5; }' +
+          'h1 { font-family: Fraunces, serif; font-size: 36px; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 8px; }' +
+          'h2 { font-family: Inter, sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #b91c1c; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }' +
+          '.sub { color: #666; font-size: 14px; margin-bottom: 24px; }' +
+          '.item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px dotted #ddd; page-break-inside: avoid; }' +
+          '.term { font-family: Fraunces, serif; font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }' +
+          '.def { font-size: 14px; color: #444; }' +
+          '@media print { body { margin: 0; padding: 16px; } h1 { font-size: 28px; } }' +
+          '.actions { margin: 20px 0; padding: 12px; background: #f5f5f5; border-radius: 8px; font-size: 13px; text-align: center; }' +
+          '.actions button { background: #b91c1c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font: inherit; font-weight: 600; }' +
+          '@media print { .actions { display: none; } }' +
+        '</style></head><body>' +
+        '<h1>HOSA Cheat Sheet</h1>' +
+        '<div class="sub">' + items.length + ' bookmarked terms · generated ' + new Date().toLocaleDateString() + '</div>' +
+        '<div class="actions"><button onclick="window.print()">🖨️ Print / Save as PDF</button></div>';
+      Object.keys(byEvent).sort().forEach(function(ev) {
+        html += '<h2>' + ev + '</h2>';
+        byEvent[ev].forEach(function(t) {
+          html += '<div class="item"><div class="term">' + t.term + '</div><div class="def">' + t.def + '</div></div>';
+        });
+      });
+      html += '</body></html>';
+      var w = window.open('', '_blank');
+      if (!w) { if (window.hosaToast) window.hosaToast('🚫', 'Pop-up blocked', 'Allow pop-ups to use the cheat sheet export.', 'info'); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+      if (window.hosaToast) window.hosaToast('📄', 'Cheat sheet ready', items.length + ' terms · use the Print button to save as PDF', 'good');
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(wire, 500); });
+  if (document.readyState !== 'loading') setTimeout(wire, 500);
+  setInterval(wire, 2000);
 })();
 </script>
 
