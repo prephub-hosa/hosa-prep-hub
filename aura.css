@@ -1309,3 +1309,340 @@ nav.tabs button.active::after { display: none !important; }
   }
   nav.tabs button::before { font-size: 22px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   VISUAL OVERHAUL — gradients, glows, animations, polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero stats bar: gradient backdrop + glow ───────────────── */
+#home-stats-bar {
+  background:
+    radial-gradient(ellipse at top left, rgba(239,68,68,0.10), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(249,115,22,0.08), transparent 55%),
+    var(--bg-card) !important;
+  border: 1px solid var(--rule) !important;
+  position: relative;
+  overflow: hidden;
+}
+#home-stats-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.6;
+}
+.hs-stat-num {
+  background: linear-gradient(135deg, var(--ink), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600 !important;
+}
+.hs-streak {
+  background: linear-gradient(135deg, #f97316, #fbbf24) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+.hs-xp-fill {
+  background: linear-gradient(90deg, var(--accent), #f97316, #fbbf24) !important;
+  background-size: 200% 100% !important;
+  animation: _xp-shimmer 3s linear infinite;
+  box-shadow: 0 0 10px rgba(239,68,68,0.4);
+}
+@keyframes _xp-shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Library stats header: same hero treatment ──────────────── */
+#lib-stats-header {
+  background:
+    radial-gradient(ellipse at top right, rgba(239,68,68,0.12), transparent 55%),
+    var(--bg-card) !important;
+  position: relative;
+  overflow: hidden;
+}
+#lib-stats-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.lib-level-badge {
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.lib-xp-fill {
+  background: linear-gradient(90deg, var(--accent), #f97316, #fbbf24) !important;
+  background-size: 200% 100% !important;
+  animation: _xp-shimmer 3s linear infinite;
+  box-shadow: 0 0 12px rgba(239,68,68,0.5);
+}
+
+/* ── JBI / library card: stronger lift + sheen ──────────────── */
+.jbi-card, .lib-card {
+  position: relative;
+  overflow: hidden;
+}
+.jbi-card::after, .lib-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transition: left 0.7s cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+.jbi-card:hover::after, .lib-card:hover::after { left: 140%; }
+.jbi-card:hover, .lib-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow:
+    0 12px 36px -10px rgba(0,0,0,0.35),
+    0 0 0 1px var(--accent),
+    0 0 40px -10px var(--accent-glow) !important;
+}
+.jbi-progress-fill {
+  background: linear-gradient(90deg, var(--accent), #f97316) !important;
+  box-shadow: 0 0 8px rgba(239,68,68,0.5);
+}
+.lib-progress-fill {
+  background: linear-gradient(90deg, var(--accent), #f97316) !important;
+  box-shadow: 0 0 6px rgba(239,68,68,0.4);
+}
+
+/* ── Section title: accent dot marker ───────────────────────── */
+.section-title {
+  position: relative;
+  padding-left: 18px;
+}
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+/* ── Page title: more dramatic with accent flourish ─────────── */
+.page-title {
+  position: relative;
+  display: inline-block;
+}
+.page-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  border-radius: 2px;
+}
+
+/* ── Daily goal: gradient backdrop ──────────────────────────── */
+.dg-card {
+  background:
+    radial-gradient(circle at right, rgba(249,115,22,0.08), transparent 50%),
+    var(--bg-card) !important;
+  position: relative;
+  overflow: hidden;
+}
+.dg-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(239,68,68,0.4), transparent 50%, rgba(249,115,22,0.2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+.dg-ring-arc { filter: drop-shadow(0 0 4px rgba(239,68,68,0.5)); }
+.dg-cta-btn {
+  background: linear-gradient(135deg, var(--accent), #f97316) !important;
+  box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5) !important;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s !important;
+}
+.dg-cta-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 22px -6px rgba(239,68,68,0.6) !important;
+  opacity: 1 !important;
+}
+
+/* ── Sidebar polish: subtle gradient + active glow ──────────── */
+#sidebar {
+  background:
+    linear-gradient(180deg, rgba(239,68,68,0.025), transparent 30%),
+    var(--bg-card) !important;
+}
+.sb-item.active {
+  background: linear-gradient(90deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)) !important;
+  position: relative;
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ── Topbar: glass + accent underline ───────────────────────── */
+#topbar {
+  background:
+    linear-gradient(180deg, rgba(239,68,68,0.02), transparent),
+    rgba(8, 8, 11, 0.7) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  border-bottom: 1px solid var(--rule) !important;
+}
+[data-theme="light"] #topbar {
+  background: rgba(250,250,250,0.85) !important;
+}
+#topbar-level {
+  background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(249,115,22,0.08)) !important;
+  border-color: rgba(239,68,68,0.3) !important;
+  box-shadow: 0 0 12px -4px rgba(239,68,68,0.4);
+}
+
+/* ── Bottom nav polish ──────────────────────────────────────── */
+#bottom-nav {
+  background: rgba(8, 8, 11, 0.92) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+}
+[data-theme="light"] #bottom-nav {
+  background: rgba(250,250,250,0.92) !important;
+}
+.bn-item.active {
+  position: relative;
+}
+.bn-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ── Recent items: accent dot ───────────────────────────────── */
+.recent-icon {
+  background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(249,115,22,0.08)) !important;
+  border: 1px solid rgba(239,68,68,0.2);
+}
+
+/* ── Animated number counter (set via JS data-target) ───────── */
+.hs-stat-num, .lib-level-badge {
+  transition: opacity 0.4s ease;
+}
+
+/* ── TOTD card: dramatic accent stripe ──────────────────────── */
+.totd-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px !important;
+  background:
+    linear-gradient(135deg, rgba(239,68,68,0.04), transparent 60%),
+    var(--bg-card) !important;
+  transition: border-color 0.2s, box-shadow 0.3s, transform 0.2s !important;
+}
+.totd-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--accent), #f97316);
+  box-shadow: 0 0 12px var(--accent);
+}
+.totd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px -12px rgba(0,0,0,0.3), 0 0 32px -12px var(--accent-glow);
+  border-color: var(--accent) !important;
+}
+.totd-eyebrow {
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700 !important;
+}
+.totd-link {
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  color: #fff !important;
+  padding: 10px 18px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5);
+  transition: transform 0.15s, box-shadow 0.15s !important;
+}
+.totd-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px -6px rgba(239,68,68,0.6) !important;
+  border-bottom: none !important;
+}
+
+/* ── Search input: better focus glow ────────────────────────── */
+#event-search:focus {
+  border-color: var(--accent) !important;
+  box-shadow:
+    0 0 0 3px rgba(239,68,68,0.12),
+    0 0 24px -8px var(--accent-glow) !important;
+}
+
+/* ── Library pills: gradient ────────────────────────────────── */
+.lib-pill-streak {
+  background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(251,191,36,0.08)) !important;
+  border-color: rgba(249,115,22,0.4) !important;
+  box-shadow: 0 0 12px -4px rgba(249,115,22,0.4);
+}
+.lib-pill-mastered {
+  background: linear-gradient(135deg, rgba(74,222,128,0.15), rgba(52,211,153,0.08)) !important;
+  border-color: rgba(74,222,128,0.4) !important;
+  box-shadow: 0 0 12px -4px rgba(74,222,128,0.4);
+}
+
+/* ── Filter buttons: more refined ──────────────────────────── */
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--accent), #f97316) !important;
+  color: #fff !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5);
+}
+
+/* ── Achievements grid: pulse earned badges ─────────────────── */
+.ach-badge.earned {
+  background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(249,115,22,0.04)) !important;
+  border-color: rgba(239,68,68,0.4) !important;
+}
+.ach-badge.earned .ach-badge-icon {
+  filter: drop-shadow(0 0 8px rgba(239,68,68,0.4));
+}
+
+/* ── Reduced motion: respect user preferences ──────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hs-xp-fill, .lib-xp-fill { animation: none !important; }
+  .jbi-card::after, .lib-card::after { transition: none !important; }
+  .tab-pane.tab-entering { animation: none !important; }
+}

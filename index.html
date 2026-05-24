@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=9">
+<link rel="stylesheet" href="aura.css?v=10">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -4463,16 +4463,30 @@ function friendlyError(code) {
       var hsStreakStat = document.getElementById('hs-streak-stat');
       var hsXpFill = document.getElementById('hs-xp-fill');
       var hsXpLabel = document.getElementById('hs-xp-label');
-      if (hsLevel) hsLevel.textContent = lvl;
-      if (hsMastered) hsMastered.textContent = totalMastered.toLocaleString();
+
+      // Number counter animation
+      function animateNumber(el, to, dur) {
+        if (!el) return;
+        var start = performance.now();
+        var from = 0;
+        function tick(now) {
+          var p = Math.min((now - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(from + (to - from) * eased).toLocaleString();
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+      animateNumber(hsLevel, lvl, 900);
+      animateNumber(hsMastered, totalMastered, 1100);
       if (streak > 0 && hsStreak && hsStreakStat) {
-        hsStreak.textContent = streak;
         hsStreakStat.style.display = 'flex';
+        animateNumber(hsStreak, streak, 800);
       }
       var xpThis = xp - xpForLevel(lvl);
       var xpNext = xpForLevel(lvl + 1) - xpForLevel(lvl);
       var pctXp = Math.min(100, Math.round(xpThis / xpNext * 100));
-      if (hsXpFill) setTimeout(function(){ hsXpFill.style.width = pctXp + '%'; }, 100);
+      if (hsXpFill) setTimeout(function(){ hsXpFill.style.width = pctXp + '%'; }, 200);
       if (hsXpLabel) hsXpLabel.textContent = xp.toLocaleString() + ' XP · ' + (xpForLevel(lvl + 1) - xp) + ' to Level ' + (lvl + 1);
     }
 
