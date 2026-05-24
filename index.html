@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=22">
+<link rel="stylesheet" href="aura.css?v=24">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2261,6 +2261,14 @@ footer { display: none; }
             <span class="qa-icon">📊</span>
             <div class="qa-body"><div class="qa-title">Your library</div><div class="qa-sub">Stats &amp; history</div></div>
           </button>
+          <button class="qa-btn" data-action="quickreview" type="button">
+            <span class="qa-icon">⚡</span>
+            <div class="qa-body"><div class="qa-title">Quick Review</div><div class="qa-sub">Rapid flip session</div></div>
+          </button>
+          <button class="qa-btn" data-action="search" type="button">
+            <span class="qa-icon">🔬</span>
+            <div class="qa-body"><div class="qa-title">Search terms</div><div class="qa-sub">100+ medical terms</div></div>
+          </button>
         </div>
       </section>
 
@@ -2331,6 +2339,12 @@ footer { display: none; }
         <div id="recents-grid" class="recents-grid"></div>
       </section>
 
+      <!-- Smart Study Suggestions — dynamically populated by JS -->
+      <section id="sss-section" class="sss-section" style="display:none">
+        <h2 class="section-title">Suggested for you</h2>
+        <div class="sss-grid" id="sss-grid"></div>
+      </section>
+
       <!-- ⚡ Daily Challenge -->
       <section class="dc-wrap" id="dc-section">
         <div class="dc-header">
@@ -2346,6 +2360,34 @@ footer { display: none; }
         <div class="dc-card" id="dc-card">
           <div style="padding:32px 24px;text-align:center;color:var(--ink-faint);font-family:'Source Serif 4',serif;font-size:14px;">Loading challenge…</div>
         </div>
+      </section>
+
+      <!-- 🏆 Mock Final Exam -->
+      <section class="mfe-wrap" id="mfe-section">
+        <div class="mfe-header">
+          <div>
+            <div class="mfe-eyebrow">🏆 Mock Final Exam</div>
+            <h2 class="section-title" style="margin:0">Cross-event timed test</h2>
+          </div>
+          <div class="mfe-meta">
+            <span class="mfe-meta-pill">15 questions</span>
+            <span class="mfe-meta-pill">7 minutes</span>
+            <span class="mfe-meta-pill">Up to 200 XP</span>
+          </div>
+        </div>
+        <div class="mfe-card" id="mfe-card">
+          <div class="mfe-intro" id="mfe-intro">
+            <p class="mfe-intro-text">A simulated HOSA-style exam pulling 15 random questions from across every event. Beat the timer, beat your last score.</p>
+            <div class="mfe-best" id="mfe-best" style="display:none"></div>
+            <button class="mfe-btn-start" id="mfe-start" type="button">Start exam →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bookmarked Terms — shown when user has bookmarks -->
+      <section class="bmk-section" id="bmk-section">
+        <h2 class="section-title">⭐ Bookmarked terms</h2>
+        <div class="bmk-grid" id="bmk-grid"></div>
       </section>
 
       <!-- Term of the Day -->
@@ -5816,6 +5858,7 @@ function friendlyError(code) {
     { id:'act-search',    icon:'🔍', name:'Search events',         hint:'/',     run: function(){ if (typeof switchTab==='function') switchTab('events'); setTimeout(function(){ var el = document.getElementById('event-search'); if (el) { el.focus(); el.select(); } }, 80); } },
     { id:'act-terms',    icon:'🔬', name:'Search medical terms',  hint:'⌘⇧F', run: function(){ if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch(); } },
     { id:'act-challenge', icon:'⚡', name:'Go to Daily Challenge', hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('dc-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 150); } },
+    { id:'act-mfe',      icon:'🏆', name:'Take Mock Final Exam',  hint:'',    run: function(){ if (typeof switchTab==='function') switchTab('home'); setTimeout(function(){ var el=document.getElementById('mfe-section'); if(el) el.scrollIntoView({behavior:'smooth'}); var btn=document.getElementById('mfe-start'); if(btn) setTimeout(function(){btn.click();}, 400); }, 150); } },
     { id:'act-pomo',     icon:'⏱',  name:'Open Pomodoro timer',   hint:'',    run: function(){ var fab=document.getElementById('pomo-fab'); if(fab) fab.click(); } },
   ];
 
@@ -6071,6 +6114,10 @@ function friendlyError(code) {
           else if (typeof window._showToast === 'function') window._showToast('No cards due today — pick any event to keep studying.', 'success');
         } else if (act === 'library') {
           if (typeof switchTab === 'function') switchTab('library');
+        } else if (act === 'quickreview') {
+          if (typeof window.__hosaOpenQR === 'function') window.__hosaOpenQR();
+        } else if (act === 'search') {
+          if (typeof window.__hosaOpenSearch === 'function') window.__hosaOpenSearch();
         }
       });
     });
@@ -7146,6 +7193,44 @@ var HOSA_TERMS = [
   // Vascular Medicine
   {term:'DVT',               def:'Deep Vein Thrombosis — blood clot in a deep vein, usually in the leg', event:'Vascular Medicine', slug:'vascular-medicine'},
   {term:'Pulmonary Embolism', def:'Blockage of pulmonary artery by a thrombus, causing sudden dyspnea and chest pain', event:'Vascular Medicine', slug:'vascular-medicine'},
+  // Toxicology
+  {term:'Anticholinergic Toxidrome', def:'Hot, dry, red, blind, mad — tachycardia, mydriasis, urinary retention from blocked muscarinic receptors', event:'Toxicology', slug:'toxicology'},
+  {term:'Cholinergic Toxidrome',     def:'SLUDGE: Salivation, Lacrimation, Urination, Defecation, GI cramps, Emesis from excess ACh', event:'Toxicology', slug:'toxicology'},
+  {term:'Opioid Toxidrome',          def:'Pinpoint pupils, respiratory depression, sedation. Reversed with naloxone (Narcan)', event:'Toxicology', slug:'toxicology'},
+  {term:'Naloxone',                  def:'Opioid receptor antagonist that rapidly reverses opioid toxicity; dose 0.4–2 mg IV/IM/IN', event:'Toxicology', slug:'toxicology'},
+  {term:'Carbon Monoxide Poisoning', def:'Binds hemoglobin 200× more than O₂; cherry-red skin, headache, confusion; treat with 100% O₂', event:'Toxicology', slug:'toxicology'},
+  // Anesthesiology
+  {term:'MAC (Minimum Alveolar Conc)', def:'Inhaled anesthetic dose preventing movement in 50% of patients at 1 atm. Lower MAC = more potent', event:'Anesthesiology', slug:'anesthesiology'},
+  {term:'Malignant Hyperthermia',    def:'Life-threatening hyperthermia from volatile anesthetics or succinylcholine. Treat with dantrolene STAT', event:'Anesthesiology', slug:'anesthesiology'},
+  {term:'Propofol',                  def:'IV induction agent. Rapid onset/offset. White emulsion. Risk: propofol infusion syndrome with prolonged use', event:'Anesthesiology', slug:'anesthesiology'},
+  // Prehospital EMS
+  {term:'START Triage',              def:'Mass-casualty triage: walking wounded = green; then RPM assessment (Resp, Perfusion, Mental status)', event:'Prehospital / EMS', slug:'prehospital-ems'},
+  {term:'Golden Hour',               def:'First 60 min after major trauma are critical — definitive intervention during this window maximizes survival', event:'Prehospital / EMS', slug:'prehospital-ems'},
+  {term:'SAMPLE History',            def:'Symptoms, Allergies, Medications, Pertinent history, Last oral intake, Events leading to illness', event:'Prehospital / EMS', slug:'prehospital-ems'},
+  // Pulmonology
+  {term:'ARDS',                      def:'Acute Respiratory Distress Syndrome — bilateral infiltrates, PaO₂/FiO₂ <300, not cardiac in origin', event:'Pulmonology', slug:'pulmonology'},
+  {term:'COPD',                      def:'Chronic Obstructive Pulmonary Disease — irreversible airflow limitation; emphysema + chronic bronchitis', event:'Pulmonology', slug:'pulmonology'},
+  {term:'FEV1/FVC Ratio',            def:'Primary spirometry measure for obstructive lung disease; ratio <0.70 confirms COPD', event:'Pulmonology', slug:'pulmonology'},
+  // Patient Safety
+  {term:'Root Cause Analysis',       def:'Systematic process to identify underlying causes of adverse events — focuses on systems not individuals', event:'Patient Safety', slug:'patient-safety'},
+  {term:'SBAR Communication',        def:'Situation, Background, Assessment, Recommendation — standardized handoff communication tool', event:'Patient Safety', slug:'patient-safety'},
+  {term:'Five Rights of Medication', def:'Right patient, right drug, right dose, right route, right time', event:'Patient Safety', slug:'patient-safety'},
+  // Pediatric Emergency
+  {term:'Pediatric Assessment Triangle', def:'Rapid 30-second visual evaluation: Appearance, Work of Breathing, Circulation to skin', event:'Pediatric Emergency', slug:'pediatric-emergency'},
+  {term:'Croup',                     def:'Viral laryngotracheobronchitis causing barking cough + stridor; treat with cool mist, racemic epi, dexamethasone', event:'Pediatric Emergency', slug:'pediatric-emergency'},
+  {term:'Epiglottitis',              def:'Rapidly progressive H. influenzae or GAS infection of epiglottis; tripod position, drooling, toxic appearance', event:'Pediatric Emergency', slug:'pediatric-emergency'},
+  // Palliative Care
+  {term:'Hospice',                   def:'Comfort-focused care for terminal patients with ≤6-month prognosis; goal is quality of life, not cure', event:'Palliative Care', slug:'palliative-care'},
+  {term:'Palliative Sedation',       def:'Reducing consciousness for intractable refractory symptoms near end of life; requires informed consent', event:'Palliative Care', slug:'palliative-care'},
+  // Biomedical Lab Science
+  {term:'PCR (Polymerase Chain Rxn)', def:'Amplifies DNA sequences in vitro; used for pathogen detection, genetic testing, forensics', event:'Biomedical Lab Science', slug:'biomedical-laboratory'},
+  {term:'ELISA',                     def:'Enzyme-Linked Immunosorbent Assay — detects antibodies or antigens; basis of many serology tests', event:'Biomedical Lab Science', slug:'biomedical-laboratory'},
+  {term:'CBC',                       def:'Complete Blood Count — measures RBC, WBC, platelets, hemoglobin, hematocrit', event:'Biomedical Lab Science', slug:'biomedical-laboratory'},
+  // Cardiology
+  {term:'Heart Block (3rd degree)',  def:'Complete AV dissociation — atria and ventricles beat independently; requires pacemaker', event:'Cardiology', slug:'cardiology'},
+  {term:'Atrial Fibrillation',       def:'Irregular irregularity with no distinct P waves; risk of embolic stroke; rate/rhythm control', event:'Cardiology', slug:'cardiology'},
+  {term:'Cardiac Tamponade',         def:'Beck\'s Triad: hypotension, JVD, muffled heart sounds. Pericardial effusion compressing heart', event:'Cardiology', slug:'cardiology'},
+  {term:'Ejection Fraction',         def:'Percentage of blood pumped out per contraction. Normal ≥55%. <40% = heart failure with reduced EF', event:'Cardiology', slug:'cardiology'},
 ];
 window.HOSA_TERMS = HOSA_TERMS;
 
@@ -7659,6 +7744,961 @@ window.hosaXPFlyup = function(el, amount) {
     setTimeout(function() { syncTokens(); renderTokens(); }, 500);
   });
   if (document.readyState !== 'loading') setTimeout(function() { syncTokens(); renderTokens(); }, 500);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   MOCK FINAL EXAM
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var QUESTIONS_TOTAL = 15;
+  var SECONDS_TOTAL = 7 * 60; // 7 minutes
+  var BEST_KEY = 'hosa::mfe-best';
+
+  var state = null; // { questions:[], answers:[], current, startedAt, timeLeft }
+  var tickInterval = null;
+
+  function pickRandom(pool, n) {
+    var copy = pool.slice();
+    var picked = [];
+    while (picked.length < n && copy.length) {
+      var idx = Math.floor(Math.random() * copy.length);
+      picked.push(copy.splice(idx, 1)[0]);
+    }
+    return picked;
+  }
+  function makeChoices(correct, pool) {
+    var choices = [correct.term];
+    var used = {}; used[correct.term] = true;
+    var attempts = 0;
+    while (choices.length < 4 && attempts < 300) {
+      var c = pool[Math.floor(Math.random() * pool.length)];
+      if (!used[c.term]) { used[c.term] = true; choices.push(c.term); }
+      attempts++;
+    }
+    // Shuffle
+    for (var i = choices.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = choices[i]; choices[i] = choices[j]; choices[j] = t;
+    }
+    return choices;
+  }
+
+  function startExam() {
+    var pool = window.HOSA_TERMS || [];
+    if (pool.length < QUESTIONS_TOTAL) return;
+    var questions = pickRandom(pool, QUESTIONS_TOTAL).map(function(q) {
+      return { term: q.term, def: q.def, event: q.event, slug: q.slug, choices: makeChoices(q, pool) };
+    });
+    state = {
+      questions: questions,
+      answers: new Array(QUESTIONS_TOTAL).fill(null),
+      current: 0,
+      startedAt: Date.now(),
+      timeLeft: SECONDS_TOTAL,
+    };
+    renderExam();
+    startTick();
+  }
+
+  function startTick() {
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = setInterval(function() {
+      var elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
+      state.timeLeft = Math.max(0, SECONDS_TOTAL - elapsed);
+      updateTimer();
+      if (state.timeLeft === 0) {
+        clearInterval(tickInterval);
+        tickInterval = null;
+        finishExam();
+      }
+    }, 1000);
+  }
+
+  function fmtTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function updateTimer() {
+    var t = document.getElementById('mfe-timer');
+    if (!t) return;
+    t.textContent = fmtTime(state.timeLeft);
+    t.classList.remove('warning', 'critical');
+    if (state.timeLeft <= 30) t.classList.add('critical');
+    else if (state.timeLeft <= 60) t.classList.add('warning');
+  }
+
+  function renderExam() {
+    var card = document.getElementById('mfe-card');
+    if (!card || !state) return;
+    var q = state.questions[state.current];
+    var letters = ['A', 'B', 'C', 'D'];
+    var pct = (state.current / QUESTIONS_TOTAL) * 100;
+
+    var opts = q.choices.map(function(ch, idx) {
+      var sel = state.answers[state.current] === ch ? ' selected' : '';
+      return '<button class="mfe-opt' + sel + '" data-ans="' + ch.replace(/"/g,'&quot;') + '">' +
+        '<span class="mfe-opt-letter">' + letters[idx] + '</span>' + ch + '</button>';
+    }).join('');
+
+    var answeredCount = state.answers.filter(function(a){ return a !== null; }).length;
+
+    card.innerHTML =
+      '<div class="mfe-active">' +
+        '<div class="mfe-topbar">' +
+          '<div class="mfe-q-count">Question <strong>' + (state.current + 1) + '</strong> of ' + QUESTIONS_TOTAL + ' · ' + answeredCount + ' answered</div>' +
+          '<div class="mfe-timer" id="mfe-timer">' + fmtTime(state.timeLeft) + '</div>' +
+        '</div>' +
+        '<div class="mfe-pbar-track"><div class="mfe-pbar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="mfe-q">' +
+          '<div class="mfe-q-meta">Which term matches this definition?</div>' +
+          '<div class="mfe-q-text">' + q.def + '</div>' +
+          '<div class="mfe-q-event">from ' + q.event + '</div>' +
+          '<div class="mfe-opts">' + opts + '</div>' +
+        '</div>' +
+        '<div class="mfe-nav">' +
+          '<button class="mfe-btn-nav" id="mfe-prev"' + (state.current === 0 ? ' disabled' : '') + '>← Previous</button>' +
+          (state.current === QUESTIONS_TOTAL - 1
+            ? '<button class="mfe-btn-submit" id="mfe-submit">Submit exam</button>'
+            : '<button class="mfe-btn-nav" id="mfe-next">Next →</button>') +
+        '</div>' +
+      '</div>';
+
+    updateTimer();
+
+    card.querySelectorAll('.mfe-opt').forEach(function(b) {
+      b.addEventListener('click', function() {
+        state.answers[state.current] = b.getAttribute('data-ans');
+        // Update visual selection without full re-render
+        card.querySelectorAll('.mfe-opt').forEach(function(o) { o.classList.remove('selected'); });
+        b.classList.add('selected');
+        // Update answered count
+        var ac = state.answers.filter(function(a){ return a !== null; }).length;
+        var qc = card.querySelector('.mfe-q-count');
+        if (qc) qc.innerHTML = 'Question <strong>' + (state.current + 1) + '</strong> of ' + QUESTIONS_TOTAL + ' · ' + ac + ' answered';
+      });
+    });
+    var prev = document.getElementById('mfe-prev');
+    if (prev) prev.addEventListener('click', function() {
+      if (state.current > 0) { state.current--; renderExam(); }
+    });
+    var next = document.getElementById('mfe-next');
+    if (next) next.addEventListener('click', function() {
+      if (state.current < QUESTIONS_TOTAL - 1) { state.current++; renderExam(); }
+    });
+    var submit = document.getElementById('mfe-submit');
+    if (submit) submit.addEventListener('click', finishExam);
+  }
+
+  function finishExam() {
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    var correct = 0;
+    state.questions.forEach(function(q, i) {
+      if (state.answers[i] === q.term) correct++;
+    });
+    var incorrect = QUESTIONS_TOTAL - correct;
+    var unanswered = state.answers.filter(function(a){ return a === null; }).length;
+    var pct = Math.round(correct / QUESTIONS_TOTAL * 100);
+    var elapsed = SECONDS_TOTAL - state.timeLeft;
+
+    // XP: 10 per correct + 50 bonus if all correct + 25 bonus if pct >= 80
+    var xpEarned = correct * 10;
+    if (correct === QUESTIONS_TOTAL) xpEarned += 50;
+    else if (pct >= 80) xpEarned += 25;
+
+    try {
+      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      localStorage.setItem('hosa::xp', String(xp + xpEarned));
+    } catch(e) {}
+
+    // Update best score
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var isNewBest = !best || pct > best.pct || (pct === best.pct && elapsed < best.time);
+    if (isNewBest) {
+      try { localStorage.setItem(BEST_KEY, JSON.stringify({ pct: pct, score: correct, time: elapsed, date: new Date().toISOString().slice(0,10) })); } catch(e) {}
+    }
+
+    // Track activity
+    try {
+      var act = JSON.parse(localStorage.getItem('hosa::activity') || '[]');
+      var today = new Date().toISOString().slice(0,10);
+      if (act.indexOf(today) === -1) { act.push(today); localStorage.setItem('hosa::activity', JSON.stringify(act)); }
+    } catch(e) {}
+
+    // Grade
+    var grade;
+    if (pct >= 93) grade = 'A';
+    else if (pct >= 85) grade = 'A−';
+    else if (pct >= 77) grade = 'B+';
+    else if (pct >= 70) grade = 'B';
+    else if (pct >= 60) grade = 'C';
+    else grade = 'D';
+
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    card.innerHTML =
+      '<div class="mfe-result">' +
+        '<div class="mfe-result-grade">' + grade + '</div>' +
+        '<div class="mfe-result-score">' + correct + ' / ' + QUESTIONS_TOTAL + ' correct</div>' +
+        '<div class="mfe-result-pct">' + pct + '% · finished in ' + fmtTime(elapsed) + (isNewBest && best ? ' · new best!' : '') + '</div>' +
+        '<div class="mfe-result-stats">' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num good">' + correct + '</div><div class="mfe-stat-label">Correct</div></div>' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num bad">' + incorrect + '</div><div class="mfe-stat-label">Wrong</div></div>' +
+          '<div class="mfe-stat-item"><div class="mfe-stat-num">' + unanswered + '</div><div class="mfe-stat-label">Blank</div></div>' +
+        '</div>' +
+        '<div class="mfe-xp-pill">+' + xpEarned + ' XP earned</div>' +
+        '<div class="mfe-actions">' +
+          '<button class="mfe-btn-primary" id="mfe-again">Take it again</button>' +
+          '<button class="mfe-btn-secondary" id="mfe-review">Review answers</button>' +
+        '</div>' +
+      '</div>';
+
+    if (window._fireConfetti && pct >= 80) window._fireConfetti();
+    if (window.hosaCheckMFE) window.hosaCheckMFE(correct, QUESTIONS_TOTAL);
+
+    document.getElementById('mfe-again').addEventListener('click', resetIntro);
+    document.getElementById('mfe-review').addEventListener('click', function() { showReview(); });
+  }
+
+  function showReview() {
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    var rows = state.questions.map(function(q, i) {
+      var your = state.answers[i] || '(blank)';
+      var ok = state.answers[i] === q.term;
+      var color = ok ? 'var(--success)' : 'var(--error)';
+      return '<div style="padding:14px 0;border-bottom:1px solid var(--rule);">' +
+        '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:12px;color:var(--ink-faint);margin-bottom:6px;">Q' + (i+1) + ' · ' + q.event + '</div>' +
+        '<div style="font-family:\'Source Serif 4\',serif;font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:8px;">' + q.def + '</div>' +
+        '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:11px;letter-spacing:0.04em;color:' + color + ';">' +
+          (ok ? '✓ ' : '✗ ') + 'You: ' + your +
+        '</div>' +
+        (ok ? '' : '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:11px;letter-spacing:0.04em;color:var(--success);margin-top:3px;">✓ Correct: ' + q.term + '</div>') +
+        '</div>';
+    }).join('');
+    card.innerHTML =
+      '<div style="padding:24px 28px 28px;">' +
+        '<div style="font-family:\'Geist Mono\',monospace,sans-serif;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;">Answer review</div>' +
+        '<h3 style="font-family:\'Fraunces\',serif;font-size:24px;font-weight:400;letter-spacing:-0.02em;margin:0 0 14px;">Question-by-question</h3>' +
+        rows +
+        '<div style="margin-top:20px;text-align:center;"><button class="mfe-btn-secondary" id="mfe-back-intro">Back to start</button></div>' +
+      '</div>';
+    document.getElementById('mfe-back-intro').addEventListener('click', resetIntro);
+  }
+
+  function resetIntro() {
+    state = null;
+    var card = document.getElementById('mfe-card');
+    if (!card) return;
+    var best = null;
+    try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch(e) {}
+    var bestHtml = best
+      ? '<div class="mfe-best">Best score · <strong>' + best.pct + '%</strong> in ' + fmtTime(best.time) + '</div>'
+      : '';
+    card.innerHTML =
+      '<div class="mfe-intro">' +
+        '<p class="mfe-intro-text">A simulated HOSA-style exam pulling 15 random questions from across every event. Beat the timer, beat your last score.</p>' +
+        bestHtml +
+        '<button class="mfe-btn-start" id="mfe-start" type="button">' + (best ? 'Start new exam →' : 'Start exam →') + '</button>' +
+      '</div>';
+    document.getElementById('mfe-start').addEventListener('click', startExam);
+  }
+
+  function init() {
+    var startBtn = document.getElementById('mfe-start');
+    if (startBtn) startBtn.addEventListener('click', startExam);
+    // Restore best score display
+    try {
+      var best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null');
+      if (best) {
+        var b = document.getElementById('mfe-best');
+        if (b) {
+          b.innerHTML = 'Best score · <strong>' + best.pct + '%</strong> in ' + fmtTime(best.time);
+          b.style.display = 'inline-flex';
+        }
+      }
+    } catch(e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
+  if (document.readyState !== 'loading') setTimeout(init, 100);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   TERM BOOKMARKS — star button in global search + home widget
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var KEY = 'hosa::bookmarks';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { return []; }
+  }
+  function save(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+  function isBookmarked(term) { return load().indexOf(term) !== -1; }
+  function toggle(term) {
+    var arr = load();
+    var idx = arr.indexOf(term);
+    if (idx === -1) arr.push(term);
+    else arr.splice(idx, 1);
+    save(arr);
+    renderHomeBookmarks();
+    return idx === -1; // returns true if newly added
+  }
+  window.hosaToggleBookmark = toggle;
+  window.hosaIsBookmarked = isBookmarked;
+
+  function renderHomeBookmarks() {
+    var section = document.getElementById('bmk-section');
+    var grid = document.getElementById('bmk-grid');
+    if (!section || !grid) return;
+    var bms = load();
+    if (bms.length === 0) { section.classList.remove('visible'); return; }
+    var pool = window.HOSA_TERMS || [];
+    var byTerm = {};
+    pool.forEach(function(t) { byTerm[t.term] = t; });
+    var items = bms.map(function(name) { return byTerm[name]; }).filter(Boolean);
+    if (items.length === 0) { section.classList.remove('visible'); return; }
+    section.classList.add('visible');
+    grid.innerHTML = '';
+    items.slice(0, 12).forEach(function(t) {
+      var a = document.createElement('a');
+      a.href = t.slug + '.html';
+      a.className = 'bmk-card';
+      a.innerHTML =
+        '<div class="bmk-term">' + t.term + '</div>' +
+        '<div class="bmk-def">' + t.def + '</div>' +
+        '<span class="bmk-event-tag">' + t.event + '</span>';
+      grid.appendChild(a);
+    });
+  }
+
+  // Inject star buttons into global search results after render
+  function enhanceSearchResults() {
+    var resultsBox = document.getElementById('gsearch-results');
+    if (!resultsBox) return;
+    var obs = new MutationObserver(function() {
+      resultsBox.querySelectorAll('.gsearch-result:not([data-bmk-wired])').forEach(function(row) {
+        row.setAttribute('data-bmk-wired', '1');
+        var termEl = row.querySelector('.gs-term');
+        if (!termEl) return;
+        // Strip <mark>...</mark> to get plain term name
+        var term = (termEl.textContent || '').trim();
+        var star = document.createElement('button');
+        star.className = 'gs-star' + (isBookmarked(term) ? ' active' : '');
+        star.setAttribute('aria-label', 'Bookmark');
+        star.textContent = isBookmarked(term) ? '★' : '☆';
+        star.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var added = toggle(term);
+          star.classList.toggle('active', added);
+          star.textContent = added ? '★' : '☆';
+          if (added && window._showToast) window._showToast('Bookmarked: ' + term, 'success');
+        });
+        // insert star before arrow
+        var arrow = row.querySelector('.gs-arrow');
+        if (arrow) row.insertBefore(star, arrow);
+        else row.appendChild(star);
+      });
+    });
+    obs.observe(resultsBox, { childList: true, subtree: true });
+  }
+
+  function init() {
+    renderHomeBookmarks();
+    enhanceSearchResults();
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 400); });
+  if (document.readyState !== 'loading') setTimeout(init, 400);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION SYSTEM — replaces all inline alert() calls
+   Usage: window.hosaToast(icon, title, msg, type)
+   Types: 'ach' | 'lvl' | 'info' | 'good'
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var stack = document.createElement('div');
+  stack.id = 'toast-stack';
+  document.body.appendChild(stack);
+
+  window.hosaToast = function(icon, title, msg, type) {
+    var t = document.createElement('div');
+    t.className = 'hosa-toast' + (type ? ' toast-' + type : '');
+    t.innerHTML =
+      '<span class="toast-icon">' + (icon || '💡') + '</span>' +
+      '<div class="toast-body">' +
+        '<div class="toast-title">' + (title || '') + '</div>' +
+        (msg ? '<div class="toast-msg">' + msg + '</div>' : '') +
+      '</div>' +
+      '<button class="toast-close" aria-label="Dismiss">✕</button>';
+    t.querySelector('.toast-close').addEventListener('click', function() { dismiss(t); });
+    stack.appendChild(t);
+    t._timer = setTimeout(function() { dismiss(t); }, 5000);
+  };
+  function dismiss(t) {
+    clearTimeout(t._timer);
+    t.classList.add('toast-out');
+    setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
+  }
+  // Alias used by older code
+  window._showToast = function(msg, type) {
+    window.hosaToast(type === 'success' ? '✅' : '💡', msg, '', type === 'success' ? 'good' : 'info');
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   CONFETTI — canvas-based particle burst
+   Usage: window.hosaConfetti({ count, colors, x, y })
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var canvas = document.createElement('canvas');
+  canvas.id = 'confetti-canvas';
+  document.body.appendChild(canvas);
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var raf = null;
+
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.hosaConfetti = function(opts) {
+    opts = opts || {};
+    var colors = opts.colors || ['#ef4444','#fbbf24','#22c55e','#60a5fa','#f97316','#a78bfa','#fb7185'];
+    var n = opts.count || 80;
+    var cx = opts.x != null ? opts.x : window.innerWidth / 2;
+    var cy = opts.y != null ? opts.y : window.innerHeight * 0.3;
+    for (var i = 0; i < n; i++) {
+      var angle = Math.random() * Math.PI * 2;
+      var spd = 3 + Math.random() * 9;
+      particles.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * spd * (0.5 + Math.random()),
+        vy: Math.sin(angle) * spd * (0.5 + Math.random()) - 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        w: 6 + Math.random() * 6, h: 4 + Math.random() * 4,
+        rot: Math.random() * 360, rotV: (Math.random() - 0.5) * 9,
+        life: 1.0, decay: 0.008 + Math.random() * 0.008,
+      });
+    }
+    if (!raf) animate();
+  };
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.18; p.vx *= 0.99;
+      p.rot += p.rotV; p.life -= p.decay;
+      if (p.life <= 0) continue;
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    }
+    particles = particles.filter(function(p) { return p.life > 0; });
+    if (particles.length) { raf = requestAnimationFrame(animate); }
+    else { raf = null; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SOUND EFFECTS — Web Audio API, defaults off, user opts in
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var enabled = false;
+  var ctx = null;
+  function ac() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
+    return ctx;
+  }
+  function tone(freq, type, dur, gain, delay) {
+    var c = ac(); if (!c || !enabled) return;
+    var osc = c.createOscillator(); var g = c.createGain();
+    osc.connect(g); g.connect(c.destination);
+    osc.type = type || 'sine'; osc.frequency.setValueAtTime(freq, c.currentTime + (delay||0));
+    g.gain.setValueAtTime(0, c.currentTime + (delay||0));
+    g.gain.linearRampToValueAtTime(gain||0.12, c.currentTime + (delay||0) + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + (delay||0) + (dur||0.2));
+    osc.start(c.currentTime + (delay||0));
+    osc.stop(c.currentTime + (delay||0) + (dur||0.2) + 0.05);
+  }
+  var sounds = {
+    correct:     function() { tone(880,'sine',0.18,0.12); tone(1320,'sine',0.14,0.08,0.12); },
+    wrong:       function() { tone(220,'sawtooth',0.22,0.09); tone(180,'sawtooth',0.18,0.07,0.14); },
+    flip:        function() { tone(660,'sine',0.08,0.05); },
+    achievement: function() { [523,659,784,1047].forEach(function(f,i){ tone(f,'sine',0.2,0.11,i*0.1); }); },
+    levelup:     function() { [523,659,784,1047,1319].forEach(function(f,i){ tone(f,'sine',0.22,0.11,i*0.1); }); },
+    click:       function() { tone(440,'sine',0.06,0.04); },
+    complete:    function() { [784,1047,1319].forEach(function(f,i){ tone(f,'sine',0.2,0.12,i*0.12); }); },
+  };
+  window.hosaPlaySound = function(name) { if (enabled && sounds[name]) sounds[name](); };
+  window.hosaIsSoundEnabled = function() { return enabled; };
+  window.hosaSetSound = function(v) {
+    enabled = !!v;
+    try { localStorage.setItem('hosa::sound', enabled ? '1' : '0'); } catch(e) {}
+    updateBtn();
+  };
+  try { if (localStorage.getItem('hosa::sound') === '1') enabled = true; } catch(e) {}
+
+  var btn = document.createElement('button');
+  btn.className = 'sound-toggle ' + (enabled ? 'sound-on' : 'sound-off');
+  btn.setAttribute('aria-label', 'Toggle sound effects');
+  function updateBtn() {
+    btn.textContent = enabled ? '🔊' : '🔇';
+    btn.className = 'sound-toggle ' + (enabled ? 'sound-on' : 'sound-off');
+    btn.title = enabled ? 'Sound on — click to mute' : 'Sound off — click to unmute';
+  }
+  updateBtn();
+  btn.addEventListener('click', function() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    window.hosaSetSound(!enabled);
+    if (enabled) setTimeout(function() { sounds.click(); }, 60);
+  });
+  document.body.appendChild(btn);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   LEVEL UP CELEBRATION — overlay + confetti on level threshold
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = document.createElement('div');
+  overlay.id = 'lvlup-overlay';
+  overlay.style.display = 'none';
+  overlay.innerHTML =
+    '<div class="lvlup-card">' +
+      '<div class="lvlup-badge">⬆</div>' +
+      '<div class="lvlup-eyebrow">Level Up!</div>' +
+      '<div class="lvlup-num" id="lvlup-num">1</div>' +
+      '<div class="lvlup-desc" id="lvlup-desc">You\'ve reached a new level!</div>' +
+      '<div class="lvlup-xp-bar"><div class="lvlup-xp-fill" id="lvlup-xp-fill"></div></div>' +
+      '<button class="lvlup-close" id="lvlup-close">Continue studying →</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function xpLevel(xp) { return Math.floor(Math.sqrt(xp / 50)) + 1; }
+
+  function show(level) {
+    var numEl = document.getElementById('lvlup-num');
+    var descEl = document.getElementById('lvlup-desc');
+    var fillEl = document.getElementById('lvlup-xp-fill');
+    if (numEl) numEl.textContent = level;
+    if (descEl) descEl.textContent = 'You\'ve reached Level ' + level + '!';
+    overlay.style.display = 'flex';
+    setTimeout(function() { if (fillEl) fillEl.style.width = '12%'; }, 600);
+    if (window.hosaConfetti) {
+      window.hosaConfetti({ colors: ['#fbbf24','#f97316','#ef4444','#ffffff','#fde68a'], count: 120, x: window.innerWidth/2, y: window.innerHeight*0.4 });
+    }
+    if (window.hosaPlaySound) window.hosaPlaySound('levelup');
+    if (window.hosaToast) window.hosaToast('⬆', 'Level ' + level + '!', 'You\'re on fire — keep it up.', 'lvl');
+  }
+  window.hosaShowLevelUp = show;
+
+  document.getElementById('lvlup-close').addEventListener('click', function() { overlay.style.display = 'none'; });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.style.display = 'none'; });
+
+  // Detect level changes via XP polling
+  var _lastLevel = -1;
+  function check() {
+    try {
+      var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+      var lvl = xpLevel(xp);
+      if (_lastLevel === -1) { _lastLevel = lvl; return; }
+      if (lvl > _lastLevel) { _lastLevel = lvl; setTimeout(function() { show(lvl); }, 600); }
+    } catch(e) {}
+  }
+  setInterval(check, 1500);
+  setTimeout(check, 400);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   QUICK REVIEW MODE — rapid flip-card session
+   Usage: window.__hosaOpenQR(terms, title) or data-action="quickreview"
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = document.createElement('div');
+  overlay.id = 'qr-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML =
+    '<div class="qr-modal">' +
+      '<div class="qr-header">' +
+        '<span class="qr-eyebrow">⚡ Quick Review</span>' +
+        '<div class="qr-title" id="qr-title">Quick Review</div>' +
+        '<div class="qr-counter" id="qr-counter"></div>' +
+        '<button class="qr-close" id="qr-close" aria-label="Close">✕</button>' +
+      '</div>' +
+      '<div class="qr-progress"><div class="qr-prog-fill" id="qr-prog-fill"></div></div>' +
+      '<div class="qr-card-area">' +
+        '<div class="qr-card" id="qr-card">' +
+          '<div class="qr-front">' +
+            '<div class="qr-front-label">Term</div>' +
+            '<div class="qr-term-text" id="qr-term-text"></div>' +
+          '</div>' +
+          '<div class="qr-back">' +
+            '<div class="qr-back-label">Definition ✓</div>' +
+            '<div class="qr-def-text" id="qr-def-text"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="qr-actions" id="qr-actions" style="display:none">' +
+        '<button class="qr-btn qr-btn-again" id="qr-again">Again ✗</button>' +
+        '<button class="qr-btn qr-btn-good" id="qr-good">Got it ✓</button>' +
+      '</div>' +
+      '<div class="qr-hint" id="qr-hint">Tap card to reveal · <kbd>Space</kbd></div>' +
+      '<div class="qr-result" id="qr-result" style="display:none"></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  var state = { terms: [], idx: 0, correct: 0, flipped: false };
+
+  function open(terms, title) {
+    var pool = terms && terms.length ? terms : (window.HOSA_TERMS || []);
+    // Shuffle and take up to 15
+    var shuffled = pool.slice().sort(function() { return Math.random() - 0.5; });
+    state.terms = shuffled.slice(0, Math.min(15, shuffled.length));
+    state.idx = 0; state.correct = 0; state.flipped = false;
+    document.getElementById('qr-title').textContent = title || 'Quick Review';
+    document.getElementById('qr-result').style.display = 'none';
+    document.getElementById('qr-actions').style.display = 'none';
+    document.getElementById('qr-hint').style.display = 'block';
+    document.getElementById('qr-card').style.display = 'block';
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    renderCard();
+  }
+  window.__hosaOpenQR = open;
+
+  function renderCard() {
+    var t = state.terms[state.idx];
+    if (!t) return;
+    var card = document.getElementById('qr-card');
+    card.classList.remove('flipped');
+    state.flipped = false;
+    document.getElementById('qr-term-text').textContent = t.term;
+    document.getElementById('qr-def-text').textContent = t.def;
+    document.getElementById('qr-actions').style.display = 'none';
+    document.getElementById('qr-hint').style.display = 'block';
+    var pct = (state.idx / state.terms.length) * 100;
+    document.getElementById('qr-prog-fill').style.width = pct + '%';
+    document.getElementById('qr-counter').textContent = (state.idx + 1) + ' / ' + state.terms.length;
+  }
+
+  function flip() {
+    if (state.flipped) return;
+    state.flipped = true;
+    document.getElementById('qr-card').classList.add('flipped');
+    document.getElementById('qr-actions').style.display = 'flex';
+    document.getElementById('qr-hint').style.display = 'none';
+    if (window.hosaPlaySound) window.hosaPlaySound('flip');
+  }
+
+  function advance(good) {
+    if (good) { state.correct++; if (window.hosaPlaySound) window.hosaPlaySound('correct'); }
+    else { if (window.hosaPlaySound) window.hosaPlaySound('wrong'); }
+    state.idx++;
+    if (state.idx >= state.terms.length) showResult();
+    else renderCard();
+  }
+
+  function showResult() {
+    document.getElementById('qr-card').style.display = 'none';
+    document.getElementById('qr-actions').style.display = 'none';
+    document.getElementById('qr-hint').style.display = 'none';
+    document.getElementById('qr-prog-fill').style.width = '100%';
+    var pct = Math.round(state.correct / state.terms.length * 100);
+    var grade = pct >= 90 ? 'A' : pct >= 80 ? 'B' : pct >= 70 ? 'C' : pct >= 60 ? 'D' : 'F';
+    var resultEl = document.getElementById('qr-result');
+    resultEl.style.display = 'block';
+    resultEl.innerHTML =
+      '<div class="qr-result-grade">' + pct + '%</div>' +
+      '<div class="qr-result-label">' + state.correct + ' of ' + state.terms.length + ' correct — Grade ' + grade + '</div>' +
+      '<button class="qr-result-btn" id="qr-retry">Try again</button>' +
+      '<button class="qr-result-btn primary" id="qr-done">Done ✓</button>';
+    document.getElementById('qr-done').addEventListener('click', close);
+    document.getElementById('qr-retry').addEventListener('click', function() {
+      open(state.terms.concat([]), document.getElementById('qr-title').textContent);
+    });
+    // Award XP
+    var xpEarned = state.correct * 8;
+    if (xpEarned > 0) {
+      try {
+        var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+        localStorage.setItem('hosa::xp', String(xp + xpEarned));
+      } catch(e) {}
+      if (window.hosaXPFlyup) window.hosaXPFlyup(resultEl, xpEarned);
+    }
+    if (pct >= 80) {
+      if (window.hosaConfetti) window.hosaConfetti({ count: 60, x: window.innerWidth/2, y: window.innerHeight*0.5 });
+      if (window.hosaPlaySound) window.hosaPlaySound('complete');
+    }
+    if (window.hosaToast) {
+      var icon = pct >= 90 ? '🏆' : pct >= 70 ? '✅' : '📚';
+      window.hosaToast(icon, 'Quick Review done!', state.correct + '/' + state.terms.length + ' correct · +' + xpEarned + ' XP', pct >= 70 ? 'good' : 'info');
+    }
+  }
+
+  function close() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    setTimeout(function() {
+      document.getElementById('qr-result').style.display = 'none';
+      document.getElementById('qr-card').style.display = 'block';
+    }, 300);
+  }
+
+  document.getElementById('qr-close').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.getElementById('qr-card').addEventListener('click', flip);
+  document.getElementById('qr-again').addEventListener('click', function() { advance(false); });
+  document.getElementById('qr-good').addEventListener('click', function() { advance(true); });
+  document.addEventListener('keydown', function(e) {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!state.flipped) flip(); else advance(true); }
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    if (e.key === 'ArrowLeft' && state.flipped) { e.preventDefault(); advance(false); }
+    if (e.key === 'ArrowRight' && state.flipped) { e.preventDefault(); advance(true); }
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SMART STUDY SUGGESTIONS — appears on home tab
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var EVENTS = [
+    {slug:'medical-terminology',   name:'Medical Terminology',    icon:'🩺'},
+    {slug:'pathophysiology',       name:'Pathophysiology',         icon:'🧬'},
+    {slug:'anatomy-physiology',    name:'Anatomy & Physiology',    icon:'🫀'},
+    {slug:'pharmacology',          name:'Pharmacology',            icon:'💊'},
+    {slug:'nutrition',             name:'Nutrition',               icon:'🥗'},
+    {slug:'biochemistry',          name:'Biochemistry',            icon:'⚗️'},
+    {slug:'medical-math',          name:'Medical Math',            icon:'🔢'},
+    {slug:'medical-law-ethics',    name:'Medical Law & Ethics',    icon:'⚖️'},
+    {slug:'behavioral-health',     name:'Behavioral Health',       icon:'🧠'},
+    {slug:'clinical-nursing',      name:'Clinical Nursing',        icon:'🏥'},
+    {slug:'public-health',         name:'Public Health',           icon:'🌍'},
+    {slug:'sports-medicine',       name:'Sports Medicine',         icon:'🏃'},
+    {slug:'biomedical-laboratory', name:'Biomedical Lab Science',  icon:'🔬'},
+    {slug:'human-growth-development', name:'Human Growth & Dev.',  icon:'👶'},
+    {slug:'physical-therapy',      name:'Physical Therapy',        icon:'🦽'},
+    {slug:'dental-science',        name:'Dental Science',          icon:'🦷'},
+    {slug:'epidemiology',          name:'Epidemiology',            icon:'📈'},
+    {slug:'cardiology',            name:'Cardiology',              icon:'❤️'},
+    {slug:'prehospital-ems',       name:'Prehospital / EMS',       icon:'🚑'},
+    {slug:'toxicology',            name:'Toxicology',              icon:'☣️'},
+    {slug:'pulmonology',           name:'Pulmonology',             icon:'🫁'},
+    {slug:'anesthesiology',        name:'Anesthesiology',          icon:'💉'},
+    {slug:'palliative-care',       name:'Palliative Care',         icon:'🕊️'},
+    {slug:'patient-safety',        name:'Patient Safety',          icon:'🛡️'},
+    {slug:'pediatric-emergency',   name:'Pediatric Emergency',     icon:'🍼'},
+  ];
+
+  function getSuggestions() {
+    var now = Date.now();
+    var suggestions = [];
+    EVENTS.forEach(function(ev) {
+      try {
+        var raw = localStorage.getItem('hosa::' + ev.slug);
+        if (!raw) {
+          suggestions.push({ slug: ev.slug, name: ev.name, icon: ev.icon, reason: 'Never studied', urgency: 'new', due: 0 });
+          return;
+        }
+        var data = JSON.parse(raw);
+        var dueCount = 0;
+        if (data.srData) {
+          Object.keys(data.srData).forEach(function(k) {
+            var sr = data.srData[k];
+            if (sr.due && sr.due <= now) dueCount++;
+          });
+        }
+        if (dueCount > 0) {
+          suggestions.push({ slug: ev.slug, name: ev.name, icon: ev.icon, reason: dueCount + ' card' + (dueCount > 1 ? 's' : '') + ' due', urgency: dueCount >= 5 ? 'overdue' : 'soon', due: dueCount });
+        }
+      } catch(e) {}
+    });
+    suggestions.sort(function(a, b) {
+      var o = { overdue: 0, soon: 1, new: 2 };
+      return (o[a.urgency] || 3) - (o[b.urgency] || 3);
+    });
+    return suggestions.slice(0, 8);
+  }
+
+  function render() {
+    var section = document.getElementById('sss-section');
+    var grid = document.getElementById('sss-grid');
+    if (!section || !grid) return;
+    var sugs = getSuggestions();
+    if (!sugs.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    grid.innerHTML = '';
+    sugs.forEach(function(s) {
+      var a = document.createElement('a');
+      a.href = s.slug + '.html';
+      a.className = 'sss-card';
+      a.setAttribute('data-urgency', s.urgency);
+      a.innerHTML =
+        '<div class="sss-icon">' + s.icon + '</div>' +
+        '<div class="sss-reason">' + s.reason + '</div>' +
+        '<div class="sss-name">' + s.name + '</div>' +
+        '<div class="sss-cta">→ ' + (s.due ? 'Review now' : 'Start studying') + '</div>';
+      grid.appendChild(a);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(render, 500); });
+  if (document.readyState !== 'loading') setTimeout(render, 500);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS RINGS — SVG rings on event cards showing mastery %
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function injectRings() {
+    document.querySelectorAll('.category-card').forEach(function(card) {
+      if (card.querySelector('.cp-ring-wrap')) return;
+      // Derive slug from href
+      var href = card.getAttribute('href') || '';
+      var slug = href.replace(/.*\//, '').replace('.html', '');
+      if (!slug) return;
+
+      var pct = 0;
+      try {
+        var raw = localStorage.getItem('hosa::' + slug);
+        if (!raw) return; // never studied — no ring
+        var data = JSON.parse(raw);
+        var total = 0, mastered = 0;
+        if (data.srData) {
+          var keys = Object.keys(data.srData);
+          total = keys.length;
+          keys.forEach(function(k) { if ((data.srData[k].q || 0) >= 4) mastered++; });
+        }
+        if (total > 0) pct = Math.round(mastered / total * 100);
+      } catch(e) { return; }
+      if (pct === 0) return;
+
+      var R = 16, C = 2 * Math.PI * R;
+      var offset = C - (pct / 100) * C;
+      var color = pct >= 75 ? '#22c55e' : pct >= 40 ? '#fbbf24' : '#ef4444';
+
+      var wrap = document.createElement('div');
+      wrap.className = 'cp-ring-wrap';
+      wrap.title = pct + '% mastered';
+      wrap.innerHTML =
+        '<svg class="cp-ring-svg" width="38" height="38" viewBox="0 0 38 38">' +
+          '<circle class="cp-ring-track" cx="19" cy="19" r="' + R + '"/>' +
+          '<circle class="cp-ring-fill" cx="19" cy="19" r="' + R + '"' +
+            ' stroke="' + color + '"' +
+            ' stroke-dasharray="' + C.toFixed(1) + '"' +
+            ' stroke-dashoffset="' + C.toFixed(1) + '"' +
+            ' data-offset="' + offset.toFixed(1) + '"/>' +
+          '<text class="cp-ring-pct" x="19" y="19">' + pct + '</text>' +
+        '</svg>';
+      card.style.position = 'relative';
+      card.appendChild(wrap);
+      // Animate after a small delay
+      setTimeout(function() {
+        var fill = wrap.querySelector('.cp-ring-fill');
+        if (fill) fill.style.strokeDashoffset = fill.getAttribute('data-offset');
+      }, 80 + Math.random() * 300);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(injectRings, 700); });
+  if (document.readyState !== 'loading') setTimeout(injectRings, 700);
+  // Re-inject on tab switch to events
+  document.addEventListener('click', function(e) {
+    var item = e.target.closest('[data-tab="events"]');
+    if (item) setTimeout(injectRings, 500);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   STUDY TIME TRACKER — tracks minutes studied today
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var startTime = Date.now();
+  var KEY = 'hosa::study-time-' + new Date().toISOString().slice(0, 10);
+
+  function getMins() { try { return parseInt(localStorage.getItem(KEY) || '0', 10); } catch(e) { return 0; } }
+  function saveMins() {
+    var elapsed = Math.floor((Date.now() - startTime) / 60000);
+    if (elapsed <= 0) return;
+    try { localStorage.setItem(KEY, String(getMins() + elapsed)); } catch(e) {}
+    startTime = Date.now();
+  }
+  setInterval(saveMins, 5 * 60 * 1000);
+  window.addEventListener('beforeunload', saveMins);
+
+  function renderStudyTime() {
+    var statBar = document.getElementById('home-stats-bar');
+    if (!statBar || document.getElementById('hs-studytime')) return;
+    var mins = getMins();
+    if (mins < 1) return;
+    var val = mins >= 60 ? Math.floor(mins/60) + 'h ' + (mins%60) + 'm' : mins + 'm';
+    var wrap = document.createElement('div');
+    wrap.className = 'hs-stat'; wrap.id = 'hs-studytime';
+    wrap.innerHTML = '<div><div class="hs-time-val">' + val + '</div><div class="hs-time-lbl">Today\'s study</div></div>';
+    statBar.insertBefore(wrap, statBar.lastElementChild);
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(renderStudyTime, 600); });
+  if (document.readyState !== 'loading') setTimeout(renderStudyTime, 600);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   HOME GREETING — time-aware welcome message
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function render() {
+    var statsBar = document.getElementById('home-stats-bar');
+    if (!statsBar || document.getElementById('home-greeting')) return;
+    var h = new Date().getHours();
+    var timeLabel, msg;
+    if (h < 5)       { timeLabel = 'Late night'; msg = 'Burning the midnight oil <em>again?</em>'; }
+    else if (h < 12) { timeLabel = 'Good morning'; msg = 'Ready to crush your <em>HOSA</em> prep?'; }
+    else if (h < 17) { timeLabel = 'Good afternoon'; msg = 'Time to level up your <em>knowledge.</em>'; }
+    else if (h < 21) { timeLabel = 'Good evening'; msg = 'Great time for a study <em>session.</em>'; }
+    else             { timeLabel = 'Good night'; msg = 'One more round before <em>bed?</em>'; }
+    var wrap = document.createElement('div');
+    wrap.className = 'home-greeting'; wrap.id = 'home-greeting';
+    wrap.innerHTML = '<div class="greeting-time">' + timeLabel + '</div><div class="greeting-main">' + msg + '</div>';
+    statsBar.parentNode.insertBefore(wrap, statsBar);
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(render, 150); });
+  if (document.readyState !== 'loading') setTimeout(render, 150);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ACHIEVEMENT TOASTS — wire engage.js achievements to toast UI
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  // Patch achievement notification: replace legacy inner panel with toast
+  var _origShowAch = window._showAchievement;
+  setTimeout(function() {
+    if (typeof window._showAchievement === 'function' && !window._showAchievement._patched) {
+      var orig = window._showAchievement;
+      window._showAchievement = function(ach) {
+        if (window.hosaToast) {
+          window.hosaToast(ach.icon || '🏅', ach.name, ach.desc || '', 'ach');
+          if (window.hosaPlaySound) window.hosaPlaySound('achievement');
+          if (window.hosaConfetti) {
+            window.hosaConfetti({ count: 40, colors: ['#fbbf24','#f97316','#ffffff'], x: window.innerWidth/2, y: window.innerHeight*0.2 });
+          }
+        }
+        orig(ach);
+      };
+      window._showAchievement._patched = true;
+    }
+  }, 800);
 })();
 </script>
 
