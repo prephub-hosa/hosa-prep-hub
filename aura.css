@@ -2665,3 +2665,140 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
   .cmdp-modal { animation: none !important; }
   .qa-btn:hover { transform: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   v17 — Readability pass
+   Stronger contrast for subtle text; larger minimum font sizes;
+   bolder weights for small labels.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Stronger subtle-text colors in every theme */
+:root {
+  --ink-faint: #a89f93;
+  --ink-soft:  #c4bcb1;
+}
+[data-theme="light"] {
+  --ink-faint: #2a2419;
+  --ink-soft:  #2e2825;
+}
+[data-theme="sepia"] {
+  --ink-faint: #3e2f1c;
+  --ink-soft:  #3a2b18;
+}
+
+/* Default body sizes — bump base for better legibility on mobile */
+@media (max-width: 640px) {
+  html, body { font-size: 16px; }
+}
+
+/* ── Small labels: minimum 11–12px and medium weight ── */
+.hs-stat-label   { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+.hs-xp-label     { font-size: 12px; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.03em; }
+.hs-week-label   { font-size: 11px; font-weight: 600; color: var(--ink-soft); }
+.hs-week-day     { font-size: 10px; font-weight: 600; color: var(--ink-soft); }
+.hs-week-day.today { color: var(--accent); }
+
+.wi-eyebrow       { font-size: 11px; font-weight: 700; color: var(--ink-soft); letter-spacing: 0.08em; }
+.wi-total         { font-size: 18px; }
+.wi-delta         { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+.wi-up .wi-delta  { color: #2d8a4e; }
+.wi-down .wi-delta { color: #c25b1c; }
+[data-theme="light"] .wi-up .wi-delta { color: #1f7a3f; }
+[data-theme="light"] .wi-down .wi-delta { color: #9a4515; }
+
+.next-up-eyebrow  { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+.next-up-desc     { font-size: 14px; color: var(--ink); opacity: 0.78; white-space: normal; line-height: 1.5; }
+.next-up-action   { font-size: 14px; font-weight: 700; }
+
+.qa-title         { font-size: 15px; font-weight: 700; }
+.qa-sub           { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+.qa-icon          { font-size: 24px; }
+
+.stip-tag  { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+.stip-text { font-size: 15px; line-height: 1.55; color: var(--ink); }
+
+.due-eyebrow      { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+.due-headline     { font-size: 22px; }
+.due-name         { font-size: 16px; }
+.due-count        { font-size: 13px; font-weight: 700; }
+
+.jbi-card-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-soft); }
+.jbi-card-title   { font-size: 16px; }
+.jbi-progress-label { font-size: 13px; color: var(--ink-soft); }
+.jbi-cta          { font-size: 13px; font-weight: 600; }
+
+.recent-meta      { font-size: 13px; color: var(--ink-soft); }
+.recent-name      { font-size: 15px; }
+
+.lib-meta         { font-size: 13px; color: var(--ink-soft); }
+.lib-level-sub    { font-size: 13px; color: var(--ink-soft); }
+.lib-xp-caption   { font-size: 12px; color: var(--ink-soft); }
+.lib-card-title   { font-size: 17px; }
+
+.exam-cd-sub      { font-size: 14px; color: var(--ink-soft); }
+.exam-cd-title    { font-size: 17px; }
+.exam-cd-unit     { font-size: 13px; font-weight: 500; }
+
+.heatmap-label    { font-size: 13px; color: var(--ink-soft); }
+.heatmap-legend-label { font-size: 12px; color: var(--ink-soft); }
+
+.diff-filter-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0.04em; }
+.diff-filter-btn  { font-size: 13px; font-weight: 500; }
+
+.diff-badge       { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+
+.card-meta        { font-size: 13px; color: var(--ink-soft); }
+.stat-label       { font-size: 12px; color: var(--ink-soft); }
+
+.faq-q            { font-size: 16px; }
+.faq-a-inner      { font-size: 15px; line-height: 1.6; color: var(--ink); opacity: 0.85; }
+
+.strategy-title   { font-size: 16px; }
+.strategy-text    { font-size: 14px; line-height: 1.55; color: var(--ink); opacity: 0.82; }
+
+.how-detail       { font-size: 12px; color: var(--ink-soft); }
+
+/* Command palette readability */
+.cmdp-section-h   { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; color: var(--ink-soft); }
+.cmdp-row         { font-size: 15px; }
+.cmdp-row-name    { font-weight: 500; }
+.cmdp-footer      { font-size: 12px; }
+.cmdp-footer kbd  { font-size: 11px; }
+
+/* Topbar & sidebar */
+.sb-item          { font-size: 14px; }
+.sb-label         { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-soft); }
+#topbar-level     { font-size: 12px; font-weight: 600; }
+.user-email       { font-size: 13px; }
+
+/* Section titles */
+.section-title    { font-weight: 500; }
+.page-title       { font-weight: 500; }
+
+/* Shortcuts overlay readability */
+.shortcuts-section-head { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-soft); }
+.shortcut-row     { font-size: 14px; }
+.shortcuts-footer { font-size: 13px; color: var(--ink-soft); }
+
+/* Bottom nav labels */
+.bn-item          { font-size: 11px; font-weight: 600; }
+
+/* Onboarding & auth fields keep good size */
+.field-label      { font-size: 13px; font-weight: 600; }
+
+/* Toast text */
+.toast            { font-size: 14px; }
+
+/* Daily goal labels */
+.dg-title         { font-size: 16px; font-weight: 600; }
+.dg-sub           { font-size: 13px; color: var(--ink-soft); }
+.dg-done-num      { font-weight: 600; }
+
+/* Ensure body text everywhere has a clear default */
+body, html { color: var(--ink); }
+p { color: var(--ink); }
+
+/* Tone-up dark-mode subtle-text shadows that were too low-contrast */
+:root {
+  --ink: #ece8de;
+}
