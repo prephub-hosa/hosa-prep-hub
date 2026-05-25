@@ -5019,15 +5019,19 @@ function friendlyError(code) {
     try { localStorage.setItem('hosa-tab', id); } catch(e) {}
   }
 
-  document.querySelectorAll('[data-tab]').forEach(function(el){
-    el.addEventListener('click', function(){
-      switchTab(el.getAttribute('data-tab'));
-      // Close the sidebar drawer when switching tabs (mobile UX)
-      var _sb = document.getElementById('sidebar');
-      var _ov = document.getElementById('sb-overlay');
-      if (_sb) _sb.classList.remove('open');
-      if (_ov) _ov.classList.remove('show');
-    });
+  // Delegated handler — works even for elements parsed after this script
+  // (e.g. #bottom-nav, which appears later in the DOM).
+  document.addEventListener('click', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('[data-tab]') : null;
+    if (!el) return;
+    var tab = el.getAttribute('data-tab');
+    if (!tab) return;
+    switchTab(tab);
+    // Close the sidebar drawer when switching tabs (mobile UX)
+    var _sb = document.getElementById('sidebar');
+    var _ov = document.getElementById('sb-overlay');
+    if (_sb) _sb.classList.remove('open');
+    if (_ov) _ov.classList.remove('show');
   });
 
   // Restore last tab (bottom nav starts with home active by default in HTML)
