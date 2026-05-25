@@ -6635,3 +6635,52 @@ nav.tabs button:active {
   .qa-btn:hover { transform: none !important; }
 }
 
+
+/* ── v33: cleaner topbar level pill + mobile feedback FAB ──────── */
+#topbar-level.visible {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(200,16,46,0.12), rgba(200,16,46,0.06));
+  border: 1px solid rgba(200,16,46,0.28);
+  color: var(--accent);
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  white-space: nowrap;
+}
+#topbar-level .tb-lvl-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+#topbar-level #tb-level {
+  font-size: 13px;
+  font-weight: 800;
+}
+[data-theme="light"] #topbar-level {
+  background: linear-gradient(135deg, rgba(168,40,31,0.10), rgba(168,40,31,0.04));
+  border-color: rgba(168,40,31,0.30);
+}
+
+/* Keep the level pill visible on phones (was hidden < 560px). */
+@media (max-width: 560px) {
+  #topbar-level.visible { display: inline-flex !important; }
+}
+
+/* Move the floating Feedback button above the bottom-nav on mobile so it
+   doesn't cover the Guide / Español tabs. */
+@media (max-width: 768px) {
+  #fb-fab {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+  }
+}

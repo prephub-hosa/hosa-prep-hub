@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=32">
+<link rel="stylesheet" href="aura.css?v=33">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2208,8 +2208,7 @@ footer { display: none; }
       <input type="search" id="event-search" placeholder="Search events — try &ldquo;cardio&rdquo; or &ldquo;pharm&rdquo;&hellip;" autocomplete="off" spellcheck="false">
     </div>
     <div class="topbar-right">
-      <button id="shortcuts-btn" title="Keyboard shortcuts (?)">? shortcuts</button>
-      <div id="topbar-level">Lv <span id="tb-level">1</span></div>
+      <div id="topbar-level" title="Your level"><span class="tb-lvl-label">Lv</span><span id="tb-level">1</span></div>
       <div class="user-pill" id="topbar-user-pill">
         <span class="user-email" id="user-email"></span>
         <button class="btn-signout" id="btn-signout">Sign Out</button>
@@ -5021,7 +5020,14 @@ function friendlyError(code) {
   }
 
   document.querySelectorAll('[data-tab]').forEach(function(el){
-    el.addEventListener('click', function(){ switchTab(el.getAttribute('data-tab')); });
+    el.addEventListener('click', function(){
+      switchTab(el.getAttribute('data-tab'));
+      // Close the sidebar drawer when switching tabs (mobile UX)
+      var _sb = document.getElementById('sidebar');
+      var _ov = document.getElementById('sb-overlay');
+      if (_sb) _sb.classList.remove('open');
+      if (_ov) _ov.classList.remove('show');
+    });
   });
 
   // Restore last tab (bottom nav starts with home active by default in HTML)
