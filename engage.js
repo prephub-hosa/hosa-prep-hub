@@ -993,6 +993,11 @@
   /* Games launcher — floating button visible on every event page */
   (function() {
     if (document.getElementById('games-launcher')) return;
+    // Don't show the floating Games launcher on the home page — it
+    // overlaps the bottom nav / Feedback button. Home has its own
+    // Games entry in the sidebar and command palette.
+    var _pg = (location.pathname.split('/').pop() || '').replace(/\.html$/, '');
+    if (_pg === '' || _pg === 'index') return;
     var wrap = document.createElement('div');
     wrap.id = 'games-launcher';
     wrap.innerHTML =
