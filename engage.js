@@ -432,10 +432,26 @@
     const deltaXP   = Math.max(0, xp - baseXP);
     const alreadyAwarded = Math.max(trackedXP, deltaXP);
 
-    // Session stats
-    const got       = window._sessGot    || 0;
-    const missed    = window._sessMissed || 0;
-    const hard      = window._sessHard   || 0;
+    // Session stats — event pages declare these as lexical (not window),
+    // so read from the DOM stats elements and the sc-stats text as fallback.
+    function readNum(id) {
+      const e = document.getElementById(id);
+      const n = e ? parseInt((e.textContent || '0').replace(/[^0-9]/g, ''), 10) : 0;
+      return isNaN(n) ? 0 : n;
+    }
+    let got    = readNum('ss-got-n') || window._sessGot    || 0;
+    let missed = readNum('ss-miss-n') || window._sessMissed || 0;
+    let hard   = readNum('ss-hard-n') || window._sessHard   || 0;
+    // Fallback: parse "You rated X cards — Y got it, Z missed" from #sc-stats
+    if (got + missed + hard === 0) {
+      const sct = (document.getElementById('sc-stats') || {}).textContent || '';
+      const mGot = sct.match(/(\d+)\s+got it/i);
+      const mMis = sct.match(/(\d+)\s+missed/i);
+      const mRated = sct.match(/rated\s+(\d+)\s+card/i);
+      if (mGot) got = parseInt(mGot[1], 10);
+      if (mMis) missed = parseInt(mMis[1], 10);
+      if (got + missed === 0 && mRated) got = parseInt(mRated[1], 10);
+    }
     const totalRated = got + missed + hard;
 
     // ─── Session completion bonus XP (this is the fix) ────────
