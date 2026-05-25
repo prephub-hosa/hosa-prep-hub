@@ -4322,6 +4322,8 @@ auth.onAuthStateChanged(user => {
     // Per-account XP: pull Firebase XP on sign-in, then keep two-way synced.
     // If switching accounts on same device, this prevents the previous account's
     // localStorage XP from contaminating the new account's record.
+    // Data lives at leaderboard/level/{uid} (publicly readable) so all signed-in
+    // users can appear on the global level leaderboard.
     try {
       var lastUid = null;
       try { lastUid = localStorage.getItem('hosa::last-uid'); } catch(_e) {}
@@ -4330,11 +4332,19 @@ auth.onAuthStateChanged(user => {
         try {
           var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
           var nm = (user.email || '').split('@')[0] || 'Student';
+          firebase.database().ref('leaderboard/level/' + user.uid).update({ xp: xp, name: nm, updatedAt: new Date().toISOString() });
+          // Keep users/{uid} in sync too for backwards compatibility / personal data
           firebase.database().ref('users/' + user.uid).update({ xp: xp, name: nm });
         } catch(_e) {}
       }
-      firebase.database().ref('users/' + user.uid + '/xp').once('value').then(function(snap) {
-        var fbXP = parseInt(snap.val() || 0, 10);
+      // Read both the new public leaderboard path AND the legacy users/ path,
+      // take whichever is higher so existing accounts don't lose stored XP
+      // when migrating to the new structure.
+      Promise.all([
+        firebase.database().ref('leaderboard/level/' + user.uid + '/xp').once('value').then(function(s){ return parseInt(s.val() || 0, 10); }).catch(function(){ return 0; }),
+        firebase.database().ref('users/' + user.uid + '/xp').once('value').then(function(s){ return parseInt(s.val() || 0, 10); }).catch(function(){ return 0; })
+      ]).then(function(vals) {
+        var fbXP = Math.max(vals[0] || 0, vals[1] || 0);
         var localXP = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
         // If account was switched on this device, the localStorage XP belongs to
         // the OLD account — use Firebase XP for the new account, don't merge.
@@ -10337,19 +10347,20 @@ window.hosaXPFlyup = function(el, amount) {
     {name: 'kairo_west',         xp:      1, avatar: '🧠'},
   ];
 
-  // Real users fetched from Firebase
+  // Real users fetched from Firebase. Uses the public leaderboard/level path
+  // so signed-in users can see everyone else (the users/ path is per-user gated).
   var FIREBASE_USERS = [];
   function fetchFirebaseUsers(cb) {
     try {
       if (typeof firebase === 'undefined' || !firebase.database) { cb && cb(); return; }
-      firebase.database().ref('users').once('value').then(function(snap) {
+      firebase.database().ref('leaderboard/level').once('value').then(function(snap) {
         var data = snap.val() || {};
         var out = [];
         Object.keys(data).forEach(function(uid) {
           var u = data[uid] || {};
           var xp = parseInt(u.xp || 0, 10);
           if (xp <= 0) return;
-          var name = u.name || (u.email ? u.email.split('@')[0] : 'Student');
+          var name = u.name || 'Student';
           out.push({ uid: uid, name: name, xp: xp, avatar: '👤' });
         });
         FIREBASE_USERS = out;
