@@ -4319,6 +4319,20 @@ auth.onAuthStateChanged(user => {
     const signoutBtn = document.getElementById('btn-signout');
     if (signoutBtn) { signoutBtn.textContent = 'Sign Out'; signoutBtn.onclick = null; }
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
+    // Sync XP to Firebase for the global leaderboard
+    try {
+      function _syncXP() {
+        try {
+          var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+          var nm = (user.email || '').split('@')[0] || 'Student';
+          firebase.database().ref('users/' + user.uid).update({ xp: xp, name: nm });
+        } catch(_e) {}
+      }
+      _syncXP();
+      if (!window._hosaXPSyncInterval) {
+        window._hosaXPSyncInterval = setInterval(_syncXP, 8000);
+      }
+    } catch(e) {}
     try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
     if (authGateEl) authGateEl.style.display = 'none';
     if (mainEl) mainEl.style.display = 'flex';
@@ -10198,29 +10212,54 @@ window.hosaXPFlyup = function(el, amount) {
 
   // Seeded fake players — realistic spread of XP/levels
   var SEED_PLAYERS = [
-    {name: 'Priya Nair',       chapter: 'Westview HS',         xp: 184250, avatar: '🧬'},
-    {name: 'Marcus Chen',      chapter: 'Lincoln Academy',     xp: 142800, avatar: '🩺'},
-    {name: 'Sofia Hernandez',  chapter: 'Riverside HS',        xp: 118400, avatar: '💉'},
-    {name: 'Ethan Park',       chapter: 'Northwood HS',        xp:  96300, avatar: '🔬'},
-    {name: 'Aaliyah Johnson',  chapter: 'East Bay Academy',    xp:  78900, avatar: '🧠'},
-    {name: 'Daniel Kim',       chapter: 'Crestwood HS',        xp:  62100, avatar: '⚕️'},
-    {name: 'Olivia Martinez',  chapter: 'Stonebridge HS',      xp:  49850, avatar: '🦴'},
-    {name: 'Jaden Wright',     chapter: 'Summit Valley HS',    xp:  38200, avatar: '🫀'},
-    {name: 'Zara Patel',       chapter: 'Greenfield Prep',     xp:  29400, avatar: '🧪'},
-    {name: 'Lucas Rivera',     chapter: 'Pinecrest HS',        xp:  22150, avatar: '🩹'},
-    {name: 'Maya Singh',       chapter: 'Brookside HS',        xp:  16800, avatar: '🧬'},
-    {name: 'Noah Thompson',    chapter: 'Cedar Ridge HS',      xp:  12450, avatar: '🩺'},
-    {name: 'Ava Robinson',     chapter: 'Mapleton Academy',    xp:   9200, avatar: '⚕️'},
-    {name: 'Ryan O\'Brien',    chapter: 'Hilltop HS',          xp:   6750, avatar: '🔬'},
-    {name: 'Isabella Garcia',  chapter: 'Lakeview HS',         xp:   4900, avatar: '💊'},
-    {name: 'Tyler Brooks',     chapter: 'Oakmont HS',          xp:   3400, avatar: '🧠'},
-    {name: 'Chloe Liu',        chapter: 'Birchwood HS',        xp:   2300, avatar: '🦴'},
-    {name: 'Jordan Carter',    chapter: 'Highland Park HS',    xp:   1500, avatar: '🩹'},
-    {name: 'Emma Davis',       chapter: 'Foxhollow HS',        xp:    950, avatar: '🧪'},
-    {name: 'Carlos Mendoza',   chapter: 'Silver Lake HS',      xp:    520, avatar: '🫀'},
-    {name: 'Hannah Lee',       chapter: 'Aspenfield HS',       xp:    280, avatar: '⚕️'},
-    {name: 'Jack Anderson',    chapter: 'Rosewood HS',         xp:    140, avatar: '🩺'},
+    {name: 'Priya Nair',       xp: 184250, avatar: '🧬'},
+    {name: 'Marcus Chen',      xp: 142800, avatar: '🩺'},
+    {name: 'Sofia Hernandez',  xp: 118400, avatar: '💉'},
+    {name: 'Ethan Park',       xp:  96300, avatar: '🔬'},
+    {name: 'Aaliyah Johnson',  xp:  78900, avatar: '🧠'},
+    {name: 'Daniel Kim',       xp:  62100, avatar: '⚕️'},
+    {name: 'Olivia Martinez',  xp:  49850, avatar: '🦴'},
+    {name: 'Jaden Wright',     xp:  38200, avatar: '🫀'},
+    {name: 'Zara Patel',       xp:  29400, avatar: '🧪'},
+    {name: 'Lucas Rivera',     xp:  22150, avatar: '🩹'},
+    {name: 'Maya Singh',       xp:  16800, avatar: '🧬'},
+    {name: 'Noah Thompson',    xp:  12450, avatar: '🩺'},
+    {name: 'Ava Robinson',     xp:   9200, avatar: '⚕️'},
+    {name: 'Ryan O\'Brien',    xp:   6750, avatar: '🔬'},
+    {name: 'Isabella Garcia',  xp:   4900, avatar: '💊'},
+    {name: 'Tyler Brooks',     xp:   3400, avatar: '🧠'},
+    {name: 'Chloe Liu',        xp:   2300, avatar: '🦴'},
+    {name: 'Jordan Carter',    xp:   1500, avatar: '🩹'},
+    {name: 'Emma Davis',       xp:    950, avatar: '🧪'},
+    {name: 'Carlos Mendoza',   xp:    520, avatar: '🫀'},
+    {name: 'Hannah Lee',       xp:    280, avatar: '⚕️'},
+    {name: 'Jack Anderson',    xp:    140, avatar: '🩺'},
   ];
+
+  // Real users fetched from Firebase
+  var FIREBASE_USERS = [];
+  function fetchFirebaseUsers(cb) {
+    try {
+      if (typeof firebase === 'undefined' || !firebase.database) { cb && cb(); return; }
+      firebase.database().ref('users').once('value').then(function(snap) {
+        var data = snap.val() || {};
+        var out = [];
+        Object.keys(data).forEach(function(uid) {
+          var u = data[uid] || {};
+          var xp = parseInt(u.xp || 0, 10);
+          if (xp <= 0) return;
+          var name = u.name || (u.email ? u.email.split('@')[0] : 'Student');
+          out.push({ uid: uid, name: name, xp: xp, avatar: '👤' });
+        });
+        FIREBASE_USERS = out;
+        cb && cb();
+      }).catch(function() { cb && cb(); });
+    } catch(e) { cb && cb(); }
+  }
+
+  function currentUid() {
+    try { return (firebase.auth().currentUser || {}).uid || null; } catch(e) { return null; }
+  }
 
   function getUserName() {
     try { return localStorage.getItem('hosa::username') || 'You'; } catch(e) { return 'You'; }
@@ -10232,16 +10271,22 @@ window.hosaXPFlyup = function(el, amount) {
 
   function buildRanked() {
     var players = SEED_PLAYERS.map(function(p) {
-      return {name: p.name, chapter: p.chapter, xp: p.xp, level: xpLevel(p.xp), avatar: p.avatar, isYou: false};
+      return {name: p.name, xp: p.xp, level: xpLevel(p.xp), avatar: p.avatar, isYou: false, isFake: true};
+    });
+    var myUid = currentUid();
+    // Add real users from Firebase (skip the current signed-in user — we add them as "You" below)
+    FIREBASE_USERS.forEach(function(u) {
+      if (myUid && u.uid === myUid) return;
+      players.push({ name: u.name, xp: u.xp, level: xpLevel(u.xp), avatar: u.avatar || '👤', isYou: false, isFake: false });
     });
     var userXP = getUserXP();
     players.push({
       name: getUserName(),
-      chapter: 'Your Account',
       xp: userXP,
       level: xpLevel(userXP),
       avatar: '🎯',
-      isYou: true
+      isYou: true,
+      isFake: false
     });
     players.sort(function(a, b) { return b.xp - a.xp; });
     players.forEach(function(p, i) { p.rank = i + 1; });
@@ -10274,7 +10319,6 @@ window.hosaXPFlyup = function(el, amount) {
         '<div class="lb-podium-medal">' + medalFor(rank) + '</div>' +
         '<div class="lb-podium-avatar">' + p.avatar + '</div>' +
         '<div class="lb-podium-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + '</div>' +
-        '<div class="lb-podium-chapter">' + escHtml(p.chapter) + '</div>' +
         '<div class="lb-podium-level">Level ' + p.level + '</div>' +
         '<div class="lb-podium-xp">' + fmtNum(p.xp) + ' XP</div>' +
       '</div>';
@@ -10326,7 +10370,6 @@ window.hosaXPFlyup = function(el, amount) {
           '<span class="lb-row-avatar">' + p.avatar + '</span>' +
           '<span class="lb-row-info">' +
             '<span class="lb-row-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + '</span>' +
-            '<span class="lb-row-chapter">' + escHtml(p.chapter) + '</span>' +
           '</span>' +
         '</span>' +
         '<span class="lb-row-level">Lvl ' + p.level + '</span>' +
@@ -10344,8 +10387,13 @@ window.hosaXPFlyup = function(el, amount) {
     renderList(players);
   }
 
+  function refreshAndRender() {
+    fetchFirebaseUsers(function() { renderAll(); });
+  }
+
   function init() {
     renderAll();
+    refreshAndRender();
     // Re-render when tab activates or XP changes
     var lastXP = getUserXP();
     setInterval(function() {
@@ -10355,8 +10403,15 @@ window.hosaXPFlyup = function(el, amount) {
       if (cur !== lastXP) { lastXP = cur; renderAll(); }
     }, 1500);
 
+    // Re-pull Firebase users every 20s while on the leaderboard tab
+    setInterval(function() {
+      var pane = document.getElementById('tab-leaderboard');
+      if (!pane || !pane.classList.contains('active')) return;
+      refreshAndRender();
+    }, 20000);
+
     document.querySelectorAll('[data-tab="leaderboard"]').forEach(function(btn) {
-      btn.addEventListener('click', function() { setTimeout(renderAll, 50); });
+      btn.addEventListener('click', function() { setTimeout(refreshAndRender, 50); });
     });
   }
 
