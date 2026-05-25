@@ -698,6 +698,8 @@
       '<div id="games-launcher-menu" hidden>' +
         '<a href="index.html?game=match">🧩 Match Game</a>' +
         '<a href="index.html?game=speed">⏱ Speed Drill</a>' +
+        '<a href="index.html?game=typing">⌨️ Typing Challenge</a>' +
+        '<a href="index.html?game=truefalse">🎯 True/False Blitz</a>' +
         '<a href="index.html?game=quickreview">⚡ Quick Review</a>' +
         '<a href="index.html">🏠 Back to Home</a>' +
       '</div>';

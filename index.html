@@ -9302,6 +9302,595 @@ window.hosaXPFlyup = function(el, amount) {
   if (document.readyState !== 'loading') openFromUrl();
   else document.addEventListener('DOMContentLoaded', openFromUrl);
 })();
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPING CHALLENGE — type the definition, score by word overlap
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = null;
+  var timer = null;
+  var timeLeft = 90;
+  var currentTerm = null;
+  var sessionXP = 0;
+
+  function wordScore(typed, real) {
+    function clean(s) { return s.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(Boolean); }
+    var t = clean(typed), r = clean(real);
+    if (!r.length) return 0;
+    var hits = t.filter(function(w){ return r.indexOf(w) !== -1; }).length;
+    return Math.min(100, Math.round(hits / r.length * 100));
+  }
+
+  function pickTerm() {
+    var pool = window.HOSA_TERMS;
+    if (!pool || !pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function build() {
+    var el = document.createElement('div');
+    el.id = 'tc-overlay';
+    el.className = 'tc-overlay';
+    el.innerHTML =
+      '<div class="tc-panel">' +
+        '<button class="tc-close" id="tc-close" aria-label="Close">✕</button>' +
+        '<div class="tc-header"><span class="tc-icon">⌨️</span><h2>Typing Challenge</h2></div>' +
+        '<div class="tc-timer-row"><div class="tc-timer-bar"><div id="tc-timer-fill"></div></div><span id="tc-timer-num">90</span>s</div>' +
+        '<div class="tc-term-box"><div class="tc-term-label">Define this term:</div><div id="tc-term-name" class="tc-term-name"></div></div>' +
+        '<textarea id="tc-input" class="tc-input" placeholder="Type the definition here…" rows="4"></textarea>' +
+        '<div id="tc-result" class="tc-result" style="display:none;"></div>' +
+        '<div class="tc-actions">' +
+          '<button id="tc-check" class="tc-btn-primary">Check Answer</button>' +
+          '<button id="tc-next" class="tc-btn-secondary" style="display:none;">Next Term →</button>' +
+        '</div>' +
+        '<div class="tc-session-xp">Session XP earned: <strong id="tc-sess-xp">0</strong></div>' +
+      '</div>';
+    document.body.appendChild(el);
+
+    el.querySelector('#tc-close').addEventListener('click', close);
+    el.addEventListener('click', function(e){ if (e.target === el) close(); });
+    el.querySelector('#tc-check').addEventListener('click', checkAnswer);
+    el.querySelector('#tc-next').addEventListener('click', nextTerm);
+    document.addEventListener('keydown', onKey);
+    overlay = el;
+  }
+
+  function onKey(e) {
+    if (!overlay || overlay.style.display === 'none') return;
+    if (e.key === 'Escape') close();
+  }
+
+  function startTimer() {
+    timeLeft = 90;
+    updateTimerUI();
+    clearInterval(timer);
+    timer = setInterval(function() {
+      timeLeft--;
+      updateTimerUI();
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        checkAnswer();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI() {
+    var fill = document.getElementById('tc-timer-fill');
+    var num = document.getElementById('tc-timer-num');
+    if (fill) fill.style.width = (timeLeft / 90 * 100) + '%';
+    if (num) num.textContent = timeLeft;
+    if (fill) fill.className = timeLeft <= 20 ? 'tc-timer-urgent' : '';
+  }
+
+  function nextTerm() {
+    currentTerm = pickTerm();
+    if (!currentTerm) return;
+    var nameEl = document.getElementById('tc-term-name');
+    var input = document.getElementById('tc-input');
+    var result = document.getElementById('tc-result');
+    var checkBtn = document.getElementById('tc-check');
+    var nextBtn = document.getElementById('tc-next');
+    if (nameEl) nameEl.textContent = currentTerm.term;
+    if (input) { input.value = ''; input.disabled = false; input.focus(); }
+    if (result) result.style.display = 'none';
+    if (checkBtn) checkBtn.style.display = '';
+    if (nextBtn) nextBtn.style.display = 'none';
+    startTimer();
+  }
+
+  function checkAnswer() {
+    if (!currentTerm) return;
+    clearInterval(timer);
+    var input = document.getElementById('tc-input');
+    var result = document.getElementById('tc-result');
+    var checkBtn = document.getElementById('tc-check');
+    var nextBtn = document.getElementById('tc-next');
+    var typed = input ? input.value.trim() : '';
+    var score = typed ? wordScore(typed, currentTerm.def) : 0;
+    var xpGain = Math.floor(score / 10);
+    sessionXP += xpGain;
+
+    var grade = score >= 70 ? 'good' : score >= 40 ? 'ok' : 'bad';
+    var label = score >= 70 ? '✓ Great!' : score >= 40 ? '~ Partial' : '✗ Missed';
+    if (result) {
+      result.style.display = '';
+      result.className = 'tc-result tc-result-' + grade;
+      result.innerHTML =
+        '<div class="tc-score-row"><span class="tc-score-num">' + score + '%</span><span class="tc-score-label">' + label + '</span><span class="tc-xp-badge">+' + xpGain + ' XP</span></div>' +
+        '<div class="tc-correct-def"><strong>Correct:</strong> ' + escHtml(currentTerm.def) + '</div>';
+    }
+    if (input) input.disabled = true;
+    if (checkBtn) checkBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = '';
+
+    var sessEl = document.getElementById('tc-sess-xp');
+    if (sessEl) sessEl.textContent = sessionXP;
+
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    localStorage.setItem('hosa::xp', xp + xpGain);
+    if (xpGain > 0 && typeof window.hosaToast === 'function') window.hosaToast('⌨️', 'Typing Challenge', score + '% accuracy · +' + xpGain + ' XP', score >= 70 ? 'good' : 'info');
+    if (score >= 80 && typeof window.hosaConfetti === 'function') window.hosaConfetti({count:60});
+
+    try {
+      var best = JSON.parse(localStorage.getItem('hosa::typing-best') || 'null');
+      if (!best || score > best.score) {
+        localStorage.setItem('hosa::typing-best', JSON.stringify({score: score, date: new Date().toISOString()}));
+      }
+    } catch(e) {}
+  }
+
+  function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function open() {
+    sessionXP = 0;
+    if (!overlay) build();
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    nextTerm();
+  }
+
+  function close() {
+    if (!overlay) return;
+    clearInterval(timer);
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKey);
+    overlay = null;
+  }
+
+  window.__hosaOpenTyping = open;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   TRUE/FALSE BLITZ — 30-second sprint with combo multiplier
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = null;
+  var timer = null;
+  var timeLeft = 30;
+  var score = 0;
+  var combo = 0;
+  var total = 0;
+  var correct = 0;
+  var currentTerm = null;
+  var currentIsTrue = false;
+  var answered = false;
+
+  function pickRound() {
+    var pool = window.HOSA_TERMS;
+    if (!pool || pool.length < 2) return null;
+    var term = pool[Math.floor(Math.random() * pool.length)];
+    var isTrue = Math.random() < 0.5;
+    var def;
+    if (isTrue) {
+      def = term.def;
+    } else {
+      var other;
+      do { other = pool[Math.floor(Math.random() * pool.length)]; } while (other === term);
+      def = other.def;
+    }
+    return {term: term.term, def: def, isTrue: isTrue};
+  }
+
+  function build() {
+    var el = document.createElement('div');
+    el.id = 'tf-overlay';
+    el.className = 'tf-overlay';
+    el.innerHTML =
+      '<div class="tf-panel">' +
+        '<button class="tf-close" id="tf-close" aria-label="Close">✕</button>' +
+        '<div class="tf-header">' +
+          '<span class="tf-icon">🎯</span><h2>True/False Blitz</h2>' +
+          '<div class="tf-combo" id="tf-combo"></div>' +
+        '</div>' +
+        '<div class="tf-timer-bar"><div id="tf-timer-fill" class="tf-timer-fill"></div></div>' +
+        '<div class="tf-stats-row">' +
+          '<span id="tf-time-num" class="tf-time">30</span>' +
+          '<span class="tf-score-live">Score: <strong id="tf-score-live">0</strong></span>' +
+        '</div>' +
+        '<div id="tf-card" class="tf-card">' +
+          '<div id="tf-term" class="tf-term"></div>' +
+          '<div class="tf-sep">is defined as</div>' +
+          '<div id="tf-def" class="tf-def"></div>' +
+        '</div>' +
+        '<div id="tf-flash" class="tf-flash" style="display:none;"></div>' +
+        '<div class="tf-buttons">' +
+          '<button id="tf-true" class="tf-btn tf-btn-true">✓ TRUE</button>' +
+          '<button id="tf-false" class="tf-btn tf-btn-false">✗ FALSE</button>' +
+        '</div>' +
+        '<div id="tf-end" class="tf-end" style="display:none;"></div>' +
+      '</div>';
+    document.body.appendChild(el);
+
+    el.querySelector('#tf-close').addEventListener('click', close);
+    el.addEventListener('click', function(e){ if (e.target === el) close(); });
+    el.querySelector('#tf-true').addEventListener('click', function(){ answer(true); });
+    el.querySelector('#tf-false').addEventListener('click', function(){ answer(false); });
+    document.addEventListener('keydown', onKey);
+    overlay = el;
+  }
+
+  function onKey(e) {
+    if (!overlay || overlay.style.display === 'none') return;
+    if (e.key === 'Escape') { close(); return; }
+    var endEl = document.getElementById('tf-end');
+    if (endEl && endEl.style.display !== 'none') return;
+    if (e.key === 't' || e.key === 'T') answer(true);
+    if (e.key === 'f' || e.key === 'F') answer(false);
+  }
+
+  function startTimer() {
+    timeLeft = 30;
+    updateTimer();
+    clearInterval(timer);
+    timer = setInterval(function() {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) { clearInterval(timer); showEnd(); }
+    }, 1000);
+  }
+
+  function updateTimer() {
+    var fill = document.getElementById('tf-timer-fill');
+    var num = document.getElementById('tf-time-num');
+    if (fill) {
+      fill.style.width = (timeLeft / 30 * 100) + '%';
+      fill.style.background = timeLeft <= 10 ? '#c8102e' : timeLeft <= 20 ? '#f0a500' : '#30d158';
+    }
+    if (num) num.textContent = timeLeft;
+  }
+
+  function nextRound() {
+    var round = pickRound();
+    if (!round) return;
+    currentTerm = round;
+    currentIsTrue = round.isTrue;
+    answered = false;
+    var term = document.getElementById('tf-term');
+    var def = document.getElementById('tf-def');
+    if (term) term.textContent = round.term;
+    if (def) def.textContent = round.def;
+    var card = document.getElementById('tf-card');
+    if (card) card.className = 'tf-card';
+  }
+
+  function answer(userSaysTrue) {
+    if (answered) return;
+    answered = true;
+    total++;
+    var isCorrect = (userSaysTrue === currentIsTrue);
+    var flash = document.getElementById('tf-flash');
+    if (isCorrect) {
+      correct++;
+      combo++;
+      var mult = Math.min(3, 1 + Math.floor((combo - 1) / 2));
+      var pts = Math.round(10 * mult);
+      score += pts;
+      if (flash) { flash.textContent = '+' + pts + (combo > 2 ? ' 🔥 x' + mult : ''); flash.className = 'tf-flash tf-flash-good'; flash.style.display = ''; setTimeout(function(){ if(flash)flash.style.display='none'; }, 700); }
+      var comboEl = document.getElementById('tf-combo');
+      if (comboEl) comboEl.textContent = combo > 1 ? combo + 'x combo!' : '';
+    } else {
+      combo = 0;
+      score = Math.max(0, score - 5);
+      if (flash) { flash.textContent = '-5'; flash.className = 'tf-flash tf-flash-bad'; flash.style.display = ''; setTimeout(function(){ if(flash)flash.style.display='none'; }, 700); }
+      var comboEl2 = document.getElementById('tf-combo');
+      if (comboEl2) comboEl2.textContent = '';
+    }
+    var liveScore = document.getElementById('tf-score-live');
+    if (liveScore) liveScore.textContent = score;
+    var card = document.getElementById('tf-card');
+    if (card) card.className = 'tf-card ' + (isCorrect ? 'tf-card-correct' : 'tf-card-wrong');
+    setTimeout(nextRound, 350);
+  }
+
+  function showEnd() {
+    var end = document.getElementById('tf-end');
+    var btns = overlay.querySelector('.tf-buttons');
+    var card = document.getElementById('tf-card');
+    if (card) card.style.display = 'none';
+    if (btns) btns.style.display = 'none';
+
+    var xpGain = Math.floor(score / 5);
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    localStorage.setItem('hosa::xp', xp + xpGain);
+
+    try {
+      var best = JSON.parse(localStorage.getItem('hosa::tf-best') || 'null');
+      var isNew = !best || score > best.score;
+      if (isNew) localStorage.setItem('hosa::tf-best', JSON.stringify({score:score, date:new Date().toISOString()}));
+    } catch(e) { var isNew = false; }
+
+    if (end) {
+      end.style.display = '';
+      end.innerHTML =
+        '<div class="tf-end-score">' + score + '</div>' +
+        '<div class="tf-end-label">Final Score</div>' +
+        '<div class="tf-end-stats">' + correct + '/' + total + ' correct · +' + xpGain + ' XP' + (isNew ? ' · 🏆 New best!' : '') + '</div>' +
+        '<button class="tc-btn-primary" id="tf-play-again">Play Again</button>';
+      end.querySelector('#tf-play-again').addEventListener('click', restart);
+    }
+
+    if (score >= 50 && typeof window.hosaConfetti === 'function') window.hosaConfetti({count:80});
+    if (typeof window.hosaToast === 'function') window.hosaToast('🎯', 'True/False Blitz', 'Score: ' + score + ' · +' + xpGain + ' XP', score >= 50 ? 'good' : 'info');
+  }
+
+  function restart() {
+    score = 0; combo = 0; total = 0; correct = 0; answered = false;
+    var end = document.getElementById('tf-end');
+    var btns = overlay ? overlay.querySelector('.tf-buttons') : null;
+    var card = document.getElementById('tf-card');
+    var liveScore = document.getElementById('tf-score-live');
+    if (end) end.style.display = 'none';
+    if (btns) btns.style.display = '';
+    if (card) { card.style.display = ''; card.className = 'tf-card'; }
+    if (liveScore) liveScore.textContent = '0';
+    var comboEl = document.getElementById('tf-combo');
+    if (comboEl) comboEl.textContent = '';
+    nextRound();
+    startTimer();
+  }
+
+  function open() {
+    if (!overlay) build();
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    restart();
+  }
+
+  function close() {
+    if (!overlay) return;
+    clearInterval(timer);
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKey);
+    overlay = null;
+  }
+
+  window.__hosaOpenTF = open;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS OVERLAY — press ? to show, M/S/T for games
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var overlay = null;
+
+  var SHORTCUTS = [
+    {group:'Navigation', items:[
+      {key:'J / K', desc:'Previous / next card'},
+      {key:'← →', desc:'Navigate cards'},
+      {key:'Space', desc:'Flip card'},
+    ]},
+    {group:'Rating (after flip)',items:[
+      {key:'1', desc:'Again — needs more practice'},
+      {key:'2', desc:'Hard'},
+      {key:'3', desc:'Good'},
+      {key:'4', desc:'Easy'},
+      {key:'5', desc:'Perfect — boost interval'},
+    ]},
+    {group:'Games',items:[
+      {key:'M', desc:'Open Match Game'},
+      {key:'S', desc:'Open Speed Drill'},
+      {key:'T', desc:'Open Typing Challenge'},
+    ]},
+    {group:'General',items:[
+      {key:'?', desc:'Toggle this shortcuts panel'},
+      {key:'Esc', desc:'Close any overlay'},
+      {key:'⌘ K', desc:'Command palette'},
+    ]},
+  ];
+
+  function build() {
+    var el = document.createElement('div');
+    el.id = 'kb-overlay';
+    el.className = 'kb-overlay';
+    var inner = '<div class="kb-panel"><button class="kb-close" id="kb-close">✕</button><h2 class="kb-title">⌨️ Keyboard Shortcuts</h2><div class="kb-grid">';
+    SHORTCUTS.forEach(function(group) {
+      inner += '<div class="kb-group"><div class="kb-group-title">' + group.group + '</div>';
+      group.items.forEach(function(item) {
+        inner += '<div class="kb-row"><kbd class="kb-key">' + item.key + '</kbd><span class="kb-desc">' + item.desc + '</span></div>';
+      });
+      inner += '</div>';
+    });
+    inner += '</div></div>';
+    el.innerHTML = inner;
+    document.body.appendChild(el);
+    el.querySelector('#kb-close').addEventListener('click', close);
+    el.addEventListener('click', function(e){ if(e.target===el) close(); });
+    overlay = el;
+  }
+
+  function open() { if (!overlay) build(); overlay.classList.add('kb-visible'); }
+  function close() { if (overlay) overlay.classList.remove('kb-visible'); }
+  function toggle() { if (!overlay) build(); overlay.classList.toggle('kb-visible'); }
+
+  document.addEventListener('keydown', function(e) {
+    var tag = (document.activeElement || {}).tagName;
+    var editable = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement||{}).isContentEditable;
+    if (editable) return;
+    if (e.key === '?') { e.preventDefault(); toggle(); return; }
+    if (e.key === 'Escape' && overlay && overlay.classList.contains('kb-visible')) { close(); return; }
+    if (overlay && overlay.classList.contains('kb-visible')) return;
+    if (e.key === 'm' || e.key === 'M') { if (typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch(); }
+    if (e.key === 's' || e.key === 'S') { if (typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill(); }
+    if (e.key === 't' || e.key === 'T') { if (typeof window.__hosaOpenTyping === 'function') window.__hosaOpenTyping(); }
+  });
+
+  window.__hosaOpenShortcuts = open;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS MODE — distraction-free full-width study
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var active = false;
+  var btn = null;
+
+  function build() {
+    btn = document.createElement('button');
+    btn.id = 'focus-mode-btn';
+    btn.className = 'focus-mode-btn';
+    btn.title = 'Toggle Focus Mode';
+    btn.textContent = '🎧';
+    btn.addEventListener('click', toggle);
+    var topbar = document.getElementById('topbar');
+    if (topbar) topbar.appendChild(btn);
+    else document.body.appendChild(btn);
+  }
+
+  function toggle() {
+    active = !active;
+    document.body.classList.toggle('focus-mode', active);
+    if (btn) {
+      btn.textContent = active ? '✕' : '🎧';
+      btn.title = active ? 'Exit Focus Mode (Esc)' : 'Enter Focus Mode';
+      btn.classList.toggle('focus-active', active);
+    }
+    if (active && typeof window.hosaToast === 'function') window.hosaToast('🎧', 'Focus Mode', 'Press Esc or click ✕ to exit', 'info');
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && active) toggle();
+  });
+
+  if (document.readyState !== 'loading') build();
+  else document.addEventListener('DOMContentLoaded', build);
+
+  window.__hosaToggleFocus = toggle;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   XP PROGRESS BAR — animated bar in topbar showing next-level %
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  function xpLevel(xp) { return Math.floor(Math.sqrt(xp / 50)) + 1; }
+  function xpForLevel(lvl) { return (lvl - 1) * (lvl - 1) * 50; }
+
+  var bar = null;
+  var fill = null;
+  var lastXP = -1;
+
+  function build() {
+    var xpEl = document.getElementById('xp-level') || document.querySelector('[id*="xp"]');
+    if (!xpEl) return false;
+    var wrap = document.createElement('div');
+    wrap.id = 'xp-bar-wrap';
+    wrap.className = 'xp-bar-wrap';
+    fill = document.createElement('div');
+    fill.id = 'xp-bar-fill';
+    fill.className = 'xp-bar-fill';
+    wrap.appendChild(fill);
+    xpEl.parentNode.insertBefore(wrap, xpEl.nextSibling);
+    bar = wrap;
+    return true;
+  }
+
+  function update() {
+    if (!fill) return;
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    if (xp === lastXP) return;
+    var gained = xp > lastXP && lastXP >= 0;
+    lastXP = xp;
+    var lvl = xpLevel(xp);
+    var base = xpForLevel(lvl);
+    var next = xpForLevel(lvl + 1);
+    var pct = next > base ? Math.min(100, Math.round((xp - base) / (next - base) * 100)) : 100;
+    fill.style.width = pct + '%';
+    if (gained) {
+      fill.classList.add('xp-bar-pulse');
+      setTimeout(function(){ fill.classList.remove('xp-bar-pulse'); }, 600);
+    }
+  }
+
+  function init() {
+    if (!build()) return;
+    update();
+    setInterval(update, 2000);
+  }
+
+  if (document.readyState !== 'loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   DAILY STUDY PATH — prioritized "today's path" on home tab
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var section = document.getElementById('daily-path-section');
+  if (!section) return;
+
+  function render() {
+    var due = [];
+    try {
+      if (typeof window.hosaDueToday === 'function') due = window.hosaDueToday();
+    } catch(e) {}
+
+    due.sort(function(a, b){ return (b.due || 0) - (a.due || 0); });
+    var steps = due.slice(0, 3);
+
+    if (!steps.length) {
+      var keys = [];
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.startsWith('hosa::') && k !== 'hosa::xp' && k !== 'hosa::streak' && k !== 'hosa::sound') keys.push(k);
+        }
+      } catch(e) {}
+      if (!keys.length) { section.style.display = 'none'; return; }
+    }
+
+    section.style.display = '';
+    var html = '<div class="dp-wrap"><div class="dp-header"><span class="dp-icon">🗺️</span><div><div class="dp-title">Today\'s Study Path</div><div class="dp-sub">Your prioritized plan for today</div></div></div><div class="dp-steps">';
+
+    if (steps.length) {
+      steps.forEach(function(s, i) {
+        var label = s.due > 0 ? s.due + ' card' + (s.due !== 1 ? 's' : '') + ' due' : 'Explore';
+        html += '<a href="' + s.slug + '.html" class="dp-step">' +
+          '<div class="dp-step-num">' + (i + 1) + '</div>' +
+          '<div class="dp-step-body"><div class="dp-step-title">' + escHtml(s.title || s.slug) + '</div><div class="dp-step-sub">' + label + '</div></div>' +
+          '<div class="dp-arrow">→</div>' +
+        '</a>';
+      });
+    } else {
+      html += '<a href="index.html" class="dp-step"><div class="dp-step-num">1</div><div class="dp-step-body"><div class="dp-step-title">Start studying</div><div class="dp-step-sub">Pick any event to begin</div></div><div class="dp-arrow">→</div></a>';
+    }
+
+    html += '</div></div>';
+    section.innerHTML = html;
+  }
+
+  function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  if (document.readyState !== 'loading') setTimeout(render, 300);
+  else document.addEventListener('DOMContentLoaded', function(){ setTimeout(render, 300); });
+})();
+    }, 400);
+  }
+  if (document.readyState !== 'loading') openFromUrl();
+  else document.addEventListener('DOMContentLoaded', openFromUrl);
+})();
 </script>
 
 </body>
