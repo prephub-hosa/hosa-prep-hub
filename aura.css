@@ -6722,3 +6722,173 @@ nav.tabs button:active {
   .jbi-row { grid-template-columns: 1fr !important; }
   #continue-list { grid-template-columns: 1fr !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   v35 — Mobile & desktop polish pass
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Topbar: clean up spacing, consistent height ────────────── */
+#topbar {
+  height: 56px !important;
+  padding: 0 24px !important;
+  gap: 14px !important;
+}
+@media (max-width: 900px) {
+  #topbar { padding: 0 16px !important; gap: 10px !important; }
+}
+
+/* ── Mobile topbar: collapse search to icon ─────────────────── */
+@media (max-width: 640px) {
+  /* Hide the full search bar — show icon button instead */
+  .topbar-search-wrap {
+    display: none !important;
+    position: absolute !important;
+    top: 56px !important;
+    left: 0 !important; right: 0 !important;
+    padding: 10px 14px !important;
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--rule) !important;
+    z-index: 190 !important;
+    max-width: none !important;
+  }
+  .topbar-search-wrap.mobile-search-open {
+    display: block !important;
+  }
+  #topbar-search-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  /* Keep Sign In button compact */
+  #btn-signout {
+    padding: 7px 14px !important;
+    font-size: 13px !important;
+  }
+  .user-email { display: none !important; }
+  /* Level pill: show but compact */
+  #topbar-level.visible {
+    padding: 3px 8px !important;
+  }
+  #topbar-level .tb-lvl-label { display: none !important; }
+  #topbar-level #tb-level { font-size: 12px !important; }
+  #topbar-level.visible::before { content: 'Lv '; font-size: 9px; opacity: 0.65; letter-spacing: 0.5px; }
+}
+
+/* ── Bottom nav: bigger, cleaner, Quizlet-style ─────────────── */
+#bottom-nav {
+  height: 64px !important;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 2px) !important;
+  box-shadow: 0 -1px 0 var(--rule), 0 -4px 16px rgba(0,0,0,0.08) !important;
+  border-top: none !important;
+}
+.bn-item {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  padding: 0 4px !important;
+}
+.bn-item svg { width: 22px !important; height: 22px !important; }
+.bn-item.active { color: var(--accent) !important; }
+.bn-item.active svg { stroke: var(--accent) !important; }
+/* Active indicator: pill under icon instead of top bar */
+.bn-item.active::before {
+  top: auto !important;
+  bottom: 6px !important;
+  left: 50% !important; right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 4px !important; height: 4px !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+}
+/* Give bottom-nav tabs proper spacing from content */
+@media (max-width: 768px) {
+  .tab-inner { padding-bottom: 80px !important; }
+}
+
+/* ── Category cards: rounder corners, more generous padding ─── */
+.category-card {
+  border-radius: 14px !important;
+  border-top-width: 3px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.15s !important;
+}
+.category-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+}
+.category-card h3 { letter-spacing: -0.02em; }
+
+/* Event page cards (jbi-card) */
+.jbi-card {
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.15s !important;
+}
+.jbi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.10) !important;
+}
+
+/* ── Home stats bar: cleaner ────────────────────────────────── */
+#home-stats-bar {
+  border-radius: 14px !important;
+}
+
+/* ── Quick action buttons: bigger, rounder ──────────────────── */
+.qa-btn {
+  border-radius: 12px !important;
+}
+
+/* ── Section titles: tighter, more modern ──────────────────── */
+.page-title {
+  font-size: clamp(22px, 4vw, 30px);
+  letter-spacing: -0.03em;
+}
+.section-title {
+  font-size: clamp(15px, 2.5vw, 18px);
+  letter-spacing: -0.01em;
+}
+
+/* ── Tab inner: better desktop spacing ──────────────────────── */
+@media (min-width: 1024px) {
+  .tab-inner { padding: 36px 52px 80px !important; }
+}
+@media (max-width: 1023px) and (min-width: 769px) {
+  .tab-inner { padding: 28px 32px 80px !important; }
+}
+@media (max-width: 768px) {
+  .tab-inner { padding: 18px 14px 88px !important; }
+}
+
+/* ── Leaderboard tab: ensure scrollable on mobile ───────────── */
+#tab-leaderboard .tab-inner { overflow-x: hidden; }
+
+/* ── Auth card: rounder on mobile ───────────────────────────── */
+@media (max-width: 640px) {
+  .auth-card { border-radius: 16px !important; padding: 32px 24px !important; }
+}
+
+/* ── "Today's Study Path" numbered circles: style them ──────── */
+.sp-step-num {
+  width: 36px !important; height: 36px !important;
+  font-size: 16px !important;
+  border-radius: 50% !important;
+  background: var(--accent) !important;
+  color: #fff !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-weight: 700 !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Topbar XP progress bar: always below topbar, never gaps ── */
+#topbar-xp-bar-wrap {
+  border-radius: 0 !important;
+  height: 3px !important;
+}

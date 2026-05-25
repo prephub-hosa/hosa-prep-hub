@@ -657,6 +657,84 @@
   }
 
   /* ─── Init ────────────────────────────────────────────────── */
+  /* ─── Swipe gestures on flashcards ─────────────────────────────
+     Swipe right → Previous card
+     Swipe left  → Next card / rate as "Know it" (swipe fast)
+     Swipe up    → Flip card
+     On the back face a fast left swipe = "Know it", right = "Don't know"
+  ─────────────────────────────────────────────────────────────── */
+  function initSwipeGestures() {
+    var card = document.getElementById('flashcard');
+    if (!card) return;
+    var sx = 0, sy = 0, st = 0;
+    var SWIPE_MIN = 40;   // px threshold
+    var SWIPE_FAST = 250; // ms for a "fast" (rating) swipe
+
+    card.addEventListener('touchstart', function(e) {
+      var t = e.touches[0];
+      sx = t.clientX; sy = t.clientY; st = Date.now();
+    }, { passive: true });
+
+    card.addEventListener('touchend', function(e) {
+      var t = e.changedTouches[0];
+      var dx = t.clientX - sx;
+      var dy = t.clientY - sy;
+      var dt = Date.now() - st;
+      var absDx = Math.abs(dx), absDy = Math.abs(dy);
+
+      // Ignore tiny taps (let the existing click-to-flip handler run)
+      if (absDx < SWIPE_MIN && absDy < SWIPE_MIN) return;
+
+      // Horizontal swipe — dominant axis must be horizontal
+      if (absDx > absDy) {
+        e.preventDefault();
+        var isFlipped = card.classList.contains('flipped');
+        if (dx < 0) {
+          // Left swipe
+          if (isFlipped && dt < SWIPE_FAST) {
+            // Fast left on back = "Know it"
+            var knowBtn = document.getElementById('flash-good');
+            if (knowBtn) knowBtn.click();
+          } else {
+            var nextBtn = document.getElementById('flash-next');
+            if (nextBtn) nextBtn.click();
+          }
+        } else {
+          // Right swipe
+          if (isFlipped && dt < SWIPE_FAST) {
+            // Fast right on back = "Don't know"
+            var missBtn = document.getElementById('flash-again');
+            if (missBtn) missBtn.click();
+          } else {
+            var prevBtn = document.getElementById('flash-prev');
+            if (prevBtn) prevBtn.click();
+          }
+        }
+      } else if (absDy > SWIPE_MIN && absDy > absDx * 1.5) {
+        // Vertical swipe up = flip
+        if (dy < 0) {
+          e.preventDefault();
+          card.click();
+        }
+      }
+    }, { passive: false });
+
+    // Visual hint: show swipe arrows briefly on first load
+    var hint = document.createElement('div');
+    hint.id = 'swipe-hint';
+    hint.innerHTML = '<span>← →</span> swipe to navigate';
+    hint.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--ink-faint);pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;z-index:2;';
+    card.style.position = 'relative';
+    card.appendChild(hint);
+    // Show hint only on touch devices
+    if ('ontouchstart' in window) {
+      setTimeout(function() {
+        hint.style.opacity = '1';
+        setTimeout(function() { hint.style.opacity = '0'; }, 2200);
+      }, 800);
+    }
+  }
+
   function init() {
     setTimeout(patchAwardXP, 80);
     setTimeout(watchSC, 160);
@@ -669,6 +747,7 @@
     if (isEvent) {
       setTimeout(initSessionProgressBar, 400);
       setTimeout(initRatingPulse, 400);
+      setTimeout(initSwipeGestures, 500);
     }
   }
 
