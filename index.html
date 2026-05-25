@@ -4306,7 +4306,7 @@ function showGuestMode() {
     signoutBtn.onclick = () => { authGateEl.style.display = 'flex'; };
   }
   const pill = document.getElementById('topbar-user-pill');
-  if (pill) pill.classList.remove('visible');
+  if (pill) pill.classList.add('visible'); // keep visible so Sign in button is reachable
 }
 
 auth.onAuthStateChanged(user => {
