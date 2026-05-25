@@ -239,6 +239,9 @@
 .sc-xp-banner{text-align:center;padding:8px 0 4px;}
 .sc-xp-count{font-family:'Inter',sans-serif;font-size:56px;font-weight:800;letter-spacing:-0.05em;color:var(--accent,#ef4444);line-height:1;display:block;}
 .sc-xp-sublabel{font-family:'Geist Mono',monospace,sans-serif;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--ink-faint,#6b6b6b);margin-top:5px;display:block;}
+.sc-xp-breakdown{max-width:340px;margin:14px auto 4px;display:flex;flex-direction:column;gap:4px;padding:12px 16px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.18);border-radius:10px;}
+.sc-xp-line{display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-soft,#888);font-weight:500;}
+.sc-xp-line .sc-xp-amt{color:var(--accent,#ef4444);font-weight:700;font-variant-numeric:tabular-nums;}
 .sc-streak-wrap{text-align:center;margin:14px 0 0;}
 .sc-streak-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(239,68,68,0.09);border:1px solid rgba(239,68,68,0.28);border-radius:100px;padding:9px 20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--ink,#fff);}
 .sc-fire{font-size:18px;}
@@ -419,22 +422,85 @@
   }
 
   function populateSC(el) {
-    const xp     = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
-    const lvl    = xpLevel(xp);
-    const forLvl = xpForLevel(lvl);
-    const forNxt = xpForLevel(lvl + 1);
-    const pct    = Math.min(100, ((xp - forLvl) / Math.max(1, forNxt - forLvl)) * 100);
+    let xp       = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+    const prevLvl0 = xpLevel(xp);
+
     // Use whichever is larger: tracked sessXP (from patched awardXP) OR delta
     // from baseline (fallback when event-page awardXP is locally-bound).
     const trackedXP = window._hosaSessXP || 0;
     const baseXP    = window._hosaSessBaseXP != null ? window._hosaSessBaseXP : xp;
     const deltaXP   = Math.max(0, xp - baseXP);
-    const sessXP    = Math.max(trackedXP, deltaXP);
+    const alreadyAwarded = Math.max(trackedXP, deltaXP);
+
+    // Session stats
+    const got       = window._sessGot    || 0;
+    const missed    = window._sessMissed || 0;
+    const hard      = window._sessHard   || 0;
+    const totalRated = got + missed + hard;
+
+    // ─── Session completion bonus XP (this is the fix) ────────
+    const bonusBreakdown = [];
+    let bonusXP = 0;
+    if (totalRated > 0) {
+      bonusXP += 15; bonusBreakdown.push(['Session complete', 15]);
+      const cardXP = got * 3 + hard * 2 + missed * 1;
+      bonusXP += cardXP; bonusBreakdown.push([totalRated + ' cards rated', cardXP]);
+      const accuracy = got / totalRated;
+      if (accuracy >= 0.9 && totalRated >= 5) { bonusXP += 30; bonusBreakdown.push(['90%+ accuracy', 30]); }
+      else if (accuracy >= 0.75 && totalRated >= 5) { bonusXP += 15; bonusBreakdown.push(['75%+ accuracy', 15]); }
+      if (totalRated >= 30) { bonusXP += 20; bonusBreakdown.push(['Marathon (30+ cards)', 20]); }
+      else if (totalRated >= 15) { bonusXP += 10; bonusBreakdown.push(['Long session', 10]); }
+
+      // First session of day bonus
+      try {
+        const today = new Date().toISOString().slice(0, 10);
+        const last  = localStorage.getItem('hosa::last-session-bonus-day');
+        if (last !== today) {
+          bonusXP += 25;
+          bonusBreakdown.push(['First session today', 25]);
+          localStorage.setItem('hosa::last-session-bonus-day', today);
+        }
+      } catch(e) {}
+    }
+
+    // Write bonus XP to storage
+    if (bonusXP > 0) {
+      xp = xp + bonusXP;
+      try { localStorage.setItem('hosa::xp', String(xp)); } catch(e) {}
+    }
+
+    const sessXP = alreadyAwarded + bonusXP;
+
+    // Trigger level-up overlay if the bonus pushed user past a threshold
+    const newLvlAfter = xpLevel(xp);
+    if (newLvlAfter > prevLvl0 && typeof showLevelUp === 'function') {
+      setTimeout(() => showLevelUp(newLvlAfter), 600);
+    }
+
+    const lvl    = xpLevel(xp);
+    const forLvl = xpForLevel(lvl);
+    const forNxt = xpForLevel(lvl + 1);
+    const pct    = Math.min(100, ((xp - forLvl) / Math.max(1, forNxt - forLvl)) * 100);
     const streak = (window.state && window.state.progress && window.state.progress.streak) || 0;
 
     // Animate XP
     const countEl = el.querySelector('#eg-xp-count');
     if (countEl) animCount(countEl, 0, sessXP, 900, v => '+' + v + ' XP');
+
+    // Inject breakdown if it doesn't exist
+    if (bonusBreakdown.length > 0) {
+      let bd = el.querySelector('#eg-xp-breakdown');
+      if (!bd) {
+        bd = document.createElement('div');
+        bd.id = 'eg-xp-breakdown';
+        bd.className = 'sc-xp-breakdown';
+        const banner = el.querySelector('.sc-xp-banner');
+        if (banner) banner.parentNode.insertBefore(bd, banner.nextSibling);
+      }
+      bd.innerHTML = bonusBreakdown.map(function(b){
+        return '<div class="sc-xp-line"><span>' + b[0] + '</span><span class="sc-xp-amt">+' + b[1] + '</span></div>';
+      }).join('');
+    }
 
     // Streak pill
     const pill = el.querySelector('#eg-streak-pill');
