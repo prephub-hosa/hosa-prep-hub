@@ -4313,6 +4313,12 @@ auth.onAuthStateChanged(user => {
   if (authLoadingEl) authLoadingEl.style.display = 'none';
   if (user) {
     if (userEmailEl) userEmailEl.textContent = user.email;
+    // Store email prefix as display name for sidebar/hero profile cards
+    var _emailPrefix = (user.email || '').split('@')[0] || '';
+    if (_emailPrefix) {
+      try { localStorage.setItem('hosa-username', _emailPrefix); } catch(_e) {}
+      try { localStorage.setItem('hosa-lb-name', _emailPrefix); } catch(_e) {}
+    }
     const pill = document.getElementById('topbar-user-pill');
     if (pill) pill.classList.add('visible');
     // Reset signout button (showGuestMode may have changed it to "Sign in")
@@ -8263,7 +8269,14 @@ window.hosaXPFlyup = function(el, amount) {
       if (state.current < QUESTIONS_TOTAL - 1) { state.current++; renderExam(); }
     });
     var submit = document.getElementById('mfe-submit');
-    if (submit) submit.addEventListener('click', finishExam);
+    if (submit) submit.addEventListener('click', function() {
+      var unanswered = state.answers.filter(function(a){ return a === null; }).length;
+      if (unanswered > 0) {
+        var confirmed = window.confirm(unanswered + ' question' + (unanswered > 1 ? 's' : '') + ' left blank. Submit anyway?');
+        if (!confirmed) return;
+      }
+      finishExam();
+    });
   }
 
   function finishExam() {
@@ -8736,6 +8749,10 @@ window.hosaXPFlyup = function(el, amount) {
 
   function open(terms, title) {
     var pool = terms && terms.length ? terms : (window.HOSA_TERMS || []);
+    if (!pool.length) {
+      if (window.hosaToast) window.hosaToast('⚡', 'No terms available', 'Browse an event page first to load study terms.', 'info');
+      return;
+    }
     // Shuffle and take up to 15
     var shuffled = pool.slice().sort(function() { return Math.random() - 0.5; });
     state.terms = shuffled.slice(0, Math.min(15, shuffled.length));
@@ -9746,7 +9763,8 @@ window.hosaXPFlyup = function(el, amount) {
     var nextBtn = document.getElementById('tc-next');
     var typed = input ? input.value.trim() : '';
     var score = typed ? wordScore(typed, currentTerm.def) : 0;
-    var xpGain = Math.floor(score / 10);
+    // XP: 0.5 per accuracy point (100% = 50 XP, 70% = 35 XP) to match other game modes
+    var xpGain = Math.floor(score * 0.5);
     sessionXP += xpGain;
 
     var grade = score >= 70 ? 'good' : score >= 40 ? 'ok' : 'bad';
@@ -9765,8 +9783,8 @@ window.hosaXPFlyup = function(el, amount) {
     var sessEl = document.getElementById('tc-sess-xp');
     if (sessEl) sessEl.textContent = sessionXP;
 
-    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
-    localStorage.setItem('hosa::xp', xp + xpGain);
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0;
+    localStorage.setItem('hosa::xp', String(xp + xpGain));
     if (xpGain > 0 && typeof window.hosaToast === 'function') window.hosaToast('⌨️', 'Typing Challenge', score + '% accuracy · +' + xpGain + ' XP', score >= 70 ? 'good' : 'info');
     if (score >= 80 && typeof window.hosaConfetti === 'function') window.hosaConfetti({count:60});
 
@@ -9951,9 +9969,9 @@ window.hosaXPFlyup = function(el, amount) {
     if (card) card.style.display = 'none';
     if (btns) btns.style.display = 'none';
 
-    var xpGain = Math.floor(score / 5);
-    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
-    localStorage.setItem('hosa::xp', xp + xpGain);
+    var xpGain = Math.floor(score * 0.4); // ~40 XP at score 100, scales with combo
+    var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0;
+    localStorage.setItem('hosa::xp', String(xp + xpGain));
 
     try {
       var best = JSON.parse(localStorage.getItem('hosa::tf-best') || 'null');
