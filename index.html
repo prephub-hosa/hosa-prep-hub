@@ -9724,20 +9724,22 @@ window.hosaXPFlyup = function(el, amount) {
 
   function open() { if (!overlay) build(); overlay.classList.add('kb-visible'); }
   function close() { if (overlay) overlay.classList.remove('kb-visible'); }
-  function toggle() { if (!overlay) build(); overlay.classList.toggle('kb-visible'); }
 
+  // M/S/T game shortcuts (? is handled by original shortcuts-overlay handler)
   document.addEventListener('keydown', function(e) {
     var tag = (document.activeElement || {}).tagName;
     var editable = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement||{}).isContentEditable;
     if (editable) return;
-    if (e.key === '?') { e.preventDefault(); toggle(); return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    // Close kb-overlay on Esc
     if (e.key === 'Escape' && overlay && overlay.classList.contains('kb-visible')) { close(); return; }
     if (overlay && overlay.classList.contains('kb-visible')) return;
-    if (e.key === 'm' || e.key === 'M') { if (typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch(); }
-    if (e.key === 's' || e.key === 'S') { if (typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill(); }
-    if (e.key === 't' || e.key === 'T') { if (typeof window.__hosaOpenTyping === 'function') window.__hosaOpenTyping(); }
+    if (e.key === 'm' || e.key === 'M') { if (typeof window.__hosaOpenMatch === 'function') { e.preventDefault(); window.__hosaOpenMatch(); } }
+    if (e.key === 's' || e.key === 'S') { if (typeof window.__hosaOpenSpeedDrill === 'function') { e.preventDefault(); window.__hosaOpenSpeedDrill(); } }
+    if (e.key === 't' || e.key === 'T') { if (typeof window.__hosaOpenTyping === 'function') { e.preventDefault(); window.__hosaOpenTyping(); } }
   });
 
+  // __hosaOpenShortcuts opens the inline kb-overlay (enhanced version)
   window.__hosaOpenShortcuts = open;
 })();
 
@@ -9793,8 +9795,13 @@ window.hosaXPFlyup = function(el, amount) {
   var lastXP = -1;
 
   function build() {
-    var xpEl = document.getElementById('xp-level') || document.querySelector('[id*="xp"]');
-    if (!xpEl) return false;
+    if (document.getElementById('xp-bar-wrap')) {
+      bar = document.getElementById('xp-bar-wrap');
+      fill = document.getElementById('xp-bar-fill');
+      return true;
+    }
+    var topbar = document.getElementById('topbar');
+    if (!topbar) return false;
     var wrap = document.createElement('div');
     wrap.id = 'xp-bar-wrap';
     wrap.className = 'xp-bar-wrap';
@@ -9802,7 +9809,7 @@ window.hosaXPFlyup = function(el, amount) {
     fill.id = 'xp-bar-fill';
     fill.className = 'xp-bar-fill';
     wrap.appendChild(fill);
-    xpEl.parentNode.insertBefore(wrap, xpEl.nextSibling);
+    topbar.appendChild(wrap);
     bar = wrap;
     return true;
   }
@@ -9885,11 +9892,6 @@ window.hosaXPFlyup = function(el, amount) {
 
   if (document.readyState !== 'loading') setTimeout(render, 300);
   else document.addEventListener('DOMContentLoaded', function(){ setTimeout(render, 300); });
-})();
-    }, 400);
-  }
-  if (document.readyState !== 'loading') openFromUrl();
-  else document.addEventListener('DOMContentLoaded', openFromUrl);
 })();
 </script>
 
