@@ -5948,6 +5948,9 @@ button:active, a:active, [role="button"]:active {
 [data-theme="light"] .v29-badge-progress { background: rgba(180,83,9,0.08);  border-color: rgba(180,83,9,0.25);  color: #b45309; }
 [data-theme="light"] .v29-badge-due      { background: rgba(185,28,28,0.08); border-color: rgba(185,28,28,0.25); color: #b91c1c; }
 
+/* ── v32: Remove decorative corner circles on event cards ─────── */
+.category-card::after { display: none !important; }
+
 /* ══════════════════════════════════════════════════════════════════
    7. SIDEBAR REDESIGN — profile card + polished nav + hover indicator
    ══════════════════════════════════════════════════════════════════ */

@@ -322,6 +322,8 @@
 
   /* ─── Level-up celebration ────────────────────────────────── */
   function showLevelUp(level) {
+    // Sync stored level so index.html doesn't re-fire the celebration
+    try { localStorage.setItem('hosa::chk-lvl', String(level)); } catch(e) {}
     // Particles
     const burst = document.createElement('div');
     burst.className = 'lu-burst';

@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=31">
+<link rel="stylesheet" href="aura.css?v=32">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -8615,14 +8615,28 @@ window.hosaXPFlyup = function(el, amount) {
   document.getElementById('lvlup-close').addEventListener('click', function() { overlay.style.display = 'none'; });
   overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.style.display = 'none'; });
 
-  // Detect level changes via XP polling
+  // Detect level changes via XP polling.
+  // Persist last-checked level in localStorage so navigating back from an event
+  // page (where engage.js already showed the level-up) does NOT re-fire here.
   var _lastLevel = -1;
+  try {
+    var _chkStored = parseInt(localStorage.getItem('hosa::chk-lvl') || '-1', 10);
+    if (_chkStored > 0) _lastLevel = _chkStored;
+  } catch(e) {}
   function check() {
     try {
       var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
       var lvl = xpLevel(xp);
-      if (_lastLevel === -1) { _lastLevel = lvl; return; }
-      if (lvl > _lastLevel) { _lastLevel = lvl; setTimeout(function() { show(lvl); }, 600); }
+      if (_lastLevel === -1) {
+        _lastLevel = lvl;
+        try { localStorage.setItem('hosa::chk-lvl', String(lvl)); } catch(e2) {}
+        return;
+      }
+      if (lvl > _lastLevel) {
+        _lastLevel = lvl;
+        try { localStorage.setItem('hosa::chk-lvl', String(lvl)); } catch(e2) {}
+        setTimeout(function() { show(lvl); }, 600);
+      }
     } catch(e) {}
   }
   setInterval(check, 1500);
