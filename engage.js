@@ -769,6 +769,227 @@
     setTimeout(tryLog, 500);
   })();
 
+  /* ─── Saved Cards — bookmark cards while studying, review anytime ─ */
+  (function() {
+    var _slug = window.location.pathname.split('/').pop().replace(/\.html$/, '');
+    var _storageKey = 'hosa::saved::' + _slug;
+
+    function getSaved() {
+      try { return JSON.parse(localStorage.getItem(_storageKey) || '[]'); } catch(e) { return []; }
+    }
+    function setSaved(arr) {
+      try { localStorage.setItem(_storageKey, JSON.stringify(arr)); } catch(e) {}
+    }
+    function isSaved(term) {
+      var list = getSaved();
+      for (var i = 0; i < list.length; i++) { if (list[i].term === term) return true; }
+      return false;
+    }
+    function toggle(term, meaning) {
+      var list = getSaved();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].term === term) { list.splice(i, 1); setSaved(list); return false; }
+      }
+      list.push({ term: term, meaning: meaning });
+      setSaved(list);
+      return true;
+    }
+    function getCurrentTerm() {
+      var el = document.getElementById('flash-front-term');
+      return el ? (el.textContent || '').trim() : '';
+    }
+    function getCurrentDef() {
+      var el = document.getElementById('flash-back-def');
+      return el ? (el.textContent || '').trim() : '';
+    }
+    function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    /* Save star button — injected into .card-counter row */
+    function injectStar() {
+      if (document.getElementById('hosa-save-star')) return;
+      var counter = document.querySelector('.card-counter');
+      if (!counter) return;
+      var btn = document.createElement('button');
+      btn.id = 'hosa-save-star';
+      btn.type = 'button';
+      btn.title = 'Save card for later (S)';
+      btn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:20px;padding:2px 6px;line-height:1;color:var(--ink-faint);transition:color 0.15s,transform 0.2s;margin-left:auto;flex-shrink:0;';
+      btn.textContent = '☆';
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var term = getCurrentTerm(), def = getCurrentDef();
+        if (!term) return;
+        var added = toggle(term, def);
+        refreshStar(); refreshPill(); refreshSCBtn();
+        btn.style.transform = 'scale(1.5)';
+        setTimeout(function() { btn.style.transform = ''; }, 200);
+        if (window.hosaToast) {
+          if (added) window.hosaToast('⭐', 'Card saved', '"' + term + '" added to Saved Cards.', 'good');
+          else       window.hosaToast('☆', 'Removed',    'Removed from Saved Cards.', 'info');
+        }
+      });
+      counter.style.display = 'flex';
+      counter.style.alignItems = 'center';
+      counter.appendChild(btn);
+    }
+    function refreshStar() {
+      var btn = document.getElementById('hosa-save-star');
+      if (!btn) return;
+      var term = getCurrentTerm();
+      var saved = term && isSaved(term);
+      btn.textContent = saved ? '★' : '☆';
+      btn.style.color = saved ? '#fbbf24' : '';
+    }
+    // 'S' keyboard shortcut to save current card
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 's' || e.key === 'S') {
+        var btn = document.getElementById('hosa-save-star');
+        if (btn && document.getElementById('flashcard') && document.getElementById('flashcard').style.display !== 'none') btn.click();
+      }
+    });
+
+    /* Persistent pill — shows below flashcard when saved cards exist */
+    function injectPill() {
+      if (document.getElementById('hosa-saved-pill')) return;
+      var stage = document.querySelector('.flashcard-stage');
+      if (!stage) return;
+      var pill = document.createElement('button');
+      pill.id = 'hosa-saved-pill';
+      pill.type = 'button';
+      pill.style.cssText = 'display:none;margin:12px auto 0;padding:8px 20px;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;border-radius:100px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;';
+      pill.addEventListener('click', openOverlay);
+      pill.addEventListener('mouseenter', function(){ pill.style.background='rgba(251,191,36,0.22)'; });
+      pill.addEventListener('mouseleave', function(){ pill.style.background='rgba(251,191,36,0.12)'; });
+      var controls = stage.querySelector('.card-controls');
+      if (controls) stage.insertBefore(pill, controls);
+      else stage.appendChild(pill);
+    }
+    function refreshPill() {
+      var pill = document.getElementById('hosa-saved-pill');
+      if (!pill) return;
+      var n = getSaved().length;
+      pill.style.display = n > 0 ? '' : 'none';
+      if (n > 0) pill.textContent = '⭐ Study ' + n + ' saved card' + (n === 1 ? '' : 's');
+    }
+
+    /* Session-complete button */
+    function injectSCBtn() {
+      if (document.getElementById('hosa-sc-saved-btn')) return;
+      var sc = document.getElementById('session-complete');
+      if (!sc) return;
+      var btn = document.createElement('button');
+      btn.id = 'hosa-sc-saved-btn';
+      btn.type = 'button';
+      btn.style.cssText = 'display:none;width:100%;padding:11px;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;transition:background 0.15s;';
+      btn.addEventListener('click', openOverlay);
+      btn.addEventListener('mouseenter', function(){ btn.style.background='rgba(251,191,36,0.22)'; });
+      btn.addEventListener('mouseleave', function(){ btn.style.background='rgba(251,191,36,0.12)'; });
+      sc.appendChild(btn);
+    }
+    function refreshSCBtn() {
+      var btn = document.getElementById('hosa-sc-saved-btn');
+      if (!btn) return;
+      var n = getSaved().length;
+      btn.style.display = n > 0 ? '' : 'none';
+      if (n > 0) btn.textContent = '⭐ Study ' + n + ' saved card' + (n === 1 ? '' : 's');
+    }
+
+    /* Saved cards overlay */
+    function openOverlay() {
+      var saved = getSaved();
+      if (!saved.length) {
+        if (window.hosaToast) window.hosaToast('⭐', 'No saved cards yet', 'Tap ☆ on any card (or press S) to save it here.', 'info');
+        return;
+      }
+      var idx = 0, flipped = false;
+      var ov = document.getElementById('hosa-saved-ov');
+      if (!ov) { ov = document.createElement('div'); ov.id = 'hosa-saved-ov'; document.body.appendChild(ov); }
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;display:flex;align-items:center;justify-content:center;';
+
+      function render() {
+        var c = saved[idx];
+        var pct = Math.round((idx + 1) / saved.length * 100);
+        ov.innerHTML =
+          '<div style="background:var(--bg-card,#1e1e1e);border-radius:20px;max-width:560px;width:92%;padding:26px 26px 22px;position:relative;box-shadow:0 24px 64px -16px rgba(0,0,0,0.7);">' +
+            '<button id="_sv-x" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft,#888);line-height:1;padding:4px 8px;">✕</button>' +
+            '<div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint,#555);margin-bottom:10px;">⭐ Saved Cards &nbsp;·&nbsp; ' + (idx+1) + ' of ' + saved.length + '</div>' +
+            '<div style="height:3px;background:var(--rule,rgba(255,255,255,0.08));border-radius:2px;margin-bottom:18px;"><div style="height:3px;background:#fbbf24;border-radius:2px;width:' + pct + '%;transition:width 0.3s;"></div></div>' +
+            '<div id="_sv-card" style="background:var(--bg-app,#141414);border-radius:14px;padding:28px 22px;min-height:120px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin-bottom:14px;">' +
+              (flipped
+                ? '<div style="font-size:15px;line-height:1.65;color:var(--ink-soft,#aaa);">' + esc(c.meaning) + '</div><div style="font-size:11px;color:var(--ink-faint,#555);margin-top:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Definition</div>'
+                : '<div style="font-size:20px;font-weight:700;color:var(--ink,#f0f0f0);line-height:1.3;">' + esc(c.term) + '</div><div style="font-size:12px;color:var(--ink-faint,#555);margin-top:10px;">tap · space · ↓ to flip</div>'
+              ) +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;">' +
+              '<button id="_sv-rem" style="padding:9px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">Remove ✕</button>' +
+              '<div style="text-align:center;font-size:12px;color:var(--ink-faint,#555);">← → to navigate</div>' +
+              '<button id="_sv-next" style="padding:9px 20px;background:var(--accent,#c8102e);border:1px solid transparent;color:#fff;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;">' + (idx < saved.length - 1 ? 'Next →' : 'Done ✓') + '</button>' +
+            '</div>' +
+          '</div>';
+
+        document.getElementById('_sv-card').addEventListener('click', function() { flipped = !flipped; render(); });
+        document.getElementById('_sv-x').addEventListener('click', close);
+        document.getElementById('_sv-rem').addEventListener('click', function() {
+          saved.splice(idx, 1); setSaved(saved); refreshPill(); refreshSCBtn(); refreshStar();
+          if (!saved.length) { close(); return; }
+          if (idx >= saved.length) idx = saved.length - 1;
+          flipped = false; render();
+        });
+        document.getElementById('_sv-next').addEventListener('click', function() {
+          if (idx < saved.length - 1) { idx++; flipped = false; render(); } else close();
+        });
+      }
+
+      function close() {
+        ov.style.display = 'none';
+        document.removeEventListener('keydown', onKey);
+        refreshPill(); refreshSCBtn(); refreshStar();
+      }
+      function onKey(e) {
+        if (ov.style.display === 'none') return;
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); flipped = !flipped; render(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); if (idx < saved.length-1) { idx++; flipped=false; render(); } else close(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); if (idx > 0) { idx--; flipped=false; render(); } }
+      }
+      document.addEventListener('keydown', onKey);
+      ov.addEventListener('click', function(e) { if (e.target === ov) close(); });
+      render();
+    }
+
+    window._hosaOpenSavedCards = openOverlay;
+
+    /* Watch for card changes to update the star */
+    function watchTerm() {
+      var el = document.getElementById('flash-front-term');
+      if (!el) return;
+      new MutationObserver(refreshStar).observe(el, { childList: true, characterData: true, subtree: true });
+    }
+
+    /* Init */
+    function init() {
+      if (!document.getElementById('flashcard')) return;
+      injectStar();
+      injectPill();
+      watchTerm();
+      refreshStar(); refreshPill();
+      // SC button: session-complete is always in DOM, inject once
+      setTimeout(function() { injectSCBtn(); refreshSCBtn(); }, 800);
+      // Re-check in case SC renders late
+      var _t = setInterval(function() {
+        injectSCBtn(); refreshSCBtn();
+        if (document.getElementById('hosa-sc-saved-btn')) clearInterval(_t);
+      }, 1000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 700); });
+    } else {
+      setTimeout(init, 700);
+    }
+  })();
+
   /* Games launcher — floating button visible on every event page */
   (function() {
     if (document.getElementById('games-launcher')) return;
