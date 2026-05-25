@@ -4315,6 +4315,9 @@ auth.onAuthStateChanged(user => {
     if (userEmailEl) userEmailEl.textContent = user.email;
     const pill = document.getElementById('topbar-user-pill');
     if (pill) pill.classList.add('visible');
+    // Reset signout button (showGuestMode may have changed it to "Sign in")
+    const signoutBtn = document.getElementById('btn-signout');
+    if (signoutBtn) { signoutBtn.textContent = 'Sign Out'; signoutBtn.onclick = null; }
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
     try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
     if (authGateEl) authGateEl.style.display = 'none';
@@ -4373,8 +4376,11 @@ if (btnCloseAuth) btnCloseAuth.addEventListener('click', function(){
 });
 var btnSignout = document.getElementById('btn-signout');
 if (btnSignout) btnSignout.addEventListener('click', function(){
-  if (firebase.auth().currentUser) auth.signOut();
-  else authGateEl.style.display = 'flex';
+  if (firebase.auth().currentUser) {
+    auth.signOut().then(function(){ if (authGateEl) authGateEl.style.display = 'flex'; });
+  } else {
+    if (authGateEl) authGateEl.style.display = 'flex';
+  }
 });
 
 var tabSignin = document.getElementById('tab-signin');
