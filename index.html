@@ -4319,8 +4319,13 @@ auth.onAuthStateChanged(user => {
     const signoutBtn = document.getElementById('btn-signout');
     if (signoutBtn) { signoutBtn.textContent = 'Sign Out'; signoutBtn.onclick = null; }
     try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
-    // Sync XP to Firebase for the global leaderboard
+    // Per-account XP: pull Firebase XP on sign-in, then keep two-way synced.
+    // If switching accounts on same device, this prevents the previous account's
+    // localStorage XP from contaminating the new account's record.
     try {
+      var lastUid = null;
+      try { lastUid = localStorage.getItem('hosa::last-uid'); } catch(_e) {}
+      var accountSwitched = lastUid && lastUid !== user.uid;
       function _syncXP() {
         try {
           var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
@@ -4328,7 +4333,22 @@ auth.onAuthStateChanged(user => {
           firebase.database().ref('users/' + user.uid).update({ xp: xp, name: nm });
         } catch(_e) {}
       }
-      _syncXP();
+      firebase.database().ref('users/' + user.uid + '/xp').once('value').then(function(snap) {
+        var fbXP = parseInt(snap.val() || 0, 10);
+        var localXP = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
+        // If account was switched on this device, the localStorage XP belongs to
+        // the OLD account — use Firebase XP for the new account, don't merge.
+        // Otherwise (same account or first sign-in), use the higher of the two
+        // so users don't lose progress when their browser data was cleared.
+        var useXP = accountSwitched ? fbXP : Math.max(fbXP, localXP);
+        try { localStorage.setItem('hosa::xp', String(useXP)); } catch(_e) {}
+        try { localStorage.setItem('hosa::last-uid', user.uid); } catch(_e) {}
+        // Reset the level-up checkpoint so the celebration doesn't fire from
+        // the XP swap on account switch
+        try { localStorage.setItem('hosa::chk-lvl', String(Math.floor(Math.sqrt(useXP / 50)) + 1)); } catch(_e) {}
+        _syncXP();
+        if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard();
+      }).catch(function(){ _syncXP(); });
       if (!window._hosaXPSyncInterval) {
         window._hosaXPSyncInterval = setInterval(_syncXP, 8000);
       }
