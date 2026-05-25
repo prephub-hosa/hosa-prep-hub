@@ -5934,21 +5934,10 @@ button:active, a:active, [role="button"]:active {
 [data-theme="light"] .category-card[data-group="allied"]   { background: linear-gradient(160deg, rgba(61,122,82,0.05), transparent 60%), var(--bg-card) !important; }
 [data-theme="light"] .category-card[data-group="systems"]  { background: linear-gradient(160deg, rgba(74,114,160,0.05), transparent 60%), var(--bg-card) !important; }
 
-/* Card status pill badges */
-.v29-card-badge {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  font-family: 'Inter', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 100px;
-  pointer-events: none;
-  z-index: 2;
-}
+/* Card status pill badges — hidden to avoid overlap with the difficulty
+   badge (BEGINNER/INTERMEDIATE/ADVANCED) which conveys overlapping info.
+   Card progress is already shown by the bottom progress bar + "X/Y mastered". */
+.v29-card-badge { display: none !important; }
 .v29-badge-new       { background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.35); color: #60a5fa; }
 .v29-badge-mastered  { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.35); color: #4ade80; }
 .v29-badge-progress  { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.35); color: #fbbf24; }
