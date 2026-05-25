@@ -687,4 +687,29 @@
     }
     setTimeout(tryLog, 500);
   })();
+
+  /* Games launcher — floating button visible on every event page */
+  (function() {
+    if (document.getElementById('games-launcher')) return;
+    var wrap = document.createElement('div');
+    wrap.id = 'games-launcher';
+    wrap.innerHTML =
+      '<button id="games-launcher-btn" type="button" aria-label="Open games menu">🎮 Games</button>' +
+      '<div id="games-launcher-menu" hidden>' +
+        '<a href="index.html?game=match">🧩 Match Game</a>' +
+        '<a href="index.html?game=speed">⏱ Speed Drill</a>' +
+        '<a href="index.html?game=quickreview">⚡ Quick Review</a>' +
+        '<a href="index.html">🏠 Back to Home</a>' +
+      '</div>';
+    document.body.appendChild(wrap);
+    var btn = wrap.querySelector('#games-launcher-btn');
+    var menu = wrap.querySelector('#games-launcher-menu');
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+    });
+    document.addEventListener('click', function(e) {
+      if (!wrap.contains(e.target)) menu.hidden = true;
+    });
+  })();
 })();

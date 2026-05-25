@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=25">
+<link rel="stylesheet" href="aura.css?v=26">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -9261,6 +9261,23 @@ window.hosaXPFlyup = function(el, amount) {
   document.addEventListener('DOMContentLoaded', function() { setTimeout(wire, 500); });
   if (document.readyState !== 'loading') setTimeout(wire, 500);
   setInterval(wire, 2000);
+})();
+
+/* ── ?game= URL param: auto-open game from external link ────── */
+(function() {
+  function openFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var game = params.get('game');
+    if (!game) return;
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(function() {
+      if (game === 'match' && typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch();
+      else if (game === 'speed' && typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill();
+      else if (game === 'quickreview' && typeof window.__hosaOpenQR === 'function') window.__hosaOpenQR();
+    }, 400);
+  }
+  if (document.readyState !== 'loading') openFromUrl();
+  else document.addEventListener('DOMContentLoaded', openFromUrl);
 })();
 </script>
 
