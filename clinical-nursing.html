@@ -3235,8 +3235,8 @@ document.addEventListener('keydown', (e) => {
   }
   if (state.activeView !== 'flashcards') return;
   if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#flashcard').classList.toggle('flipped'); }
-  else if (e.key === 'ArrowRight') nextFlashcard(1);
-  else if (e.key === 'ArrowLeft') nextFlashcard(-1);
+  else if (e.key === 'ArrowRight') document.getElementById('flash-good')?.click();
+  else if (e.key === 'ArrowLeft') document.getElementById('flash-again')?.click();
   const flipped = document.getElementById('flashcard')?.classList.contains('flipped');
   if (!flipped) return;
   if (e.key==='a'||e.key==='A') document.getElementById('flash-again')?.click();
