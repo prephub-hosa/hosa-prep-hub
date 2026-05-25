@@ -516,9 +516,6 @@
     if (fill) { fill.style.width = '0%'; setTimeout(() => { fill.style.width = pct + '%'; }, 200); }
 
     // Achievement check (after slight delay so XP is written)
-    const got    = window._sessGot    || 0;
-    const missed = window._sessMissed || 0;
-    const hard   = window._sessHard   || 0;
     setTimeout(() => checkAchievements({ got, missed, hard }), 900);
 
     // Reset session trackers (next session starts from here)
