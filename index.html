@@ -2243,7 +2243,7 @@ footer { display: none; }
       <section id="weekly-improve-section" style="display:none;margin-bottom:24px;"></section>
 
       <!-- Quick actions strip -->
-      <section id="quick-actions-section" style="display:none;margin-bottom:32px;">
+      <section id="quick-actions-section" style="margin-bottom:32px;">
         <div class="qa-strip">
           <button class="qa-btn" data-action="palette" type="button">
             <span class="qa-icon">⌘</span>
@@ -6158,13 +6158,7 @@ function friendlyError(code) {
     });
   }
 
-  if (document.body.classList.contains('user-active')) init();
-  else {
-    var obs = new MutationObserver(function() {
-      if (document.body.classList.contains('user-active')) { obs.disconnect(); init(); }
-    });
-    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  }
+  init();
 })();
 
 // ── Theme cycle (dark → light → sepia) ────────────────────────
@@ -8281,26 +8275,9 @@ window.hosaXPFlyup = function(el, amount) {
   window.hosaSetSound = function(v) {
     enabled = !!v;
     try { localStorage.setItem('hosa::sound', enabled ? '1' : '0'); } catch(e) {}
-    updateBtn();
   };
   try { if (localStorage.getItem('hosa::sound') === '1') enabled = true; } catch(e) {}
 
-  var btn = document.createElement('button');
-  btn.className = 'sound-toggle ' + (enabled ? 'sound-on' : 'sound-off');
-  btn.setAttribute('aria-label', 'Toggle sound effects');
-  function updateBtn() {
-    btn.textContent = enabled ? '🔊' : '🔇';
-    btn.className = 'sound-toggle ' + (enabled ? 'sound-on' : 'sound-off');
-    btn.title = enabled ? 'Sound on — click to mute' : 'Sound off — click to unmute';
-  }
-  updateBtn();
-  btn.addEventListener('click', function() {
-    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-    window.hosaSetSound(!enabled);
-    if (enabled) setTimeout(function() { sounds.click(); }, 60);
-  });
-  document.body.appendChild(btn);
 })();
 
 /* ═══════════════════════════════════════════════════════════════
