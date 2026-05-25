@@ -2999,9 +2999,9 @@ document.addEventListener('keydown', (e) => {
   const overlay = document.getElementById('kbd-overlay');
   if (e.key === '?') { if (overlay) overlay.classList.toggle('open'); return; }
   if (overlay && overlay.classList.contains('open')) { if (e.key === 'Escape') overlay.classList.remove('open'); return; }
-  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#flashcard').classList.toggle('flipped'); }
-  else if (e.key === 'ArrowRight') document.getElementById('flash-good')?.click();
-  else if (e.key === 'ArrowLeft') document.getElementById('flash-again')?.click();
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowDown') { e.preventDefault(); document.getElementById('flashcard')?.classList.toggle('flipped'); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('flash-good')?.click(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('flash-again')?.click(); }
   else if (document.getElementById('flashcard')?.classList.contains('flipped')) {
     if (e.key==='a'||e.key==='A') document.getElementById('flash-again')?.click();
     else if (e.key==='h'||e.key==='H') document.getElementById('flash-hard')?.click();
