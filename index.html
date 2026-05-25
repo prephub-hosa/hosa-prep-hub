@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=28">
+<link rel="stylesheet" href="aura.css?v=29">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2144,6 +2144,19 @@ footer { display: none; }
 <!-- ═══════════════════════════════ APP SHELL ═══════════════════════════════ -->
 <nav id="sidebar">
   <div class="sb-brand"><span>✢</span>HOSA Prep Hub</div>
+
+  <!-- v29: User profile mini-card -->
+  <div class="sb-profile-card" id="sb-profile-card" style="display:none">
+    <div class="sb-profile-avatar" id="sb-profile-avatar">🎓</div>
+    <div class="sb-profile-info">
+      <div class="sb-profile-name" id="sb-profile-name">Champion</div>
+      <div class="sb-profile-level" id="sb-profile-level-text">Level 1</div>
+    </div>
+    <div class="sb-profile-xp">
+      <div class="sb-profile-xp-bar"><div class="sb-profile-xp-fill" id="sb-profile-xp-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
   <div class="sb-section">
     <button class="sb-item active" data-tab="home">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -2209,6 +2222,54 @@ footer { display: none; }
 
     <!-- ══ HOME TAB ══ -->
     <div class="tab-pane active" id="tab-home">
+
+      <!-- v29: Full-width hero banner -->
+      <section class="home-hero" id="home-hero">
+        <div class="home-hero-mesh" aria-hidden="true"></div>
+        <div class="home-hero-inner">
+          <div class="home-hero-left">
+            <div class="home-hero-tagline" id="home-hero-tagline">Every card is a step toward State.</div>
+            <h1 class="home-hero-title">
+              <span class="home-hero-greeting" id="home-hero-greeting">Hello,</span>
+              <span class="home-hero-name" id="home-hero-name">Future Champion</span>
+            </h1>
+            <div class="home-hero-sub" id="home-hero-sub">Ready to study? Your next review is waiting.</div>
+            <div class="home-hero-cta-row">
+              <button class="home-hero-cta" id="home-hero-cta-btn" data-action="due" type="button">
+                Continue Studying <span class="home-hero-cta-arrow">→</span>
+              </button>
+              <button class="home-hero-cta-sec" data-action="surprise" type="button">
+                🎲 Surprise me
+              </button>
+            </div>
+          </div>
+          <div class="home-hero-right">
+            <div class="home-hero-stats">
+              <div class="home-hero-stat">
+                <div class="home-hero-stat-icon">⚡</div>
+                <div class="home-hero-stat-num" id="hh-level">1</div>
+                <div class="home-hero-stat-label">Level</div>
+              </div>
+              <div class="home-hero-stat">
+                <div class="home-hero-stat-icon">🔥</div>
+                <div class="home-hero-stat-num" id="hh-streak">0</div>
+                <div class="home-hero-stat-label">Day streak</div>
+              </div>
+              <div class="home-hero-stat">
+                <div class="home-hero-stat-icon">🏆</div>
+                <div class="home-hero-stat-num" id="hh-mastered">0</div>
+                <div class="home-hero-stat-label">Mastered</div>
+              </div>
+              <div class="home-hero-stat">
+                <div class="home-hero-stat-icon">🃏</div>
+                <div class="home-hero-stat-num" id="hh-due">0</div>
+                <div class="home-hero-stat-label">Due today</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     <div class="tab-inner">
 
       <!-- Resume hero CTA — shown when user has due cards -->
@@ -2293,6 +2354,41 @@ footer { display: none; }
             <span class="qa-icon">🎧</span>
             <div class="qa-body"><div class="qa-title">Focus Mode</div><div class="qa-sub">Distraction-free</div></div>
           </button>
+        </div>
+      </section>
+
+      <!-- v29: Mastery Overview by category — shown for users with progress -->
+      <section class="mastery-overview-section" id="mastery-overview-section" style="display:none;margin-bottom:36px;">
+        <h2 class="section-title">Mastery Overview</h2>
+        <div class="mastery-overview-grid" id="mastery-overview-grid">
+          <div class="mastery-cat-row">
+            <div class="mastery-cat-header">
+              <span class="mastery-cat-name" style="color:var(--cat-basic)">Basic Sciences</span>
+              <span class="mastery-cat-pct" id="mo-pct-basic" style="color:var(--cat-basic)">0%</span>
+            </div>
+            <div class="mastery-cat-track"><div class="mastery-cat-fill" data-cat="basic" id="mo-fill-basic" style="width:0%"></div></div>
+          </div>
+          <div class="mastery-cat-row">
+            <div class="mastery-cat-header">
+              <span class="mastery-cat-name" style="color:var(--cat-clinical)">Clinical Medicine</span>
+              <span class="mastery-cat-pct" id="mo-pct-clinical" style="color:var(--cat-clinical)">0%</span>
+            </div>
+            <div class="mastery-cat-track"><div class="mastery-cat-fill" data-cat="clinical" id="mo-fill-clinical" style="width:0%"></div></div>
+          </div>
+          <div class="mastery-cat-row">
+            <div class="mastery-cat-header">
+              <span class="mastery-cat-name" style="color:var(--cat-allied)">Allied Health</span>
+              <span class="mastery-cat-pct" id="mo-pct-allied" style="color:var(--cat-allied)">0%</span>
+            </div>
+            <div class="mastery-cat-track"><div class="mastery-cat-fill" data-cat="allied" id="mo-fill-allied" style="width:0%"></div></div>
+          </div>
+          <div class="mastery-cat-row">
+            <div class="mastery-cat-header">
+              <span class="mastery-cat-name" style="color:var(--cat-systems)">Health Systems</span>
+              <span class="mastery-cat-pct" id="mo-pct-systems" style="color:var(--cat-systems)">0%</span>
+            </div>
+            <div class="mastery-cat-track"><div class="mastery-cat-fill" data-cat="systems" id="mo-fill-systems" style="width:0%"></div></div>
+          </div>
         </div>
       </section>
 
@@ -4449,6 +4545,8 @@ function friendlyError(code) {
   }
   var BADGE_HTML = '<span class="card-studied-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="badge-text">Studied</span></span>';
   var anyStudied = 0, totalMastered = 0;
+  // v29: check due cards for today
+  var _nowMs = Date.now();
   cardData.forEach(function(c){
     var slug = slugFromHref(c.el.getAttribute('href'));
     if (!slug) return;
@@ -4474,8 +4572,44 @@ function friendlyError(code) {
       var pct = Math.min(100, Math.round(masteredCt / totalTerms * 100));
       if (fillEl) { setTimeout(function(){ fillEl.style.width = pct + '%'; }, 80); }
       if (labelEl) labelEl.textContent = masteredCt + ' mastered · ' + studiedCt + ' studied';
+
+      // v29: status pill badge (overrides existing card-studied-badge positioning)
+      if (!c.el.querySelector('.v29-card-badge')) {
+        var badgeEl = document.createElement('span');
+        badgeEl.className = 'v29-card-badge';
+        // Check for due cards
+        var dueCount = 0;
+        try {
+          var cardsData = JSON.parse(localStorage.getItem('hosa::' + slug + '::cards') || '{}');
+          Object.values(cardsData).forEach(function(card){ if(card.due && card.due <= _nowMs) dueCount++; });
+        } catch(e){}
+
+        if (dueCount > 0) {
+          badgeEl.className += ' v29-badge-due';
+          badgeEl.textContent = 'DUE TODAY';
+        } else if (pct >= 90) {
+          badgeEl.className += ' v29-badge-mastered';
+          badgeEl.textContent = 'MASTERED';
+        } else if (studiedCt > 0) {
+          badgeEl.className += ' v29-badge-progress';
+          badgeEl.textContent = 'IN PROGRESS';
+        }
+        if (badgeEl.textContent) c.el.appendChild(badgeEl);
+      }
     } catch(e){}
   });
+  // v29: mark NEW cards (no data at all) — but only when user has other data
+  if (anyStudied > 3) {
+    cardData.forEach(function(c){
+      if (c.el.classList.contains('is-studied')) return;
+      if (c.el.classList.contains('coming-soon')) return;
+      if (c.el.querySelector('.v29-card-badge')) return;
+      var newBadge = document.createElement('span');
+      newBadge.className = 'v29-card-badge v29-badge-new';
+      newBadge.textContent = 'NEW';
+      c.el.appendChild(newBadge);
+    });
+  }
   if (anyStudied > 0) document.body.classList.add('user-active');
 
   // ── Surprise Me ──
@@ -5097,6 +5231,60 @@ function friendlyError(code) {
       if (hsXpLabel) hsXpLabel.textContent = xp.toLocaleString() + ' XP · ' + (xpForLevel(lvl + 1) - xp) + ' to Level ' + (lvl + 1);
     }
 
+    // ── v29: Home hero stats + sidebar profile card ──
+    (function(){
+      // Hero stats
+      var hhLevel   = document.getElementById('hh-level');
+      var hhStreak  = document.getElementById('hh-streak');
+      var hhMastered= document.getElementById('hh-mastered');
+      var hhDue     = document.getElementById('hh-due');
+      if (hhLevel) hhLevel.textContent = lvl;
+      if (hhStreak) hhStreak.textContent = streak > 0 ? streak : 0;
+      if (hhMastered) hhMastered.textContent = totalMastered.toLocaleString();
+      // Due count from localStorage
+      try {
+        var _now = Date.now();
+        var _dueCount = 0;
+        var _keys = Object.keys(localStorage);
+        _keys.forEach(function(k){
+          if(k.indexOf('::cards')!==-1){try{var d=JSON.parse(localStorage.getItem(k)||'{}');Object.values(d).forEach(function(c){if(c.due&&c.due<=_now)_dueCount++;});}catch(e){}}
+        });
+        if (hhDue) hhDue.textContent = _dueCount;
+        if (_dueCount > 0) {
+          var heroCta = document.getElementById('home-hero-cta-btn');
+          if (heroCta) heroCta.textContent = 'Review ' + _dueCount + ' Due Cards →';
+        }
+      } catch(e){}
+      // Hero greeting
+      var greetingEl = document.getElementById('home-hero-greeting');
+      var nameEl = document.getElementById('home-hero-name');
+      var tagEl = document.getElementById('home-hero-tagline');
+      var h = new Date().getHours();
+      var g = h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
+      if (greetingEl) greetingEl.textContent = g;
+      var storedName = '';
+      try { storedName = localStorage.getItem('hosa-username') || ''; } catch(e){}
+      if (storedName && nameEl) nameEl.textContent = storedName;
+      else if (nameEl && xp > 0) nameEl.textContent = 'Future Champion';
+      if (tagEl && streak >= 7) tagEl.textContent = streak + '-day streak! You\'re on fire. 🔥';
+      else if (tagEl && streak >= 3) tagEl.textContent = 'Keep it up — ' + streak + ' days strong!';
+      // Sidebar profile card
+      var sbCard = document.getElementById('sb-profile-card');
+      if (sbCard && xp > 0) {
+        sbCard.style.display = 'flex';
+        var sbName = document.getElementById('sb-profile-name');
+        var sbLvl  = document.getElementById('sb-profile-level-text');
+        var sbFill = document.getElementById('sb-profile-xp-fill');
+        if (sbName) sbName.textContent = storedName || 'Champion';
+        if (sbLvl)  sbLvl.textContent  = 'Level ' + lvl;
+        if (sbFill) {
+          var xpThis2 = xp - xpForLevel(lvl);
+          var xpNext2 = xpForLevel(lvl + 1) - xpForLevel(lvl);
+          setTimeout(function(){ sbFill.style.width = Math.min(100, Math.round(xpThis2 / xpNext2 * 100)) + '%'; }, 300);
+        }
+      }
+    })();
+
     // ── Topbar level badge ──
     if (xp > 0) {
       var tbLevel = document.getElementById('tb-level');
@@ -5110,6 +5298,56 @@ function friendlyError(code) {
         if (_act.indexOf(_today) === -1) { _act.push(_today); localStorage.setItem('hosa::activity', JSON.stringify(_act)); }
       } catch(_e) {}
     }
+
+    // ── v29: Mastery Overview bars ──
+    (function(){
+      var moSection = document.getElementById('mastery-overview-section');
+      if (!moSection || studied.length === 0) return;
+
+      // Tally mastered per category using ALL_EVENTS groups
+      var catMastered = { basic: 0, clinical: 0, allied: 0, systems: 0 };
+      var catTotal    = { basic: 0, clinical: 0, allied: 0, systems: 0 };
+
+      // Map event slugs to their group using card data-group attribute from the DOM
+      var slugGroups = {};
+      document.querySelectorAll('.category-card[data-group]').forEach(function(card){
+        var href = card.getAttribute('href') || '';
+        var slug = href.replace(/\.html$/, '');
+        if (slug) slugGroups[slug] = card.getAttribute('data-group');
+      });
+
+      // Count from studied data
+      studied.forEach(function(ev){
+        var g = slugGroups[ev.slug];
+        if (!catMastered[g]) return;
+        catMastered[g] += ev.mastered;
+        catTotal[g]    += Math.max(ev.mastered, ev.studied);
+      });
+
+      // Count total possible from ALL events in each group
+      var allCatTotal = { basic: 0, clinical: 0, allied: 0, systems: 0 };
+      document.querySelectorAll('.category-card[data-group]').forEach(function(card){
+        var g = card.getAttribute('data-group');
+        if (!allCatTotal[g]) allCatTotal[g] = 0;
+        // Each event ≈ 50 terms as a rough denominator (we only show studied %)
+      });
+
+      var groups = ['basic', 'clinical', 'allied', 'systems'];
+      var hasAny = false;
+      groups.forEach(function(g){
+        var total = catTotal[g];
+        var mastered = catMastered[g];
+        if (total === 0) return;
+        hasAny = true;
+        var pct = Math.min(100, Math.round(mastered / total * 100));
+        var fillEl = document.getElementById('mo-fill-' + g);
+        var pctEl  = document.getElementById('mo-pct-' + g);
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fillEl) setTimeout(function(){ fillEl.style.width = pct + '%'; }, 400);
+      });
+
+      if (hasAny) moSection.style.display = 'block';
+    })();
 
     // ── Jump back in ──
     var jbiSection = document.getElementById('jbi-section');
@@ -6166,6 +6404,20 @@ function friendlyError(code) {
 
   function init() {
     section.style.display = '';
+    // Also wire hero CTA buttons to the same action system
+    document.querySelectorAll('.home-hero-cta[data-action], .home-hero-cta-sec[data-action]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var act = btn.getAttribute('data-action');
+        if (act === 'due') {
+          var slug = topDueSlug();
+          if (slug) window.location.href = slug + '.html';
+          else if (typeof window._showToast === 'function') window._showToast('No cards due today — pick any event to keep studying.', 'success');
+        } else if (act === 'surprise') {
+          if (typeof switchTab === 'function') switchTab('events');
+          setTimeout(function(){ if (typeof window.__hosaSurpriseMe === 'function') window.__hosaSurpriseMe(); }, 80);
+        }
+      });
+    });
     section.querySelectorAll('.qa-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
         var act = btn.getAttribute('data-action');
