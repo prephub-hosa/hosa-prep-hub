@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=26">
+<link rel="stylesheet" href="aura.css?v=27">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -2277,8 +2277,23 @@ footer { display: none; }
             <span class="qa-icon">⏱</span>
             <div class="qa-body"><div class="qa-title">Speed Drill</div><div class="qa-sub">60-second sprint</div></div>
           </button>
+          <button class="qa-btn" data-action="typing" type="button">
+            <span class="qa-icon">⌨️</span>
+            <div class="qa-body"><div class="qa-title">Typing Challenge</div><div class="qa-sub">Type the definition</div></div>
+          </button>
+          <button class="qa-btn" data-action="truefalse" type="button">
+            <span class="qa-icon">🎯</span>
+            <div class="qa-body"><div class="qa-title">True/False Blitz</div><div class="qa-sub">30-second blitz</div></div>
+          </button>
+          <button class="qa-btn" data-action="focus" type="button">
+            <span class="qa-icon">🎧</span>
+            <div class="qa-body"><div class="qa-title">Focus Mode</div><div class="qa-sub">Distraction-free</div></div>
+          </button>
         </div>
       </section>
+
+      <!-- Daily study path — shown for active users with due cards -->
+      <section id="daily-path-section" style="margin-bottom:24px;display:none;"></section>
 
       <!-- Exam countdown — shown for active users who set a date -->
       <section id="exam-countdown-section" style="display:none;margin-bottom:24px;"></section>
@@ -6153,6 +6168,12 @@ function friendlyError(code) {
           if (typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch();
         } else if (act === 'speed') {
           if (typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill();
+        } else if (act === 'typing') {
+          if (typeof window.__hosaOpenTyping === 'function') window.__hosaOpenTyping();
+        } else if (act === 'truefalse') {
+          if (typeof window.__hosaOpenTF === 'function') window.__hosaOpenTF();
+        } else if (act === 'focus') {
+          if (typeof window.__hosaToggleFocus === 'function') window.__hosaToggleFocus();
         }
       });
     });
@@ -9274,6 +9295,8 @@ window.hosaXPFlyup = function(el, amount) {
       if (game === 'match' && typeof window.__hosaOpenMatch === 'function') window.__hosaOpenMatch();
       else if (game === 'speed' && typeof window.__hosaOpenSpeedDrill === 'function') window.__hosaOpenSpeedDrill();
       else if (game === 'quickreview' && typeof window.__hosaOpenQR === 'function') window.__hosaOpenQR();
+      else if (game === 'typing' && typeof window.__hosaOpenTyping === 'function') window.__hosaOpenTyping();
+      else if (game === 'truefalse' && typeof window.__hosaOpenTF === 'function') window.__hosaOpenTF();
     }, 400);
   }
   if (document.readyState !== 'loading') openFromUrl();
