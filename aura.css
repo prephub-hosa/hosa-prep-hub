@@ -6892,3 +6892,135 @@ nav.tabs button:active {
   border-radius: 0 !important;
   height: 3px !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   v36 — Verified mobile fixes (screenshot pass 2026-05-30)
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1. Events grid — iPhones (≥360px) now get 2-col. Old 400px
+      threshold was too wide, catching iPhone 14/15 (393px). */
+@media (max-width: 400px) {
+  #tab-events .categories { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 330px) {
+  /* Only truly tiny phones fall back to 1 col */
+  #tab-events .categories { grid-template-columns: 1fr !important; }
+}
+
+/* 2. Quick action labels — allow wrap instead of truncating */
+.qa-title {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  font-size: 12.5px !important;
+  line-height: 1.25 !important;
+}
+.qa-sub {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+@media (max-width: 640px) {
+  .qa-btn { padding: 11px 12px !important; gap: 9px !important; }
+  .qa-icon { font-size: 18px !important; }
+  .qa-title { font-size: 12px !important; }
+  .qa-sub { display: none !important; } /* hide subtitle on phones to save space */
+}
+
+/* 3. Sign Out / Sign In button — subtle on mobile, no giant red pill */
+@media (max-width: 768px) {
+  .btn-signout {
+    background: transparent !important;
+    border: 1px solid rgba(200,16,46,0.40) !important;
+    color: var(--accent) !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    border-radius: 6px !important;
+  }
+  .btn-signout:hover {
+    background: rgba(200,16,46,0.10) !important;
+  }
+}
+
+/* 4. Topbar: keep user pill compact — no overflow on small screens */
+@media (max-width: 640px) {
+  .topbar-right { gap: 8px !important; }
+  #topbar-user-pill { gap: 8px !important; }
+}
+
+/* 5. Category cards on mobile: compact 2-col, not too tall */
+@media (max-width: 640px) {
+  #tab-events .category-card {
+    padding: 12px 10px 10px !important;
+  }
+  #tab-events .category-card h3 {
+    font-size: 13.5px !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+  }
+  #tab-events .card-number { font-size: 16px !important; margin-bottom: 2px !important; }
+  #tab-events .card-cta {
+    font-size: 11px !important;
+    padding-top: 6px !important;
+    margin-top: 6px !important;
+  }
+}
+
+/* 6. Home hero section — better mobile spacing */
+@media (max-width: 640px) {
+  .home-hero { padding: 28px 18px 24px !important; min-height: unset !important; }
+  .home-hero-title { font-size: clamp(26px, 8vw, 36px) !important; }
+  .home-hero-tagline { font-size: 11px !important; }
+  .home-hero-sub { font-size: 13px !important; }
+  .home-hero-cta { padding: 12px 20px !important; font-size: 14px !important; }
+  .home-hero-cta-sec { padding: 11px 16px !important; font-size: 13px !important; }
+}
+
+/* 7. Stats bar on mobile: 2-col grid, no overflow */
+@media (max-width: 640px) {
+  #home-stats-bar {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 16px !important;
+    margin-bottom: 20px !important;
+  }
+}
+
+/* 8. Feedback button — lift higher on mobile, smaller */
+@media (max-width: 768px) {
+  #fb-fab {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 12px !important;
+    padding: 7px 13px !important;
+    font-size: 12px !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* ── v36b: Fix Sign Out button — undo primary-button red styling ─ */
+/* The topbar sign-out/in button got caught by the primary CTA rule
+   (button.btn-signout) at line ~213. Override with ID specificity. */
+#btn-signout {
+  background: transparent !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule) !important;
+  border-radius: 6px !important;
+  padding: 5px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  letter-spacing: 0 !important;
+  transition: background 0.12s, border-color 0.12s, color 0.12s !important;
+}
+#btn-signout:hover {
+  background: rgba(200,16,46,0.08) !important;
+  border-color: rgba(200,16,46,0.4) !important;
+  color: var(--accent) !important;
+}
+/* Mobile: even more compact */
+@media (max-width: 640px) {
+  #btn-signout {
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+  }
+}
