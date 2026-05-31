@@ -7024,3 +7024,77 @@ nav.tabs button:active {
     font-size: 12px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   v37 — Mobile home hero: compact, app-like dashboard feel
+   Replaces the tall stacked layout with a tight greeting + a single
+   row of 4 compact stat chips, so the greeting + CTA + content sit
+   higher and feel less "wall of text".
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .home-hero {
+    border-radius: 0 0 22px 22px !important;
+  }
+  .home-hero-inner {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    padding: 22px 18px 20px !important;
+  }
+  .home-hero-left { gap: 10px !important; }
+  .home-hero-tagline {
+    font-size: 10px !important;
+    letter-spacing: 0.14em !important;
+  }
+  .home-hero-title { gap: 0 !important; }
+  .home-hero-greeting { font-size: 16px !important; font-weight: 500 !important; }
+  .home-hero-name { font-size: 32px !important; font-weight: 800 !important; }
+  .home-hero-sub {
+    font-size: 13px !important;
+    max-width: 100% !important;
+    margin-top: 2px;
+  }
+  .home-hero-cta-row {
+    display: flex !important;
+    gap: 8px !important;
+    width: 100%;
+  }
+  .home-hero-cta {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+  .home-hero-cta-sec {
+    flex: 0 0 auto !important;
+    padding: 12px 14px !important;
+    font-size: 13px !important;
+  }
+
+  /* Stats: single tight row of 4 compact chips */
+  .home-hero-right { width: 100%; }
+  .home-hero-stats {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 7px !important;
+  }
+  .home-hero-stat {
+    padding: 11px 4px 9px !important;
+    min-width: 0 !important;
+    border-radius: 12px !important;
+    gap: 2px !important;
+  }
+  .home-hero-stat-icon { font-size: 15px !important; margin-bottom: 0 !important; }
+  .home-hero-stat-num { font-size: 21px !important; }
+  .home-hero-stat-label {
+    font-size: 8.5px !important;
+    letter-spacing: 0.03em !important;
+    text-align: center;
+    line-height: 1.15 !important;
+  }
+}
+
+/* Very small phones: shrink stat labels a touch more so they don't wrap ugly */
+@media (max-width: 360px) {
+  .home-hero-stat-num { font-size: 19px !important; }
+  .home-hero-stat-label { font-size: 8px !important; }
+  .home-hero-name { font-size: 28px !important; }
+}

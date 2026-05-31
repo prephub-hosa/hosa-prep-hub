@@ -1364,7 +1364,7 @@
   }
   .find-event-pill:hover { border-color: var(--accent); color: var(--accent); border-style: solid; }
 </style>
-<link rel="stylesheet" href="aura.css?v=36">
+<link rel="stylesheet" href="aura.css?v=37">
 <script defer src="aura.js?v=7"></script>
 <style id="app-shell-css">
 /* ── App shell layout ── */
@@ -5037,10 +5037,12 @@ function friendlyError(code) {
     if (_ov) _ov.classList.remove('show');
   });
 
-  // Restore last tab (bottom nav starts with home active by default in HTML)
+  // Always open on Home. We deliberately do NOT restore the last tab —
+  // landing back on a text-heavy tab (e.g. Guide) after sign-in is
+  // disorienting, especially on mobile. Home greets the user instead.
   try {
-    var saved = localStorage.getItem('hosa-tab');
-    if (saved) switchTab(saved);
+    localStorage.setItem('hosa-tab', 'home');
+    switchTab('home');
   } catch(e){}
 
   // When event search is focused from home tab, switch to events tab
