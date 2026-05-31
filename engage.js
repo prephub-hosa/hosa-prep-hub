@@ -1100,4 +1100,191 @@
       if (!wrap.contains(e.target)) menu.hidden = true;
     });
   })();
+
+  /* ─── All Terms browser — full scrollable glossary per event ─────
+     Renders a clean, searchable, filterable list of every term and
+     definition below the flashcard. Reads the page-level `TERMS`
+     const via the shared global lexical scope (engage.js is a classic
+     deferred script, so `TERMS` is resolvable by name once the inline
+     page script has run). Works on all 70 event pages with no per-page
+     edits. ───────────────────────────────────────────────────────── */
+  (function() {
+    function getTerms() {
+      try { if (typeof TERMS !== 'undefined' && Array.isArray(TERMS)) return TERMS; } catch (e) {}
+      try { if (window.TERMS && Array.isArray(window.TERMS)) return window.TERMS; } catch (e) {}
+      return null;
+    }
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    function titleCase(s) {
+      return String(s || '').replace(/[-_]/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+    }
+
+    function injectStyles() {
+      if (document.getElementById('hosa-allterms-css')) return;
+      var css = ''
+        + '#hosa-all-terms{max-width:720px;margin:48px auto 0;font-family:"Source Serif 4",Georgia,serif;}'
+        + '#hosa-all-terms .hat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;'
+        +   'padding:16px 18px;background:var(--bg-card);border:1px solid var(--rule);border-radius:14px;'
+        +   'transition:border-color .15s,box-shadow .15s;}'
+        + '#hosa-all-terms .hat-head:hover{border-color:var(--accent);box-shadow:0 4px 18px -8px rgba(168,40,31,.25);}'
+        + '#hosa-all-terms.open .hat-head{border-radius:14px 14px 0 0;border-bottom-color:transparent;}'
+        + '#hosa-all-terms .hat-title{font-family:"Fraunces",serif;font-size:19px;font-weight:500;letter-spacing:-.01em;color:var(--ink);}'
+        + '#hosa-all-terms .hat-count{font-size:13px;color:var(--ink-faint);font-weight:500;margin-left:8px;}'
+        + '#hosa-all-terms .hat-chevron{font-size:13px;color:var(--ink-soft);transition:transform .2s;flex-shrink:0;}'
+        + '#hosa-all-terms.open .hat-chevron{transform:rotate(180deg);}'
+        + '#hosa-all-terms .hat-body{display:none;border:1px solid var(--rule);border-top:none;border-radius:0 0 14px 14px;'
+        +   'background:var(--bg-card);overflow:hidden;}'
+        + '#hosa-all-terms.open .hat-body{display:block;}'
+        + '#hosa-all-terms .hat-controls{display:flex;gap:10px;padding:14px 16px;border-bottom:1px solid var(--rule);'
+        +   'position:sticky;top:0;background:var(--bg-card);z-index:2;flex-wrap:wrap;}'
+        + '#hosa-all-terms .hat-search{flex:1 1 200px;min-width:0;padding:9px 13px;font-family:inherit;font-size:14px;'
+        +   'color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:8px;outline:none;'
+        +   'transition:border-color .15s;}'
+        + '#hosa-all-terms .hat-search:focus{border-color:var(--accent);}'
+        + '#hosa-all-terms .hat-cat{padding:9px 12px;font-family:inherit;font-size:14px;color:var(--ink);'
+        +   'background:var(--bg);border:1px solid var(--rule);border-radius:8px;outline:none;cursor:pointer;max-width:180px;}'
+        + '#hosa-all-terms .hat-list{max-height:460px;overflow-y:auto;overscroll-behavior:contain;}'
+        + '#hosa-all-terms .hat-row{padding:14px 18px;border-bottom:1px solid var(--rule);cursor:pointer;'
+        +   'transition:background .12s;}'
+        + '#hosa-all-terms .hat-row:last-child{border-bottom:none;}'
+        + '#hosa-all-terms .hat-row:hover{background:rgba(168,40,31,.04);}'
+        + '#hosa-all-terms .hat-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}'
+        + '#hosa-all-terms .hat-term{font-family:"Fraunces",serif;font-size:16px;font-weight:500;color:var(--ink);'
+        +   'letter-spacing:-.01em;line-height:1.3;}'
+        + '#hosa-all-terms .hat-cat-tag{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;'
+        +   'color:var(--ink-faint);background:var(--bg);border:1px solid var(--rule);border-radius:100px;'
+        +   'padding:2px 9px;flex-shrink:0;white-space:nowrap;}'
+        + '#hosa-all-terms .hat-def{font-size:14px;color:var(--ink-soft);line-height:1.55;margin-top:6px;}'
+        + '#hosa-all-terms .hat-ex{font-size:13px;color:var(--ink-faint);line-height:1.5;margin-top:8px;'
+        +   'padding-left:12px;border-left:2px solid var(--rule);display:none;}'
+        + '#hosa-all-terms .hat-row.show-ex .hat-ex{display:block;}'
+        + '#hosa-all-terms .hat-ex b{font-weight:600;color:var(--ink-soft);font-style:normal;}'
+        + '#hosa-all-terms .hat-empty{padding:32px 18px;text-align:center;color:var(--ink-faint);font-size:14px;}'
+        + '@media (max-width:640px){'
+        +   '#hosa-all-terms{margin-top:32px;}'
+        +   '#hosa-all-terms .hat-title{font-size:17px;}'
+        +   '#hosa-all-terms .hat-cat{max-width:none;flex:1 1 100%;}'
+        +   '#hosa-all-terms .hat-list{max-height:60vh;}'
+        + '}';
+      var style = document.createElement('style');
+      style.id = 'hosa-allterms-css';
+      style.textContent = css;
+      document.head.appendChild(style);
+    }
+
+    function build() {
+      var terms = getTerms();
+      if (!terms || !terms.length) return;
+      var stage = document.querySelector('.flashcard-stage');
+      var host = document.getElementById('view-flashcards') || (stage && stage.parentNode);
+      if (!host || document.getElementById('hosa-all-terms')) return;
+
+      injectStyles();
+
+      // Unique categories (preserve first-seen order)
+      var cats = [];
+      terms.forEach(function(t) {
+        var c = t && t.category;
+        if (c && cats.indexOf(c) === -1) cats.push(c);
+      });
+
+      var sec = document.createElement('section');
+      sec.id = 'hosa-all-terms';
+
+      var catOpts = '<option value="">All categories</option>' + cats.map(function(c) {
+        return '<option value="' + esc(c) + '">' + esc(titleCase(c)) + '</option>';
+      }).join('');
+
+      sec.innerHTML =
+        '<div class="hat-head" id="hat-head" role="button" tabindex="0" aria-expanded="false">' +
+          '<div><span class="hat-title">All Terms</span><span class="hat-count" id="hat-count">' + terms.length + ' terms</span></div>' +
+          '<span class="hat-chevron">▾</span>' +
+        '</div>' +
+        '<div class="hat-body">' +
+          '<div class="hat-controls">' +
+            '<input type="search" class="hat-search" id="hat-search" placeholder="Search terms or definitions…" autocomplete="off" spellcheck="false">' +
+            (cats.length > 1 ? '<select class="hat-cat" id="hat-cat">' + catOpts + '</select>' : '') +
+          '</div>' +
+          '<div class="hat-list" id="hat-list"></div>' +
+        '</div>';
+
+      host.appendChild(sec);
+
+      var listEl = sec.querySelector('#hat-list');
+      var searchEl = sec.querySelector('#hat-search');
+      var catEl = sec.querySelector('#hat-cat');
+      var countEl = sec.querySelector('#hat-count');
+      var headEl = sec.querySelector('#hat-head');
+
+      function render() {
+        var q = (searchEl.value || '').trim().toLowerCase();
+        var cat = catEl ? catEl.value : '';
+        var rows = [];
+        terms.forEach(function(t) {
+          if (!t || !t.term) return;
+          if (cat && t.category !== cat) return;
+          var def = t.meaning || t.definition || '';
+          if (q) {
+            var hay = (t.term + ' ' + def).toLowerCase();
+            if (hay.indexOf(q) === -1) return;
+          }
+          var ex = t.example
+            ? '<div class="hat-ex"><b>Example:</b> ' + esc(t.example) + '</div>'
+            : '';
+          var tag = t.category
+            ? '<span class="hat-cat-tag">' + esc(titleCase(t.category)) + '</span>'
+            : '';
+          rows.push(
+            '<div class="hat-row">' +
+              '<div class="hat-row-top"><span class="hat-term">' + esc(t.term) + '</span>' + tag + '</div>' +
+              '<div class="hat-def">' + esc(def) + '</div>' + ex +
+            '</div>'
+          );
+        });
+        listEl.innerHTML = rows.length
+          ? rows.join('')
+          : '<div class="hat-empty">No terms match your search.</div>';
+        countEl.textContent = rows.length === terms.length
+          ? terms.length + ' terms'
+          : rows.length + ' of ' + terms.length;
+      }
+
+      // Toggle open/close
+      function toggle() {
+        var open = sec.classList.toggle('open');
+        headEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open && !listEl.children.length) render();
+      }
+      headEl.addEventListener('click', toggle);
+      headEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+
+      // Row click → expand/collapse its example
+      listEl.addEventListener('click', function(e) {
+        var row = e.target.closest('.hat-row');
+        if (row && row.querySelector('.hat-ex')) row.classList.toggle('show-ex');
+      });
+
+      // Live filtering
+      searchEl.addEventListener('input', render);
+      if (catEl) catEl.addEventListener('change', render);
+    }
+
+    function init() {
+      // Only on event flashcard pages
+      if (!document.getElementById('view-flashcards') && !document.querySelector('.flashcard-stage')) return;
+      build();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 600); });
+    } else {
+      setTimeout(init, 600);
+    }
+  })();
 })();
