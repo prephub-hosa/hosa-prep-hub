@@ -5105,7 +5105,7 @@ function friendlyError(code) {
 
 <script id="hosa-analytics">
 (function(){
-  var PAGE_KEY='home';
+  var PAGE_KEY=(function(){var p=(location.pathname.split('/').pop()||'').replace(/\.html$/,'');return(!p||p==='index')?'home':p;})();
   var t0=Date.now();
   var today=new Date().toISOString().slice(0,10);
   var vid=localStorage.getItem('hosa-guest-id');
