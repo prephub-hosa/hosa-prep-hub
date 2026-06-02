@@ -391,12 +391,14 @@ function loadAnalytics() {
     db.ref('analytics/dev').once('value'),
     db.ref('analytics/src').once('value'),
     db.ref('analytics/sess').once('value'),
+    db.ref('analytics/vis-alltime').once('value'),
   ]).then(function(snaps) {
     var pvData  = snaps[0].val() || {};
     var visData = snaps[1].val() || {};
     var devData = snaps[2].val() || {};
     var srcData = snaps[3].val() || {};
     var sessData = snaps[4].val() || {};
+    var alltimeData = snaps[5].val() || {};
 
     // ── Date helpers ───────────────────────────────────────────
     var today = new Date();
@@ -420,6 +422,8 @@ function loadAnalytics() {
 
     // ── Unique visitors: all-time + 30d ────────────────────────
     var allVisitors = new Set(), vis30 = new Set();
+    // Merge vis-alltime (never expires) + date-bucketed vis (for 30d)
+    Object.keys(alltimeData).forEach(function(id) { allVisitors.add(id); });
     Object.keys(visData).forEach(function(date) {
       Object.keys(visData[date]).forEach(function(id) {
         allVisitors.add(id);

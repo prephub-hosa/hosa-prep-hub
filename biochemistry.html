@@ -3835,6 +3835,7 @@ function showNextReview(interval, recycled) {
     var u={};
     u['analytics/pv/'+today+'/'+PAGE_KEY]=inc;
     u['analytics/vis/'+today+'/'+id]=true;
+    u['analytics/vis-alltime/'+id]=true;
     u['analytics/dev/'+today+'/'+dev]=inc;
     u['analytics/src/'+today+'/'+src]=inc;
     firebase.database().ref().update(u).catch(function(){});
