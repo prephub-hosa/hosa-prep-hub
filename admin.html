@@ -465,9 +465,14 @@ function loadAnalytics() {
     }
 
     // ── Render top-line stats ───────────────────────────────────
+    // GA_BASELINE: Google Analytics catches visitors (ad-blocked / fast-bounce /
+    // privacy browsers) that the Firebase tracker misses. We add GA's new-users
+    // figure to the all-time unique count so the dashboard reflects total reach.
+    // Update this number from GA (Reports snapshot → New users) periodically.
+    var GA_BASELINE = 112;
     document.getElementById('an-badge').textContent = totalPV.toLocaleString() + ' views total';
     document.getElementById('an-pv').textContent    = totalPV.toLocaleString();
-    document.getElementById('an-vis').textContent   = allVisitors.size.toLocaleString();
+    document.getElementById('an-vis').textContent   = (allVisitors.size + GA_BASELINE).toLocaleString();
     document.getElementById('an-pv30').textContent  = pv30.toLocaleString();
     document.getElementById('an-vis30').textContent = vis30.size.toLocaleString();
     document.getElementById('an-avgsec').textContent = avgSec ? fmtSec(avgSec) : '—';
