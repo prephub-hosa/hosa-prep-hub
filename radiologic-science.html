@@ -2331,6 +2331,32 @@ function showXPToast(msg, cls) {
   clearTimeout(t._hideTm);
   t._hideTm = setTimeout(() => { t.classList.remove('show'); }, cls === 'level-up' ? 2400 : 1200);
 }
+function _showLevelUpModal(level) {
+  var ov = document.getElementById('lvlup-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'lvlup-overlay';
+    ov.innerHTML =
+      '<div class="lvlup-card">' +
+        '<div class="lvlup-badge">\u2B06</div>' +
+        '<div class="lvlup-eyebrow">Level Up</div>' +
+        '<div class="lvlup-num" id="lvlup-num"></div>' +
+        '<div class="lvlup-desc" id="lvlup-desc"></div>' +
+        '<div class="lvlup-xp-bar"><div class="lvlup-xp-fill" id="lvlup-xp-fill"></div></div>' +
+        '<button class="lvlup-close" id="lvlup-close">Continue studying \u2192</button>' +
+      '</div>';
+    document.body.appendChild(ov);
+    document.getElementById('lvlup-close').addEventListener('click', function() { ov.style.display = 'none'; });
+    ov.addEventListener('click', function(e) { if (e.target === ov) ov.style.display = 'none'; });
+  }
+  document.getElementById('lvlup-num').textContent = level;
+  document.getElementById('lvlup-desc').textContent = 'You\'ve reached Level ' + level + '!';
+  ov.style.display = 'flex';
+  var fill = document.getElementById('lvlup-xp-fill');
+  if (fill) { fill.style.width = '0%'; setTimeout(function() { fill.style.width = '12%'; }, 600); }
+  if (window.hosaConfetti) window.hosaConfetti({ colors: ['#fbbf24','#f97316','#ef4444','#ffffff','#fde68a'], count: 120, x: window.innerWidth/2, y: window.innerHeight*0.4 });
+  if (window.hosaPlaySound) window.hosaPlaySound('levelup');
+}
 function awardXP(amount) {
   if (!amount) return;
   const oldLvl = xpLevel(_xpTotal);
@@ -2339,8 +2365,10 @@ function awardXP(amount) {
   const newLvl = xpLevel(_xpTotal);
   updateXPDisplay();
   if (newLvl > oldLvl) {
-    showXPToast('🎉 Level ' + newLvl + ' unlocked!', 'level-up');
+    // Update checkpoint so index.html polling loop doesn't double-fire the modal
+    try { localStorage.setItem('hosa::chk-lvl', String(newLvl)); } catch(e) {}
     try{gtag('event','level_up',{level:newLvl});}catch(e){}
+    setTimeout(function() { _showLevelUpModal(newLvl); }, 300);
   } else {
     showXPToast('+' + amount + ' XP', '');
   }

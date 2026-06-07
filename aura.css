@@ -7098,3 +7098,19 @@ nav.tabs button:active {
   .home-hero-stat-label { font-size: 8px !important; }
   .home-hero-name { font-size: 28px !important; }
 }
+
+/* ── aura v38: Mobile declutter ───────────────────────────────── */
+@media (max-width: 768px) {
+  /* Keyboard shortcuts button is useless on touch — remove it */
+  .kbd-help-btn { display: none !important; }
+  /* Hide the keyboard-hint line beneath flashcard buttons */
+  .rating-hint { display: none !important; }
+  /* Guest banner: tighten on mobile so it takes less vertical space */
+  #guest-banner { padding: 8px 16px !important; font-size: 12px !important; }
+}
+@media (max-width: 480px) {
+  /* On very small screens, shrink the XP pill text */
+  #xp-pill { font-size: 10px !important; padding: 2px 6px !important; }
+  /* User email already hidden at 640px; make sign-out button smaller */
+  .btn-signout { padding: 4px 10px !important; font-size: 12px !important; }
+}
