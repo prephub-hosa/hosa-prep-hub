@@ -1814,6 +1814,18 @@ const state = {
 // ══════════════════════════════════════════════════════════════
 const DB_PATH = 'audiology';
 
+// ── Firebase key safety ────────────────────────────────────
+// RTDB keys may not contain . # $ / [ ] — but deck terms routinely do
+// ("my/o", "FEV1/FVC", "Nature vs. Nurture"). ref().set() validates keys
+// SYNCHRONOUSLY and throws, so a .catch() on the returned promise never sees
+// it: the throw escaped saveProgress() and aborted its caller, which froze the
+// timed test mid-question and stopped progress saving for signed-in users
+// entirely. Encode the two term-keyed maps on write, decode them on read.
+function _fbEncKey(k) { return String(k).replace(/[%.#$\/\[\]]/g, function(c) { return '%' + c.charCodeAt(0).toString(16).toUpperCase(); }); }
+function _fbDecKey(k) { return String(k).replace(/%([0-9A-F]{2})/g, function(_m, h) { return String.fromCharCode(parseInt(h, 16)); }); }
+function _fbEncMap(o) { var out = {}; o = o || {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) out[_fbEncKey(k)] = o[k]; return out; }
+function _fbDecMap(o) { var out = {}; o = o || {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) out[_fbDecKey(k)] = o[k]; return out; }
+
 function saveProgress() {
   const user = firebase.auth().currentUser;
   const data = {
@@ -1829,8 +1841,18 @@ function saveProgress() {
     lastFilter:    state.flash.filter || 'all',
   };
   if (user) {
-    firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(data)
-      .catch(e => console.warn('Could not save progress:', e));
+    // Encode term-keyed maps, and never let a save failure escape into the
+    // caller — a throw here used to freeze the timed test mid-question.
+    try {
+      var _fbData = Object.assign({}, data, {
+        srLevels: _fbEncMap(data.srLevels),
+        srData:   _fbEncMap(data.srData)
+      });
+      firebase.database().ref(`users/${user.uid}/progress/${DB_PATH}`).set(_fbData)
+        .catch(e => console.warn('Could not save progress:', e));
+    } catch (e) {
+      console.warn('Could not save progress:', e);
+    }
   } else {
     try { localStorage.setItem('hosa::' + DB_PATH, JSON.stringify(data)); } catch(e) {}
     // Mirror a lightweight summary to Firebase so admin can track guest activity
@@ -1878,8 +1900,8 @@ async function loadProgress(uid) {
         state.progress.studyDates    = new Set(data.studyDates || []);
         state.progress.quizzes       = _mergeQuizzes(state.progress.quizzes, data.quizzes);
         state.progress.lastMissed    = data.lastMissed || [];
-        state.progress.srLevels      = data.srLevels   || {};
-        state.progress.srData        = data.srData     || {};
+        state.progress.srLevels      = _fbDecMap(data.srLevels);
+        state.progress.srData        = _fbDecMap(data.srData);
         state.progress.streak        = data.streak        || 0;
         state.progress.lastStudyDate = data.lastStudyDate || null;
         state.progress.lastFilter    = data.lastFilter    || 'all';
