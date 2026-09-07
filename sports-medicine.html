@@ -1654,6 +1654,7 @@
         <div class="quiz-feedback" id="test-feedback">
           <div class="verdict" id="test-verdict"></div>
           <div class="explain" id="test-explain"></div>
+          <button class="btn primary" id="test-next" style="display:none;">Next Question &rarr;</button>
         </div>
       </div>
     </div>
@@ -1988,6 +1989,22 @@ function saveProgress() {
   }
 }
 
+// Union of local + remote attempts, de-duped. Prevents a late load from
+// discarding a quiz the user just finished in this session.
+function _mergeQuizzes(local, remote) {
+  var a = Array.isArray(local)  ? local  : [];
+  var b = Array.isArray(remote) ? remote : [];
+  var seen = {}, out = [];
+  a.concat(b).forEach(function(q) {
+    if (!q) return;
+    var k = (q.date || '') + '|' + q.score + '|' + q.total + '|' + (q.timed ? 't' : 'f');
+    if (seen[k]) return;
+    seen[k] = 1;
+    out.push(q);
+  });
+  return out;
+}
+
 async function loadProgress(uid) {
   try {
     if (uid) {
@@ -1997,7 +2014,7 @@ async function loadProgress(uid) {
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
         state.progress.studyDates    = new Set(data.studyDates || []);
-        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.quizzes       = _mergeQuizzes(state.progress.quizzes, data.quizzes);
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
         state.progress.srData        = data.srData     || {};
@@ -2012,7 +2029,7 @@ async function loadProgress(uid) {
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
         state.progress.studyDates    = new Set(data.studyDates || []);
-        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.quizzes       = _mergeQuizzes(state.progress.quizzes, data.quizzes);
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
         state.progress.streak        = data.streak        || 0;
@@ -2384,6 +2401,8 @@ function initFlashcards() {
     nextFlashcard(-1);
   });
 
+}
+
 let _sessHard = 0;
 function rateCard(q) {
   const card = state.flash.deck[state.flash.index];
@@ -2590,7 +2609,6 @@ document.getElementById('goal-dec')?.addEventListener('click', () => {
   localStorage.setItem(GOAL_STORAGE, _dailyGoal);
   updateGoalRing();
 });
-}
 
 function nextFlashcard(dir) {
   const total = state.flash.deck.length;
@@ -2804,6 +2822,7 @@ function finishQuiz() {
   $('#final-total').textContent = state.quiz.deck.length;
   const pct = Math.round((state.quiz.score / state.quiz.deck.length) * 100);
   try{gtag('event','quiz_completed',{event_category:DB_PATH,value:pct,quiz_score:state.quiz.score,quiz_total:state.quiz.deck.length});}catch(e){}
+  _flushPendingLevelUp();
   let msg;
   if (pct === 100) {
     msg = 'Flawless. The terminology bends to you.';
@@ -2840,6 +2859,10 @@ const TEST_SECONDS = 720; // 12 minutes
 
 function initTest() {
   $('#test-begin').addEventListener('click', startTest);
+  var _tnBtn = document.getElementById('test-next');
+  if (_tnBtn) _tnBtn.addEventListener('click', function() {
+    if (state.test._advance) state.test._advance();
+  });
   $('#test-again').addEventListener('click', () => {
     $('#test-results').style.display = 'none';
     $('#test-intro').style.display = 'block';
@@ -2848,6 +2871,8 @@ function initTest() {
 }
 
 function startTest() {
+  clearInterval(state.test.timer);                 // never leak a prior timer
+  clearTimeout(state.test._advTimer); state.test._advTimer = null;
   const pool = [...TERMS];
   state.test.deck = shuffle(pool).slice(0, TEST_LENGTH);
   state.test.index = 0;
@@ -2890,6 +2915,9 @@ function renderTestQuestion() {
   const card = state.test.deck[state.test.index];
   const options = buildOptions(card, TERMS);
   state.test.answered = false;
+  clearTimeout(state.test._advTimer); state.test._advTimer = null;
+  const _tnReset = document.getElementById('test-next');
+  if (_tnReset) { _tnReset.style.display = 'none'; _tnReset.disabled = true; }
 
   $('#test-progress').textContent = `${pad(state.test.index + 1)} / ${pad(state.test.deck.length)}`;
   $('#test-term').textContent = card.term;
@@ -2945,8 +2973,13 @@ function answerTest(chosen, correct) {
   }
   document.getElementById('test-explain').innerHTML = _testRat;
   saveProgress();
+  // Always give a manual way forward — the unguarded auto-advance alone left
+  // users stuck (or skipped questions) whenever a modal interrupted the timer.
   const _ai = state.test.index;
-  setTimeout(() => {
+  const _advance = () => {
+    if (state.test.index !== _ai) return;   // already moved on
+    clearTimeout(state.test._advTimer);
+    state.test._advTimer = null;
     state.test.index++;
     if (state.test.index >= state.test.deck.length) {
       clearInterval(state.test.timer);
@@ -2954,11 +2987,16 @@ function answerTest(chosen, correct) {
     } else {
       renderTestQuestion();
     }
-  }, isCorrect ? 1300 : 2000);
+  };
+  state.test._advance = _advance;
+  const _tn = document.getElementById('test-next');
+  if (_tn) { _tn.style.display = ''; _tn.disabled = false; }
+  state.test._advTimer = setTimeout(_advance, isCorrect ? 1300 : 2600);
 }
 
 function finishTest() {
   state.test.active = false;
+  _flushPendingLevelUp();
   const correctCount = state.test.answers.filter(a => a.isCorrect).length;
   const total = state.test.deck.length;
   state.progress.quizzes.push({
@@ -3136,13 +3174,33 @@ $('#reset-progress').addEventListener('click', () => {
 // ══════════════════════════════════════════════════════════════
 //  BOOT
 // ══════════════════════════════════════════════════════════════
+// onAuthStateChanged also fires on every token refresh (~hourly). Re-running
+// loadProgress() there wiped in-memory quiz results ("0 quizzes taken" after
+// finishing quizzes) and re-running init*() stacked duplicate listeners, which
+// started overlapping test timers. Wire once; reload only on identity change.
+var _listenersWired = false;
+var _bootUid = undefined;
+function _wireOnce() {
+  if (_listenersWired) return;
+  _listenersWired = true;
+  initFlashcards(); initQuiz(); initTest();
+  _guestGateCheck();
+}
+function _hidePageLoader() {
+  var lo = document.getElementById('page-loader');
+  if (lo) { lo.style.opacity = '0'; setTimeout(function(){ lo.remove(); }, 280); }
+}
 firebase.auth().onAuthStateChanged(user => {
+  var _uid = user ? user.uid : null;
+  if (_bootUid === _uid) return;   // token refresh, same identity
+  _bootUid = _uid;
   if (!user) {
     // Guest mode — use localStorage, no redirect
     const emailEl = document.getElementById('user-email');
     const signoutBtn = document.getElementById('btn-signout');
     if (emailEl) emailEl.textContent = 'Guest';
-    if (signoutBtn) {
+    if (signoutBtn && !signoutBtn._guestWired) {
+      signoutBtn._guestWired = true;
       signoutBtn.textContent = 'Sign In';
       signoutBtn.style.cssText += ';background:var(--accent);color:#fff;border-color:var(--accent);';
       signoutBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
@@ -3151,23 +3209,23 @@ firebase.auth().onAuthStateChanged(user => {
     if (guestBanner) guestBanner.style.display = '';
     loadProgress(null).then(() => {
       saveProgress(); // sync localStorage → Firebase guest-stats on load
-      initFlashcards();
-      initQuiz();
-      initTest();
-      (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})();
+      _wireOnce();
+      _hidePageLoader();
     });
     return;
   }
   document.getElementById('user-email').textContent = user.email;
-  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  var _soBtn = document.getElementById('btn-signout');
+  if (_soBtn && !_soBtn._authWired) {
+    _soBtn._authWired = true;
+    _soBtn.addEventListener('click', () => firebase.auth().signOut());
+  }
   // Store email so admin can identify users
   try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
   try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
   loadProgress(user.uid).then(() => {
-    initFlashcards();
-    initQuiz();
-    initTest();
-    (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})();
+    _wireOnce();
+    _hidePageLoader();
   });
 });
 
@@ -3262,6 +3320,63 @@ function showXPToast(msg, cls) {
   clearTimeout(t._hideTm);
   t._hideTm = setTimeout(() => { t.classList.remove('show'); }, cls === 'level-up' ? 2400 : 1200);
 }
+// A level-up overlay mid-assessment stole focus and made the test feel frozen.
+// Hold it until the quiz/test finishes.
+var _pendingLevelUp = 0;
+function _isAssessmentActive() {
+  try {
+    var t = document.getElementById('test-active');
+    if (t && t.offsetParent !== null) return true;
+    var q = document.getElementById('quiz-stage');
+    if (q && q.offsetParent !== null) return true;
+  } catch(e) {}
+  return false;
+}
+function _flushPendingLevelUp() {
+  if (!_pendingLevelUp) return;
+  var lv = _pendingLevelUp;
+  _pendingLevelUp = 0;
+  setTimeout(function() { _showLevelUpModal(lv); }, 450);
+}
+
+// ── Guest usage limit ──────────────────────────────────────────────
+var GUEST_LIMIT = 60;
+function _showGuestGate() {
+  if (document.getElementById('guest-gate')) return;
+  var ov = document.createElement('div');
+  ov.id = 'guest-gate';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);';
+  ov.innerHTML =
+    '<div class="lvlup-card" style="max-width:440px;">' +
+      '<div class="lvlup-badge">\u2726</div>' +
+      '<div class="lvlup-eyebrow">Free preview complete</div>' +
+      '<div class="lvlup-desc" style="font-size:16px;margin-top:14px;">You\'ve studied <strong>' + GUEST_LIMIT + ' cards</strong> as a guest \u2014 nice work.<br><br>Create a free account to keep studying, sync progress across devices, and join the leaderboard.</div>' +
+      '<a href="index.html#signup" class="lvlup-close" style="display:inline-block;text-decoration:none;">Create free account \u2192</a>' +
+      '<div style="margin-top:16px;"><a href="index.html" style="font-family:\'Source Serif 4\',Georgia,serif;font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;">Back to all events</a></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+// Re-assert the gate on load, so reloading the page can't buy extra cards.
+function _guestGateCheck() {
+  try {
+    if (firebase.auth().currentUser) return false;
+    var n = parseInt(localStorage.getItem('hosa::guest-actions') || '0', 10);
+    if (n >= GUEST_LIMIT) { _showGuestGate(); return true; }
+  } catch(e) {}
+  return false;
+}
+function _guestTick() {
+  try {
+    if (firebase.auth().currentUser) return;   // signed in — unlimited
+    var n = parseInt(localStorage.getItem('hosa::guest-actions') || '0', 10) + 1;
+    localStorage.setItem('hosa::guest-actions', String(n));
+    if (n >= GUEST_LIMIT) { _showGuestGate(); }
+    else if (n === GUEST_LIMIT - 15) {
+      showXPToast('15 free cards left \u2014 create a free account to keep going', 'level-up');
+    }
+  } catch(e) {}
+}
+
 function _showLevelUpModal(level) {
   var ov = document.getElementById('lvlup-overlay');
   if (!ov) {
@@ -3290,6 +3405,7 @@ function _showLevelUpModal(level) {
 }
 function awardXP(amount) {
   if (!amount) return;
+  _guestTick();
   const oldLvl = xpLevel(_xpTotal);
   _xpTotal += amount;
   localStorage.setItem(XP_STORAGE, _xpTotal);
@@ -3299,7 +3415,8 @@ function awardXP(amount) {
     // Update checkpoint so index.html polling loop doesn't double-fire the modal
     try { localStorage.setItem('hosa::chk-lvl', String(newLvl)); } catch(e) {}
     try{gtag('event','level_up',{level:newLvl});}catch(e){}
-    setTimeout(function() { _showLevelUpModal(newLvl); }, 300);
+    if (_isAssessmentActive()) _pendingLevelUp = newLvl;
+    else setTimeout(function() { _showLevelUpModal(newLvl); }, 300);
   } else {
     showXPToast('+' + amount + ' XP', '');
   }
@@ -3713,7 +3830,7 @@ function showNextReview(interval, recycled) {
   var el=document.createElement('div');
   el.id='ob-overlay';
   el.style.display='none';
-  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You'll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
+  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You\'ll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
   document.body.appendChild(el);
 
   function dismiss(){

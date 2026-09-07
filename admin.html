@@ -183,6 +183,12 @@
     <div id="usage-users"><p class="empty">Loading…</p></div>
   </section>
 
+  <section id="section-signups">
+    <h2>Sign-ups &amp; Outreach <span class="badge" id="signup-count">0</span></h2>
+    <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Name, username and school collected at account creation.</p>
+    <div id="signup-body"><p class="empty">No sign-ups with profile data yet.</p></div>
+  </section>
+
   <section id="section-subscribers">
     <h2>Subscribers <span class="badge" id="sub-count">0</span></h2>
     <div id="sub-body"><p class="empty">No subscribers yet.</p></div>
@@ -216,6 +222,46 @@ function fmt(iso) {
   var d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
        + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
+function loadSignups() {
+  db.ref('users').once('value').then(function(snap) {
+    var users = snap.val() || {};
+    var rows = [];
+    Object.keys(users).forEach(function(uid) {
+      var p = users[uid] && users[uid].profile;
+      if (!p) return;
+      rows.push({
+        uid: uid,
+        name: p.name || '',
+        username: p.username || '',
+        school: p.school || '',
+        email: p.email || (users[uid] && users[uid].email) || '',
+        createdAt: p.createdAt || ''
+      });
+    });
+    rows.sort(function(a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
+    document.getElementById('signup-count').textContent = rows.length;
+    var el = document.getElementById('signup-body');
+    if (!rows.length) { el.innerHTML = '<p class="empty">No sign-ups with profile data yet.</p>'; return; }
+    var schools = {};
+    rows.forEach(function(r) { if (r.school) schools[r.school.trim().toLowerCase()] = 1; });
+    var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;">'
+             + rows.length + ' profile' + (rows.length === 1 ? '' : 's') + ' across '
+             + Object.keys(schools).length + ' school' + (Object.keys(schools).length === 1 ? '' : 's') + '.</p>'
+             + '<table><thead><tr><th>Joined</th><th>Name</th><th>Username</th><th>School / Chapter</th><th>Email</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      var when = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—';
+      html += '<tr><td>' + escapeHtml(when) + '</td><td>' + escapeHtml(r.name || '—')
+            + '</td><td>' + escapeHtml(r.username || '—')
+            + '</td><td>' + escapeHtml(r.school || '—')
+            + '</td><td><code>' + escapeHtml(r.email || '—') + '</code></td></tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }).catch(function() {
+    document.getElementById('signup-body').innerHTML = '<p class="empty">Could not load sign-ups.</p>';
+  });
 }
 
 function loadSubscribers() {
@@ -789,6 +835,7 @@ auth.onAuthStateChanged(function(user) {
   loadSubscribers();
   loadRequests();
   loadFeedback();
+  loadSignups();
 });
 
 document.getElementById('signout-btn').onclick = function() {

@@ -2120,6 +2120,19 @@ footer { display: none; }
     </form>
     <form id="form-signup" style="display:none">
       <div class="field-group">
+        <label class="field-label" for="signup-name">Full name</label>
+        <input id="signup-name" type="text" class="field-input" placeholder="Jordan Ramirez" autocomplete="name" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="signup-username">Username</label>
+        <input id="signup-username" type="text" class="field-input" placeholder="jordan_r" autocomplete="nickname" minlength="3" maxlength="20" required>
+        <p style="font-family:'Source Serif 4',Georgia,serif;font-size:11.5px;color:var(--ink-soft);margin:5px 0 0;opacity:.7;">Shown on the leaderboard. Letters, numbers, . _ - only.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="signup-school">School / HOSA chapter</label>
+        <input id="signup-school" type="text" class="field-input" placeholder="Lincoln High School" autocomplete="organization" required>
+      </div>
+      <div class="field-group">
         <label class="field-label" for="signup-email">Email</label>
         <input id="signup-email" type="email" class="field-input" placeholder="you@example.com" required>
       </div>
@@ -4458,12 +4471,25 @@ auth.onAuthStateChanged(user => {
   if (authLoadingEl) authLoadingEl.style.display = 'none';
   if (user) {
     if (userEmailEl) userEmailEl.textContent = user.email;
-    // Store email prefix as display name for sidebar/hero profile cards
+    // Display name: prefer the username chosen at signup, fall back to email prefix.
     var _emailPrefix = (user.email || '').split('@')[0] || '';
     if (_emailPrefix) {
-      try { localStorage.setItem('hosa-username', _emailPrefix); } catch(_e) {}
-      try { localStorage.setItem('hosa-lb-name', _emailPrefix); } catch(_e) {}
+      try {
+        if (!localStorage.getItem('hosa-username')) localStorage.setItem('hosa-username', _emailPrefix);
+        if (!localStorage.getItem('hosa-lb-name'))  localStorage.setItem('hosa-lb-name',  _emailPrefix);
+      } catch(_e) {}
     }
+    // Pull the stored profile username so it wins on other devices too.
+    try {
+      firebase.database().ref('users/' + user.uid + '/profile/username').get().then(function(s) {
+        var un = s && s.val();
+        if (!un) return;
+        try { localStorage.setItem('hosa-username', un); } catch(_e) {}
+        try { localStorage.setItem('hosa-lb-name',  un); } catch(_e) {}
+        try { localStorage.setItem('hosa::username', un); } catch(_e) {}
+        if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard();
+      }).catch(function(){});
+    } catch(_e) {}
     const pill = document.getElementById('topbar-user-pill');
     if (pill) pill.classList.add('visible');
     // Reset signout button (showGuestMode may have changed it to "Sign in")
@@ -4482,7 +4508,9 @@ auth.onAuthStateChanged(user => {
       function _syncXP() {
         try {
           var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
-          var nm = (user.email || '').split('@')[0] || 'Student';
+          var nm = '';
+          try { nm = localStorage.getItem('hosa-lb-name') || ''; } catch(_e) {}
+          if (!nm) nm = (user.email || '').split('@')[0] || 'Student';
           firebase.database().ref('leaderboard/level/' + user.uid).update({ xp: xp, name: nm, updatedAt: new Date().toISOString() });
           // Keep users/{uid} in sync too for backwards compatibility / personal data
           firebase.database().ref('users/' + user.uid).update({ xp: xp, name: nm });
@@ -4625,16 +4653,67 @@ if (formSignup) formSignup.addEventListener('submit', async e => {
   const password = document.getElementById('signup-password').value;
   const confirm  = document.getElementById('signup-confirm').value;
   const errorEl  = document.getElementById('signup-error');
+  const fullName = document.getElementById('signup-name').value.trim();
+  const username = document.getElementById('signup-username').value.trim();
+  const school   = document.getElementById('signup-school').value.trim();
   errorEl.textContent = '';
+  if (!fullName)            { errorEl.textContent = 'Please enter your name.'; return; }
+  if (!school)              { errorEl.textContent = 'Please enter your school or HOSA chapter.'; return; }
+  if (username.length < 3)  { errorEl.textContent = 'Username must be at least 3 characters.'; return; }
+  if (!/^[A-Za-z0-9._-]+$/.test(username)) {
+    errorEl.textContent = 'Username can only use letters, numbers, and . _ -';
+    return;
+  }
   if (password !== confirm) { errorEl.textContent = 'Passwords do not match.'; return; }
   if (password.length < 6)  { errorEl.textContent = 'Password must be at least 6 characters.'; return; }
   try {
-    await auth.createUserWithEmailAndPassword(
+    const cred = await auth.createUserWithEmailAndPassword(
       document.getElementById('signup-email').value, password
     );
+    const uid = cred && cred.user && cred.user.uid;
+    if (uid) {
+      // Outreach tracking: name + school live under the user's own record.
+      try {
+        await firebase.database().ref('users/' + uid + '/profile').set({
+          name: fullName, username: username, school: school,
+          email: cred.user.email || '', createdAt: new Date().toISOString()
+        });
+      } catch(_e) {}
+      // Leaderboard shows the chosen username, not the email prefix.
+      try { firebase.database().ref('leaderboard/level/' + uid).update({ name: username }); } catch(_e) {}
+    }
+    try { localStorage.setItem('hosa-lb-name', username); } catch(_e) {}
+    try { localStorage.setItem('hosa-username', username); } catch(_e) {}
+    try { localStorage.setItem('hosa::username', username); } catch(_e) {}
+    // New account — clear the guest usage counter.
+    try { localStorage.removeItem('hosa::guest-actions'); } catch(_e) {}
     try { gtag('event', 'user_registered', {method: 'email'}); } catch(e) {}
   } catch (err) { errorEl.textContent = friendlyError(err.code); }
 });
+
+// Deep link from the guest-limit gate on event pages: index.html#signup
+(function() {
+  function openSignup() {
+    var gate = document.getElementById('auth-gate');
+    var tab  = document.getElementById('tab-signup');
+    if (!gate || !tab) return;
+    gate.style.display = 'flex';
+    tab.click();
+  }
+  if (location.hash === '#signup') {
+    setTimeout(openSignup, 60);
+    // showGuestMode() hides #auth-gate once Firebase resolves the (guest)
+    // session, which can land after the timer above and bounce the visitor
+    // to the homepage. This listener is registered after the main auth
+    // handler, so it re-asserts the form once that has run.
+    auth.onAuthStateChanged(function(u) {
+      if (!u) setTimeout(openSignup, 0);
+    });
+  }
+  window.addEventListener('hashchange', function() {
+    if (location.hash === '#signup') openSignup();
+  });
+})();
 
 function friendlyError(code) {
   return ({
@@ -5060,8 +5139,10 @@ function friendlyError(code) {
   });
   document.getElementById('onboard-skip-1').addEventListener('click', closeModal);
 
-  // Open via hero pill — always opens at step 1 of full flow
-  openBtn.addEventListener('click', function(){ openModal(1); });
+  // Open via hero pill — always opens at step 1 of full flow.
+  // The pill is not rendered on every layout, so guard: without this the whole
+  // block threw and the onboarding auto-open below never ran.
+  if (openBtn) openBtn.addEventListener('click', function(){ openModal(1); });
 
   // Auto-open on first visit only, after a short delay so the page paints
   var seen = false;
