@@ -1569,6 +1569,7 @@
         <div class="quiz-feedback" id="test-feedback">
           <div class="verdict" id="test-verdict"></div>
           <div class="explain" id="test-explain"></div>
+          <button class="btn primary" id="test-next" style="display:none;">Next Question &rarr;</button>
         </div>
       </div>
     </div>
@@ -1783,7 +1784,7 @@ const TERMS = [
   // ── Complex Terms / Conditions ────────────────────────────────
   {term:'Anaphylaxis',     type:'Condition', category:'Condition', meaning:'Spelling: A-N-A-P-H-Y-L-A-X-I-S. Severe, life-threatening systemic allergic reaction requiring epinephrine. From "ana-" (up/against) + "phylaxis" (protection) = against protection.', example:'Remember: anaPhYLaxis. PH makes the /f/ sound; Y before L then A-X-I-S.'},
   {term:'Arrhythmia',      type:'Condition', category:'Condition', meaning:'Spelling: A-R-R-H-Y-T-H-M-I-A. Irregular heart rhythm. From "a-" (without) + "rhythmos" (rhythm). Note the double-R and the silent H in "rhythm".',                                       example:'Tricky: double R + RHY (silent H). Ar-RHYTH-mia = no rhythm.'},
-  {term:'Diphtheria',      type:'Condition', category:'Condition', meaning:'Spelling: D-I-P-H-T-H-E-R-I-A. Bacterial throat infection caused by Corynebacterium. Note: -phth- cluster (P-H-T-H) is a common misspelling trap.',                                         example:'DiPHTHeria: two H's in a row — PHT + H. Very common spelling error.'},
+  {term:'Diphtheria',      type:'Condition', category:'Condition', meaning:'Spelling: D-I-P-H-T-H-E-R-I-A. Bacterial throat infection caused by Corynebacterium. Note: -phth- cluster (P-H-T-H) is a common misspelling trap.',                                         example:'DiPHTHeria: two H\'s in a row — PHT + H. Very common spelling error.'},
   {term:'Dyspnea',         type:'Condition', category:'Condition', meaning:'Spelling: D-Y-S-P-N-E-A. Difficulty breathing / shortness of breath. From "dys-" (difficult) + "pnoe" (breathing). The PN cluster is silent in pronunciation.',                             example:'DysPNea: P is silent. Dys = difficult + pnea = breathing.'},
   {term:'Epistaxis',       type:'Condition', category:'Condition', meaning:'Spelling: E-P-I-S-T-A-X-I-S. Nosebleed. From Greek "epi-" (upon) + "stazein" (to drip). The X in -taxis creates the /ks/ sound.',                                                         example:'EpiSTAXis: note the X. Epi = upon + staxis = dripping.'},
   {term:'Hemoptysis',      type:'Condition', category:'Condition', meaning:'Spelling: H-E-M-O-P-T-Y-S-I-S. Coughing up blood from airways. From "hemo-" (blood) + "ptysis" (spitting). PT cluster: P is silent.',                                                      example:'HemoPTYsis: silent P. Hemo = blood + ptysis = spitting blood.'},
@@ -1797,7 +1798,7 @@ const TERMS = [
 
   // ── Procedures / Tests ────────────────────────────────────────
   {term:'Auscultation',    type:'Procedure', category:'Procedure', meaning:'Spelling: A-U-S-C-U-L-T-A-T-I-O-N. Listening to internal body sounds with a stethoscope. From Latin "auscultare" (to listen). The SC cluster is common in Latin medical terms.',            example:'AuSCULtation: note SC + UL. Latin roots use SC frequently.'},
-  {term:'Electrocardiogram',type:'Procedure',category:'Procedure', meaning:'Spelling: E-L-E-C-T-R-O-C-A-R-D-I-O-G-R-A-M. ECG/EKG: tracing of the heart's electrical activity. Electro + cardio + gram (record). Three root words joined.',                          example:'ELECTRO + CARDIO + GRAM. Each part is spelled as its root.'},
+  {term:'Electrocardiogram',type:'Procedure',category:'Procedure', meaning:'Spelling: E-L-E-C-T-R-O-C-A-R-D-I-O-G-R-A-M. ECG/EKG: tracing of the heart\'s electrical activity. Electro + cardio + gram (record). Three root words joined.',                          example:'ELECTRO + CARDIO + GRAM. Each part is spelled as its root.'},
   {term:'Phlebotomy',      type:'Procedure', category:'Procedure', meaning:'Spelling: P-H-L-E-B-O-T-O-M-Y. Drawing blood from a vein. From "phlebo-" (vein) + "tomy" (cutting). PHL cluster at start; PH = /f/ sound.',                                               example:'PHLebotomy: silent P + HL. Phlebo = vein + tomy = cutting into.'},
   {term:'Sphygmomanometer',type:'Procedure', category:'Procedure', meaning:'Spelling: S-P-H-Y-G-M-O-M-A-N-O-M-E-T-E-R. Blood pressure measuring device. From "sphygmos" (pulse) + "mano" (pressure) + "meter" (measure). SPH cluster at start.',                     example:'SPHYGmomanometer: say SFIG-moh-mah-NOM-eh-ter. 15 letters!'},
   {term:'Laryngoscopy',    type:'Procedure', category:'Procedure', meaning:'Spelling: L-A-R-Y-N-G-O-S-C-O-P-Y. Visual examination of the larynx (voice box). Laryng(o) + scopy. Note: laryngo — not "laringo" — the Y before the N is a common error.',              example:'LARYNGoscopy: LARYNG not LARING. Y is present, not just I.'},
@@ -1889,6 +1890,22 @@ function saveProgress() {
   }
 }
 
+// Union of local + remote attempts, de-duped. Prevents a late load from
+// discarding a quiz the user just finished in this session.
+function _mergeQuizzes(local, remote) {
+  var a = Array.isArray(local)  ? local  : [];
+  var b = Array.isArray(remote) ? remote : [];
+  var seen = {}, out = [];
+  a.concat(b).forEach(function(q) {
+    if (!q) return;
+    var k = (q.date || '') + '|' + q.score + '|' + q.total + '|' + (q.timed ? 't' : 'f');
+    if (seen[k]) return;
+    seen[k] = 1;
+    out.push(q);
+  });
+  return out;
+}
+
 async function loadProgress(uid) {
   try {
     if (uid) {
@@ -1898,7 +1915,7 @@ async function loadProgress(uid) {
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
         state.progress.studyDates    = new Set(data.studyDates || []);
-        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.quizzes       = _mergeQuizzes(state.progress.quizzes, data.quizzes);
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
         state.progress.srData        = data.srData     || {};
@@ -1913,7 +1930,7 @@ async function loadProgress(uid) {
         state.progress.studied       = new Set(data.studied    || []);
         state.progress.mastered      = new Set(data.mastered   || []);
         state.progress.studyDates    = new Set(data.studyDates || []);
-        state.progress.quizzes       = data.quizzes    || [];
+        state.progress.quizzes       = _mergeQuizzes(state.progress.quizzes, data.quizzes);
         state.progress.lastMissed    = data.lastMissed || [];
         state.progress.srLevels      = data.srLevels   || {};
         state.progress.streak        = data.streak        || 0;
@@ -2349,6 +2366,63 @@ function showXPToast(msg, cls) {
   clearTimeout(t._hideTm);
   t._hideTm = setTimeout(() => { t.classList.remove('show'); }, cls === 'level-up' ? 2400 : 1200);
 }
+// A level-up overlay mid-assessment stole focus and made the test feel frozen.
+// Hold it until the quiz/test finishes.
+var _pendingLevelUp = 0;
+function _isAssessmentActive() {
+  try {
+    var t = document.getElementById('test-active');
+    if (t && t.offsetParent !== null) return true;
+    var q = document.getElementById('quiz-stage');
+    if (q && q.offsetParent !== null) return true;
+  } catch(e) {}
+  return false;
+}
+function _flushPendingLevelUp() {
+  if (!_pendingLevelUp) return;
+  var lv = _pendingLevelUp;
+  _pendingLevelUp = 0;
+  setTimeout(function() { _showLevelUpModal(lv); }, 450);
+}
+
+// ── Guest usage limit ──────────────────────────────────────────────
+var GUEST_LIMIT = 60;
+function _showGuestGate() {
+  if (document.getElementById('guest-gate')) return;
+  var ov = document.createElement('div');
+  ov.id = 'guest-gate';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);';
+  ov.innerHTML =
+    '<div class="lvlup-card" style="max-width:440px;">' +
+      '<div class="lvlup-badge">\u2726</div>' +
+      '<div class="lvlup-eyebrow">Free preview complete</div>' +
+      '<div class="lvlup-desc" style="font-size:16px;margin-top:14px;">You\'ve studied <strong>' + GUEST_LIMIT + ' cards</strong> as a guest \u2014 nice work.<br><br>Create a free account to keep studying, sync progress across devices, and join the leaderboard.</div>' +
+      '<a href="index.html#signup" class="lvlup-close" style="display:inline-block;text-decoration:none;">Create free account \u2192</a>' +
+      '<div style="margin-top:16px;"><a href="index.html" style="font-family:\'Source Serif 4\',Georgia,serif;font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;">Back to all events</a></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+// Re-assert the gate on load, so reloading the page can't buy extra cards.
+function _guestGateCheck() {
+  try {
+    if (firebase.auth().currentUser) return false;
+    var n = parseInt(localStorage.getItem('hosa::guest-actions') || '0', 10);
+    if (n >= GUEST_LIMIT) { _showGuestGate(); return true; }
+  } catch(e) {}
+  return false;
+}
+function _guestTick() {
+  try {
+    if (firebase.auth().currentUser) return;   // signed in — unlimited
+    var n = parseInt(localStorage.getItem('hosa::guest-actions') || '0', 10) + 1;
+    localStorage.setItem('hosa::guest-actions', String(n));
+    if (n >= GUEST_LIMIT) { _showGuestGate(); }
+    else if (n === GUEST_LIMIT - 15) {
+      showXPToast('15 free cards left \u2014 create a free account to keep going', 'level-up');
+    }
+  } catch(e) {}
+}
+
 function _showLevelUpModal(level) {
   var ov = document.getElementById('lvlup-overlay');
   if (!ov) {
@@ -2377,6 +2451,7 @@ function _showLevelUpModal(level) {
 }
 function awardXP(amount) {
   if (!amount) return;
+  _guestTick();
   const oldLvl = xpLevel(_xpTotal);
   _xpTotal += amount;
   localStorage.setItem(XP_STORAGE, _xpTotal);
@@ -2386,7 +2461,8 @@ function awardXP(amount) {
     // Update checkpoint so index.html polling loop doesn't double-fire the modal
     try { localStorage.setItem('hosa::chk-lvl', String(newLvl)); } catch(e) {}
     try{gtag('event','level_up',{level:newLvl});}catch(e){}
-    setTimeout(function() { _showLevelUpModal(newLvl); }, 300);
+    if (_isAssessmentActive()) _pendingLevelUp = newLvl;
+    else setTimeout(function() { _showLevelUpModal(newLvl); }, 300);
   } else {
     showXPToast('+' + amount + ' XP', '');
   }
@@ -2844,6 +2920,7 @@ function showQuizResults() {
   state.progress.quizzes.push({ score, total, date: new Date().toISOString(), timed: false });
   try{gtag('event','quiz_completed',{event_category:DB_PATH,value:pct,quiz_score:score,quiz_total:total});}catch(e){}
   saveProgress();
+  _flushPendingLevelUp();
 }
 
 document.getElementById('quiz-next').addEventListener('click', () => { state.quiz.index++; renderQuizQuestion(); });
@@ -2859,6 +2936,10 @@ const TEST_TIME = 720;
 
 function initTest() {
   document.getElementById('test-begin').addEventListener('click', startTest);
+  var _tnBtn = document.getElementById('test-next');
+  if (_tnBtn) _tnBtn.addEventListener('click', function() {
+    if (state.test._advance) state.test._advance();
+  });
   document.getElementById('test-again').addEventListener('click', () => {
     document.getElementById('test-results').style.display = 'none';
     document.getElementById('test-intro').style.display = '';
@@ -2876,6 +2957,8 @@ function initTest() {
 }
 
 function startTest() {
+  clearInterval(state.test.timer);                 // never leak a prior timer
+  clearTimeout(state.test._advTimer); state.test._advTimer = null;
   state.test.deck     = shuffle([...TERMS]).slice(0, TEST_SIZE);
   state.test.index    = 0;
   state.test.answers  = [];
@@ -2905,6 +2988,9 @@ function renderTestQuestion() {
   if (idx >= deck.length) { clearInterval(state.test.timer); showTestResults(); return; }
   const card = deck[idx];
   state.test.answered = false;
+  clearTimeout(state.test._advTimer); state.test._advTimer = null;
+  const _tnReset = document.getElementById('test-next');
+  if (_tnReset) { _tnReset.style.display = 'none'; _tnReset.disabled = true; }
   document.getElementById('test-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
   document.getElementById('test-term').textContent     = card.term;
   document.getElementById('test-feedback').className   = 'quiz-feedback';
@@ -2939,13 +3025,20 @@ function renderTestQuestion() {
         _testRat += '<div class="rationale-row r-picked-wrong"><strong>✗ You picked ' + opt.term + '</strong> — ' + opt.meaning + '</div>';
       }
       document.getElementById('test-explain').innerHTML = _testRat;
+      // Always give a manual way forward — the auto-advance alone left users
+      // stuck whenever a modal or mis-click interrupted the timer.
       const _ai = state.test.index;
-      setTimeout(() => {
-        if (state.test.index === _ai) {
-          state.test.index++;
-          renderTestQuestion();
-        }
-      }, correct ? 1300 : 2000);
+      const _advance = () => {
+        if (state.test.index !== _ai) return;   // already moved on
+        clearTimeout(state.test._advTimer);
+        state.test._advTimer = null;
+        state.test.index++;
+        renderTestQuestion();
+      };
+      state.test._advance = _advance;
+      const _tn = document.getElementById('test-next');
+      if (_tn) { _tn.style.display = ''; _tn.disabled = false; }
+      state.test._advTimer = setTimeout(_advance, correct ? 1300 : 2600);
     });
     container.appendChild(btn);
   });
@@ -2969,6 +3062,7 @@ function showTestResults() {
   const misses = state.test.answers.filter(a => !a.correct).map(a => a.term);
   state.progress.lastMissed = misses;
   saveProgress();
+  _flushPendingLevelUp();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3094,26 +3188,51 @@ $('#reset-progress').addEventListener('click', () => {
 // ══════════════════════════════════════════════════════════════
 //  BOOT
 // ══════════════════════════════════════════════════════════════
+// onAuthStateChanged also fires on every token refresh (~hourly). Re-running
+// loadProgress() there wiped in-memory quiz results (users saw "0 quizzes taken"
+// after completing quizzes) and re-running init*() stacked duplicate listeners,
+// which started overlapping test timers. Wire listeners once; reload only on
+// an actual identity change.
+var _listenersWired = false;
+var _bootUid = undefined;
+function _wireOnce() {
+  if (_listenersWired) return;
+  _listenersWired = true;
+  initFlashcards(); initQuiz(); initTest();
+  _guestGateCheck();
+}
+function _hidePageLoader() {
+  var lo = document.getElementById('page-loader');
+  if (lo) { lo.style.opacity = '0'; setTimeout(function(){ lo.remove(); }, 280); }
+}
 firebase.auth().onAuthStateChanged(user => {
+  var uid = user ? user.uid : null;
+  if (_bootUid === uid) return;   // token refresh, same identity — nothing to do
+  _bootUid = uid;
   if (!user) {
     const emailEl = document.getElementById('user-email');
     const signoutBtn = document.getElementById('btn-signout');
     if (emailEl) emailEl.textContent = 'Guest';
-    if (signoutBtn) {
+    if (signoutBtn && !signoutBtn._guestWired) {
+      signoutBtn._guestWired = true;
       signoutBtn.textContent = 'Sign In';
       signoutBtn.style.cssText += ';background:var(--accent);color:#fff;border-color:var(--accent);';
       signoutBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
     }
     const guestBanner = document.getElementById('guest-banner');
     if (guestBanner) guestBanner.style.display = '';
-    loadProgress(null).then(() => { saveProgress(); initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
+    loadProgress(null).then(() => { saveProgress(); _wireOnce(); _hidePageLoader(); });
     return;
   }
   document.getElementById('user-email').textContent = user.email;
-  document.getElementById('btn-signout').addEventListener('click', () => firebase.auth().signOut());
+  var _soBtn = document.getElementById('btn-signout');
+  if (_soBtn && !_soBtn._authWired) {
+    _soBtn._authWired = true;
+    _soBtn.addEventListener('click', () => firebase.auth().signOut());
+  }
   // Store email so admin can identify users
   try { firebase.database().ref('users/' + user.uid + '/email').set(user.email); } catch(e) {}
-  loadProgress(user.uid).then(() => { initFlashcards(); initQuiz(); initTest(); (function(){var lo=document.getElementById('page-loader');if(lo){lo.style.opacity='0';setTimeout(function(){lo.remove();},280);}})(); });
+  loadProgress(user.uid).then(() => { _wireOnce(); _hidePageLoader(); });
 });
 
 // Smart Review help popover
@@ -3348,7 +3467,7 @@ function showNextReview(interval, recycled) {
   var el=document.createElement('div');
   el.id='ob-overlay';
   el.style.display='none';
-  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You'll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
+  el.innerHTML='<div id="ob-box">'    +'<h2>Welcome to HOSA Prep Hub ✢</h2>'    +'<div class="ob-step"><div class="ob-icon">🃏</div><div class="ob-text"><strong>Tap a card to flip it</strong> — term on the front, definition on the back.</div></div>'    +'<div class="ob-step"><div class="ob-icon">✓ ✗</div><div class="ob-text"><strong>Rate yourself honestly</strong> — "Got it" or "Missed it" teaches Smart Review which cards to bring back sooner.</div></div>'    +'<div class="ob-step"><div class="ob-icon">📊</div><div class="ob-text"><strong>20 cards per session</strong> — a mix of new terms and review cards. You\'ll work through the full deck over multiple sessions.</div></div>'    +'<div class="ob-step"><div class="ob-icon">★</div><div class="ob-text"><strong>Already know a term?</strong> Hit “Already know this” on any card to skip it straight to mastered.</div></div>'    +'<div class="ob-step"><div class="ob-icon">☁</div><div class="ob-text"><strong>Progress saves automatically</strong> — sign in to sync across devices, or study as a guest.</div></div>'    +'<button id="ob-start">Got it — start studying!</button>'    +'</div>';
   document.body.appendChild(el);
 
   function dismiss(){
