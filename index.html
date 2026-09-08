@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
-<script>try{var t=localStorage.getItem("hosa-theme");if(t==="light"||t==="sepia")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<script>try{var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
@@ -1151,6 +1151,137 @@
   }
   .btn-signout:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   #main-content { display: block; }
+
+/* ── Levels / XP explainer ─────────────────────────────────────
+   Forms: stat tiles for the XP sources (headline numbers, not a chart),
+   a table+bar ladder for level cost (>7 meaningful classes), and a
+   hero figure + meter for the reader's own standing. Single series
+   throughout, so one hue and no legend; values wear text tokens. */
+.lv-section { margin-bottom: 56px; }
+.lv-h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 24px; font-weight: 500; letter-spacing: -0.01em;
+  color: var(--ink); margin: 0 0 6px;
+}
+.lv-sub {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14.5px; line-height: 1.6; color: var(--ink-soft);
+  margin: 0 0 22px; max-width: 620px;
+}
+
+/* Standing: hero figure + meter */
+.lv-standing {
+  border: 1px solid var(--rule); background: var(--bg-card);
+  border-radius: 10px; padding: 26px 28px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 28px;
+}
+.lv-hero-wrap { display: flex; align-items: baseline; gap: 10px; }
+.lv-hero {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 56px; line-height: 1; font-weight: 500;
+  color: var(--accent); letter-spacing: -0.03em;
+}
+.lv-hero-label {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.lv-meter-wrap { flex: 1 1 260px; min-width: 220px; }
+.lv-meter-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 13px;
+  color: var(--ink-soft); margin-bottom: 8px; gap: 12px;
+}
+.lv-meter-track {
+  height: 12px; border-radius: 6px; overflow: hidden;
+  background: var(--rule); opacity: 0.55;
+}
+.lv-meter-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 0 4px 4px 0; transition: width 0.5s ease;
+}
+
+/* XP sources: KPI tiles grouped by mode */
+.lv-group { margin-bottom: 26px; }
+.lv-group-head {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 10px;
+}
+.lv-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
+.lv-tile {
+  border: 1px solid var(--rule); background: var(--bg-card);
+  border-radius: 8px; padding: 16px 18px;
+}
+.lv-tile-xp {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 30px; font-weight: 500; line-height: 1;
+  color: var(--ink); letter-spacing: -0.02em;
+}
+.lv-tile-xp span { font-size: 14px; color: var(--ink-faint); margin-left: 3px; }
+.lv-tile-what {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 13.5px; color: var(--ink-soft); margin-top: 7px; line-height: 1.45;
+}
+
+/* Level ladder: table + bars */
+.lv-ladder { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.lv-row {
+  display: grid; grid-template-columns: 62px 92px 1fr 78px;
+  align-items: center; gap: 14px;
+  padding: 9px 18px; border-bottom: 1px solid var(--rule);
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 14px;
+}
+.lv-row:last-child { border-bottom: none; }
+.lv-row-head {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-faint); background: var(--bg-card);
+}
+.lv-row-you { background: rgba(200,16,46,0.06); }
+.lv-lvl { font-family: 'Fraunces', Georgia, serif; font-size: 16px; color: var(--ink); }
+.lv-total, .lv-step { font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.lv-step { text-align: right; }
+.lv-bar-track { height: 12px; background: transparent; }
+.lv-bar {
+  height: 12px; background: var(--accent);
+  border-radius: 0 4px 4px 0;   /* 4px data-end, square at the baseline */
+  min-width: 2px;
+}
+.lv-you-tag {
+  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 9px;
+  letter-spacing: 0.1em; color: var(--accent); margin-left: 6px;
+}
+.lv-note {
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 13.5px;
+  color: var(--ink-soft); line-height: 1.6; margin-top: 14px;
+}
+.lv-note strong { color: var(--ink); font-weight: 600; }
+
+/* Worked examples */
+.lv-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.lv-ex {
+  border: 1px solid var(--rule); background: var(--bg-card);
+  border-radius: 8px; padding: 18px 20px;
+}
+.lv-ex-goal {
+  font-family: 'Fraunces', Georgia, serif; font-size: 17px; color: var(--ink); margin-bottom: 3px;
+}
+.lv-ex-xp {
+  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 12px;
+}
+.lv-ex-line {
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 13.5px;
+  color: var(--ink-soft); line-height: 1.7;
+}
+.lv-ex-line b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 620px) {
+  .lv-row { grid-template-columns: 48px 74px 1fr 66px; gap: 10px; padding: 9px 12px; font-size: 13px; }
+  .lv-hero { font-size: 44px; }
+  /* Keep the header on one line — the numeric "Step" column already names it. */
+  .lv-hdr-long { display: none; }
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1883,7 +2014,7 @@ footer { display: none; }
 }
 #intro-splash.is-out {
   pointer-events: none;
-  animation: is-fade-out 0.55s ease forwards;
+  animation: is-fade-out 0.35s ease forwards;
 }
 @keyframes is-fade-out {
   to { opacity: 0; }
@@ -1915,7 +2046,7 @@ footer { display: none; }
   font-size: 22px;
   color: var(--accent);
   margin-bottom: 28px;
-  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 0.05s forwards;
 }
 
 .is-headline {
@@ -1934,7 +2065,7 @@ footer { display: none; }
   font-style: italic;
   letter-spacing: -0.04em;
   color: var(--ink);
-  animation: is-up 0.55s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+  animation: is-up 0.45s cubic-bezier(0.22,1,0.36,1) 0.12s forwards;
 }
 
 .is-line2 {
@@ -1943,7 +2074,7 @@ footer { display: none; }
   font-weight: 500;
   letter-spacing: -0.04em;
   color: var(--ink);
-  animation: is-up 0.55s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+  animation: is-up 0.45s cubic-bezier(0.22,1,0.36,1) 0.20s forwards;
 }
 
 .is-line2 em {
@@ -1957,7 +2088,7 @@ footer { display: none; }
   line-height: 1.6;
   color: var(--ink-soft);
   margin-bottom: 28px;
-  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 0.34s forwards;
 }
 
 .is-pills {
@@ -1972,7 +2103,7 @@ footer { display: none; }
   letter-spacing: 0.1em;
   color: var(--ink-faint);
   margin-bottom: 40px;
-  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.95s forwards;
+  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 0.44s forwards;
 }
 
 .is-dot { color: var(--accent); font-size: 11px; }
@@ -1990,7 +2121,7 @@ footer { display: none; }
   min-width: 220px;
   margin-bottom: 16px;
   transition: filter 0.15s;
-  animation: is-up 0.5s cubic-bezier(0.22,1,0.36,1) 1.2s forwards;
+  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 0.56s forwards;
 }
 .is-cta:hover { filter: brightness(1.1); }
 
@@ -2004,7 +2135,7 @@ footer { display: none; }
   color: var(--ink-faint);
   cursor: pointer;
   padding: 6px 12px;
-  animation: is-up 0.4s cubic-bezier(0.22,1,0.36,1) 1.5s forwards;
+  animation: is-up 0.35s cubic-bezier(0.22,1,0.36,1) 0.70s forwards;
   transition: color 0.15s;
 }
 .is-skip:hover { color: var(--ink); }
@@ -2203,6 +2334,10 @@ footer { display: none; }
     <button class="sb-item" data-tab="leaderboard">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 4h3v3a3 3 0 0 1-3 3M7 4H4v3a3 3 0 0 0 3 3"/></svg>
       Leaderboard
+    </button>
+    <button class="sb-item" data-tab="levels">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="4" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="16" y="4" width="4" height="16"/></svg>
+      Levels &amp; XP
     </button>
   </div>
   <div class="sb-footer">
@@ -2687,8 +2822,8 @@ footer { display: none; }
         <p class="card-desc">Master the language of medicine through prefixes, suffixes, and word roots — the vocabulary foundation every healthcare field depends on.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">216</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">3</div>
@@ -2712,8 +2847,8 @@ footer { display: none; }
         <p class="card-desc">Study diseases and disorders across every major body system — cardiovascular, endocrine, neurological, and more.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">147</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">9</div>
@@ -2737,8 +2872,8 @@ footer { display: none; }
         <p class="card-desc">Macronutrients, vitamins, fluid balance, medical nutrition therapy — the full HOSA Nutrition test plan, built to scope.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">127</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">8</div>
@@ -2762,8 +2897,8 @@ footer { display: none; }
         <p class="card-desc">Proteins, nucleic acids, carbohydrates, lipids, membranes, and metabolism — the molecular foundations of life.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">112</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">7</div>
@@ -2787,8 +2922,8 @@ footer { display: none; }
         <p class="card-desc">Body systems, anatomical terminology, and physiological processes — from the skeleton to the endocrine system.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">96</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">8</div>
@@ -2812,8 +2947,8 @@ footer { display: none; }
         <p class="card-desc">Drug classifications, mechanisms of action, and clinical applications — from antibiotics to cardiac drugs.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">72</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">7</div>
@@ -2837,8 +2972,8 @@ footer { display: none; }
         <p class="card-desc">Dosage calculations, IV drip rates, unit conversions, lab values, and clinical formulas — the numbers side of medicine.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">75</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2862,8 +2997,8 @@ footer { display: none; }
         <p class="card-desc">Healthcare law, patient rights, HIPAA, bioethical principles, and professional accountability — the foundation of ethical practice.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">69</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2887,8 +3022,8 @@ footer { display: none; }
         <p class="card-desc">Lifespan development from conception to late adulthood — milestones, major theorists (Piaget, Erikson, Kohlberg), and the physical, cognitive, and social changes that shape us.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">78</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2912,8 +3047,8 @@ footer { display: none; }
         <p class="card-desc">Mental health disorders, substance use, psychiatric medications, and therapy modalities — everything from DSM-5 criteria to neurotransmitters and evidence-based treatments.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">77</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2937,8 +3072,8 @@ footer { display: none; }
         <p class="card-desc">Vital signs, patient care, clinical procedures, medication administration, infection control, and medical equipment — the complete foundation of hands-on nursing practice.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">87</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2962,8 +3097,8 @@ footer { display: none; }
         <p class="card-desc">Epidemiology, disease prevention, biostatistics, environmental health, global health systems, and health promotion — the science of protecting and improving community health.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">80</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -2987,8 +3122,8 @@ footer { display: none; }
         <p class="card-desc">Sports injuries, injury assessment, musculoskeletal anatomy, treatment techniques, rehabilitation principles, and medical conditions in athletes — from sprains to sudden cardiac arrest.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">73</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3012,8 +3147,8 @@ footer { display: none; }
         <p class="card-desc">Lab safety, microbiology, hematology, urinalysis, clinical chemistry, and quality control — the diagnostic science behind every blood draw, culture, and test result.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">68</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3037,8 +3172,8 @@ footer { display: none; }
         <p class="card-desc">Core biotech concepts, lab techniques, genetic engineering, biopharmaceuticals, real-world applications, and bioethics — built for HOSA competitors.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">80</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3062,8 +3197,8 @@ footer { display: none; }
         <p class="card-desc">EMS systems, patient assessment, airway management, trauma care, medical emergencies, and special situations — everything an EMT needs to know.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">69</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3087,8 +3222,8 @@ footer { display: none; }
         <p class="card-desc">PT foundations, patient assessment, musculoskeletal conditions, therapeutic modalities, exercise science, and neurology — built for HOSA competitors.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">72</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3112,8 +3247,8 @@ footer { display: none; }
         <p class="card-desc">Dental anatomy, oral diseases, preventive dentistry, restorative procedures, dental materials, and infection control — the complete foundation of oral healthcare.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">67</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3137,8 +3272,8 @@ footer { display: none; }
         <p class="card-desc">Animal anatomy, common diseases, parasitology and zoonotic disease, animal nutrition, veterinary pharmacology, and clinical procedures — the foundation of animal medicine.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">68</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3162,8 +3297,8 @@ footer { display: none; }
         <p class="card-desc">Epidemiological foundations, study designs, measures and statistics, disease surveillance, outbreak investigation, historical epidemics, and levels of prevention.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">58</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3187,8 +3322,8 @@ footer { display: none; }
         <p class="card-desc">Venous anatomy, phlebotomy equipment, color-coded tubes and the CLSI order of draw, venipuncture procedure, complications, and OSHA safety standards.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">60</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3212,8 +3347,8 @@ footer { display: none; }
         <p class="card-desc">Administrative skills, clinical procedures, vital signs and measurements, pharmacology and injections, laboratory testing, and patient-centered care.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">50</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3237,8 +3372,8 @@ footer { display: none; }
         <p class="card-desc">Imaging modalities, patient positioning, radiation safety and ALARA, anatomical findings on imaging, and radiographic procedures and equipment.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">42</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">5</div>
@@ -3262,8 +3397,8 @@ footer { display: none; }
         <p class="card-desc">Bacteria, viruses, fungi and parasites, antimicrobial agents and resistance, laboratory diagnosis, and infection control practices.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">55</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">6</div>
@@ -3287,8 +3422,8 @@ footer { display: none; }
         <p class="card-desc">Prescription anatomy and dispensing, major drug classes, pharmacokinetics, compounding and pharmacy calculations, and pharmacy regulation and safety.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">46</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">5</div>
@@ -3312,8 +3447,8 @@ footer { display: none; }
         <p class="card-desc">Death investigation, wound analysis, forensic toxicology, trace evidence, and forensic DNA and serology — the science behind criminal investigations.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">37</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">5</div>
@@ -3337,8 +3472,8 @@ footer { display: none; }
         <p class="card-desc">Foundations of OT, frames of reference and practice models, evaluation and standardized assessments, and therapeutic interventions for functional independence.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">33</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">4</div>
@@ -3362,8 +3497,8 @@ footer { display: none; }
         <p class="card-desc">Eye anatomy from cornea to retina, refractive errors and prescriptions, ocular diseases, and ophthalmic examination techniques.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">30</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">4</div>
@@ -3387,8 +3522,8 @@ footer { display: none; }
         <p class="card-desc">Molecular genetics, Mendelian inheritance patterns, chromosomal and single-gene disorders, and the role of genetics in modern clinical medicine.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">33</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">5</div>
@@ -3412,8 +3547,8 @@ footer { display: none; }
         <p class="card-desc">Electronic health records and clinical systems, interoperability standards (HL7, FHIR, ICD-10), HIPAA privacy and security, and healthcare data analytics.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">28</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">4</div>
@@ -3437,8 +3572,8 @@ footer { display: none; }
         <p class="card-desc">Pulmonary anatomy and physiology, lung pathology from asthma to ARDS, respiratory assessment and ABGs, and oxygen and airway therapy.</p>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="stat-num">20</div>
-            <div class="stat-label">Cards/Session</div>
+            <div class="stat-num">30</div>
+            <div class="stat-label">Terms</div>
           </div>
           <div class="card-stat">
             <div class="stat-num">4</div>
@@ -3461,7 +3596,7 @@ footer { display: none; }
         <h3>Nursing<br><em>Assisting</em></h3>
         <p class="card-desc">CNA scope and professionalism, ADLs and personal care, vital signs, safe mobility and transfers, and infection control and special-population care.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">27</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3474,7 +3609,7 @@ footer { display: none; }
         <h3>Cardiovascular<br><em>Science</em></h3>
         <p class="card-desc">Cardiac anatomy and physiology, EKG interpretation and arrhythmias, cardiac pathology including MI and heart failure, and cardiovascular drugs and interventions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">30</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3487,7 +3622,7 @@ footer { display: none; }
         <h3>Endo<em>crinology</em></h3>
         <p class="card-desc">Pituitary and hypothalamic disorders, thyroid disease, diabetes mellitus and its complications, and adrenal and parathyroid conditions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">24</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3500,7 +3635,7 @@ footer { display: none; }
         <h3>Neuro<em>logy</em></h3>
         <p class="card-desc">CNS anatomy and function, stroke and cerebrovascular disease, seizures and movement disorders, and other neurologic conditions from meningitis to dementia.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">25</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3513,7 +3648,7 @@ footer { display: none; }
         <h3>Onco<em>logy</em></h3>
         <p class="card-desc">Cancer biology and hallmarks, the most common malignancies, diagnosis and TNM staging, and modern cancer treatment from chemo to immunotherapy.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">26</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3526,7 +3661,7 @@ footer { display: none; }
         <h3>Immuno<em>logy</em></h3>
         <p class="card-desc">Innate and adaptive immunity, immunoglobulin classes and T-cell subsets, hypersensitivity reactions and autoimmune disease, and vaccines and transplant immunology.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">27</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3539,7 +3674,7 @@ footer { display: none; }
         <h3>Hemato<em>logy</em></h3>
         <p class="card-desc">Blood cell biology and hematopoiesis, anemias from iron deficiency to sickle cell, coagulation and bleeding disorders, and blood cancers and transfusion medicine.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">26</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3552,7 +3687,7 @@ footer { display: none; }
         <h3>Derma<em>tology</em></h3>
         <p class="card-desc">Skin anatomy and appendages, primary and secondary lesion morphology, inflammatory and infectious skin conditions, and skin cancers from BCC to melanoma.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">25</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3565,7 +3700,7 @@ footer { display: none; }
         <h3>Gastro<em>enterology</em></h3>
         <p class="card-desc">GI tract anatomy and physiology, upper and lower GI disorders including IBD and ulcers, and hepatobiliary and pancreatic disease from cirrhosis to pancreatitis.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">26</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3578,7 +3713,7 @@ footer { display: none; }
         <h3>Surgical<br><em>Technology</em></h3>
         <p class="card-desc">OR roles and environment, surgical asepsis and sterilization, instruments and supplies, and operative procedures, time outs, and surgical counts.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">25</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3591,7 +3726,7 @@ footer { display: none; }
         <h3>Nephro<em>logy</em></h3>
         <p class="card-desc">Kidney anatomy and physiology, fluid and electrolyte and acid-base disorders, acute and chronic kidney disease, and dialysis and renal transplant.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">19</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3604,7 +3739,7 @@ footer { display: none; }
         <h3>Obstetrics<br>&amp; <em>Gynecology</em></h3>
         <p class="card-desc">Female reproductive anatomy and physiology, pregnancy and prenatal care, labor and delivery, and major gynecologic conditions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">21</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3617,7 +3752,7 @@ footer { display: none; }
         <h3>Pedi<em>atrics</em></h3>
         <p class="card-desc">Growth and development milestones, pediatric vaccines and infections, and the most common conditions encountered in children from asthma to ADHD.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3630,7 +3765,7 @@ footer { display: none; }
         <h3>Geri<em>atrics</em></h3>
         <p class="card-desc">Physiology of aging, geriatric syndromes including falls and delirium and dementia, and comprehensive assessment and end-of-life care.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">18</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3643,7 +3778,7 @@ footer { display: none; }
         <h3>Infectious<br><em>Disease</em></h3>
         <p class="card-desc">Sepsis and bacteremia, common clinical infections including UTI and pneumonia and cellulitis, and special populations including HIV, TB, and STIs.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">17</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3656,7 +3791,7 @@ footer { display: none; }
         <h3>Rheuma<em>tology</em></h3>
         <p class="card-desc">Autoimmune joint disease, connective tissue diseases including lupus and scleroderma, and crystal arthropathies and other rheumatologic conditions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">17</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3669,7 +3804,7 @@ footer { display: none; }
         <h3>Otolaryng<em>ology</em></h3>
         <p class="card-desc">Ear disorders from otitis to vertigo, nose and sinus conditions including allergic rhinitis and sinusitis, and throat and voice disorders including pharyngitis and OSA.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">18</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3682,7 +3817,7 @@ footer { display: none; }
         <h3>Uro<em>logy</em></h3>
         <p class="card-desc">The lower urinary tract, kidney stones and urologic tumors, and male andrology and pediatric urologic emergencies.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">18</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3695,7 +3830,7 @@ footer { display: none; }
         <h3>Sleep<br><em>Medicine</em></h3>
         <p class="card-desc">Sleep physiology and architecture, sleep-disordered breathing and CPAP, and insomnia and other sleep disorders.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">15</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3708,7 +3843,7 @@ footer { display: none; }
         <h3>Pain<br><em>Management</em></h3>
         <p class="card-desc">Pain physiology and types, non-opioid analgesics, and opioids and interventional pain procedures.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">18</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3721,7 +3856,7 @@ footer { display: none; }
         <h3>Trauma &amp;<br><em>Critical Care</em></h3>
         <p class="card-desc">Trauma resuscitation and ATLS principles, shock and resuscitation, and core ICU concepts including ARDS, mechanical ventilation, and sepsis.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">19</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3734,7 +3869,7 @@ footer { display: none; }
         <h3>Speech-Language<br><em>Pathology</em></h3>
         <p class="card-desc">SLP scope and communication foundations, speech and language disorders, dysphagia evaluation and treatment, and AAC and pediatric issues.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">21</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3747,7 +3882,7 @@ footer { display: none; }
         <h3>Audio<em>logy</em></h3>
         <p class="card-desc">Auditory anatomy and physiology, types of hearing loss, audiologic assessment, and hearing rehabilitation including hearing aids and cochlear implants.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">22</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3760,7 +3895,7 @@ footer { display: none; }
         <h3>Healthcare<br><em>Systems</em></h3>
         <p class="card-desc">US healthcare structure and providers, insurance and payment systems including Medicare/Medicaid/ACA, and healthcare quality, policy, and public health.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3773,7 +3908,7 @@ footer { display: none; }
         <h3>Psychi<em>atry</em></h3>
         <p class="card-desc">Mood disorders, anxiety and trauma-related disorders, psychotic disorders, substance use and personality disorders, and neurodevelopmental conditions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">15</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3786,7 +3921,7 @@ footer { display: none; }
         <h3>Neo<em>natology</em></h3>
         <p class="card-desc">Newborn assessment and resuscitation, NICU conditions including RDS and NEC, neonatal infections and metabolic emergencies, and congenital heart disease.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">13</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3799,7 +3934,7 @@ footer { display: none; }
         <h3>Physical Medicine &amp;<br><em>Rehabilitation</em></h3>
         <p class="card-desc">Rehab foundations and the multidisciplinary team, stroke and neurological rehabilitation, spinal cord injury, musculoskeletal medicine and amputee care.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3812,7 +3947,7 @@ footer { display: none; }
         <h3>Allergy &amp;<br><em>Immunology</em></h3>
         <p class="card-desc">Hypersensitivity reaction types and anaphylaxis, respiratory allergy and immunotherapy, food and drug allergy, and primary immune deficiency disorders.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">11</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">4</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3825,7 +3960,7 @@ footer { display: none; }
         <h3>Global<br><em>Health</em></h3>
         <p class="card-desc">Global burden of disease and health equity, major global diseases including malaria and TB and HIV, universal health coverage, and the One Health approach.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3838,7 +3973,7 @@ footer { display: none; }
         <h3>Anesthes<br><em>iology</em></h3>
         <p class="card-desc">Induction agents and inhaled anesthetics, neuromuscular blockers, regional vs general techniques, ASA classification, and the recognition of malignant hyperthermia.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3851,7 +3986,7 @@ footer { display: none; }
         <h3>Hepat<br><em>ology</em></h3>
         <p class="card-desc">Liver function tests, viral hepatitis and NAFLD, cirrhosis and Child-Pugh classification, ascites and portal hypertension, and acetaminophen toxicity.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">13</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3864,7 +3999,7 @@ footer { display: none; }
         <h3>Toxic<br><em>ology</em></h3>
         <p class="card-desc">Common toxidromes and pattern recognition, life-saving antidotes including NAC and naloxone, MUDPILES anion-gap acidosis, and emergency overdose management.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3877,7 +4012,7 @@ footer { display: none; }
         <h3>Palliative<br><em>Care</em></h3>
         <p class="card-desc">Hospice eligibility and levels of care, symptom management at end of life, advance directives and DNR orders, and the SPIKES framework for difficult conversations.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3890,7 +4025,7 @@ footer { display: none; }
         <h3>Pulmon<br><em>ology</em></h3>
         <p class="card-desc">Asthma and COPD stepwise therapy, pulmonary embolism and Wells score, ARDS Berlin criteria, PFT interpretation, and pneumothorax management.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3903,7 +4038,7 @@ footer { display: none; }
         <h3>Vascular<br><em>Medicine</em></h3>
         <p class="card-desc">Virchow's triad and venous thromboembolism, peripheral arterial disease and the ankle-brachial index, aortic aneurysm and dissection, plus anticoagulation and HIT.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3916,7 +4051,7 @@ footer { display: none; }
         <h3>Reproductive<br><em>Health</em></h3>
         <p class="card-desc">Menstrual cycle physiology, contraceptive methods and effectiveness, infertility evaluation and PCOS, plus cervical cancer screening and STI management.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3929,7 +4064,7 @@ footer { display: none; }
         <h3>Patient<br><em>Safety</em></h3>
         <p class="card-desc">Joint Commission accreditation and National Patient Safety Goals, sentinel events and root cause analysis, never events, the Swiss cheese model, and IHI Triple Aim.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3942,7 +4077,7 @@ footer { display: none; }
         <h3>Pediatric<br><em>Emergency</em></h3>
         <p class="card-desc">Pediatric Assessment Triangle and PALS, fever workup in infants, dehydration assessment, plus croup, epiglottitis, intussusception, and Kawasaki disease.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3955,7 +4090,7 @@ footer { display: none; }
         <h3>Pre-Hospital<br><em>&amp; EMS</em></h3>
         <p class="card-desc">Adult and pediatric BLS, AED use, START mass-casualty triage, prehospital stroke and STEMI care, IO access, and spinal motion restriction.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">12</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">3</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3968,7 +4103,7 @@ footer { display: none; }
         <h3>Ortho<br><em>pedics</em></h3>
         <p class="card-desc">Fractures and healing, joint replacement, common musculoskeletal conditions, orthopedic procedures, and rehabilitation principles.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">42</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3981,7 +4116,7 @@ footer { display: none; }
         <h3>Ophthal<br><em>mology</em></h3>
         <p class="card-desc">Eye anatomy, glaucoma, cataracts, diabetic retinopathy, macular degeneration, retinal detachment, and common ocular emergencies.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">33</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -3994,7 +4129,7 @@ footer { display: none; }
         <h3>Transplant<br><em>Medicine</em></h3>
         <p class="card-desc">Organ transplantation, immunosuppression, acute and chronic rejection, UNOS allocation, and long-term complications in solid organ recipients.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">34</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4007,7 +4142,7 @@ footer { display: none; }
         <h3>Wound<br><em>Care</em></h3>
         <p class="card-desc">Wound healing phases, pressure injury staging, wound assessment, dressing types, burns management, and debridement principles.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">32</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4020,7 +4155,7 @@ footer { display: none; }
         <h3>Interventional<br><em>Cardiology</em></h3>
         <p class="card-desc">ECG interpretation, arrhythmias, cardiac catheterization, STEMI management, PCI, coronary stents, and cardiac pharmacology.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">33</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4033,7 +4168,7 @@ footer { display: none; }
         <h3>Geriatric<br><em>Psychiatry</em></h3>
         <p class="card-desc">Dementia types, delirium vs dementia, late-life depression, cognitive assessment tools, pharmacology in aging, and behavioral interventions.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">29</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4046,7 +4181,7 @@ footer { display: none; }
         <h3>Health<br><em>Equity</em></h3>
         <p class="card-desc">Health disparities, social determinants of health, structural racism, implicit bias, policy frameworks, and population health equity.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">24</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4059,7 +4194,7 @@ footer { display: none; }
         <h3>Clinical<br><em>Genetics</em></h3>
         <p class="card-desc">Inheritance patterns, chromosomal disorders, metabolic diseases, genetic counseling, newborn screening, BRCA, and pharmacogenomics.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">25</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4072,7 +4207,7 @@ footer { display: none; }
         <h3>Wilderness<br><em>Medicine</em></h3>
         <p class="card-desc">Altitude illness, hypothermia, frostbite, envenomation, field trauma, evacuation decision-making, and wilderness prevention strategies.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">21</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4085,7 +4220,7 @@ footer { display: none; }
         <h3>Perioperative<br><em>Care</em></h3>
         <p class="card-desc">Preoperative assessment, anesthesia types, intraoperative monitoring, malignant hyperthermia, PACU, and postoperative complications.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">23</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4098,7 +4233,7 @@ footer { display: none; }
         <h3>Medical<br><em>Spelling</em></h3>
         <p class="card-desc">Prefixes, suffixes, root words, and the trickiest medical terms to spell correctly — silent letters, PH clusters, and double-consonant traps.</p>
         <div class="card-stats">
-          <div class="card-stat"><div class="stat-num">20</div><div class="stat-label">Cards/Session</div></div>
+          <div class="card-stat"><div class="stat-num">56</div><div class="stat-label">Terms</div></div>
           <div class="card-stat"><div class="stat-num">5</div><div class="stat-label">Domains</div></div>
         </div>
         <div class="card-cta"><span>Begin studying</span><span class="card-arrow">→</span></div>
@@ -4440,6 +4575,74 @@ footer { display: none; }
           Players above are seeded for demonstration. Your row updates live based on your real XP.
           As you study, you'll automatically climb the ranks.
         </p>
+      </div>
+    </div>
+
+    <!-- ── Levels & XP Tab ── -->
+    <div class="tab-pane" id="tab-levels">
+      <div class="tab-inner">
+        <header class="page-header">
+          <div class="kicker">⚡ Progress</div>
+          <h1 class="page-title">Levels &amp; <span class="text-accent">XP</span></h1>
+          <p class="page-subtitle">Every card you rate and every question you get right earns XP. XP is the only thing that sets your level and your place on the leaderboard.</p>
+        </header>
+
+        <section class="lv-section">
+          <div class="lv-standing" id="lv-standing"></div>
+        </section>
+
+        <section class="lv-section">
+          <h2 class="lv-h2">Exactly how you earn XP</h2>
+          <p class="lv-sub">Three study modes award XP. Nothing else does &mdash; XP comes only from these actions, and it pools across every event you study.</p>
+
+          <div class="lv-group">
+            <div class="lv-group-head">Flashcards &mdash; per card you rate</div>
+            <div class="lv-tiles">
+              <div class="lv-tile"><div class="lv-tile-xp">1<span>XP</span></div><div class="lv-tile-what">&ldquo;Missed it&rdquo; &mdash; you still get credit for the rep</div></div>
+              <div class="lv-tile"><div class="lv-tile-xp">3<span>XP</span></div><div class="lv-tile-what">&ldquo;Hard&rdquo; &mdash; recalled, but it took work</div></div>
+              <div class="lv-tile"><div class="lv-tile-xp">5<span>XP</span></div><div class="lv-tile-what">&ldquo;Got it&rdquo; &mdash; the everyday rating</div></div>
+              <div class="lv-tile"><div class="lv-tile-xp">8<span>XP</span></div><div class="lv-tile-what">&ldquo;Already know this&rdquo; &mdash; straight to mastered</div></div>
+            </div>
+          </div>
+
+          <div class="lv-group">
+            <div class="lv-group-head">Practice Quiz &mdash; per question</div>
+            <div class="lv-tiles">
+              <div class="lv-tile"><div class="lv-tile-xp">10<span>XP</span></div><div class="lv-tile-what">Each <strong>correct</strong> answer</div></div>
+              <div class="lv-tile"><div class="lv-tile-xp">0<span>XP</span></div><div class="lv-tile-what">A wrong answer &mdash; no penalty, just no XP</div></div>
+            </div>
+          </div>
+
+          <div class="lv-group">
+            <div class="lv-group-head">Timed Test &mdash; per question</div>
+            <div class="lv-tiles">
+              <div class="lv-tile"><div class="lv-tile-xp">15<span>XP</span></div><div class="lv-tile-what">Each <strong>correct</strong> answer &mdash; the fastest XP on the site</div></div>
+              <div class="lv-tile"><div class="lv-tile-xp">0<span>XP</span></div><div class="lv-tile-what">A wrong answer &mdash; no penalty, just no XP</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lv-section">
+          <h2 class="lv-h2">What each level costs</h2>
+          <p class="lv-sub">Your level is set by total XP: <strong>level = &radic;(XP &divide; 50) + 1</strong>, rounded down. In practice that means every level costs <strong>100 XP more than the one before</strong> &mdash; the bars below are that step getting longer.</p>
+          <div class="lv-ladder" id="lv-ladder"></div>
+          <p class="lv-note">The bar shows the XP needed to climb <em>into</em> that level from the one below. Reaching <strong>Level 10</strong> takes 4,050 XP in total.</p>
+        </section>
+
+        <section class="lv-section">
+          <h2 class="lv-h2">How long is that, really?</h2>
+          <p class="lv-sub">The same target, three ways &mdash; whichever mode you prefer.</p>
+          <div class="lv-examples" id="lv-examples"></div>
+        </section>
+
+        <section class="lv-section">
+          <h2 class="lv-h2">Good to know</h2>
+          <div class="lv-tiles">
+            <div class="lv-tile"><div class="lv-tile-what"><strong>XP is shared across events.</strong> Studying Pharmacology and Medical Terminology both feed the same total.</div></div>
+            <div class="lv-tile"><div class="lv-tile-what"><strong>You never lose XP.</strong> Wrong answers award nothing, but nothing is taken away.</div></div>
+            <div class="lv-tile"><div class="lv-tile-what"><strong>Sign in to keep it.</strong> Signed out, XP lives only in this browser. An account syncs it everywhere.</div></div>
+          </div>
+        </section>
       </div>
     </div>
 
@@ -5185,14 +5388,14 @@ function friendlyError(code) {
           if (openBtn) openBtn.click();
         }, 200);
       }
-    }, 560);
+    }, 360);
   }
 
   document.getElementById('is-begin').addEventListener('click', function(){ exitSplash(true); });
   document.getElementById('is-skip').addEventListener('click', function(){ exitSplash(false); });
 
-  // Auto-advance after 5.5s
-  var t = setTimeout(function(){ exitSplash(true); }, 5500);
+  // Auto-advance once the staggered entrance has landed (~1.05s) plus a beat to read.
+  var t = setTimeout(function(){ exitSplash(true); }, 2400);
   document.getElementById('is-begin').addEventListener('click', function(){ clearTimeout(t); }, {once:true});
   document.getElementById('is-skip').addEventListener('click',  function(){ clearTimeout(t); }, {once:true});
 })();
@@ -10901,9 +11104,15 @@ window.hosaXPFlyup = function(el, amount) {
     var myGid = guestId();
     // Add real users from Firebase. Skip our own row (signed-in uid OR guest id) —
     // we add the current studier as the "You" row below, so this avoids a duplicate.
+    var myName = (getUserName() || '').trim().toLowerCase();
     FIREBASE_USERS.forEach(function(u) {
+      // Skip our own rows. Both ids must be checked even when signed in: a user who
+      // studied as a guest first has a leftover leaderboard/level/{guestId} row, and
+      // including it put them directly above themselves ("0 XP behind <me>").
       if (myUid && u.uid === myUid) return;
-      if (!myUid && myGid && u.uid === myGid) return;
+      if (myGid && u.uid === myGid) return;
+      // Same-name safety net for rows written under an id we no longer hold.
+      if (myName && (u.name || '').trim().toLowerCase() === myName) return;
       players.push({ name: u.name, xp: u.xp, level: xpLevel(u.xp), avatar: u.avatar || '👤', isYou: false, isFake: false });
     });
     var userXP = getUserXP();
@@ -10964,7 +11173,14 @@ window.hosaXPFlyup = function(el, amount) {
     var xpNext = xpForLevel(lvl + 1);
     var pct = xpNext > xpBase ? Math.min(100, Math.round((you.xp - xpBase) / (xpNext - xpBase) * 100)) : 100;
     var toNext = Math.max(0, xpNext - you.xp);
-    var ahead = you.rank > 1 ? players[you.rank - 2] : null;
+    // Walk up past anyone who is really us (duplicate row) before picking a rival.
+    var ahead = null;
+    for (var _i = you.rank - 2; _i >= 0; _i--) {
+      var _c = players[_i];
+      if (!_c || _c.isYou) continue;
+      if ((_c.name || '').trim().toLowerCase() === (you.name || '').trim().toLowerCase()) continue;
+      ahead = _c; break;
+    }
     var aheadGap = ahead ? (ahead.xp - you.xp) : 0;
 
     section.innerHTML =
@@ -10980,7 +11196,13 @@ window.hosaXPFlyup = function(el, amount) {
         '<div class="lb-you-bar"><div class="lb-you-fill" style="width:' + pct + '%"></div></div>' +
         '<div class="lb-you-progress">' +
           '<span>' + fmtNum(you.xp - xpBase) + ' / ' + fmtNum(xpNext - xpBase) + ' XP to Level ' + (lvl + 1) + '</span>' +
-          (ahead ? '<span class="lb-you-gap">' + fmtNum(aheadGap) + ' XP behind ' + escHtml(ahead.name.split(' ')[0]) + '</span>' : '<span class="lb-you-gap">👑 #1 — King of the Hill</span>') +
+          (ahead
+            ? (aheadGap > 0
+                ? '<span class="lb-you-gap">' + fmtNum(aheadGap) + ' XP behind ' + escHtml(ahead.name.split(' ')[0]) + '</span>'
+                : '<span class="lb-you-gap">Tied with ' + escHtml(ahead.name.split(' ')[0]) + '</span>')
+            : (you.rank === 1
+                ? '<span class="lb-you-gap">👑 #1 — King of the Hill</span>'
+                : '<span class="lb-you-gap"></span>')) +
         '</div>' +
       '</div>';
   }
@@ -11054,5 +11276,107 @@ window.hosaXPFlyup = function(el, amount) {
 })();
 </script>
 
+
+<script id="levels-explainer">
+/* Levels & XP tab. Mirrors the real award values used by the event pages
+   (flashcard ratings 1/3/5/8, quiz 10, test 15) and the real level curve
+   (level = floor(sqrt(xp/50)) + 1). Keep these in sync with awardXP callers. */
+(function() {
+  var LADDER_MAX = 10;
+  var XP_GOT_IT = 5, XP_QUIZ = 10, XP_TEST = 15;
+
+  function xpLevel(xp)    { return Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1; }
+  function xpForLevel(l)  { return (l - 1) * (l - 1) * 50; }
+  function myXP() {
+    try { return parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0; } catch(e) { return 0; }
+  }
+  function fmt(n) { return n.toLocaleString(); }
+
+  function renderStanding() {
+    var el = document.getElementById('lv-standing');
+    if (!el) return;
+    var xp = myXP(), lvl = xpLevel(xp);
+    var base = xpForLevel(lvl), next = xpForLevel(lvl + 1);
+    var into = xp - base, span = next - base;
+    var pct = span > 0 ? Math.min(100, Math.round(into / span * 100)) : 100;
+    el.innerHTML =
+      '<div class="lv-hero-wrap">' +
+        '<div>' +
+          '<div class="lv-hero-label">Your level</div>' +
+          '<div class="lv-hero">' + lvl + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="lv-meter-wrap">' +
+        '<div class="lv-meter-top">' +
+          '<span>' + fmt(xp) + ' XP total</span>' +
+          '<span>' + fmt(Math.max(0, next - xp)) + ' XP to Level ' + (lvl + 1) + '</span>' +
+        '</div>' +
+        '<div class="lv-meter-track"><div class="lv-meter-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="lv-meter-top" style="margin:8px 0 0;">' +
+          '<span>' + fmt(into) + ' / ' + fmt(span) + ' XP into this level</span>' +
+          '<span>' + pct + '%</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderLadder() {
+    var el = document.getElementById('lv-ladder');
+    if (!el) return;
+    var myLvl = xpLevel(myXP());
+    var maxStep = xpForLevel(LADDER_MAX) - xpForLevel(LADDER_MAX - 1);
+    var html = '<div class="lv-row lv-row-head"><span>Level</span><span>Total XP</span>' +
+               '<span>Step<span class="lv-hdr-long"> from previous</span></span>' +
+               '<span class="lv-step">Step</span></div>';
+    for (var l = 1; l <= LADDER_MAX; l++) {
+      var total = xpForLevel(l);
+      var step  = l === 1 ? 0 : total - xpForLevel(l - 1);
+      var pct   = l === 1 ? 0 : Math.round(step / maxStep * 100);
+      html += '<div class="lv-row' + (l === myLvl ? ' lv-row-you' : '') + '">' +
+        '<span class="lv-lvl">' + l + (l === myLvl ? '<span class="lv-you-tag">YOU</span>' : '') + '</span>' +
+        '<span class="lv-total">' + fmt(total) + '</span>' +
+        '<span class="lv-bar-track">' + (step ? '<div class="lv-bar" style="width:' + pct + '%"></div>' : '') + '</span>' +
+        '<span class="lv-step">' + (step ? '+' + fmt(step) : '&mdash;') + '</span>' +
+      '</div>';
+    }
+    el.innerHTML = html;
+  }
+
+  function renderExamples() {
+    var el = document.getElementById('lv-examples');
+    if (!el) return;
+    var goals = [3, 5, 10];
+    el.innerHTML = goals.map(function(l) {
+      var need = xpForLevel(l);
+      return '<div class="lv-ex">' +
+        '<div class="lv-ex-goal">Reach Level ' + l + '</div>' +
+        '<div class="lv-ex-xp">' + fmt(need) + ' XP total</div>' +
+        '<div class="lv-ex-line"><b>' + fmt(Math.ceil(need / XP_GOT_IT)) + '</b> flashcards rated &ldquo;Got it&rdquo;</div>' +
+        '<div class="lv-ex-line"><b>' + fmt(Math.ceil(need / XP_QUIZ)) + '</b> correct quiz answers</div>' +
+        '<div class="lv-ex-line"><b>' + fmt(Math.ceil(need / XP_TEST)) + '</b> correct test answers</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderAll() { renderStanding(); renderLadder(); renderExamples(); }
+
+  function init() {
+    renderAll();
+    document.querySelectorAll('[data-tab="levels"]').forEach(function(btn) {
+      btn.addEventListener('click', function() { setTimeout(renderAll, 50); });
+    });
+    // Keep the live figures honest while the tab is open.
+    var last = myXP();
+    setInterval(function() {
+      var pane = document.getElementById('tab-levels');
+      if (!pane || !pane.classList.contains('active')) return;
+      var cur = myXP();
+      if (cur !== last) { last = cur; renderAll(); }
+    }, 1500);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 </body>
 </html>
