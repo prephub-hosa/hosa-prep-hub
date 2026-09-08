@@ -12,18 +12,22 @@
   btn.id = 'fb-fab';
   btn.type = 'button';
   btn.setAttribute('aria-label', 'Send feedback');
-  btn.innerHTML = '<span style="margin-right:6px;">✱</span>Feedback';
+  btn.innerHTML = '<span style="margin-right:5px;font-size:12px;">\u2731</span>Feedback';
+  // Compact, and parked clear of whichever floating control sits in the corner:
+  // the 52px Pomodoro timer on the home page, the smaller Games launcher on event
+  // pages. Previously both sat at bottom:20px and overlapped this button.
   btn.style.cssText = [
-    'position:fixed','bottom:20px','right:20px','z-index:9998',
-    'padding:10px 18px','background:#c9372d','color:#fff',
-    'border:none','border-radius:24px',
-    "font-family:'Source Serif 4',Georgia,serif",'font-size:14px','font-weight:600',
-    'cursor:pointer','box-shadow:0 4px 14px rgba(0,0,0,0.3)',
+    'position:fixed','bottom:64px','right:20px','z-index:9998',
+    'padding:6px 12px','background:#c9372d','color:#fff',
+    'border:none','border-radius:16px',
+    "font-family:'Source Serif 4',Georgia,serif",'font-size:12px','font-weight:600',
+    'line-height:1.2',
+    'cursor:pointer','box-shadow:0 2px 8px rgba(0,0,0,0.22)',
     'transition:transform 0.15s, box-shadow 0.15s',
-    'display:flex','align-items:center'
+    'display:flex','align-items:center','opacity:0.92'
   ].join(';');
-  btn.addEventListener('mouseenter', function(){ btn.style.transform='translateY(-2px)'; btn.style.boxShadow='0 6px 18px rgba(0,0,0,0.35)'; });
-  btn.addEventListener('mouseleave', function(){ btn.style.transform=''; btn.style.boxShadow='0 4px 14px rgba(0,0,0,0.3)'; });
+  btn.addEventListener('mouseenter', function(){ btn.style.transform='translateY(-2px)'; btn.style.opacity='1'; btn.style.boxShadow='0 5px 14px rgba(0,0,0,0.3)'; });
+  btn.addEventListener('mouseleave', function(){ btn.style.transform=''; btn.style.opacity='0.92'; btn.style.boxShadow='0 2px 8px rgba(0,0,0,0.22)'; });
 
   var modal = document.createElement('div');
   modal.id = 'fb-modal';
@@ -60,6 +64,14 @@
   function init() {
     document.body.appendChild(btn);
     document.body.appendChild(modal);
+
+    // The study timer is taller than the Games launcher, so lift the button further
+    // on pages that have it. Re-checked once in case the timer mounts after us.
+    function clearCorner() {
+      btn.style.bottom = document.getElementById('pomo-fab') ? '88px' : '64px';
+    }
+    clearCorner();
+    setTimeout(clearCorner, 800);
 
     var rating = 0;
     var stars = modal.querySelectorAll('#fb-stars span');

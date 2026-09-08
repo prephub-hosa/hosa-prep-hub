@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
-<script>try{if(localStorage.getItem("hosa-theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+<script>try{var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
@@ -305,12 +305,23 @@
 
   .card-counter {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    /* Explicit gaps: space-between used to dump all the slack into one gap,
+       leaving "01 / 20", the streak badge and the Smart Review toggle butted
+       together as a single run-on line. */
+    gap: 8px 18px;
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 15px;
     font-weight: 500;
     color: var(--ink-soft);
+  }
+  /* Counter + streak read as one left cluster; the toggle sits off to the right. */
+  .card-counter > .sr-toggle-label { margin-left: auto; }
+  .card-counter > #flash-progress {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: var(--ink);
   }
 
   .card-counter .type-badge {
@@ -1020,7 +1031,9 @@
   .sr-toggle-label:hover { color: var(--ink); }
 
   @media (max-width: 600px) {
-    .card-counter { flex-wrap: wrap; gap: 10px; }
+    .card-counter { gap: 8px 12px; }
+    /* Narrow screens: let the toggle sit with the rest rather than stranded right. */
+    .card-counter > .sr-toggle-label { margin-left: 0; }
     .sr-toggle-label { font-size: 13px; }
   }
 
