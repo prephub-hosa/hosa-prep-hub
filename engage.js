@@ -42,9 +42,6 @@
     // ── Pomodoro
     { id:'pomo-5',             icon:'⏱',  title:'Focused',              desc:'Completed 5 Pomodoro focus sessions' },
     { id:'pomo-25',            icon:'🍅', title:'Pomodoro Pro',         desc:'Completed 25 Pomodoro focus sessions' },
-    // ── Medical Spanish
-    { id:'spanish-10',         icon:'🌎', title:'Hola Médico',          desc:'Learned 10 Medical Spanish terms' },
-    { id:'spanish-all',        icon:'🏥', title:'Bilingüe',             desc:'Mastered all Medical Spanish terms' },
     // ── Time-based
     { id:'night-owl',          icon:'🦉', title:'Night Owl',            desc:'Studied after midnight' },
     { id:'early-bird',         icon:'🌅', title:'Early Bird',           desc:'Studied before 6 AM' },
@@ -137,13 +134,6 @@
     } catch (e) { return 0; }
   }
 
-  function getSpanishLearned() {
-    try {
-      const arr = JSON.parse(localStorage.getItem('hosa::sp-learned') || '[]');
-      return Array.isArray(arr) ? arr.length : 0;
-    } catch (e) { return 0; }
-  }
-
   function getDCStreak() {
     try {
       const s = JSON.parse(localStorage.getItem('hosa::dc-streak') || '{"streak":0}');
@@ -165,7 +155,6 @@
     const hour = new Date().getHours();
     const xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);
     const pomoSessions = getPomodoroSessions();
-    const spanishLearned = getSpanishLearned();
     const dcStreak = getDCStreak();
     const bmkCount = getBookmarkCount();
 
@@ -195,8 +184,6 @@
       'dc-streak-7':     dcStreak >= 7,
       'pomo-5':          pomoSessions >= 5,
       'pomo-25':         pomoSessions >= 25,
-      'spanish-10':      spanishLearned >= 10,
-      'spanish-all':     spanishLearned >= 68,
       'night-owl':       (got + missed + hard) >= 1 && (hour === 0 || hour === 1 || hour === 23),
       'early-bird':      (got + missed + hard) >= 1 && hour < 6,
       'xp-1000':         xp >= 1000,
