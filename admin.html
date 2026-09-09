@@ -184,9 +184,9 @@
   </section>
 
   <section id="section-signups">
-    <h2>Sign-ups &amp; Outreach <span class="badge" id="signup-count">0</span></h2>
-    <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Name, username and school collected at account creation.</p>
-    <div id="signup-body"><p class="empty">No sign-ups with profile data yet.</p></div>
+    <h2>Schools &amp; Outreach <span class="badge" id="signup-count">0</span></h2>
+    <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Schools captured from the one-question prompt (no account needed), plus full profiles from account sign-ups.</p>
+    <div id="signup-body"><p class="empty">No schools captured yet.</p></div>
   </section>
 
   <section id="section-subscribers">
@@ -225,42 +225,66 @@ function fmt(iso) {
 }
 
 function loadSignups() {
-  db.ref('users').once('value').then(function(snap) {
-    var users = snap.val() || {};
-    var rows = [];
+  // Two sources now: full account profiles (users/{uid}/profile) and the
+  // school-only records captured from the one-question prompt (outreach/{id}),
+  // which needs no account. Account rows win when both exist for one person.
+  Promise.all([
+    db.ref('users').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; }),
+    db.ref('outreach').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; })
+  ]).then(function(res) {
+    var users = res[0], outreach = res[1];
+    var rows = [], claimedUids = {};
     Object.keys(users).forEach(function(uid) {
       var p = users[uid] && users[uid].profile;
       if (!p) return;
+      claimedUids[uid] = 1;
       rows.push({
-        uid: uid,
-        name: p.name || '',
-        username: p.username || '',
+        kind: 'account', uid: uid,
+        name: p.name || '', username: p.username || '',
         school: p.school || '',
         email: p.email || (users[uid] && users[uid].email) || '',
         createdAt: p.createdAt || ''
       });
     });
+    Object.keys(outreach).forEach(function(gid) {
+      var o = outreach[gid] || {};
+      if (!o.school) return;
+      if (o.uid && claimedUids[o.uid]) return;   // already listed as an account
+      rows.push({
+        kind: 'school-only', uid: gid,
+        name: '', username: '', school: o.school,
+        email: o.email || '', createdAt: o.updatedAt || ''
+      });
+    });
     rows.sort(function(a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
     document.getElementById('signup-count').textContent = rows.length;
     var el = document.getElementById('signup-body');
-    if (!rows.length) { el.innerHTML = '<p class="empty">No sign-ups with profile data yet.</p>'; return; }
-    var schools = {};
-    rows.forEach(function(r) { if (r.school) schools[r.school.trim().toLowerCase()] = 1; });
-    var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;">'
-             + rows.length + ' profile' + (rows.length === 1 ? '' : 's') + ' across '
-             + Object.keys(schools).length + ' school' + (Object.keys(schools).length === 1 ? '' : 's') + '.</p>'
-             + '<table><thead><tr><th>Joined</th><th>Name</th><th>Username</th><th>School / Chapter</th><th>Email</th></tr></thead><tbody>';
+    if (!rows.length) { el.innerHTML = '<p class="empty">No schools captured yet.</p>'; return; }
+    var schools = {}, accounts = 0;
     rows.forEach(function(r) {
-      var when = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—';
-      html += '<tr><td>' + escapeHtml(when) + '</td><td>' + escapeHtml(r.name || '—')
-            + '</td><td>' + escapeHtml(r.username || '—')
-            + '</td><td>' + escapeHtml(r.school || '—')
-            + '</td><td><code>' + escapeHtml(r.email || '—') + '</code></td></tr>';
+      if (r.school) schools[r.school.trim().toLowerCase()] = 1;
+      if (r.kind === 'account') accounts++;
+    });
+    var nSchools = Object.keys(schools).length;
+    var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;">'
+             + rows.length + ' record' + (rows.length === 1 ? '' : 's') + ' across '
+             + nSchools + ' school' + (nSchools === 1 ? '' : 's') + ' &middot; '
+             + accounts + ' with an account, ' + (rows.length - accounts) + ' school-only.</p>'
+             + '<table><thead><tr><th>When</th><th>School / Chapter</th><th>Type</th>'
+             + '<th>Name</th><th>Username</th><th>Email</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      var when = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '\u2014';
+      html += '<tr><td>' + escapeHtml(when) + '</td>'
+            + '<td><strong>' + escapeHtml(r.school || '\u2014') + '</strong></td>'
+            + '<td>' + (r.kind === 'account' ? 'Account' : 'School only') + '</td>'
+            + '<td>' + escapeHtml(r.name || '\u2014') + '</td>'
+            + '<td>' + escapeHtml(r.username || '\u2014') + '</td>'
+            + '<td><code>' + escapeHtml(r.email || '\u2014') + '</code></td></tr>';
     });
     html += '</tbody></table>';
     el.innerHTML = html;
   }).catch(function() {
-    document.getElementById('signup-body').innerHTML = '<p class="empty">Could not load sign-ups.</p>';
+    document.getElementById('signup-body').innerHTML = '<p class="empty">Could not load outreach data.</p>';
   });
 }
 
