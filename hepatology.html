@@ -1340,8 +1340,8 @@
 </header>
 <div class="xp-toast" id="xp-toast"></div>
 <div id="guest-banner" style="display:none;background:#fffbf0;border-bottom:2px solid #e8c84a;padding:11px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#7a6210;text-align:center;line-height:1.5;">
-  ⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.&nbsp;
-  <a href="index.html#signup" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account to sync everywhere →</a>
+  <span id="guest-banner-text">⚠ You're studying as a <strong>guest</strong> — progress saves to this browser only and will be lost if you clear your history or switch devices.</span>&nbsp;
+  <a href="index.html#signup" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Create a free account — it's free →</a>
 </div>
 
 <div class="kbd-overlay" id="kbd-overlay">
@@ -2142,6 +2142,7 @@ function showSessionComplete() {
   try{gtag('event','session_complete',{event_category:DB_PATH,cards_got:_sessGot,cards_missed:_sessMissed});}catch(e){}
   document.querySelector('.card-controls').style.display = 'none';
   document.getElementById('session-complete').style.display = '';
+  _guestSavePrompt();
 }
 
 // Start reviewing only the SRS-due cards
@@ -2366,7 +2367,7 @@ function _flushPendingLevelUp() {
 }
 
 // ── Guest usage limit ──────────────────────────────────────────────
-var GUEST_LIMIT = 60;
+var GUEST_LIMIT = 45;
 function _showGuestGate() {
   if (document.getElementById('guest-gate')) return;
   var ov = document.createElement('div');
@@ -2397,9 +2398,96 @@ function _guestTick() {
     var n = parseInt(localStorage.getItem('hosa::guest-actions') || '0', 10) + 1;
     localStorage.setItem('hosa::guest-actions', String(n));
     if (n >= GUEST_LIMIT) { _showGuestGate(); }
-    else if (n === GUEST_LIMIT - 15) {
-      showXPToast('15 free cards left \u2014 create a free account to keep going', 'level-up');
+    else if (n === GUEST_LIMIT - 15 || n === GUEST_LIMIT - 5) {
+      showXPToast((GUEST_LIMIT - n) + ' free cards left \u2014 create a free account to keep going', 'level-up');
+      // A toast alone is easy to miss; surface the real ask too.
+      try { localStorage.removeItem('hosa::save-prompt-snooze'); } catch(e) {}
     }
+  } catch(e) {}
+}
+
+// Name what is actually at stake. "Progress saves to this browser only" is
+// abstract until it reads "23 terms mastered and a 4-day streak".
+function _paintGuestBanner() {
+  try {
+    var el = document.getElementById('guest-banner-text');
+    if (!el) return;
+    var s = _guestStats(), bits = [];
+    if (s.mastered) bits.push('<strong>' + s.mastered + '</strong> term' + (s.mastered === 1 ? '' : 's') + ' mastered');
+    if (s.streak > 1) bits.push('a <strong>' + s.streak + '</strong>-day streak');
+    if (!bits.length) return;   // nothing earned yet — keep the generic wording
+    el.innerHTML = '\u26a0 You have ' + bits.join(' and ') +
+      ' saved to <strong>this browser only</strong> \u2014 clearing history or switching devices loses it.';
+  } catch(e) {}
+}
+
+// ── Guest conversion prompt ────────────────────────────────────────
+// The old funnel asked exactly twice: a thin banner, and a hard wall at 60
+// actions most visitors never reached. This asks at the moment a guest has
+// something concrete to lose — end of a study session, quiz or test — with
+// their real numbers in front of them. Dismissible, never for signed-in
+// users, and it backs off for a day once dismissed.
+var _GUEST_PROMPT_SNOOZE_MS = 20 * 60 * 60 * 1000;
+function _guestStats() {
+  var mastered = 0, streak = 0, xp = 0;
+  try { mastered = state.progress.mastered ? state.progress.mastered.size : 0; } catch(e) {}
+  try { streak = state.progress.streak || 0; } catch(e) {}
+  try { xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0; } catch(e) {}
+  return { mastered: mastered, streak: streak, xp: xp };
+}
+function _guestPromptSnoozed() {
+  try {
+    var t = parseInt(localStorage.getItem('hosa::save-prompt-snooze') || '0', 10) || 0;
+    return Date.now() - t < _GUEST_PROMPT_SNOOZE_MS;
+  } catch(e) { return false; }
+}
+function _guestSavePrompt() {
+  try {
+    if (firebase.auth().currentUser) return;          // signed in — nothing to sell
+    if (_guestPromptSnoozed()) return;
+    if (document.getElementById('guest-save-prompt')) return;
+    var s = _guestStats();
+    if (!s.mastered && !s.xp) return;                 // nothing earned yet — no ask
+
+    // Attach to whichever results panel the user is actually looking at.
+    var host = null, ids = ['session-complete', 'quiz-results', 'test-results'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el && el.offsetParent !== null) { host = el; break; }
+    }
+    if (!host) return;
+
+    var bits = [];
+    if (s.mastered) bits.push('<strong>' + s.mastered + '</strong> term' + (s.mastered === 1 ? '' : 's') + ' mastered');
+    if (s.streak > 1) bits.push('<strong>' + s.streak + '</strong>-day streak');
+    if (s.xp) bits.push('<strong>' + s.xp.toLocaleString() + '</strong> XP');
+
+    var box = document.createElement('div');
+    box.id = 'guest-save-prompt';
+    box.style.cssText = 'margin:26px auto 4px;max-width:440px;text-align:left;border:1px solid var(--accent);'
+      + 'border-radius:10px;padding:20px 22px;background:var(--bg-card);'
+      + "font-family:'Source Serif 4',Georgia,serif;";
+    box.innerHTML =
+      '<div style="font-family:\'Geist Mono\',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;'
+        + 'text-transform:uppercase;color:var(--accent);margin-bottom:8px;">\u2731 Don\u2019t lose this</div>'
+      + (bits.length ? '<div style="font-size:15px;color:var(--ink);margin-bottom:10px;line-height:1.5;">' + bits.join(' \u00b7 ') + '</div>' : '')
+      + '<div style="font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:16px;">'
+        + 'That is saved to <strong>this browser only</strong> \u2014 clearing history or switching devices loses it. '
+        + 'A free account keeps it everywhere and puts you on the leaderboard.</div>'
+      + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+        + '<a href="index.html#signup" id="gsp-go" style="background:var(--accent);color:#fff;text-decoration:none;'
+          + 'padding:9px 16px;border-radius:6px;font-size:14px;font-weight:600;">Create free account \u2192</a>'
+        + '<button type="button" id="gsp-later" style="background:none;border:none;cursor:pointer;'
+          + "font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-faint);"
+          + 'text-decoration:underline;text-underline-offset:3px;">Not now</button>'
+      + '</div>';
+    host.appendChild(box);
+    var later = box.querySelector('#gsp-later');
+    if (later) later.addEventListener('click', function() {
+      try { localStorage.setItem('hosa::save-prompt-snooze', String(Date.now())); } catch(e) {}
+      box.remove();
+    });
+    try { gtag('event', 'guest_save_prompt_shown', { event_category: DB_PATH }); } catch(e) {}
   } catch(e) {}
 }
 
@@ -2901,6 +2989,7 @@ function showQuizResults() {
   try{gtag('event','quiz_completed',{event_category:DB_PATH,value:pct,quiz_score:score,quiz_total:total});}catch(e){}
   saveProgress();
   _flushPendingLevelUp();
+  _guestSavePrompt();
 }
 
 document.getElementById('quiz-next').addEventListener('click', () => { state.quiz.index++; renderQuizQuestion(); });
@@ -3043,6 +3132,7 @@ function showTestResults() {
   state.progress.lastMissed = misses;
   saveProgress();
   _flushPendingLevelUp();
+  _guestSavePrompt();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3200,7 +3290,7 @@ firebase.auth().onAuthStateChanged(user => {
       signoutBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
     }
     const guestBanner = document.getElementById('guest-banner');
-    if (guestBanner) guestBanner.style.display = '';
+    if (guestBanner) { guestBanner.style.display = ''; _paintGuestBanner(); }
     loadProgress(null).then(() => { saveProgress(); _wireOnce(); _hidePageLoader(); });
     return;
   }
