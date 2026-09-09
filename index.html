@@ -2271,10 +2271,10 @@ footer { display: none; }
       <div id="reset-msg" style="font-family:'Source Serif 4',serif;font-size:13px;color:var(--success);margin-top:6px;min-height:18px;"></div>
     </form>
     <form id="form-signup" style="display:none">
-      <p class="field-req-note"><span class="req">*</span> All fields are required.</p>
+      <p class="field-req-note"><span class="req">*</span> Required. Your email is how you sign back in.</p>
       <div class="field-group">
-        <label class="field-label" for="signup-name">Name<span class="req" aria-hidden="true">*</span></label>
-        <input id="signup-name" type="text" class="field-input" placeholder="Jordan Ramirez" autocomplete="name" required aria-required="true">
+        <label class="field-label" for="signup-name">Name <span style="font-variant:normal;letter-spacing:0;opacity:.65;">(optional)</span></label>
+        <input id="signup-name" type="text" class="field-input" placeholder="Jordan Ramirez" autocomplete="name">
       </div>
       <div class="field-group">
         <label class="field-label" for="signup-username">Username<span class="req" aria-hidden="true">*</span></label>
@@ -4585,6 +4585,175 @@ footer { display: none; }
 </div><!-- /app-shell -->
 
 
+<script id="school-prompt-js">
+// ── School prompt (outreach) ───────────────────────────────────────
+// Asked once per browser, on whichever page the visitor first lands. No
+// account, no gate, nothing blocked — the school name is the only thing
+// needed for outreach. Stored under outreach/{guestId} for the admin page.
+var _SCHOOL_LS = 'hosa::school';
+function _guestId() {
+  try {
+    var g = localStorage.getItem('hosa-guest-id');
+    if (!g) { g = 'g-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+              localStorage.setItem('hosa-guest-id', g); }
+    return g;
+  } catch(e) { return null; }
+}
+function _saveSchool(school) {
+  school = (school || '').trim();
+  if (!school) return;
+  try { localStorage.setItem(_SCHOOL_LS, school); } catch(e) {}
+  try {
+    var gid = _guestId(); if (!gid) return;
+    var u = firebase.auth().currentUser;
+    firebase.database().ref('outreach/' + gid).update({
+      school: school,
+      updatedAt: new Date().toISOString(),
+      firstPage: (typeof DB_PATH !== 'undefined' ? DB_PATH : 'home'),
+      uid: u ? u.uid : null,
+      email: u ? (u.email || null) : null
+    }).catch(function(){});
+  } catch(e) {}
+  try { gtag('event', 'school_captured'); } catch(e) {}
+}
+function _askedSchool() {
+  try { return !!(localStorage.getItem(_SCHOOL_LS) || localStorage.getItem('hosa::school-asked')); }
+  catch(e) { return true; }
+}
+function _markSchoolAsked() {
+  try { localStorage.setItem('hosa::school-asked', '1'); } catch(e) {}
+}
+function _showSchoolPrompt() {
+  if (_askedSchool()) return;
+  if (document.getElementById('school-prompt')) return;
+  _markSchoolAsked();
+  var ov = document.createElement('div');
+  ov.id = 'school-prompt';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.55);'
+    + 'display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;'
+    + '-webkit-overflow-scrolling:touch;padding:24px 18px;backdrop-filter:blur(3px);';
+  ov.innerHTML =
+    '<div style="margin:auto;max-width:420px;width:100%;background:var(--bg-card);border:1px solid var(--rule);'
+      + 'border-radius:12px;padding:28px 26px;box-shadow:0 18px 50px -18px rgba(0,0,0,0.45);">'
+      + '<div style="font-family:\'Geist Mono\',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;'
+        + 'text-transform:uppercase;color:var(--accent);margin-bottom:10px;">One quick question</div>'
+      + '<div style="font-family:\'Fraunces\',Georgia,serif;font-size:22px;font-weight:500;color:var(--ink);'
+        + 'line-height:1.3;margin-bottom:8px;">What school or HOSA chapter are you with?</div>'
+      + '<div style="font-family:\'Source Serif 4\',Georgia,serif;font-size:13.5px;color:var(--ink-soft);'
+        + 'line-height:1.6;margin-bottom:18px;">It helps us reach more chapters. No account needed &mdash; '
+        + 'everything on the site is free and open.</div>'
+      + '<input id="school-prompt-input" type="text" autocomplete="organization" '
+        + 'placeholder="Lincoln High School" style="display:block;width:100%;box-sizing:border-box;'
+        + 'background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;'
+        + "font-family:'Source Serif 4',Georgia,serif;font-size:16px;color:var(--ink);outline:none;\">"
+      + '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;">'
+        + '<button type="button" id="school-prompt-save" style="background:var(--accent);color:#fff;border:none;'
+          + 'border-radius:6px;padding:11px 20px;font-family:\'Source Serif 4\',Georgia,serif;font-size:15px;'
+          + 'font-weight:600;cursor:pointer;">Continue &rarr;</button>'
+        + '<button type="button" id="school-prompt-skip" style="background:none;border:none;cursor:pointer;'
+          + 'font-family:\'Source Serif 4\',Georgia,serif;font-size:13px;color:var(--ink-faint);'
+          + 'text-decoration:underline;text-underline-offset:3px;">Skip</button>'
+      + '</div>'
+    + '</div>';
+  document.body.appendChild(ov);
+  var input = ov.querySelector('#school-prompt-input');
+  function done() { ov.remove(); }
+  ov.querySelector('#school-prompt-save').addEventListener('click', function() {
+    _saveSchool(input.value); done();
+  });
+  ov.querySelector('#school-prompt-skip').addEventListener('click', done);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { _saveSchool(input.value); done(); }
+  });
+  setTimeout(function(){ try { input.focus(); } catch(e) {} }, 80);
+}
+
+// Name what is actually at stake. "Progress saves to this browser only" is
+// abstract until it reads "23 terms mastered and a 4-day streak".
+function _paintGuestBanner() {
+  try {
+    var el = document.getElementById('guest-banner-text');
+    if (!el) return;
+    var s = _guestStats(), bits = [];
+    if (s.mastered) bits.push('<strong>' + s.mastered + '</strong> term' + (s.mastered === 1 ? '' : 's') + ' mastered');
+    if (s.streak > 1) bits.push('a <strong>' + s.streak + '</strong>-day streak');
+    if (!bits.length) return;   // nothing earned yet — keep the generic wording
+    el.innerHTML = '\u26a0 You have ' + bits.join(' and ') +
+      ' saved to <strong>this browser only</strong> \u2014 clearing history or switching devices loses it.';
+  } catch(e) {}
+}
+
+// ── Guest conversion prompt ────────────────────────────────────────
+// The old funnel asked exactly twice: a thin banner, and a hard wall at 60
+// actions most visitors never reached. This asks at the moment a guest has
+// something concrete to lose — end of a study session, quiz or test — with
+// their real numbers in front of them. Dismissible, never for signed-in
+// users, and it backs off for a day once dismissed.
+var _GUEST_PROMPT_SNOOZE_MS = 20 * 60 * 60 * 1000;
+function _guestStats() {
+  var mastered = 0, streak = 0, xp = 0;
+  try { mastered = state.progress.mastered ? state.progress.mastered.size : 0; } catch(e) {}
+  try { streak = state.progress.streak || 0; } catch(e) {}
+  try { xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0; } catch(e) {}
+  return { mastered: mastered, streak: streak, xp: xp };
+}
+function _guestPromptSnoozed() {
+  try {
+    var t = parseInt(localStorage.getItem('hosa::save-prompt-snooze') || '0', 10) || 0;
+    return Date.now() - t < _GUEST_PROMPT_SNOOZE_MS;
+  } catch(e) { return false; }
+}
+function _guestSavePrompt() {
+  try {
+    if (firebase.auth().currentUser) return;          // signed in — nothing to sell
+    if (_guestPromptSnoozed()) return;
+    if (document.getElementById('guest-save-prompt')) return;
+    var s = _guestStats();
+    if (!s.mastered && !s.xp) return;                 // nothing earned yet — no ask
+
+    // Attach to whichever results panel the user is actually looking at.
+    var host = null, ids = ['session-complete', 'quiz-results', 'test-results'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el && el.offsetParent !== null) { host = el; break; }
+    }
+    if (!host) return;
+
+    var bits = [];
+    if (s.mastered) bits.push('<strong>' + s.mastered + '</strong> term' + (s.mastered === 1 ? '' : 's') + ' mastered');
+    if (s.streak > 1) bits.push('<strong>' + s.streak + '</strong>-day streak');
+    if (s.xp) bits.push('<strong>' + s.xp.toLocaleString() + '</strong> XP');
+
+    var box = document.createElement('div');
+    box.id = 'guest-save-prompt';
+    box.style.cssText = 'margin:26px auto 4px;max-width:440px;text-align:left;border:1px solid var(--accent);'
+      + 'border-radius:10px;padding:20px 22px;background:var(--bg-card);'
+      + "font-family:'Source Serif 4',Georgia,serif;";
+    box.innerHTML =
+      '<div style="font-family:\'Geist Mono\',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;'
+        + 'text-transform:uppercase;color:var(--accent);margin-bottom:8px;">\u2731 Don\u2019t lose this</div>'
+      + (bits.length ? '<div style="font-size:15px;color:var(--ink);margin-bottom:10px;line-height:1.5;">' + bits.join(' \u00b7 ') + '</div>' : '')
+      + '<div style="font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:16px;">'
+        + 'That is saved to <strong>this browser only</strong> \u2014 clearing history or switching devices loses it. '
+        + 'A free account keeps it everywhere and puts you on the leaderboard.</div>'
+      + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+        + '<a href="index.html#signup" id="gsp-go" style="background:var(--accent);color:#fff;text-decoration:none;'
+          + 'padding:9px 16px;border-radius:6px;font-size:14px;font-weight:600;">Create free account \u2192</a>'
+        + '<button type="button" id="gsp-later" style="background:none;border:none;cursor:pointer;'
+          + "font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:var(--ink-faint);"
+          + 'text-decoration:underline;text-underline-offset:3px;">Not now</button>'
+      + '</div>';
+    host.appendChild(box);
+    var later = box.querySelector('#gsp-later');
+    if (later) later.addEventListener('click', function() {
+      try { localStorage.setItem('hosa::save-prompt-snooze', String(Date.now())); } catch(e) {}
+      box.remove();
+    });
+    try { gtag('event', 'guest_save_prompt_shown', { event_category: DB_PATH }); } catch(e) {}
+  } catch(e) {}
+}
+</script>
+
 <script>
 const auth = firebase.auth();
 const authLoadingEl = document.getElementById('auth-loading');
@@ -4729,23 +4898,10 @@ auth.onAuthStateChanged(user => {
       }).catch(function(){ document.body.classList.add('user-active'); });
     } catch(e) { document.body.classList.add('user-active'); }
   } else {
-    // First visit ever: actually show the account screen once, defaulting to
-    // Create Account. Before this, showGuestMode() ran unconditionally and the
-    // signup screen was unreachable unless you found "Sign in" in the topbar —
-    // which is why nobody was signing up. "Try without an account" is right
-    // there, and the choice is remembered so we never ask twice.
-    var _asked = false;
-    try { _asked = !!localStorage.getItem('hosa::auth-asked'); } catch(e) {}
-    if (!_asked && location.hash !== '#signup') {
-      try { localStorage.setItem('hosa::auth-asked', '1'); } catch(e) {}
-      if (authGateEl) authGateEl.style.display = 'flex';
-      if (mainEl) mainEl.style.display = 'none';
-      var _st = document.getElementById('tab-signup');
-      if (_st) _st.click();
-      try { gtag('event', 'auth_gate_first_visit'); } catch(e) {}
-    } else {
-      showGuestMode();
-    }
+    // Nothing is gated for guests. On a visitor's first landing we ask one
+    // question — their school — purely for outreach. No account required.
+    showGuestMode();
+    if (location.hash !== '#signup') setTimeout(_showSchoolPrompt, 400);
   }
 });
 
@@ -4819,7 +4975,6 @@ if (formSignup) formSignup.addEventListener('submit', async e => {
   const username = document.getElementById('signup-username').value.trim();
   const school   = document.getElementById('signup-school').value.trim();
   errorEl.textContent = '';
-  if (!fullName)            { errorEl.textContent = 'Please enter your name.'; return; }
   if (!school)              { errorEl.textContent = 'Please enter your school or HOSA chapter.'; return; }
   if (username.length < 3)  { errorEl.textContent = 'Username must be at least 3 characters.'; return; }
   if (!/^[A-Za-z0-9._-]+$/.test(username)) {
@@ -4843,6 +4998,8 @@ if (formSignup) formSignup.addEventListener('submit', async e => {
       } catch(_e) {}
       // Leaderboard shows the chosen username, not the email prefix.
       try { firebase.database().ref('leaderboard/level/' + uid).update({ name: username }); } catch(_e) {}
+      // Keep the outreach record in step with the account.
+      try { _saveSchool(school); } catch(_e) {}
     }
     try { localStorage.setItem('hosa-lb-name', username); } catch(_e) {}
     try { localStorage.setItem('hosa-username', username); } catch(_e) {}
