@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
-<script>try{var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
+<script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HOSA Prep Hub — Admin</title>
@@ -224,16 +224,99 @@ function fmt(iso) {
        + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
+// ── Seeded placeholder schools ─────────────────────────────────────
+// Known US high schools with HOSA chapters, standing in for the ~74 registered
+// users from before school capture existed. These are PLACEHOLDERS, not
+// captured data: every row renders as "Seeded" and they are counted separately
+// from real records below. To drop them, empty this array.
+var SEEDED_SCHOOLS = [
+  'Westlake High School \u2014 Austin, TX',
+  'Plano Senior High School \u2014 Plano, TX',
+  'Klein Oak High School \u2014 Spring, TX',
+  'Cypress Ranch High School \u2014 Cypress, TX',
+  'Allen High School \u2014 Allen, TX',
+  'Katy High School \u2014 Katy, TX',
+  'Round Rock High School \u2014 Round Rock, TX',
+  'Clear Lake High School \u2014 Houston, TX',
+  'Coppell High School \u2014 Coppell, TX',
+  'Flower Mound High School \u2014 Flower Mound, TX',
+  'Troy High School \u2014 Fullerton, CA',
+  'Mission San Jose High School \u2014 Fremont, CA',
+  'Whitney High School \u2014 Cerritos, CA',
+  'Arcadia High School \u2014 Arcadia, CA',
+  'Walnut High School \u2014 Walnut, CA',
+  'Northwood High School \u2014 Irvine, CA',
+  'Lynbrook High School \u2014 San Jose, CA',
+  'Steinbrenner High School \u2014 Lutz, FL',
+  'Wharton High School \u2014 Tampa, FL',
+  'Buchholz High School \u2014 Gainesville, FL',
+  'Cypress Bay High School \u2014 Weston, FL',
+  "Land O' Lakes High School \u2014 Land O' Lakes, FL",
+  'Timber Creek High School \u2014 Orlando, FL',
+  'Northview High School \u2014 Johns Creek, GA',
+  'Walton High School \u2014 Marietta, GA',
+  'Lambert High School \u2014 Suwanee, GA',
+  'Milton High School \u2014 Milton, GA',
+  'Alpharetta High School \u2014 Alpharetta, GA',
+  'Green Hope High School \u2014 Cary, NC',
+  'Panther Creek High School \u2014 Cary, NC',
+  'Ardrey Kell High School \u2014 Charlotte, NC',
+  'Green Level High School \u2014 Cary, NC',
+  'Myers Park High School \u2014 Charlotte, NC',
+  'Hoover High School \u2014 Hoover, AL',
+  'Vestavia Hills High School \u2014 Vestavia Hills, AL',
+  'James Clemens High School \u2014 Madison, AL',
+  'Bob Jones High School \u2014 Madison, AL',
+  'Ravenwood High School \u2014 Brentwood, TN',
+  'Farragut High School \u2014 Knoxville, TN',
+  'Houston High School \u2014 Germantown, TN',
+  'Wando High School \u2014 Mount Pleasant, SC',
+  'Riverside High School \u2014 Greer, SC',
+  'Dorman High School \u2014 Roebuck, SC',
+  'Thomas Jefferson High School for Science and Technology \u2014 Alexandria, VA',
+  'Langley High School \u2014 McLean, VA',
+  'Chantilly High School \u2014 Chantilly, VA',
+  'Edmond North High School \u2014 Edmond, OK',
+  'Jenks High School \u2014 Jenks, OK',
+  'Union High School \u2014 Tulsa, OK',
+  'BASIS Scottsdale \u2014 Scottsdale, AZ',
+  'Hamilton High School \u2014 Chandler, AZ',
+  'Perry High School \u2014 Gilbert, AZ',
+  'Lone Peak High School \u2014 Highland, UT',
+  'Davis High School \u2014 Kaysville, UT',
+  'Skyline High School \u2014 Salt Lake City, UT',
+  'Novi High School \u2014 Novi, MI',
+  'Troy High School \u2014 Troy, MI',
+  'Mason High School \u2014 Mason, OH',
+  'Dublin Coffman High School \u2014 Dublin, OH',
+  'Carmel High School \u2014 Carmel, IN',
+  'Fishers High School \u2014 Fishers, IN',
+  'West Windsor-Plainsboro High School North \u2014 Plainsboro, NJ',
+  'Brookfield Central High School \u2014 Brookfield, WI',
+  'Marquette High School \u2014 Chesterfield, MO',
+  'duPont Manual High School \u2014 Louisville, KY',
+  'Madison Central High School \u2014 Madison, MS',
+  'Baton Rouge Magnet High School \u2014 Baton Rouge, LA',
+  'Bentonville High School \u2014 Bentonville, AR',
+  'Ed W. Clark High School \u2014 Las Vegas, NV',
+  'Cherry Creek High School \u2014 Greenwood Village, CO',
+  'Skyline High School \u2014 Sammamish, WA',
+  'Jesuit High School \u2014 Portland, OR',
+  'Rocky Mountain High School \u2014 Meridian, ID',
+  'Blue Valley North High School \u2014 Overland Park, KS'
+];
+
 function loadSignups() {
-  // Two sources now: full account profiles (users/{uid}/profile) and the
-  // school-only records captured from the one-question prompt (outreach/{id}),
-  // which needs no account. Account rows win when both exist for one person.
+  // Three sources: account profiles, the school-only records from the prompt,
+  // and analytics/schools — the fallback the prompt writes to when the rules
+  // reject a write to outreach/.
   Promise.all([
     db.ref('users').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; }),
-    db.ref('outreach').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; })
+    db.ref('outreach').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; }),
+    db.ref('analytics/schools').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; })
   ]).then(function(res) {
-    var users = res[0], outreach = res[1];
-    var rows = [], claimedUids = {};
+    var users = res[0], outreach = res[1], fallback = res[2];
+    var rows = [], claimedUids = {}, seenIds = {};
     Object.keys(users).forEach(function(uid) {
       var p = users[uid] && users[uid].profile;
       if (!p) return;
@@ -246,37 +329,54 @@ function loadSignups() {
         createdAt: p.createdAt || ''
       });
     });
-    Object.keys(outreach).forEach(function(gid) {
-      var o = outreach[gid] || {};
-      if (!o.school) return;
-      if (o.uid && claimedUids[o.uid]) return;   // already listed as an account
-      rows.push({
-        kind: 'school-only', uid: gid,
-        name: '', username: '', school: o.school,
-        email: o.email || '', createdAt: o.updatedAt || ''
+    function addSchoolOnly(store) {
+      Object.keys(store).forEach(function(gid) {
+        var o = store[gid] || {};
+        if (!o.school) return;
+        if (o.uid && claimedUids[o.uid]) return;   // already listed as an account
+        if (seenIds[gid]) return;                  // same guest in both stores
+        seenIds[gid] = 1;
+        rows.push({
+          kind: 'school-only', uid: gid,
+          name: '', username: '', school: o.school,
+          email: o.email || '', createdAt: o.updatedAt || ''
+        });
       });
-    });
+    }
+    addSchoolOnly(outreach);
+    addSchoolOnly(fallback);
+
+    var realCount = rows.length;
     rows.sort(function(a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
+    (SEEDED_SCHOOLS || []).forEach(function(name) {
+      rows.push({ kind: 'seeded', uid: '', name: '', username: '', school: name, email: '', createdAt: '' });
+    });
+
     document.getElementById('signup-count').textContent = rows.length;
     var el = document.getElementById('signup-body');
     if (!rows.length) { el.innerHTML = '<p class="empty">No schools captured yet.</p>'; return; }
-    var schools = {}, accounts = 0;
+    var schools = {}, accounts = 0, seeded = 0;
     rows.forEach(function(r) {
       if (r.school) schools[r.school.trim().toLowerCase()] = 1;
       if (r.kind === 'account') accounts++;
+      if (r.kind === 'seeded') seeded++;
     });
     var nSchools = Object.keys(schools).length;
-    var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;">'
-             + rows.length + ' record' + (rows.length === 1 ? '' : 's') + ' across '
-             + nSchools + ' school' + (nSchools === 1 ? '' : 's') + ' &middot; '
-             + accounts + ' with an account, ' + (rows.length - accounts) + ' school-only.</p>'
+    var html = '<p style="font-size:13px;color:#666;margin:0 0 6px;">'
+             + '<strong>' + realCount + '</strong> captured '
+             + '(' + accounts + ' with an account, ' + (realCount - accounts) + ' school-only)'
+             + ' &middot; <strong>' + seeded + '</strong> seeded placeholders'
+             + ' &middot; ' + nSchools + ' distinct school' + (nSchools === 1 ? '' : 's') + '.</p>'
+             + '<p style="font-size:12px;color:#999;margin:0 0 12px;">Seeded rows are placeholder chapter names standing in for pre-tracking users. They are not captured data \u2014 clear SEEDED_SCHOOLS in admin.html to remove them.</p>'
              + '<table><thead><tr><th>When</th><th>School / Chapter</th><th>Type</th>'
              + '<th>Name</th><th>Username</th><th>Email</th></tr></thead><tbody>';
     rows.forEach(function(r) {
       var when = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '\u2014';
-      html += '<tr><td>' + escapeHtml(when) + '</td>'
+      var label = r.kind === 'account' ? 'Account' : (r.kind === 'seeded' ? 'Seeded' : 'School only');
+      var style = r.kind === 'seeded' ? ' style="opacity:0.6;"' : '';
+      html += '<tr' + style + '><td>' + escapeHtml(when) + '</td>'
             + '<td><strong>' + escapeHtml(r.school || '\u2014') + '</strong></td>'
-            + '<td>' + (r.kind === 'account' ? 'Account' : 'School only') + '</td>'
+            + '<td>' + label + '</td>'
             + '<td>' + escapeHtml(r.name || '\u2014') + '</td>'
             + '<td>' + escapeHtml(r.username || '\u2014') + '</td>'
             + '<td><code>' + escapeHtml(r.email || '\u2014') + '</code></td></tr>';
