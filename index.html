@@ -1103,8 +1103,17 @@
   }
   #auth-gate {
     position: fixed; inset: 0; background: var(--bg); z-index: 999;
-    display: none; justify-content: center; align-items: center; padding: 40px;
+    display: none; justify-content: center;
+    /* The card is taller than a phone viewport (and much taller once the
+       on-screen keyboard opens). With align-items:center and overflow visible
+       the overflow was unreachable: "Try without an account" sat below the fold
+       with no way to scroll to it, and the submit button went out of reach as
+       soon as a field was focused. align-items:flex-start + margin:auto on the
+       card keeps it centred when it fits and fully scrollable when it doesn't. */
+    align-items: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 40px 20px;
   }
+  #auth-gate .auth-card { margin: auto; }
   .auth-card {
     background: var(--bg-card); border: 1px solid var(--rule);
     padding: 52px 48px; width: 100%; max-width: 440px;
@@ -2242,6 +2251,7 @@ footer { display: none; }
   <div class="auth-card" style="position:relative;">
     <button type="button" id="btn-close-auth" aria-label="Close" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:24px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:6px 10px;font-family:'Source Serif 4',serif;">&times;</button>
     <div class="auth-brand"><span>✢</span> HOSA Prep Hub</div>
+    <p style="font-family:'Source Serif 4',Georgia,serif;font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin:-18px 0 22px;">Free forever. An account saves your progress across devices, keeps your streak, and puts you on the leaderboard.</p>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-signin">Sign In</button>
       <button class="auth-tab" id="tab-signup">Create Account</button>
@@ -4588,8 +4598,12 @@ function showGuestMode() {
   userEmailEl.textContent = '';
   const signoutBtn = document.getElementById('btn-signout');
   if (signoutBtn) {
-    signoutBtn.textContent = 'Sign in';
-    signoutBtn.onclick = () => { authGateEl.style.display = 'flex'; };
+    signoutBtn.textContent = 'Create free account';
+    signoutBtn.onclick = () => {
+      authGateEl.style.display = 'flex';
+      var st = document.getElementById('tab-signup');
+      if (st) st.click();
+    };
   }
   const pill = document.getElementById('topbar-user-pill');
   if (pill) pill.classList.add('visible'); // keep visible so Sign in button is reachable
@@ -4715,12 +4729,32 @@ auth.onAuthStateChanged(user => {
       }).catch(function(){ document.body.classList.add('user-active'); });
     } catch(e) { document.body.classList.add('user-active'); }
   } else {
-    showGuestMode();
+    // First visit ever: actually show the account screen once, defaulting to
+    // Create Account. Before this, showGuestMode() ran unconditionally and the
+    // signup screen was unreachable unless you found "Sign in" in the topbar —
+    // which is why nobody was signing up. "Try without an account" is right
+    // there, and the choice is remembered so we never ask twice.
+    var _asked = false;
+    try { _asked = !!localStorage.getItem('hosa::auth-asked'); } catch(e) {}
+    if (!_asked && location.hash !== '#signup') {
+      try { localStorage.setItem('hosa::auth-asked', '1'); } catch(e) {}
+      if (authGateEl) authGateEl.style.display = 'flex';
+      if (mainEl) mainEl.style.display = 'none';
+      var _st = document.getElementById('tab-signup');
+      if (_st) _st.click();
+      try { gtag('event', 'auth_gate_first_visit'); } catch(e) {}
+    } else {
+      showGuestMode();
+    }
   }
 });
 
 var btnGuest = document.getElementById('btn-guest');
-if (btnGuest) btnGuest.addEventListener('click', showGuestMode);
+if (btnGuest) btnGuest.addEventListener('click', function() {
+  try { localStorage.setItem('hosa::auth-asked', '1'); } catch(e) {}
+  try { gtag('event', 'auth_gate_chose_guest'); } catch(e) {}
+  showGuestMode();
+});
 var btnCloseAuth = document.getElementById('btn-close-auth');
 if (btnCloseAuth) btnCloseAuth.addEventListener('click', function(){
   if (authGateEl) authGateEl.style.display = 'none';
