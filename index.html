@@ -5093,9 +5093,14 @@ function friendlyError(code) {
 
   // Build per-card data once
   var cardData = Array.from(cards).map(function(card) {
+    var h = card.querySelector('h3');
     return {
       el: card,
       text: card.textContent.toLowerCase(),
+      // Title kept separate so a name match can outrank a mention buried in
+      // another event's description — searching "cardio" used to surface
+      // Pathophysiology first simply because it comes earlier in the DOM.
+      title: (h ? h.textContent : '').toLowerCase(),
       group: card.getAttribute('data-group') || 'basic',
       diff:  card.getAttribute('data-difficulty') || ''
     };
@@ -5120,6 +5125,14 @@ function friendlyError(code) {
       var matchText  = !q || c.text.indexOf(q) !== -1;
       var show = matchGroup && matchDiff && matchText;
       c.el.style.display = show ? '' : 'none';
+      // Rank while searching: title-start, then title-contains, then the rest.
+      // .categories is a grid, so `order` reflows without touching the DOM.
+      if (!q) {
+        c.el.style.order = '';
+      } else {
+        var t = c.title;
+        c.el.style.order = t.indexOf(q) === 0 ? '0' : (t.indexOf(q) !== -1 ? '1' : '2');
+      }
       if (show) visible++;
     });
 
