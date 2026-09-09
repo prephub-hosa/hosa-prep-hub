@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
-<script>try{var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
+<script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
@@ -2418,13 +2418,27 @@ function _saveSchool(school) {
   try {
     var gid = _guestId(); if (!gid) return;
     var u = firebase.auth().currentUser;
-    firebase.database().ref('outreach/' + gid).update({
+    var rec = {
       school: school,
       updatedAt: new Date().toISOString(),
       firstPage: (typeof DB_PATH !== 'undefined' ? DB_PATH : 'home'),
       uid: u ? u.uid : null,
       email: u ? (u.email || null) : null
-    }).catch(function(){});
+    };
+    // outreach/ is a new top-level node. If the database rules do not grant
+    // unauthenticated write there, the promise rejects and nothing is stored —
+    // which is why guest answers were not reaching the admin panel. Fall back
+    // to analytics/, a node guests demonstrably can write (page views and
+    // unique visitors land there), and surface the reason instead of
+    // swallowing it. Admin reads both.
+    firebase.database().ref('outreach/' + gid).update(rec).catch(function(err) {
+      console.warn('[school] outreach/ write rejected, falling back to analytics/schools:', err && err.message);
+      try {
+        firebase.database().ref('analytics/schools/' + gid).update(rec).catch(function(e2) {
+          console.warn('[school] fallback write also failed:', e2 && e2.message);
+        });
+      } catch(e2) {}
+    });
   } catch(e) {}
   try { gtag('event', 'school_captured'); } catch(e) {}
 }
