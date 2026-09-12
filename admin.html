@@ -252,8 +252,10 @@ function loadChapters() {
     Object.keys(lb).forEach(function(id) {
       var u = lb[id] || {};
       if (!u.chapter) return;
-      var t = tally[u.chapter] || (tally[u.chapter] = { members: 0, xp: 0, name: '' });
+      var t = tally[u.chapter] || (tally[u.chapter] = { members: 0, active: 0, xp: 0, name: '' });
       t.members += 1;
+      // "Active" on chapters.html means three separate study days.
+      if ((parseInt(u.days || 0, 10) || 0) >= 3) t.active += 1;
       t.xp += parseInt(u.xp || 0, 10) || 0;
       if (u.chapterName) t.name = u.chapterName;
     });
@@ -261,7 +263,7 @@ function loadChapters() {
     Object.keys(tally).forEach(function(k){ if (slugs.indexOf(k) === -1) slugs.push(k); });
 
     var rows = slugs.map(function(slug) {
-      var c = chapters[slug] || {}, t = tally[slug] || { members: 0, xp: 0, name: '' };
+      var c = chapters[slug] || {}, t = tally[slug] || { members: 0, active: 0, xp: 0, name: '' };
       return {
         slug: slug,
         name: c.name || c.school || t.name || slug.replace(/-/g, ' '),
@@ -270,7 +272,8 @@ function loadChapters() {
         role: c.contactRole || '',
         email: c.contactEmail || '',
         createdAt: c.createdAt || '',
-        members: t.members, xp: t.xp,
+        members: t.members, active: t.active || 0, xp: t.xp,
+        founding: !!c.founding, featured: !!c.featured,
         registered: !!chapters[slug]
       };
     });
@@ -282,15 +285,21 @@ function loadChapters() {
     var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;"><strong>' + rows.length + '</strong> chapter'
              + (rows.length === 1 ? '' : 's') + ' &middot; <strong>' + totalMembers + '</strong> tagged member'
              + (totalMembers === 1 ? '' : 's') + '.</p>'
-             + '<table><thead><tr><th>Chapter</th><th>State</th><th>Members</th><th>Chapter XP</th>'
-             + '<th>Contact</th><th>Email</th><th>Join link</th></tr></thead><tbody>';
+             + '<table><thead><tr><th>Chapter</th><th>State</th><th>Members</th><th>Active</th><th>Chapter XP</th>'
+             + '<th>Status</th><th>Contact</th><th>Email</th><th>Join link</th></tr></thead><tbody>';
     rows.forEach(function(r) {
       var link = 'index.html?chapter=' + r.slug;
       html += '<tr><td><strong>' + escapeHtml(r.name) + '</strong>'
             + (r.registered ? '' : ' <span style="color:#999;font-size:11px;">(untagged)</span>') + '</td>'
             + '<td>' + escapeHtml(r.state || '\u2014') + '</td>'
             + '<td>' + r.members + '</td>'
+            + '<td>' + r.active + '<span style="color:#999;font-size:11px;"> / 15</span></td>'
             + '<td>' + r.xp.toLocaleString() + '</td>'
+            + '<td style="font-size:11px;">'
+            +   (r.founding ? '<span style="display:inline-block;padding:1px 7px;border-radius:99px;background:#fdf3d6;border:1px solid #e6c766;color:#8a6100;font-weight:700;">FOUNDING</span> ' : '')
+            +   (r.featured ? '<span style="display:inline-block;padding:1px 7px;border-radius:99px;background:#fbe9e9;border:1px solid #e0a3a3;color:#b91c1c;font-weight:700;">FEATURED</span>' : '')
+            +   (!r.founding && !r.featured ? '<span style="color:#999;">\u2014</span>' : '')
+            + '</td>'
             + '<td>' + escapeHtml(r.contact || '\u2014') + (r.role ? '<br><span style="color:#999;font-size:11px;">' + escapeHtml(r.role) + '</span>' : '') + '</td>'
             + '<td><code>' + escapeHtml(r.email || '\u2014') + '</code></td>'
             + '<td><code style="font-size:11px;">' + escapeHtml(link) + '</code></td></tr>';

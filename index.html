@@ -2617,6 +2617,10 @@ footer { display: none; }
         </div>
       </a>
 
+      <!-- Featured chapter — filled by the leaderboard module once a chapter
+           reaches 15 active members. Hidden until then. -->
+      <section id="featured-chapter-slot" style="display:none;margin-bottom:28px;"></section>
+
       <section id="resume-cta-section" style="display:none;margin-bottom:32px;"></section>
 
       <!-- Next-up recommendation — shown when user has studied some events but not others -->
@@ -10942,6 +10946,7 @@ window.hosaXPFlyup = function(el, amount) {
           if (xp <= 0) return;
           var name = u.name || 'Student';
           out.push({ uid: uid, name: name, xp: xp, avatar: '👤',
+                     days: parseInt(u.days || 0, 10) || 0,
                      chapter: u.chapter || '', chapterName: u.chapterName || '' });
         });
         FIREBASE_USERS = out;
@@ -10984,6 +10989,23 @@ window.hosaXPFlyup = function(el, amount) {
   // already synced by the auth handler; guests are keyed by their stable
   // hosa-guest-id so everyone can see them too. Only writes once they have XP
   // (i.e. they've actually studied) so the board isn't flooded with empties.
+  // Distinct days this browser has studied on. "Active" on chapters.html
+  // means three separate days, so a burst of sign-ups in one sitting can't
+  // inflate a chapter.
+  function activeDays() {
+    try {
+      var today = new Date().toISOString().slice(0, 10);
+      var last  = localStorage.getItem('hosa::last-study-day') || '';
+      var n     = parseInt(localStorage.getItem('hosa::study-days') || '0', 10) || 0;
+      if (getUserXP() > 0 && last !== today) {
+        n += 1;
+        localStorage.setItem('hosa::study-days', String(n));
+        localStorage.setItem('hosa::last-study-day', today);
+      }
+      return n;
+    } catch(e) { return 0; }
+  }
+
   function syncGuest() {
     try {
       if (typeof firebase === 'undefined' || !firebase.database) return;
@@ -10991,7 +11013,8 @@ window.hosaXPFlyup = function(el, amount) {
       var gid = guestId(); if (!gid) return;
       var xp = getUserXP(); if (xp <= 0) return;
       firebase.database().ref('leaderboard/level/' + gid).update({
-        xp: xp, name: ensureGuestName(), guest: true, updatedAt: new Date().toISOString()
+        xp: xp, name: ensureGuestName(), guest: true, days: activeDays(),
+        updatedAt: new Date().toISOString()
       });
     } catch(e) {}
   }
@@ -11013,20 +11036,36 @@ window.hosaXPFlyup = function(el, amount) {
       if (myGid && u.uid === myGid) return;
       // Same-name safety net for rows written under an id we no longer hold.
       if (myName && (u.name || '').trim().toLowerCase() === myName) return;
-      players.push({ name: u.name, xp: u.xp, level: xpLevel(u.xp), avatar: u.avatar || '👤', isYou: false, isFake: false });
+      players.push({ name: u.name, xp: u.xp, level: xpLevel(u.xp), avatar: u.avatar || '👤', isYou: false, isFake: false,
+                     chapter: u.chapter || '', chapterName: u.chapterName || '' });
     });
     var userXP = getUserXP();
+    var myChapter = '', myChapterName = '';
+    try { myChapter = _chapterSlug() || ''; myChapterName = _chapterName() || ''; } catch(e) {}
     players.push({
       name: getUserName(),
       xp: userXP,
       level: xpLevel(userXP),
       avatar: '🎯',
       isYou: true,
-      isFake: false
+      isFake: false,
+      chapter: myChapter,
+      chapterName: myChapterName
     });
     players.sort(function(a, b) { return b.xp - a.xp; });
     players.forEach(function(p, i) { p.rank = i + 1; });
     return players;
+  }
+
+  // Chapter badge beside a member's name — chapters.html promises this to
+  // every chapter that registers, so it has to appear wherever people are
+  // listed, not only on the chapter board.
+  function chapterBadge(p) {
+    if (!p || !p.chapter) return '';
+    var label = p.chapterName || p.chapter.replace(/-/g, ' ');
+    return '<a class="lb-row-chapter" href="chapter.html?c=' + encodeURIComponent(p.chapter) + '" '
+         + 'title="' + escHtml(label) + ' — chapter dashboard">'
+         + '<span class="lb-row-chapter-dot"></span>' + escHtml(label) + '</a>';
   }
 
   function medalFor(rank) {
@@ -11044,6 +11083,66 @@ window.hosaXPFlyup = function(el, amount) {
   // Chapters are built from the same leaderboard/level rows the individual
   // board already uses: a member tagged via a chapter link carries a
   // `chapter` field on their row, so no extra writable node is needed.
+  var FOUNDING = {};
+  function _loadFounding(cb) {
+    try {
+      firebase.database().ref('chapters').get().then(function(s) {
+        var v = (s && s.val()) || {};
+        Object.keys(v).forEach(function(k) {
+          if (v[k] && v[k].founding) FOUNDING[k] = true;
+          if (v[k] && v[k].featured) FEATURED[k] = true;
+        });
+        cb && cb();
+      }).catch(function() { cb && cb(); });
+    } catch(e) { cb && cb(); }
+  }
+  var FEATURED = {};
+  var _featuredWrites = {};
+  function _markFeatured(slug, name, active) {
+    if (!slug || _featuredWrites[slug]) return;
+    _featuredWrites[slug] = true;
+    try {
+      firebase.database().ref('chapters/' + slug)
+        .update({ featured: true, featuredAt: new Date().toISOString(), activeMembers: active })
+        .catch(function() {
+          firebase.database().ref('analytics/chapters/' + slug)
+            .update({ featured: true, featuredAt: new Date().toISOString(), activeMembers: active }).catch(function(){});
+        });
+    } catch(e) {}
+  }
+
+  // The home page slot promised at 15 active members.
+  function _renderFeatured(rows) {
+    var host = document.getElementById('featured-chapter-slot');
+    if (!host) return;
+    var f = rows.filter(function(r){ return r.featured; })
+                .sort(function(a,b){ return b.xp - a.xp; })[0];
+    if (!f) { host.style.display = 'none'; host.innerHTML = ''; return; }
+    host.style.display = '';
+    host.innerHTML =
+        '<a class="fc-card" href="chapter.html?c=' + encodeURIComponent(f.slug) + '">'
+      +   '<div class="fc-kicker">Featured chapter</div>'
+      +   '<div class="fc-name">' + escHtml(f.name) + '</div>'
+      +   '<div class="fc-meta">' + fmtNum(f.active) + ' active members \u00b7 ' + fmtNum(f.xp) + ' chapter XP</div>'
+      +   '<div class="fc-cta">See their dashboard \u2192</div>'
+      + '</a>';
+  }
+
+  var _foundingWrites = {};
+  function _markFounding(slug) {
+    if (!slug || _foundingWrites[slug]) return;
+    _foundingWrites[slug] = true;
+    FOUNDING[slug] = true;
+    try {
+      firebase.database().ref('chapters/' + slug)
+        .update({ founding: true, foundingAt: new Date().toISOString() })
+        .catch(function() {
+          firebase.database().ref('analytics/chapters/' + slug)
+            .update({ founding: true, foundingAt: new Date().toISOString() }).catch(function(){});
+        });
+    } catch(e) {}
+  }
+
   function renderChapters() {
     var section = document.getElementById('lb-chapters-section');
     if (!section) return;
@@ -11056,9 +11155,10 @@ window.hosaXPFlyup = function(el, amount) {
     FIREBASE_USERS.forEach(function(u) {
       if (!u.chapter) return;
       if (myId && u.uid === myId) meCounted = true;
-      var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0 });
+      var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0, active: 0 });
       g.xp += (u.xp || 0);
       g.members += 1;
+      if ((u.days || 0) >= 3) g.active += 1;
       if (u.chapterName) g.name = u.chapterName;
     });
     // Our own XP may not have synced to leaderboard/level yet — fold it in so a
@@ -11066,8 +11166,9 @@ window.hosaXPFlyup = function(el, amount) {
     if (mine && !meCounted) {
       var myXp = getUserXP();
       if (myXp > 0) {
-        var g = groups[mine] || (groups[mine] = { slug: mine, name: '', xp: 0, members: 0 });
+        var g = groups[mine] || (groups[mine] = { slug: mine, name: '', xp: 0, members: 0, active: 0 });
         g.xp += myXp; g.members += 1;
+        if (activeDays() >= 3) g.active += 1;
       }
     }
     if (mine && groups[mine] && !groups[mine].name) {
@@ -11077,6 +11178,16 @@ window.hosaXPFlyup = function(el, amount) {
     }
     var rows = Object.keys(groups).map(function(k){ return groups[k]; });
     rows.sort(function(a, b){ return b.xp - a.xp; });
+    // Founding Chapter: earned by reaching the top 10, then kept for good.
+    // Written back to chapters/{slug} so the mark survives a rank slip,
+    // a new device, and anyone else's view of the board.
+    rows.forEach(function(r, i) {
+      r.founding = !!FOUNDING[r.slug];
+      if (!r.founding && i < 10) { r.founding = true; _markFounding(r.slug); }
+      r.featured = (r.active || 0) >= 15;
+      if (r.featured && !FEATURED[r.slug]) { FEATURED[r.slug] = true; _markFeatured(r.slug, r.name, r.active); }
+    });
+    _renderFeatured(rows);
 
     var head = '<div class="ch-head"><div>'
              + '<div class="ch-title">Chapter leaderboard</div>'
@@ -11094,7 +11205,10 @@ window.hosaXPFlyup = function(el, amount) {
       var isMine = mine && r.slug === mine;
       html += '<div class="ch-row' + (isMine ? ' ch-row-you' : '') + '">'
             + '<span class="ch-rank">' + medalFor(i + 1) + '</span>'
-            + '<span class="ch-name">' + escHtml(r.name) + (isMine ? '<span class="ch-you-tag">YOURS</span>' : '') + '</span>'
+            + '<span class="ch-name">' + escHtml(r.name)
+            +   (r.featured ? '<span class="ch-featured" title="Featured chapter \u2014 15 or more active members.">Featured</span>' : '')
+            +   (r.founding ? '<span class="ch-founding" title="Founding Chapter \u2014 one of the first ten on the board. Kept permanently.">Founding</span>' : '')
+            +   (isMine ? '<span class="ch-you-tag">YOURS</span>' : '') + '</span>'
             + '<span class="ch-xp">' + fmtNum(r.xp) + '</span>'
             + '<span class="ch-mem">' + fmtNum(r.members) + '</span>'
             + '</div>';
@@ -11182,6 +11296,7 @@ window.hosaXPFlyup = function(el, amount) {
           '<span class="lb-row-avatar">' + p.avatar + '</span>' +
           '<span class="lb-row-info">' +
             '<span class="lb-row-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + '</span>' +
+            chapterBadge(p) +
           '</span>' +
         '</span>' +
         '<span class="lb-row-level">Lvl ' + p.level + '</span>' +
@@ -11202,7 +11317,11 @@ window.hosaXPFlyup = function(el, amount) {
 
   function refreshAndRender() {
     syncGuest();
-    fetchFirebaseUsers(function() { renderAll(); });
+    // Founding marks come from chapters/, the board from leaderboard/level;
+    // render once both are in so a chapter never flickers without its mark.
+    _loadFounding(function() {
+      fetchFirebaseUsers(function() { renderAll(); });
+    });
   }
 
   function init() {
