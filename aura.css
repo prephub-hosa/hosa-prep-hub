@@ -25,11 +25,16 @@
   --accent-3:     #ef4444;
   --accent-soft:  rgba(239,68,68,0.12);
   --accent-glow:  rgba(239,68,68,0.35);
+  /* Second stop for accent gradients. Was #f97316 — an orange that
+     fought the crimson everywhere it appeared. */
+  --accent-deep:  #a01625;
   --highlight:    rgba(239,68,68,0.08);
   --brand-red:    #ef4444;
   --success:      #22c55e;
   --error:        #ef4444;
-  --grad-cta:     #ef4444;
+  /* Fill colour for solid-accent surfaces with white text. #ef4444
+     reads 3.76:1 against white; this reads 6.1:1. */
+  --grad-cta:     #c2182b;
   --grad-aurora-a: radial-gradient(circle at 12% 6%, rgba(239,68,68,0.06) 0%, transparent 50%);
   --grad-aurora-b: none;
   --grad-aurora-c: none;
@@ -50,6 +55,7 @@
   --accent-3:     #b91c1c;
   --accent-soft:  rgba(185,28,28,0.08);
   --accent-glow:  rgba(185,28,28,0.25);
+  --accent-deep:  #7f1220;
   --highlight:    rgba(185,28,28,0.05);
   --brand-red:    #b91c1c;
   --success:      #15803d;
@@ -224,7 +230,7 @@ button.btn-signout,
   box-shadow:
     0 1px 0 rgba(255,255,255,0.15) inset,
     0 8px 24px -8px var(--accent-glow),
-    0 0 0 1px rgba(139,92,246,0.45);
+    0 0 0 1px var(--accent-glow);
   transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease !important;
   position: relative;
   overflow: hidden;
@@ -747,7 +753,7 @@ nav.tabs button.active::after {
 }
 .hosa-sess-pbar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), #f97316);
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
   border-radius: 100px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 10px var(--accent-glow);
@@ -1346,7 +1352,7 @@ nav.tabs button.active::after { display: none !important; }
   -webkit-text-fill-color: transparent !important;
 }
 .hs-xp-fill {
-  background: linear-gradient(90deg, var(--accent), #f97316, #fbbf24) !important;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep)) !important;
   background-size: 200% 100% !important;
   animation: _xp-shimmer 3s linear infinite;
   box-shadow: 0 0 10px rgba(239,68,68,0.4);
@@ -1372,13 +1378,13 @@ nav.tabs button.active::after { display: none !important; }
   background: linear-gradient(90deg, var(--accent), transparent);
 }
 .lib-level-badge {
-  background: linear-gradient(135deg, var(--accent), #f97316);
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .lib-xp-fill {
-  background: linear-gradient(90deg, var(--accent), #f97316, #fbbf24) !important;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep)) !important;
   background-size: 200% 100% !important;
   animation: _xp-shimmer 3s linear infinite;
   box-shadow: 0 0 12px rgba(239,68,68,0.5);
@@ -1408,11 +1414,11 @@ nav.tabs button.active::after { display: none !important; }
     0 0 40px -10px var(--accent-glow) !important;
 }
 .jbi-progress-fill {
-  background: linear-gradient(90deg, var(--accent), #f97316) !important;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep)) !important;
   box-shadow: 0 0 8px rgba(239,68,68,0.5);
 }
 .lib-progress-fill {
-  background: linear-gradient(90deg, var(--accent), #f97316) !important;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep)) !important;
   box-shadow: 0 0 6px rgba(239,68,68,0.4);
 }
 
@@ -1471,7 +1477,7 @@ nav.tabs button.active::after { display: none !important; }
 }
 .dg-ring-arc { filter: drop-shadow(0 0 4px rgba(239,68,68,0.5)); }
 .dg-cta-btn {
-  background: linear-gradient(135deg, var(--accent), #f97316) !important;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep)) !important;
   box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5) !important;
   transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s !important;
 }
@@ -1572,7 +1578,7 @@ nav.tabs button.active::after { display: none !important; }
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 4px;
-  background: linear-gradient(180deg, var(--accent), #f97316);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   box-shadow: 0 0 12px var(--accent);
 }
 .totd-card:hover {
@@ -1581,14 +1587,14 @@ nav.tabs button.active::after { display: none !important; }
   border-color: var(--accent) !important;
 }
 .totd-eyebrow {
-  background: linear-gradient(135deg, var(--accent), #f97316);
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700 !important;
 }
 .totd-link {
-  background: linear-gradient(135deg, var(--accent), #f97316);
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   color: #fff !important;
   padding: 10px 18px !important;
   border-radius: 8px !important;
@@ -1625,7 +1631,7 @@ nav.tabs button.active::after { display: none !important; }
 
 /* ── Filter buttons: more refined ──────────────────────────── */
 .filter-btn.active {
-  background: linear-gradient(135deg, var(--accent), #f97316) !important;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep)) !important;
   color: #fff !important;
   border-color: var(--accent) !important;
   box-shadow: 0 4px 14px -4px rgba(239,68,68,0.5);
@@ -1718,7 +1724,7 @@ nav.tabs button.active::after { display: none !important; }
 }
 .cp-bar-fill[data-mastery="high"]   { background: linear-gradient(90deg, #16a34a, #4ade80) !important; box-shadow: 0 0 8px rgba(74,222,128,0.4); }
 .cp-bar-fill[data-mastery="mid"]    { background: linear-gradient(90deg, #d97706, #fbbf24) !important; box-shadow: 0 0 8px rgba(251,191,36,0.4); }
-.cp-bar-fill[data-mastery="low"]    { background: linear-gradient(90deg, var(--accent), #f97316) !important; }
+.cp-bar-fill[data-mastery="low"]    { background: linear-gradient(90deg, var(--accent), var(--accent-deep)) !important; }
 
 /* ── Streak: fire pulse when has-streak ─────────────────────── */
 @keyframes _fire-pulse {
@@ -1893,7 +1899,7 @@ nav.tabs button.active::after { display: none !important; }
 .lib-empty-icon { font-size:48px; margin-bottom:20px; opacity:0.6; }
 .lib-empty-title { font-family:'Fraunces',serif; font-size:26px; font-weight:400; letter-spacing:-0.02em; margin-bottom:12px; }
 .lib-empty-sub { font-family:'Source Serif 4',serif; font-size:15px; line-height:1.65; color:var(--ink-soft); max-width:46ch; margin:0 auto 28px; }
-.lib-empty-cta { background:linear-gradient(135deg,var(--accent),#f97316); color:#fff; border:none; border-radius:8px; padding:12px 24px; font-family:'Source Serif 4',serif; font-size:15px; font-weight:600; cursor:pointer; letter-spacing:0.01em; box-shadow:0 4px 14px -4px rgba(239,68,68,0.5); transition:transform 0.15s, box-shadow 0.15s; }
+.lib-empty-cta { background:linear-gradient(135deg,var(--accent),var(--accent-deep)); color:#fff; border:none; border-radius:8px; padding:12px 24px; font-family:'Source Serif 4',serif; font-size:15px; font-weight:600; cursor:pointer; letter-spacing:0.01em; box-shadow:0 4px 14px -4px rgba(239,68,68,0.5); transition:transform 0.15s, box-shadow 0.15s; }
 .lib-empty-cta:hover { transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(239,68,68,0.6); }
 
 /* ══ Study heatmap ════════════════════════════════════════════ */
@@ -1993,7 +1999,7 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 4px;
-  background: linear-gradient(180deg, var(--accent), #f97316);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   box-shadow: 0 0 14px var(--accent);
 }
 .resume-cta-card:hover {
@@ -2038,7 +2044,7 @@ body:not(.user-active) #exam-countdown-section { display:none !important; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, var(--accent), #f97316);
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   color: #fff;
   font-family: 'Source Serif 4', serif;
   font-size: 14px;
@@ -2906,7 +2912,7 @@ p { color: var(--ink); }
 }
 .ach-prog-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), #f97316);
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
   border-radius: 100px;
   transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -3318,7 +3324,7 @@ p { color: var(--ink); }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent), #f97316, #fbbf24);
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
   z-index: 1;
 }
 .dc-progress-bar {
@@ -3777,7 +3783,7 @@ p { color: var(--ink); }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #fbbf24, #f97316, var(--accent));
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
   z-index: 1;
 }
 .mfe-intro {
@@ -3979,7 +3985,7 @@ p { color: var(--ink); }
   font-size: 84px;
   font-weight: 500;
   letter-spacing: -0.05em;
-  background: linear-gradient(135deg, #fbbf24, #f97316, var(--accent));
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -4269,7 +4275,7 @@ p { color: var(--ink); }
 }
 .lvlup-desc { font-family: 'Inter', sans-serif; font-size: 15px; color: var(--ink-soft); margin-bottom: 28px; line-height: 1.5; }
 .lvlup-xp-bar { height: 6px; background: var(--rule); border-radius: 100px; margin-bottom: 28px; overflow: hidden; }
-.lvlup-xp-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, var(--accent)); border-radius: 100px; width: 0%; transition: width 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
+.lvlup-xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent-deep), var(--accent)); border-radius: 100px; width: 0%; transition: width 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
 .lvlup-close {
   background: linear-gradient(135deg, #fbbf24, #f97316); color: #1a1a1a;
   font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px;
@@ -4313,7 +4319,7 @@ p { color: var(--ink); }
 }
 .qr-close:hover { color: var(--ink); transform: scale(1.1); }
 .qr-progress { height: 3px; background: var(--rule); margin: 16px 20px 0; border-radius: 100px; overflow: hidden; }
-.qr-prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #f97316); border-radius: 100px; transition: width 0.4s ease; width: 0%; }
+.qr-prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); border-radius: 100px; transition: width 0.4s ease; width: 0%; }
 .qr-card-area { padding: 24px 20px 16px; perspective: 1000px; }
 .qr-card {
   cursor: pointer; height: 200px; position: relative;
@@ -4370,7 +4376,7 @@ p { color: var(--ink); }
 }
 .qr-result-btn:hover { background: var(--bg-elev); transform: translateY(-1px); }
 .qr-result-btn.primary {
-  background: linear-gradient(135deg, var(--accent), #f97316); color: #fff; border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #fff; border: none;
 }
 
 /* ── Smart Study Suggestions ────────────────────────────────── */
@@ -4583,7 +4589,7 @@ p { color: var(--ink); }
 .sd-intro, .sd-result { padding: 32px 22px 28px; text-align: center; }
 .sd-intro-text { font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; max-width: 380px; margin: 0 auto 24px; }
 .sd-btn-start {
-  background: linear-gradient(135deg, #f97316 0%, var(--accent) 100%);
+  background: linear-gradient(135deg, var(--accent-deep) 0%, var(--accent) 100%);
   color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px;
   border: none; padding: 13px 32px; border-radius: 12px; cursor: pointer;
   box-shadow: 0 8px 24px -6px rgba(249,115,22,0.5);
@@ -4592,7 +4598,7 @@ p { color: var(--ink); }
 .sd-btn-start:hover { transform: translateY(-1px); box-shadow: 0 12px 32px -6px rgba(249,115,22,0.65); }
 .sd-result-num {
   font-family: 'Fraunces', serif; font-size: 84px; font-weight: 700; letter-spacing: -0.05em;
-  background: linear-gradient(135deg, #f97316, var(--accent));
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   line-height: 0.9; margin-bottom: 4px;
 }
@@ -5264,7 +5270,7 @@ button:active, a:active, [role="button"]:active {
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  background: linear-gradient(135deg, var(--accent), #f97316) !important;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep)) !important;
   color: #fff !important;
   border: none !important;
   border-radius: 12px !important;
@@ -5665,7 +5671,7 @@ button:active, a:active, [role="button"]:active {
 [data-theme="light"] .sb-profile-xp-bar { background: rgba(0,0,0,0.08); }
 .sb-profile-xp-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), #f97316);
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
   border-radius: 100px;
   width: 0%;
   transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
@@ -6806,3 +6812,609 @@ nav.tabs button:active {
   header .xp-bar-mini { display: none !important; }
   header .brand { font-size: 14px !important; }
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   AURA v4 — Visual polish pass
+   Purely presentational. Loaded last, so every rule here is the
+   final word on surfaces, spacing and iconography.
+   ═════════════════════════════════════════════════════════════════ */
+
+/* ── Elevation + radius scale ──────────────────────────────────
+   One shadow ramp instead of the dozen ad-hoc rgba stacks that
+   had accumulated. Dark on :root (site default), light override. */
+:root {
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --sh-1: 0 1px 2px rgba(0,0,0,0.30), 0 3px 10px -3px rgba(0,0,0,0.40);
+  --sh-2: 0 2px 4px rgba(0,0,0,0.30), 0 14px 32px -12px rgba(0,0,0,0.55);
+  --sh-3: 0 4px 8px rgba(0,0,0,0.32), 0 24px 56px -16px rgba(0,0,0,0.65);
+  --sh-accent: 0 3px 12px -3px rgba(239,68,68,0.40), 0 18px 44px -16px rgba(239,68,68,0.55);
+  --ring: 0 0 0 3px rgba(239,68,68,0.22);
+}
+[data-theme="light"] {
+  --sh-1: 0 1px 2px rgba(17,17,17,0.04), 0 3px 10px -3px rgba(17,17,17,0.07);
+  --sh-2: 0 1px 3px rgba(17,17,17,0.05), 0 14px 32px -12px rgba(17,17,17,0.14);
+  --sh-3: 0 2px 6px rgba(17,17,17,0.06), 0 24px 56px -16px rgba(17,17,17,0.18);
+  --sh-accent: 0 3px 12px -3px rgba(185,28,28,0.28), 0 18px 44px -16px rgba(185,28,28,0.38);
+  --ring: 0 0 0 3px rgba(185,28,28,0.16);
+}
+
+/* Line icons, drawn once as masks so they inherit currentColor and
+   stay crisp at any size. Replaces the emoji clip-art. */
+:root {
+  --ic-cards:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><rect x='2.5' y='6.5' width='12' height='15' rx='2.2'/><path d='M8.2 3.5H17a2.2 2.2 0 0 1 2.2 2.2v11.6'/></svg>");
+  --ic-quiz:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M10 6.5h10M10 12h10M10 17.5h10'/><path d='M3.5 6.3l1.6 1.6L8 5.2M3.5 11.8l1.6 1.6L8 10.7M3.5 17.3l1.6 1.6L8 16.2'/></svg>");
+  --ic-test:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='13.5' r='8'/><path d='M12 9v4.5l3 2M9.5 2.5h5'/></svg>");
+  --ic-board:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M8 21h8M12 17.5V21'/><path d='M6.5 3h11v5.5a5.5 5.5 0 0 1-11 0z'/><path d='M6.5 4.5h-3V7a3 3 0 0 0 3 3M17.5 4.5h3V7a3 3 0 0 1-3 3'/></svg>");
+  --ic-prog:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M3 20.5h18'/><path d='M6.5 20.5v-6M12 20.5V8M17.5 20.5v-9.5'/></svg>");
+  --ic-guide:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4.8A1.8 1.8 0 0 1 5.8 3H19v15.5H5.8A1.8 1.8 0 0 0 4 20.3z'/><path d='M4 18.5A1.8 1.8 0 0 1 5.8 21H19'/><path d='M8 7.5h7M8 11h5'/></svg>");
+  --ic-games:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M7 11.5h4M9 9.5v4M15 10.5h.01M17.5 13h.01'/><path d='M8.2 6h7.6a4.7 4.7 0 0 1 4.65 4l.8 5.6A2.8 2.8 0 0 1 18.5 19c-1 0-1.6-.5-2.2-1.2l-.9-1.1a1.9 1.9 0 0 0-1.45-.7h-3.9a1.9 1.9 0 0 0-1.45.7l-.9 1.1C6.1 18.5 5.5 19 4.5 19a2.8 2.8 0 0 1-2.75-3.4l.8-5.6A4.7 4.7 0 0 1 8.2 6z'/></svg>");
+  --ic-chat:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M20.5 12.2a7.7 7.7 0 0 1-8.3 7.7 8.6 8.6 0 0 1-2.9-.6L4 21l1.4-4.2a7.5 7.5 0 0 1-1.4-4.4A7.7 7.7 0 0 1 12.2 4a7.7 7.7 0 0 1 8.3 8.2z'/></svg>");
+}
+
+/* ═══ Event page: tabs become a real segmented control ═══════════
+   Was a 6-up grid of bordered boxes with emoji — ~300px of vertical
+   chrome on a phone before any content. Now one 48px rail. */
+nav.tabs {
+  display: flex !important;
+  grid-template-columns: none !important;
+  gap: 2px !important;
+  background: var(--bg-elev) !important;
+  border: 1px solid var(--rule) !important;
+  border-bottom: 1px solid var(--rule) !important;
+  border-radius: var(--r-sm) !important;
+  padding: 4px !important;
+  margin: 0 0 26px !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  box-shadow: var(--sh-1);
+}
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs button {
+  flex: 1 1 0 !important;
+  min-width: 0;
+  padding: 10px 12px !important;
+  border: none !important;
+  border-radius: var(--r-xs) !important;
+  background: transparent !important;
+  color: var(--ink-soft) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  gap: 7px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background 0.16s ease, color 0.16s ease !important;
+  white-space: nowrap;
+}
+nav.tabs button::before {
+  content: '' !important;
+  flex: 0 0 auto;
+  width: 15px; height: 15px;
+  background: currentColor;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+  font-size: 0 !important;
+  opacity: 0.9;
+}
+nav.tabs button[data-view="flashcards"]::before  { -webkit-mask-image: var(--ic-cards); mask-image: var(--ic-cards); }
+nav.tabs button[data-view="quiz"]::before        { -webkit-mask-image: var(--ic-quiz);  mask-image: var(--ic-quiz); }
+nav.tabs button[data-view="test"]::before        { -webkit-mask-image: var(--ic-test);  mask-image: var(--ic-test); }
+nav.tabs button[data-view="leaderboard"]::before { -webkit-mask-image: var(--ic-board); mask-image: var(--ic-board); }
+nav.tabs button[data-view="progress"]::before    { -webkit-mask-image: var(--ic-prog);  mask-image: var(--ic-prog); }
+nav.tabs button[data-view="guide"]::before       { -webkit-mask-image: var(--ic-guide); mask-image: var(--ic-guide); }
+nav.tabs button:hover {
+  background: var(--highlight) !important;
+  color: var(--ink) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+nav.tabs button.active,
+nav.tabs button.active:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14), 0 4px 12px -4px var(--accent-glow) !important;
+}
+nav.tabs button.active::before { opacity: 1; }
+nav.tabs button:focus-visible { outline: none; box-shadow: var(--ring) !important; }
+
+@media (max-width: 720px) {
+  nav.tabs { margin-bottom: 18px !important; padding: 3px !important; }
+  nav.tabs button {
+    flex: 0 0 auto !important;
+    padding: 9px 13px !important;
+    font-size: 13px !important;
+    min-height: 42px !important;
+  }
+}
+
+/* ═══ Event page: quieter hero ═══════════════════════════════════
+   84px of Fraunces plus a three-line italic subtitle was eating the
+   entire first screen on a phone before any study control appeared. */
+.masthead {
+  padding-bottom: 20px !important;
+  margin-bottom: 26px !important;
+  border-bottom-width: 1px !important;
+}
+.masthead h1 {
+  font-size: clamp(32px, 5vw, 58px) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.038em !important;
+}
+.masthead .subtitle {
+  font-family: 'Inter', sans-serif !important;
+  font-style: normal !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  color: var(--ink-soft) !important;
+  max-width: 300px !important;
+}
+.category-eyebrow { font-size: 10.5px !important; letter-spacing: 0.14em !important; }
+@media (max-width: 720px) {
+  .masthead { padding-bottom: 16px !important; margin-bottom: 18px !important; gap: 10px !important; }
+  .masthead h1 { font-size: 28px !important; line-height: 1.06 !important; }
+  .masthead h1 br { display: none; }
+  .masthead .subtitle {
+    font-size: 13.5px !important; max-width: 100% !important; text-align: left !important;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+}
+
+/* ═══ Guest banner: one quiet line, not a wall ══════════════════ */
+#guest-banner, .guest-banner {
+  font-size: 13px !important;
+  padding: 9px 18px !important;
+  line-height: 1.45 !important;
+}
+@media (max-width: 720px) {
+  #guest-banner, .guest-banner {
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+    text-align: left !important;
+  }
+  #guest-banner a, .guest-banner a { white-space: nowrap; }
+}
+
+/* ═══ Smart Review: a switch, not a checkbox ════════════════════ */
+.sr-toggle-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: var(--ink-soft) !important;
+  cursor: pointer;
+  user-select: none;
+}
+.sr-toggle-label input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 32px; height: 18px; margin: 0;
+  border-radius: 999px;
+  background: var(--rule-strong);
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.sr-toggle-label input[type="checkbox"]::after {
+  content: '';
+  position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.28);
+  transition: transform 0.18s cubic-bezier(0.2,0,0,1);
+}
+.sr-toggle-label input[type="checkbox"]:checked { background: var(--accent); }
+.sr-toggle-label input[type="checkbox"]:checked::after { transform: translateX(14px); }
+.sr-toggle-label input[type="checkbox"]:focus-visible { outline: none; box-shadow: var(--ring); }
+.sr-help {
+  width: 17px !important; height: 17px !important;
+  min-width: 17px !important;
+  padding: 0 !important;
+  font-size: 10.5px !important;
+  line-height: 1 !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--rule-strong) !important;
+  background: transparent !important;
+  color: var(--ink-faint) !important;
+  display: inline-flex !important;
+  align-items: center !important; justify-content: center !important;
+}
+.sr-help:hover { color: var(--ink) !important; border-color: var(--ink-faint) !important; }
+
+/* ═══ Flashcard header: tighten the rhythm ══════════════════════
+   Counter / must-know / deck line were three isolated islands with
+   ~40px of dead air between each. */
+.card-counter {
+  gap: 14px !important;
+  margin-bottom: 14px !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+  font-size: 12.5px !important;
+}
+.must-know-section { margin: 0 0 12px !important; }
+.mk-toggle-btn {
+  border-radius: var(--r-xs) !important;
+  padding: 11px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--rule) !important;
+}
+.deck-progress-row { margin: 0 0 14px !important; }
+.deck-progress-line { font-size: 12.5px !important; }
+.cram-btn {
+  border-radius: 999px !important;
+  padding: 6px 13px !important;
+  font-size: 11.5px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  font-variant: normal !important;
+}
+@media (max-width: 720px) {
+  .card-counter { gap: 10px !important; margin-bottom: 12px !important; flex-wrap: wrap; }
+  .must-know-section { margin-bottom: 10px !important; }
+  .deck-progress-row { margin-bottom: 12px !important; }
+}
+
+/* ═══ Emoji become deliberate marks, not stray clip art ═════════
+   Sized, boxed and tinted so a stethoscope reads as a category
+   badge rather than something pasted in. */
+.sss-icon,
+.hof-icon,
+.tl-icon,
+.ach-prog-icon {
+  display: inline-flex !important;
+  align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--highlight);
+  font-size: 17px !important;
+  line-height: 1 !important;
+  margin-bottom: 10px !important;
+}
+.chip-emoji {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  font-size: 13px;
+  line-height: 1;
+  margin-right: 7px;
+}
+
+/* ═══ Cards: one surface language ═══════════════════════════════ */
+.jbi-card, .lib-card, .sss-card, .category-card, .recent-item {
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--sh-1);
+}
+.jbi-card:hover, .lib-card:hover, .sss-card:hover {
+  box-shadow: var(--sh-2), 0 0 0 1px var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+.sss-card { box-shadow: var(--sh-1) !important; }
+
+/* ═══ Home: quick-start banner survives a phone ═════════════════
+   grid-template-columns:1fr auto + a nowrap button was squeezing
+   the paragraph to one word per line at 390px. */
+@media (max-width: 720px) {
+  #tab-events .tab-inner > div[style*="grid-template-columns:1fr auto"],
+  .tab-inner > div[style*="grid-template-columns:1fr auto"] {
+    grid-template-columns: 1fr !important;
+    padding: 24px 20px !important;
+    gap: 16px !important;
+  }
+  .tab-inner > div[style*="grid-template-columns:1fr auto"] > button {
+    width: 100% !important;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* ═══ Home: suggestion rail reads as a grid on a phone ══════════
+   A half-clipped card at the right edge looks like a bug. */
+@media (max-width: 720px) {
+  .sss-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+  .sss-card { width: auto !important; padding: 14px !important; }
+  .sss-icon { width: 30px; height: 30px; font-size: 15px !important; margin-bottom: 8px !important; }
+  .sss-name { font-size: 13px !important; }
+}
+
+/* ═══ Floating controls: one dock, not a pile ═══════════════════ */
+#games-launcher { bottom: 20px !important; right: 20px !important; }
+#games-launcher-btn,
+#fb-fab {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--bg-card) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule-strong) !important;
+  border-radius: 999px !important;
+  padding: 8px 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  box-shadow: var(--sh-2) !important;
+}
+#games-launcher-btn:hover,
+#fb-fab:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  box-shadow: var(--sh-2), var(--ring) !important;
+}
+#games-launcher-btn::before,
+#fb-fab::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 14px; height: 14px;
+  background: currentColor;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+}
+#games-launcher-btn::before { -webkit-mask-image: var(--ic-games); mask-image: var(--ic-games); }
+#fb-fab::before      { -webkit-mask-image: var(--ic-chat);  mask-image: var(--ic-chat); }
+/* The emoji/glyph that shipped inside each label is now redundant. */
+#games-launcher-btn { font-size: 0 !important; }
+#games-launcher-btn::after { content: 'Games'; font-size: 12.5px; }
+#fb-fab > span:first-child { display: none !important; }
+
+@media (max-width: 720px) {
+  #games-launcher-btn, #fb-fab {
+    width: 40px; height: 40px;
+    padding: 0 !important;
+    justify-content: center;
+    border-radius: 50% !important;
+  }
+  #games-launcher-btn::after { display: none; }
+  #fb-fab { font-size: 0 !important; }
+  #games-launcher { bottom: 16px !important; right: 14px !important; }
+  #fb-fab { bottom: 64px !important; right: 14px !important; }
+  /* Keep the last row of content clear of the dock. */
+  .view.active > *:last-child, #tab-events .tab-inner, #tab-home .tab-inner { padding-bottom: 72px; }
+}
+
+/* ═══ Focus visibility, sitewide ════════════════════════════════ */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── v4 corrections ────────────────────────────────────────────── */
+
+/* The stage's 32px grid gap was stacking on top of every child margin,
+   giving the flashcard column a uniform band of dead air between each
+   control. Let the gap carry the rhythm; zero the margins. */
+.flashcard-stage { gap: 16px !important; }
+.flashcard-stage > .card-counter,
+.flashcard-stage > .must-know-section,
+.flashcard-stage > .deck-progress-row { margin-bottom: 0 !important; }
+@media (max-width: 720px) { .flashcard-stage { gap: 12px !important; } }
+
+/* Keep the line break in the masthead — collapsing it ran the two
+   halves of the title together ("The Anatomyof Language"). */
+.masthead h1 br { display: inline !important; }
+
+/* The touch-target layer forces #sr-toggle to 22x22, which squares off
+   the switch. The label already carries a 44px hit area, so the control
+   itself can keep its own shape. */
+#sr-toggle,
+.sr-toggle-label input[type="checkbox"] {
+  width: 32px !important;
+  height: 18px !important;
+  border-radius: 999px !important;
+  flex: 0 0 32px !important;
+}
+.sr-toggle-label { gap: 9px !important; }
+.sr-help { width: 20px !important; height: 20px !important; min-width: 20px !important; font-size: 11px !important; }
+@media (pointer: coarse), (max-width: 768px) {
+  .sr-help { width: 24px !important; height: 24px !important; font-size: 12px !important; }
+}
+
+/* Cram: #c08040 on white reads at ~2.6:1. Neutral outline, accent on
+   hover, same footprint. */
+.cram-btn {
+  border-color: var(--rule-strong) !important;
+  color: var(--ink-soft) !important;
+  background: transparent !important;
+}
+.cram-btn:hover, .cram-btn.active {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: var(--accent-soft) !important;
+}
+
+/* Tab rail scrolls on narrow screens — show that it does. */
+nav.tabs {
+  position: relative;
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%);
+}
+@media (min-width: 721px) {
+  nav.tabs { -webkit-mask-image: none; mask-image: none; }
+}
+
+/* Guest banner: two lines of warning plus a wrapped link was a third of
+   the phone viewport. Trim the explanation, keep the call to action. */
+@media (max-width: 720px) {
+  #guest-banner { padding: 7px 14px !important; font-size: 11.5px !important; line-height: 1.4 !important; }
+  #guest-banner-text {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ── Flashcard surface ─────────────────────────────────────────── */
+
+/* .face::before drew a square 1px rule 20px inside a 20px-rounded card
+   — a stray box floating in the middle of the surface. The card's own
+   border already frames the content. */
+.face::before { display: none !important; }
+
+/* .flashcard and .face carried the same 1px border 1px apart, which
+   read as a doubled ring. One border, on the outer element. */
+.face { border: none !important; }
+
+/* .flip-hint is absolutely parked at bottom:28px, so flow content has
+   to be told to stop above it — "Already know this" was sitting on top
+   of "tap to reveal". */
+.face.front, .face.back { padding-bottom: 62px !important; }
+
+.flip-hint {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  color: var(--ink-faint) !important;
+}
+.know-it-btn {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  padding: 8px 16px !important;
+  border-radius: 999px !important;
+  border-color: var(--rule-strong) !important;
+  color: var(--ink-soft) !important;
+  margin-top: 16px !important;
+}
+.know-it-btn:hover { border-color: var(--success) !important; color: var(--success) !important; }
+
+/* ── Line icons for the home page ──────────────────────────────── */
+:root {
+  --ic-level:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M13 2.5 4.5 13.6h6.2L11 21.5 19.5 10.4h-6.2z'/></svg>");
+  --ic-streak: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2.5s5.4 4 5.4 8.9a5.4 5.4 0 0 1-10.8 0C6.6 9.6 8 8 8 8s.6 1.7 1.8 2.2c0-3 2.2-5.6 2.2-7.7z'/><path d='M12 21.5a3.3 3.3 0 0 0 3.3-3.3c0-2-2-3.4-3.3-5-1.3 1.6-3.3 3-3.3 5A3.3 3.3 0 0 0 12 21.5z'/></svg>");
+  --ic-master: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M8 21h8M12 17.5V21'/><path d='M6.5 3h11v5.5a5.5 5.5 0 0 1-11 0z'/><path d='M6.5 4.5h-3V7a3 3 0 0 0 3 3M17.5 4.5h3V7a3 3 0 0 1-3 3'/></svg>");
+}
+.hiw-icon,
+.home-hero-stat-icon[data-ic] {
+  background: currentColor;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+  font-size: 0 !important;
+}
+.hiw-icon {
+  width: 22px; height: 22px;
+  margin-bottom: 12px;
+  color: var(--accent);
+}
+.home-hero-stat-icon[data-ic] {
+  width: 17px; height: 17px;
+  color: var(--ink-faint);
+  margin: 0 auto 6px;
+}
+[data-ic="cards"]    { -webkit-mask-image: var(--ic-cards);  mask-image: var(--ic-cards); }
+[data-ic="quiz"]     { -webkit-mask-image: var(--ic-quiz);   mask-image: var(--ic-quiz); }
+[data-ic="test"]     { -webkit-mask-image: var(--ic-test);   mask-image: var(--ic-test); }
+[data-ic="prog"]     { -webkit-mask-image: var(--ic-prog);   mask-image: var(--ic-prog); }
+[data-ic="level"]    { -webkit-mask-image: var(--ic-level);  mask-image: var(--ic-level); }
+[data-ic="streak"]   { -webkit-mask-image: var(--ic-streak); mask-image: var(--ic-streak); }
+[data-ic="mastered"] { -webkit-mask-image: var(--ic-master); mask-image: var(--ic-master); }
+
+/* Chapter CTA kicker: as an inline-flex the pulse dot hung beside a
+   two-line label on narrow screens. Block-level and top-aligned. */
+#chapter-cta .cc-kicker { display: flex !important; align-items: flex-start !important; }
+#chapter-cta .cc-kicker::before { margin-top: 4px; flex: 0 0 6px; }
+
+/* The utility glyphs in the header stay emoji (their meaning changes
+   with state) but shouldn't out-shout the interface. */
+#theme-btn, #theme-toggle, #focus-mode-btn {
+  filter: saturate(0.3) contrast(1.05);
+  opacity: 0.85;
+}
+#theme-btn:hover, #theme-toggle:hover, #focus-mode-btn:hover {
+  filter: none; opacity: 1;
+}
+
+/* The base rule sizes the tab rail to its content (width: fit-content),
+   which left a 564px rail floating under an 1100px masthead. Span the
+   content column instead. */
+nav.tabs { width: 100% !important; }
+
+/* ── v4: contrast and dark-mode corrections ───────────────────── */
+
+/* The active tab is a solid crimson block, so it needs the fill colour
+   that carries white text, not the brighter text-accent. */
+nav.tabs button.active,
+nav.tabs button.active:hover { background: var(--grad-cta) !important; }
+
+/* refreshStar() clears the inline colour on every unsave, which dropped
+   the star back to the inherited colour — black on a black page. */
+#hosa-save-star { color: var(--ink-faint); }
+
+/* The guest banner was hardcoded cream with olive text, so in dark mode
+   it burned a bright band across the top of every event page. */
+:root:not([data-theme="light"]):not([data-theme="sepia"]) #guest-banner {
+  background: rgba(251,191,36,0.10) !important;
+  border-bottom-color: rgba(251,191,36,0.45) !important;
+  color: #e3c766 !important;
+}
+:root:not([data-theme="light"]):not([data-theme="sepia"]) #guest-banner a {
+  color: #f5d98a !important;
+}
+
+/* ── Guide tab ─────────────────────────────────────────────────── */
+
+/* .guide-layout is a hard 1fr 1fr with a 40px gutter and no mobile
+   override, so at 390px each panel got 127px and the whole page
+   scrolled sideways. */
+@media (max-width: 860px) {
+  .guide-layout { grid-template-columns: 1fr !important; gap: 20px !important; }
+}
+/* Square panels among rounded cards everywhere else. */
+.guide-panel {
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--sh-1);
+}
+
+/* The "?" stays visually small but gets a finger-sized hit area. */
+.sr-help { position: relative; }
+.sr-help::after { content: ''; position: absolute; inset: -11px; }
+
+/* The mock-exam CTA was an amber/orange gradient sitting under a crimson
+   rule — the one button on the home page that didn't belong to the
+   brand. Gold stays on the eyebrow; the button joins the system. */
+.mfe-btn-start, .mfe-btn-primary {
+  background: var(--grad-cta) !important;
+  color: #fff !important;
+}
+
+/* Study-path header icon: line mark instead of a full-colour map emoji. */
+:root {
+  --ic-path: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M5.5 20.5c0-3 2.5-3.4 5-3.9s5-.9 5-3.9-2.5-3.4-5-3.9'/><circle cx='5.5' cy='5.5' r='2.6'/><circle cx='18.5' cy='18.5' r='2.6'/></svg>");
+}
+.dp-icon[data-ic] {
+  display: inline-block;
+  width: 22px; height: 22px;
+  background: currentColor; color: var(--accent);
+  -webkit-mask-image: var(--ic-path); mask-image: var(--ic-path);
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+  font-size: 0;
+}
+
+/* The bottom nav sat at 0.92 alpha, so a saturated CTA scrolling beneath
+   it tinted the bar pink wherever backdrop-filter was unavailable. */
+#bottom-nav { background: rgba(8, 8, 11, 0.97) !important; }
+[data-theme="light"] #bottom-nav { background: rgba(250, 250, 250, 0.97) !important; }
