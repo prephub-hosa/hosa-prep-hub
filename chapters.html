@@ -170,11 +170,12 @@
 <div class="wrap">
 
   <section class="hero">
-    <div class="kicker">Any member can do this &mdash; no officer role needed</div>
-    <h1>Start your <em>chapter</em>.</h1>
-    <p class="lede">You don't need to be president, an officer, or an advisor. If you're in the chapter, you can put it on here. It takes about a minute, it's free, and everyone you share the link with gets features the rest of the site doesn't have.</p>
+    <div class="kicker" id="hero-kicker">Any member can do this &mdash; no officer role needed</div>
+    <h1 id="hero-title">Start your <em>chapter</em>.</h1>
+    <p class="lede" id="hero-lede">You don't need to be president, an officer, or an advisor. If you're in the chapter, you can put it on here. It takes about a minute, it's free, and everyone you share the link with gets features the rest of the site doesn't have.</p>
   </section>
 
+  <div id="pitch">
   <h2>What your chapter gets that the site doesn't give anyone else</h2>
   <p class="sub">Everything on HOSA Prep Hub is already free and open — we don't lock studying behind a chapter. What registering adds is everything that only makes sense when you're a <em>team</em>.</p>
 
@@ -194,10 +195,10 @@
       <div class="cmp-title">Everything above, plus</div>
       <ul>
         <li><strong>Chapter leaderboard</strong> — your chapter ranked against every other chapter in the country</li>
-        <li><strong>Chapter badge</strong> beside every member's name</li>
+        <li><strong>Chapter badge</strong> beside every member's name on the main leaderboard, linking back to your chapter</li>
         <li><strong>Live chapter dashboard</strong> — members, chapter XP, national rank, all updating as people study</li>
         <li><strong>Printable study sheets</strong> — every term in an event as a clean handout or PDF, on any event page</li>
-        <li><strong>One join link</strong> that tags every member automatically</li>
+        <li><strong>One join link</strong> that tags every member automatically &mdash; and is always recoverable from this page</li>
         <li><strong>Founding Chapter</strong> status, kept permanently</li>
       </ul>
     </div>
@@ -219,7 +220,7 @@
     <div class="tier">
       <div class="tier-n">15 active members</div>
       <div class="tier-t">Featured chapter</div>
-      <div class="tier-d">Your chapter is featured on the home page, and we'll build a custom study set for the events your chapter actually competes in.</div>
+      <div class="tier-d">Your chapter gets its own slot on the home page, seen by everyone who opens the site. You can also request a custom study set for the events your chapter actually competes in &mdash; send the list through the feedback button on any page and we'll build it.</div>
     </div>
     <div class="tier">
       <div class="tier-n">Top 10 chapters</div>
@@ -229,8 +230,10 @@
   </div>
   <p class="hint" style="margin-top:14px;">&ldquo;Active&rdquo; means a member who studied on at least three separate days — so a burst of sign-ups in one sitting doesn't count.</p>
 
-  <h2>Register</h2>
-  <p class="sub">Members, officers and advisors &mdash; anyone in the chapter can register it. We only need enough to build your link and reach you.</p>
+  </div><!-- /#pitch -->
+
+  <h2 id="register-heading">Register</h2>
+  <p class="sub" id="register-sub">Members, officers and advisors &mdash; anyone in the chapter can register it. We only need enough to build your link and reach you.</p>
 
   <div class="card" id="form-card">
     <div class="fg">
@@ -270,7 +273,7 @@
   </div>
 
   <div class="card" id="result">
-    <div class="kicker" style="margin-bottom:8px;">✓ Your chapter is registered</div>
+    <div class="kicker" style="margin-bottom:8px;" id="res-kicker">✓ Your chapter is registered</div>
     <div style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;" id="res-name">—</div>
     <p class="sub" style="margin-bottom:4px;">This is your chapter's join link. Anyone who opens it is tagged to your chapter automatically — they don't have to type anything or make an account.</p>
     <div class="linkbox">
@@ -278,11 +281,39 @@
       <button class="copy" id="res-copy" type="button">Copy link</button>
     </div>
     <p class="hint" id="res-copied" style="min-height:16px;"></p>
+
+    <div class="lbl" style="margin-top:20px;">Your dashboard</div>
+    <p class="sub" style="margin-bottom:4px;">Members, chapter XP and your national rank, updating as people study. Bookmark this one — it works on any device.</p>
+    <div class="linkbox">
+      <input id="res-dash" type="text" readonly>
+      <button class="copy" id="res-dash-copy" type="button">Copy link</button>
+    </div>
+    <p class="hint" id="res-dash-copied" style="min-height:16px;"></p>
+
     <ol class="steps">
-      <li>Post the link in your chapter GroupMe, Remind, or Instagram bio.</li>
+      <li>Post the join link in your chapter GroupMe, Remind, or Instagram bio.</li>
       <li>Announce it once at a meeting — &ldquo;open this, we're doing a 15-minute drill.&rdquo;</li>
-      <li>Watch your chapter climb the chapter leaderboard, and check your <a href="chapter.html">live dashboard</a> any time.</li>
+      <li>Watch your chapter climb the chapter leaderboard, and check your <a id="res-dash-open" href="chapter.html">live dashboard</a> any time.</li>
     </ol>
+    <p class="hint" id="res-recover" style="margin-top:14px;">
+      Lost these links? Come back to this page on any device and enter your school — we'll hand them straight back instead of registering again.
+    </p>
+    <p class="hint" id="res-switch" style="margin-top:10px;display:none;">
+      <a href="#" id="res-register-other">Register a different school instead</a>
+    </p>
+  </div>
+
+  <!-- Shown when someone who already has a chapter comes back to this page. -->
+  <div class="card" id="lookup" style="display:none;">
+    <div class="kicker" style="margin-bottom:8px;">Already registered?</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px;">Get your links back</div>
+    <p class="sub">Type the school you registered and we'll show your join link and dashboard again. Nothing is created — this only looks up what already exists.</p>
+    <div class="fg" style="margin-top:14px;">
+      <label class="lbl" for="lk-school">School</label>
+      <input id="lk-school" class="inp" type="text" placeholder="Brewer high school" autocomplete="organization">
+    </div>
+    <button class="btn" id="lk-submit" type="button">Find my chapter →</button>
+    <div class="err" id="lk-error"></div>
   </div>
 
   <div class="foot">
@@ -308,6 +339,114 @@
   }
   var $ = function(id){ return document.getElementById(id); };
   var err = $('ch-error');
+
+  function dashUrl(slug) {
+    return baseUrl().replace(/index\.html$/, 'chapter.html') + '?c=' + encodeURIComponent(slug);
+  }
+  function joinUrl(slug) {
+    return baseUrl() + '?chapter=' + encodeURIComponent(slug);
+  }
+
+  // One renderer for both paths: a fresh registration, and someone coming
+  // back later for links they no longer have.
+  function showChapter(slug, name, returning) {
+    $('res-kicker').textContent = returning ? '\u2713 Your chapter' : '\u2713 Your chapter is registered';
+    $('res-name').textContent = name || slug.replace(/-/g, ' ');
+    $('res-link').value = joinUrl(slug);
+    $('res-dash').value = dashUrl(slug);
+    $('res-dash-open').href = dashUrl(slug);
+    $('form-card').style.display = 'none';
+    $('lookup').style.display = 'none';
+    $('res-switch').style.display = returning ? 'block' : 'none';
+    $('result').style.display = 'block';
+    if (returning) {
+      // Someone who already registered came here for their links, not for the
+      // pitch — put the card first and drop the sales copy.
+      var wrap = document.querySelector('.wrap');
+      var hero = wrap && wrap.querySelector('.hero');
+      if (wrap && hero && $('result').previousElementSibling !== hero) {
+        wrap.insertBefore($('result'), hero.nextSibling);
+      }
+      ['pitch', 'register-heading', 'register-sub'].forEach(function(id){
+        var el = $(id); if (el) el.style.display = 'none';
+      });
+      $('hero-kicker').textContent = 'Your chapter is already registered';
+      $('hero-title').innerHTML = 'Invite your <em>chapter</em>.';
+      $('hero-lede').textContent = 'Share the join link below. Everyone who opens it is counted toward '
+        + ($('res-name').textContent || 'your chapter') + ' \u2014 no account, nothing to type.';
+    } else {
+      $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function copyFrom(inputId, noteId) {
+    var i = $(inputId);
+    i.select(); i.setSelectionRange(0, 99999);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) { try { navigator.clipboard.writeText(i.value); ok = true; } catch(e) {} }
+    $(noteId).textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
+  }
+
+  function lookUp(slug, thenShow, onMissing) {
+    function got(rec) {
+      if (!rec) { onMissing && onMissing(); return; }
+      try { localStorage.setItem('hosa::chapter', rec.slug || slug);
+            localStorage.setItem('hosa::chapter-name', rec.name || rec.school || slug); } catch(e) {}
+      thenShow(rec.slug || slug, rec.name || rec.school || slug);
+    }
+    try {
+      firebase.database().ref('chapters/' + slug).get()
+        .then(function(s){ return (s && s.val()) || firebase.database().ref('analytics/chapters/' + slug).get().then(function(s2){ return s2 && s2.val(); }); })
+        .then(got).catch(function(){ onMissing && onMissing(); });
+    } catch(e) { onMissing && onMissing(); }
+  }
+
+  // ── Coming back to this page ──────────────────────────────────────
+  // Previously the only place the join link ever appeared was the result
+  // card shown once, immediately after registering. Close that tab and the
+  // link was gone, which is the whole point of registering.
+  (function restore(){
+    var m = /[?&]c=([^&#]+)/.exec(location.search);
+    var fromUrl = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44) : '';
+    var saved = '';
+    try { saved = (localStorage.getItem('hosa::chapter') || '').trim(); } catch(e) {}
+    var slug = fromUrl || saved;
+    if (!slug) { $('lookup').style.display = 'block'; return; }
+    var nm = '';
+    try { nm = localStorage.getItem('hosa::chapter-name') || ''; } catch(e) {}
+    // Show what we know immediately, then confirm the name against the record.
+    showChapter(slug, nm || slug.replace(/-/g, ' '), true);
+    lookUp(slug, function(s, n){ showChapter(s, n, true); }, function(){});
+  })();
+
+  $('lk-submit').addEventListener('click', function(){
+    var v = $('lk-school').value.trim();
+    var e = $('lk-error');
+    e.textContent = '';
+    if (v.length < 3) { e.textContent = 'Please enter your school.'; return; }
+    var slug = slugify(v);
+    var btn = $('lk-submit');
+    btn.disabled = true; btn.textContent = 'Looking\u2026';
+    lookUp(slug, function(s, n){ showChapter(s, n, true); }, function(){
+      btn.disabled = false; btn.textContent = 'Find my chapter \u2192';
+      e.textContent = 'No chapter registered under that name yet. Check the spelling, or register it below.';
+    });
+  });
+
+  $('res-register-other').addEventListener('click', function(ev){
+    ev.preventDefault();
+    $('result').style.display = 'none';
+    $('lookup').style.display = 'none';
+    ['pitch', 'register-heading', 'register-sub'].forEach(function(id){
+      var el = $(id); if (el) el.style.display = '';
+    });
+    $('hero-kicker').textContent = 'Any member can do this \u2014 no officer role needed';
+    $('hero-title').innerHTML = 'Start your <em>chapter</em>.';
+    $('hero-lede').textContent = "You don't need to be president, an officer, or an advisor. If you're in the chapter, you can put it on here.";
+    $('form-card').style.display = 'block';
+    $('form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   $('ch-submit').addEventListener('click', function(){
     var school  = $('ch-school').value.trim();
@@ -342,12 +481,7 @@
             localStorage.setItem('hosa::chapter-name', name);
             localStorage.setItem('hosa::school', school); } catch(e) {}
       try { gtag('event', 'chapter_registered', { event_category: state }); } catch(e) {}
-      var link = baseUrl() + '?chapter=' + encodeURIComponent(slug);
-      $('res-name').textContent = name;
-      $('res-link').value = link;
-      $('form-card').style.display = 'none';
-      $('result').style.display = 'block';
-      $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showChapter(slug, name, false);
     }
     try {
       firebase.database().ref('chapters/' + slug).update(rec)
@@ -364,14 +498,8 @@
     } catch(e) { done(); }
   });
 
-  $('res-copy').addEventListener('click', function(){
-    var i = $('res-link');
-    i.select(); i.setSelectionRange(0, 99999);
-    var ok = false;
-    try { ok = document.execCommand('copy'); } catch(e) {}
-    if (navigator.clipboard) { try { navigator.clipboard.writeText(i.value); ok = true; } catch(e) {} }
-    $('res-copied').textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
-  });
+  $('res-copy').addEventListener('click', function(){ copyFrom('res-link', 'res-copied'); });
+  $('res-dash-copy').addEventListener('click', function(){ copyFrom('res-dash', 'res-dash-copied'); });
 })();
 </script>
 </body>

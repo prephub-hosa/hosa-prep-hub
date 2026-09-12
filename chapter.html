@@ -63,6 +63,17 @@
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 2px;
   }
+
+  .founding-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-left: 8px; padding: 2px 9px; border-radius: 999px;
+    background: rgba(251,191,36,0.16); border: 1px solid rgba(251,191,36,0.45);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #8a6100; vertical-align: middle;
+  }
+  .founding-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  html:not([data-theme]) .founding-pill { color: #e3c766; }
 </style>
 </head>
 <body>
@@ -113,7 +124,9 @@
 
   if (!slug) {
     $('ch-name').textContent = 'No chapter yet';
-    $('ch-meta').innerHTML = 'You are not part of a chapter. <a href="chapters.html">Start one for your school</a> — it takes about a minute and anyone can do it.';
+    $('ch-meta').innerHTML = 'You are not part of a chapter on this device. '
+      + '<a href="chapters.html">Start one for your school</a> — it takes about a minute and anyone can do it. '
+      + 'Already registered? <a href="chapters.html">Look it up by school name</a> to get your links back.';
     $('ch-members').innerHTML = '<div class="empty">Once your chapter exists, everyone who joins through its link shows up here.</div>';
     return;
   }
@@ -145,6 +158,23 @@
     var ranked = Object.keys(totals).sort(function(a,b){ return totals[b]-totals[a]; });
     var rank = ranked.indexOf(slug) + 1;
 
+    // Founding Chapter: earned by reaching the top 10, then kept for good.
+    var founding = !!info.founding;
+    if (!founding && rank && rank <= 10) {
+      founding = true;
+      try {
+        firebase.database().ref('chapters/' + slug)
+          .update({ founding: true, foundingAt: new Date().toISOString() })
+          .catch(function(){
+            firebase.database().ref('analytics/chapters/' + slug)
+              .update({ founding: true, foundingAt: new Date().toISOString() }).catch(function(){});
+          });
+      } catch(e) {}
+    }
+    if (founding) {
+      $('ch-kicker').innerHTML = 'Chapter dashboard <span class="founding-pill" title="One of the first ten chapters on the board. Kept permanently.">Founding Chapter</span>';
+    }
+
     $('ch-meta').innerHTML = (info.state ? esc(info.state) + ' &middot; ' : '')
       + (rank ? 'Ranked <strong>#' + rank + '</strong> of ' + ranked.length + ' chapters nationally' : 'Not yet ranked — earn some XP to appear');
 
@@ -157,6 +187,13 @@
     var base = location.href.split('#')[0].split('?')[0].replace(/chapter\.html$/, 'index.html');
     $('ch-link').value = base + '?chapter=' + slug;
     $('ch-link-wrap').style.display = '';
+    // Reached via localStorage with a bare URL — put the slug in the address
+    // bar so bookmarking or sharing this page actually works.
+    try {
+      if (!/[?&]c=/.test(location.search)) {
+        history.replaceState(null, '', location.pathname + '?c=' + encodeURIComponent(slug));
+      }
+    } catch(e) {}
 
     if (!members.length) {
       $('ch-members').innerHTML = '<div class="empty">No members yet. Share the link above — the first person to open it shows up here.</div>';
