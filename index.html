@@ -1177,6 +1177,54 @@
    a table+bar ladder for level cost (>7 meaningful classes), and a
    hero figure + meter for the reader's own standing. Single series
    throughout, so one hue and no legend; values wear text tokens. */
+/* Home: chapter call-to-action. Solid accent so it reads as the one
+   deliberate ask on an otherwise quiet page. */
+#chapter-cta {
+  display: block; text-decoration: none;
+  background: var(--accent); border-radius: 14px;
+  padding: 26px 28px; margin-bottom: 34px;
+  box-shadow: 0 10px 30px -12px rgba(185,28,28,0.45);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+#chapter-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 38px -12px rgba(185,28,28,0.55); }
+#chapter-cta .cc-inner { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+#chapter-cta .cc-copy { flex: 1 1 320px; min-width: 0; }
+#chapter-cta .cc-kicker {
+  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.82); margin-bottom: 9px;
+}
+#chapter-cta .cc-title {
+  font-family: 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 500;
+  color: #fff; line-height: 1.22; letter-spacing: -0.015em; margin-bottom: 8px;
+}
+#chapter-cta .cc-sub {
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px;
+  color: rgba(255,255,255,0.9); line-height: 1.6; max-width: 560px;
+}
+#chapter-cta .cc-btn {
+  flex: 0 0 auto; background: #fff; color: var(--accent);
+  border-radius: 9px; padding: 14px 24px;
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 15.5px;
+  font-weight: 700; white-space: nowrap;
+}
+@media (max-width: 620px) {
+  #chapter-cta { padding: 22px 20px; }
+  #chapter-cta .cc-title { font-size: 22px; }
+  #chapter-cta .cc-btn { width: 100%; text-align: center; }
+}
+
+/* Sidebar: the chapter entry is the one thing we want officers to find. */
+.sb-item-chapter {
+  text-decoration: none;
+  color: var(--accent) !important;
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  margin: 2px 0;
+}
+.sb-item-chapter:hover { background: var(--accent) !important; color: #fff !important; }
+
 /* Chapter leaderboard */
 .ch-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
 .ch-title { font-family:'Fraunces',Georgia,serif; font-size:20px; font-weight:500; color:var(--ink); }
@@ -2388,9 +2436,13 @@ footer { display: none; }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="4" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="16" y="4" width="4" height="16"/></svg>
       Levels &amp; XP
     </button>
-    <a class="sb-item" href="chapters.html" style="text-decoration:none;">
+  </div>
+
+  <div class="sb-label">Chapters</div>
+  <div class="sb-section">
+    <a class="sb-item sb-item-chapter" href="chapters.html">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      For Chapters
+      Register a Chapter
     </a>
   </div>
   <div class="sb-footer">
@@ -2476,14 +2528,14 @@ footer { display: none; }
     <div class="tab-inner">
 
       <!-- Resume hero CTA — shown when user has due cards -->
-      <a href="chapters.html" id="chapter-cta" style="display:block;text-decoration:none;border:1px solid var(--accent);border-radius:12px;padding:20px 22px;margin-bottom:28px;background:var(--bg-card);">
-        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-          <div style="flex:1 1 300px;min-width:0;">
-            <div style="font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px;">For chapter officers &amp; advisors</div>
-            <div style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:500;color:var(--ink);line-height:1.3;margin-bottom:5px;">Bring your whole HOSA chapter</div>
-            <div style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;color:var(--ink-soft);line-height:1.55;">Get a join link for your chapter, a spot on the chapter leaderboard, and an officer dashboard. Free, and your members never need an account.</div>
+      <a href="chapters.html" id="chapter-cta">
+        <div class="cc-inner">
+          <div class="cc-copy">
+            <div class="cc-kicker">For chapter officers &amp; advisors</div>
+            <div class="cc-title">Bring your whole HOSA chapter</div>
+            <div class="cc-sub">One join link for every member, your chapter ranked on the national chapter leaderboard, and an officer dashboard. Free &mdash; and your members never need an account.</div>
           </div>
-          <div style="flex:0 0 auto;background:var(--accent);color:#fff;border-radius:8px;padding:12px 20px;font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;white-space:nowrap;">Register your chapter →</div>
+          <div class="cc-btn">Register your chapter &rarr;</div>
         </div>
       </a>
 
@@ -2522,55 +2574,6 @@ footer { display: none; }
       <section id="weekly-improve-section" style="display:none;margin-bottom:24px;"></section>
 
       <!-- Quick actions strip -->
-      <section id="quick-actions-section" style="margin-bottom:32px;">
-        <div class="qa-strip">
-          <button class="qa-btn" data-action="palette" type="button">
-            <span class="qa-icon">⌘</span>
-            <div class="qa-body"><div class="qa-title">Command palette</div><div class="qa-sub">Jump to anywhere</div></div>
-          </button>
-          <button class="qa-btn" data-action="surprise" type="button">
-            <span class="qa-icon">🎲</span>
-            <div class="qa-body"><div class="qa-title">Surprise me</div><div class="qa-sub">Random event</div></div>
-          </button>
-          <button class="qa-btn" data-action="due" type="button">
-            <span class="qa-icon">🔥</span>
-            <div class="qa-body"><div class="qa-title">Continue streak</div><div class="qa-sub">Top due event</div></div>
-          </button>
-          <button class="qa-btn" data-action="library" type="button">
-            <span class="qa-icon">📊</span>
-            <div class="qa-body"><div class="qa-title">Your library</div><div class="qa-sub">Stats &amp; history</div></div>
-          </button>
-          <button class="qa-btn" data-action="quickreview" type="button">
-            <span class="qa-icon">⚡</span>
-            <div class="qa-body"><div class="qa-title">Quick Review</div><div class="qa-sub">Rapid flip session</div></div>
-          </button>
-          <button class="qa-btn" data-action="search" type="button">
-            <span class="qa-icon">🔬</span>
-            <div class="qa-body"><div class="qa-title">Search terms</div><div class="qa-sub">100+ medical terms</div></div>
-          </button>
-          <button class="qa-btn" data-action="match" type="button">
-            <span class="qa-icon">🧩</span>
-            <div class="qa-body"><div class="qa-title">Match Game</div><div class="qa-sub">Pair terms &amp; defs</div></div>
-          </button>
-          <button class="qa-btn" data-action="speed" type="button">
-            <span class="qa-icon">⏱</span>
-            <div class="qa-body"><div class="qa-title">Speed Drill</div><div class="qa-sub">60-second sprint</div></div>
-          </button>
-          <button class="qa-btn" data-action="typing" type="button">
-            <span class="qa-icon">⌨️</span>
-            <div class="qa-body"><div class="qa-title">Typing Challenge</div><div class="qa-sub">Type the definition</div></div>
-          </button>
-          <button class="qa-btn" data-action="truefalse" type="button">
-            <span class="qa-icon">🎯</span>
-            <div class="qa-body"><div class="qa-title">True/False Blitz</div><div class="qa-sub">30-second blitz</div></div>
-          </button>
-          <button class="qa-btn" data-action="focus" type="button">
-            <span class="qa-icon">🎧</span>
-            <div class="qa-body"><div class="qa-title">Focus Mode</div><div class="qa-sub">Distraction-free</div></div>
-          </button>
-        </div>
-      </section>
-
       <!-- v29: Mastery Overview by category — shown for users with progress -->
       <section class="mastery-overview-section" id="mastery-overview-section" style="display:none;margin-bottom:36px;">
         <h2 class="section-title">Mastery Overview</h2>
@@ -2643,18 +2646,6 @@ footer { display: none; }
       </section>
 
       <!-- Study tip widget — always shown -->
-      <div class="stip-wrap" id="stip-wrap">
-        <div class="stip-card" id="stip-card">
-          <div class="stip-icon" id="stip-icon"></div>
-          <div class="stip-body">
-            <div class="stip-tag" id="stip-tag"></div>
-            <div class="stip-text" id="stip-text"></div>
-          </div>
-          <button class="stip-next" id="stip-next" title="Next tip" aria-label="Next tip">→</button>
-        </div>
-        <div class="stip-dots" id="stip-dots"></div>
-      </div>
-
       <!-- Jump back in — shown only when user has progress -->
       <section id="jbi-section" style="display:none;margin-bottom:48px;">
         <h2 class="section-title">Jump back in</h2>
@@ -2683,22 +2674,6 @@ footer { display: none; }
       </section>
 
       <!-- ⚡ Daily Challenge -->
-      <section class="dc-wrap" id="dc-section">
-        <div class="dc-header">
-          <div>
-            <div class="dc-eyebrow">⚡ Daily Challenge</div>
-            <h2 class="section-title" style="margin:0">5 questions. 2× XP.</h2>
-          </div>
-          <div class="dc-timer-wrap" id="dc-timer-wrap" style="display:none">
-            <div class="dc-timer-label">Next challenge in</div>
-            <div class="dc-timer-val" id="dc-timer-val">--:--:--</div>
-          </div>
-        </div>
-        <div class="dc-card" id="dc-card">
-          <div style="padding:32px 24px;text-align:center;color:var(--ink-faint);font-family:'Source Serif 4',serif;font-size:14px;">Loading challenge…</div>
-        </div>
-      </section>
-
       <!-- 🏆 Mock Final Exam -->
       <section class="mfe-wrap" id="mfe-section">
         <div class="mfe-header">
@@ -2734,22 +2709,6 @@ footer { display: none; }
       </section>
 
       <!-- Term of the Day -->
-      <section class="totd-section" id="totd-section" style="margin-bottom:48px;">
-        <h2 class="section-title">Term of the <em style="font-style:italic;color:var(--accent)">Day.</em></h2>
-        <div class="totd-card" id="totd-card">
-          <div class="totd-body">
-            <div class="totd-eyebrow" id="totd-eyebrow">Loading…</div>
-            <h3 class="totd-term" id="totd-term"></h3>
-            <p class="totd-def" id="totd-def"></p>
-            <div class="totd-meta" id="totd-event"></div>
-          </div>
-          <div class="totd-aside">
-            <div class="totd-date" id="totd-date-num"></div>
-            <a class="totd-link" id="totd-link" href="#">Study this event →</a>
-          </div>
-        </div>
-      </section>
-
       <!-- Activity Heatmap — shown for users with study history -->
       <section class="heatmap-outer" id="heatmap-section" style="display:none">
         <h2 class="section-title">Study activity</h2>
@@ -5419,72 +5378,6 @@ function friendlyError(code) {
       surpriseMe();
     }
   });
-})();
-</script>
-
-
-<script id="totd-js">
-(function(){
-  var TERMS = [
-    {term:'Homeostasis',def:'The body\'s ability to maintain a stable internal environment (temperature, pH, fluid balance) despite external changes — the foundation of all physiology.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
-    {term:'Myocardial Infarction',def:'Death of heart muscle tissue caused by prolonged ischemia due to coronary artery occlusion; commonly called a heart attack.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
-    {term:'Apoptosis',def:'Programmed cell death — a tightly regulated process the body uses to eliminate damaged, infected, or unnecessary cells without triggering inflammation.',event:'Pathophysiology',slug:'pathophysiology'},
-    {term:'Tachycardia',def:'A resting heart rate above 100 beats per minute; may be physiological (exercise, fever) or pathological (arrhythmia, shock).',event:'Emergency Medical Science',slug:'emergency-medical-science'},
-    {term:'Septicemia',def:'Bacteria in the bloodstream causing systemic infection; can rapidly progress to septic shock with multiorgan failure if untreated.',event:'Medical Microbiology',slug:'medical-microbiology'},
-    {term:'Dyspnea',def:'Subjective sensation of shortness of breath or difficulty breathing; a hallmark symptom of cardiac and pulmonary disease.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
-    {term:'Hematuria',def:'Blood in the urine, classified as gross (visible) or microscopic; may indicate UTI, kidney stones, glomerulonephritis, or malignancy.',event:'Nephrology',slug:'nephrology'},
-    {term:'Anaphylaxis',def:'A rapid, life-threatening systemic allergic reaction triggered by IgE-mediated mast cell degranulation; treated immediately with epinephrine.',event:'Allergy & Immunology',slug:'allergy-immunology'},
-    {term:'Encephalopathy',def:'Any diffuse disease or disorder of the brain causing altered cognition, behavior, or consciousness; etiologies include metabolic, toxic, and infectious causes.',event:'Neurology',slug:'neurology'},
-    {term:'Epistaxis',def:'Nosebleed; most commonly from Kiesselbach\'s plexus in the anterior nasal septum; usually self-limiting but can indicate hypertension or clotting disorders.',event:'Otolaryngology',slug:'otolaryngology'},
-    {term:'Hemostasis',def:'The process that stops bleeding — comprising vasoconstriction, platelet plug formation, and the coagulation cascade to form a stable fibrin clot.',event:'Hematology',slug:'hematology'},
-    {term:'Hyperglycemia',def:'Elevated blood glucose (>126 mg/dL fasting); a hallmark of diabetes mellitus resulting from insufficient insulin action or secretion.',event:'Endocrinology',slug:'endocrinology'},
-    {term:'Cyanosis',def:'A blue-gray discoloration of skin/mucous membranes caused by deoxygenated hemoglobin; indicates hypoxia when >5 g/dL deoxyhemoglobin is present.',event:'Pathophysiology',slug:'pathophysiology'},
-    {term:'Peritonitis',def:'Inflammation of the peritoneum, usually from bacterial infection secondary to bowel perforation, appendicitis, or trauma; a surgical emergency.',event:'Gastroenterology',slug:'gastroenterology'},
-    {term:'Atelectasis',def:'Collapse or incomplete expansion of lung alveoli, leading to reduced gas exchange; common post-surgery or with mucus plugging.',event:'Respiratory Therapy',slug:'respiratory-therapy'},
-    {term:'Diuresis',def:'Increased urine production; stimulated by diuretics, high fluid intake, or conditions such as diabetes insipidus and hyperglycemia.',event:'Pharmacology',slug:'pharmacology'},
-    {term:'Ecchymosis',def:'Bruising — subcutaneous hemorrhage causing a purple/yellow skin discoloration; may signal trauma, coagulopathy, or vasculitis.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
-    {term:'Asystole',def:'Complete absence of cardiac electrical activity (flat-line ECG); a non-shockable cardiac arrest rhythm managed with CPR and epinephrine.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
-    {term:'Peristalsis',def:'Rhythmic, wave-like contractions of smooth muscle that propel contents through tubular organs — the mechanism moving food through the GI tract.',event:'Gastroenterology',slug:'gastroenterology'},
-    {term:'Intubation',def:'Insertion of an endotracheal tube into the trachea to secure the airway, enable mechanical ventilation, and protect against aspiration.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
-    {term:'Neuroplasticity',def:'The brain\'s ability to reorganize synaptic connections in response to learning, experience, or injury — the basis for rehabilitation after stroke.',event:'Neurology',slug:'neurology'},
-    {term:'Osmosis',def:'Net movement of water across a semipermeable membrane from a region of low solute concentration to high solute concentration until equilibrium.',event:'Biochemistry',slug:'biochemistry'},
-    {term:'Thrombocytopenia',def:'A platelet count below 150,000/μL, causing increased bleeding risk; causes include bone marrow suppression, autoimmune destruction (ITP), and heparin-induced types.',event:'Hematology',slug:'hematology'},
-    {term:'Bradycardia',def:'A resting heart rate below 60 beats per minute; normal in athletes but pathological when causing hemodynamic compromise.',event:'Cardiovascular Science',slug:'cardiovascular-science'},
-    {term:'Prion',def:'A misfolded protein capable of inducing other proteins to misfold; responsible for fatal neurodegenerative diseases such as Creutzfeldt-Jakob disease.',event:'Medical Microbiology',slug:'medical-microbiology'},
-    {term:'Comorbidity',def:'The presence of two or more chronic conditions in the same patient simultaneously; complicates treatment decisions and worsens prognosis.',event:'Healthcare Systems',slug:'healthcare-systems'},
-    {term:'Triage',def:'The process of sorting patients by severity of injury or illness to prioritize emergency care when resources are limited.',event:'Emergency Medical Science',slug:'emergency-medical-science'},
-    {term:'Pharmacokinetics',def:'The study of how the body handles a drug — including absorption, distribution, metabolism, and excretion (ADME) — determining its concentration over time.',event:'Pharmacology',slug:'pharmacology'},
-    {term:'Autopsy',def:'A post-mortem examination of a body to determine cause of death, document pathology, and gather data for medicolegal or research purposes.',event:'Forensic Science',slug:'forensic-science'},
-    {term:'Edema',def:'Accumulation of excess fluid in the interstitial space, causing swelling; results from increased capillary pressure, reduced oncotic pressure, or lymphatic obstruction.',event:'Pathophysiology',slug:'pathophysiology'},
-    {term:'Immunity',def:'The body\'s defense against pathogens, comprising innate (rapid, nonspecific) and adaptive (antigen-specific, memory-forming) branches.',event:'Immunology',slug:'immunology'},
-    {term:'Dehydration',def:'Excessive loss of body water relative to intake, impairing cellular function; classified as mild (<5%), moderate (5-10%), or severe (>10%) by % body weight lost.',event:'Nutrition',slug:'nutrition'},
-    {term:'Pathogen',def:'A microorganism (virus, bacterium, fungus, parasite) capable of causing disease in a susceptible host.',event:'Medical Microbiology',slug:'medical-microbiology'},
-    {term:'Prophylaxis',def:'Preventive treatment or intervention given before a disease or infection occurs to reduce risk; includes vaccines, antibiotics, and surgical preparation.',event:'Public Health',slug:'public-health'},
-    {term:'Iatrogenic',def:'Illness or adverse effect caused by medical examination, treatment, or other healthcare intervention — a key concept in patient safety and medical law.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
-    {term:'Homeostasis',def:'The body\'s ability to regulate its internal environment within narrow parameters despite changing external conditions.',event:'Anatomy & Physiology',slug:'anatomy-physiology'},
-    {term:'Remission',def:'A period during which signs and symptoms of a disease decrease significantly or disappear; may be complete or partial and temporary or sustained.',event:'Oncology',slug:'oncology'},
-    {term:'Teratogen',def:'A substance, organism, or physical agent that disrupts normal fetal development when a pregnant person is exposed, causing structural or functional defects.',event:'Human Growth & Development',slug:'human-growth-development'},
-    {term:'Biopsy',def:'Removal of tissue from a living patient for microscopic examination; the definitive method for diagnosing cancer and many other diseases.',event:'Biomedical Lab Science',slug:'biomedical-lab-science'},
-    {term:'Palliative Care',def:'Specialized medical care focused on relief of pain, symptoms, and stress of serious illness — provided alongside curative treatment, not instead of it.',event:'Medical Law & Ethics',slug:'medical-law-ethics'},
-  ];
-
-  var d = new Date();
-  var idx = (d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate()) % TERMS.length;
-  var t = TERMS[idx];
-
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-  document.getElementById('totd-eyebrow').textContent = days[d.getDay()] + ' · Clinical Term';
-  document.getElementById('totd-term').textContent = t.term;
-  document.getElementById('totd-def').textContent = t.def;
-  document.getElementById('totd-event').textContent = t.event;
-  document.getElementById('totd-date-num').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-  var dateLabel = document.getElementById('totd-date-label');
-  if (dateLabel) dateLabel.remove();
-  var link = document.getElementById('totd-link');
-  link.href = t.slug + '.html';
-  link.textContent = 'Study ' + t.event + ' →';
 })();
 </script>
 
@@ -9455,29 +9348,6 @@ window.hosaXPFlyup = function(el, amount) {
   }
   document.addEventListener('DOMContentLoaded', function() { setTimeout(renderStudyTime, 600); });
   if (document.readyState !== 'loading') setTimeout(renderStudyTime, 600);
-})();
-
-/* ═══════════════════════════════════════════════════════════════
-   HOME GREETING — time-aware welcome message
-   ═══════════════════════════════════════════════════════════════ */
-(function() {
-  function render() {
-    var statsBar = document.getElementById('home-stats-bar');
-    if (!statsBar || document.getElementById('home-greeting')) return;
-    var h = new Date().getHours();
-    var timeLabel, msg;
-    if (h < 5)       { timeLabel = 'Late night'; msg = 'Burning the midnight oil <em>again?</em>'; }
-    else if (h < 12) { timeLabel = 'Good morning'; msg = 'Ready to crush your <em>HOSA</em> prep?'; }
-    else if (h < 17) { timeLabel = 'Good afternoon'; msg = 'Time to level up your <em>knowledge.</em>'; }
-    else if (h < 21) { timeLabel = 'Good evening'; msg = 'Great time for a study <em>session.</em>'; }
-    else             { timeLabel = 'Good night'; msg = 'One more round before <em>bed?</em>'; }
-    var wrap = document.createElement('div');
-    wrap.className = 'home-greeting'; wrap.id = 'home-greeting';
-    wrap.innerHTML = '<div class="greeting-time">' + timeLabel + '</div><div class="greeting-main">' + msg + '</div>';
-    statsBar.parentNode.insertBefore(wrap, statsBar);
-  }
-  document.addEventListener('DOMContentLoaded', function() { setTimeout(render, 150); });
-  if (document.readyState !== 'loading') setTimeout(render, 150);
 })();
 
 /* ═══════════════════════════════════════════════════════════════
