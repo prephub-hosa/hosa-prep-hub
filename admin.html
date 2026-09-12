@@ -183,6 +183,12 @@
     <div id="usage-users"><p class="empty">Loading…</p></div>
   </section>
 
+  <section id="section-chapters">
+    <h2>Chapters <span class="badge" id="chapter-count">0</span></h2>
+    <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Chapters registered through chapters.html, with members tagged via their join link.</p>
+    <div id="chapter-body"><p class="empty">No chapters registered yet.</p></div>
+  </section>
+
   <section id="section-signups">
     <h2>Schools &amp; Outreach <span class="badge" id="signup-count">0</span></h2>
     <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Schools captured from the one-question prompt (no account needed), plus full profiles from account sign-ups.</p>
@@ -224,87 +230,71 @@ function fmt(iso) {
        + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ── Seeded placeholder schools ─────────────────────────────────────
-// Known US high schools with HOSA chapters, standing in for the ~74 registered
-// users from before school capture existed. These are PLACEHOLDERS, not
-// captured data: every row renders as "Seeded" and they are counted separately
-// from real records below. To drop them, empty this array.
-var SEEDED_SCHOOLS = [
-  'Westlake High School \u2014 Austin, TX',
-  'Plano Senior High School \u2014 Plano, TX',
-  'Klein Oak High School \u2014 Spring, TX',
-  'Cypress Ranch High School \u2014 Cypress, TX',
-  'Allen High School \u2014 Allen, TX',
-  'Katy High School \u2014 Katy, TX',
-  'Round Rock High School \u2014 Round Rock, TX',
-  'Clear Lake High School \u2014 Houston, TX',
-  'Coppell High School \u2014 Coppell, TX',
-  'Flower Mound High School \u2014 Flower Mound, TX',
-  'Troy High School \u2014 Fullerton, CA',
-  'Mission San Jose High School \u2014 Fremont, CA',
-  'Whitney High School \u2014 Cerritos, CA',
-  'Arcadia High School \u2014 Arcadia, CA',
-  'Walnut High School \u2014 Walnut, CA',
-  'Northwood High School \u2014 Irvine, CA',
-  'Lynbrook High School \u2014 San Jose, CA',
-  'Steinbrenner High School \u2014 Lutz, FL',
-  'Wharton High School \u2014 Tampa, FL',
-  'Buchholz High School \u2014 Gainesville, FL',
-  'Cypress Bay High School \u2014 Weston, FL',
-  "Land O' Lakes High School \u2014 Land O' Lakes, FL",
-  'Timber Creek High School \u2014 Orlando, FL',
-  'Northview High School \u2014 Johns Creek, GA',
-  'Walton High School \u2014 Marietta, GA',
-  'Lambert High School \u2014 Suwanee, GA',
-  'Milton High School \u2014 Milton, GA',
-  'Alpharetta High School \u2014 Alpharetta, GA',
-  'Green Hope High School \u2014 Cary, NC',
-  'Panther Creek High School \u2014 Cary, NC',
-  'Ardrey Kell High School \u2014 Charlotte, NC',
-  'Green Level High School \u2014 Cary, NC',
-  'Myers Park High School \u2014 Charlotte, NC',
-  'Hoover High School \u2014 Hoover, AL',
-  'Vestavia Hills High School \u2014 Vestavia Hills, AL',
-  'James Clemens High School \u2014 Madison, AL',
-  'Bob Jones High School \u2014 Madison, AL',
-  'Ravenwood High School \u2014 Brentwood, TN',
-  'Farragut High School \u2014 Knoxville, TN',
-  'Houston High School \u2014 Germantown, TN',
-  'Wando High School \u2014 Mount Pleasant, SC',
-  'Riverside High School \u2014 Greer, SC',
-  'Dorman High School \u2014 Roebuck, SC',
-  'Thomas Jefferson High School for Science and Technology \u2014 Alexandria, VA',
-  'Langley High School \u2014 McLean, VA',
-  'Chantilly High School \u2014 Chantilly, VA',
-  'Edmond North High School \u2014 Edmond, OK',
-  'Jenks High School \u2014 Jenks, OK',
-  'Union High School \u2014 Tulsa, OK',
-  'BASIS Scottsdale \u2014 Scottsdale, AZ',
-  'Hamilton High School \u2014 Chandler, AZ',
-  'Perry High School \u2014 Gilbert, AZ',
-  'Lone Peak High School \u2014 Highland, UT',
-  'Davis High School \u2014 Kaysville, UT',
-  'Skyline High School \u2014 Salt Lake City, UT',
-  'Novi High School \u2014 Novi, MI',
-  'Troy High School \u2014 Troy, MI',
-  'Mason High School \u2014 Mason, OH',
-  'Dublin Coffman High School \u2014 Dublin, OH',
-  'Carmel High School \u2014 Carmel, IN',
-  'Fishers High School \u2014 Fishers, IN',
-  'West Windsor-Plainsboro High School North \u2014 Plainsboro, NJ',
-  'Brookfield Central High School \u2014 Brookfield, WI',
-  'Marquette High School \u2014 Chesterfield, MO',
-  'duPont Manual High School \u2014 Louisville, KY',
-  'Madison Central High School \u2014 Madison, MS',
-  'Baton Rouge Magnet High School \u2014 Baton Rouge, LA',
-  'Bentonville High School \u2014 Bentonville, AR',
-  'Ed W. Clark High School \u2014 Las Vegas, NV',
-  'Cherry Creek High School \u2014 Greenwood Village, CO',
-  'Skyline High School \u2014 Sammamish, WA',
-  'Jesuit High School \u2014 Portland, OR',
-  'Rocky Mountain High School \u2014 Meridian, ID',
-  'Blue Valley North High School \u2014 Overland Park, KS'
-];
+function loadChapters() {
+  Promise.all([
+    db.ref('chapters').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; }),
+    db.ref('analytics/chapters').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; }),
+    db.ref('leaderboard/level').once('value').then(function(s){ return s.val() || {}; }).catch(function(){ return {}; })
+  ]).then(function(res) {
+    var chapters = {}, i;
+    [res[0], res[1]].forEach(function(store) {
+      Object.keys(store).forEach(function(k){ if (!chapters[k]) chapters[k] = store[k] || {}; });
+    });
+    // Members and XP come from the leaderboard rows tagged with a chapter.
+    var tally = {};
+    var lb = res[2];
+    Object.keys(lb).forEach(function(id) {
+      var u = lb[id] || {};
+      if (!u.chapter) return;
+      var t = tally[u.chapter] || (tally[u.chapter] = { members: 0, xp: 0, name: '' });
+      t.members += 1;
+      t.xp += parseInt(u.xp || 0, 10) || 0;
+      if (u.chapterName) t.name = u.chapterName;
+    });
+    var slugs = Object.keys(chapters);
+    Object.keys(tally).forEach(function(k){ if (slugs.indexOf(k) === -1) slugs.push(k); });
+
+    var rows = slugs.map(function(slug) {
+      var c = chapters[slug] || {}, t = tally[slug] || { members: 0, xp: 0, name: '' };
+      return {
+        slug: slug,
+        name: c.name || c.school || t.name || slug.replace(/-/g, ' '),
+        state: c.state || '',
+        contact: c.contactName || '',
+        role: c.contactRole || '',
+        email: c.contactEmail || '',
+        createdAt: c.createdAt || '',
+        members: t.members, xp: t.xp,
+        registered: !!chapters[slug]
+      };
+    });
+    rows.sort(function(a, b){ return b.xp - a.xp || b.members - a.members; });
+    document.getElementById('chapter-count').textContent = rows.length;
+    var el = document.getElementById('chapter-body');
+    if (!rows.length) { el.innerHTML = '<p class="empty">No chapters registered yet.</p>'; return; }
+    var totalMembers = rows.reduce(function(n, r){ return n + r.members; }, 0);
+    var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;"><strong>' + rows.length + '</strong> chapter'
+             + (rows.length === 1 ? '' : 's') + ' &middot; <strong>' + totalMembers + '</strong> tagged member'
+             + (totalMembers === 1 ? '' : 's') + '.</p>'
+             + '<table><thead><tr><th>Chapter</th><th>State</th><th>Members</th><th>Chapter XP</th>'
+             + '<th>Contact</th><th>Email</th><th>Join link</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      var link = 'index.html?chapter=' + r.slug;
+      html += '<tr><td><strong>' + escapeHtml(r.name) + '</strong>'
+            + (r.registered ? '' : ' <span style="color:#999;font-size:11px;">(untagged)</span>') + '</td>'
+            + '<td>' + escapeHtml(r.state || '\u2014') + '</td>'
+            + '<td>' + r.members + '</td>'
+            + '<td>' + r.xp.toLocaleString() + '</td>'
+            + '<td>' + escapeHtml(r.contact || '\u2014') + (r.role ? '<br><span style="color:#999;font-size:11px;">' + escapeHtml(r.role) + '</span>' : '') + '</td>'
+            + '<td><code>' + escapeHtml(r.email || '\u2014') + '</code></td>'
+            + '<td><code style="font-size:11px;">' + escapeHtml(link) + '</code></td></tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }).catch(function() {
+    document.getElementById('chapter-body').innerHTML = '<p class="empty">Could not load chapters.</p>';
+  });
+}
 
 function loadSignups() {
   // Three sources: account profiles, the school-only records from the prompt,
@@ -348,33 +338,26 @@ function loadSignups() {
 
     var realCount = rows.length;
     rows.sort(function(a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
-    (SEEDED_SCHOOLS || []).forEach(function(name) {
-      rows.push({ kind: 'seeded', uid: '', name: '', username: '', school: name, email: '', createdAt: '' });
-    });
 
     document.getElementById('signup-count').textContent = rows.length;
     var el = document.getElementById('signup-body');
     if (!rows.length) { el.innerHTML = '<p class="empty">No schools captured yet.</p>'; return; }
-    var schools = {}, accounts = 0, seeded = 0;
+    var schools = {}, accounts = 0;
     rows.forEach(function(r) {
       if (r.school) schools[r.school.trim().toLowerCase()] = 1;
       if (r.kind === 'account') accounts++;
-      if (r.kind === 'seeded') seeded++;
     });
     var nSchools = Object.keys(schools).length;
     var html = '<p style="font-size:13px;color:#666;margin:0 0 6px;">'
              + '<strong>' + realCount + '</strong> captured '
              + '(' + accounts + ' with an account, ' + (realCount - accounts) + ' school-only)'
-             + ' &middot; <strong>' + seeded + '</strong> seeded placeholders'
              + ' &middot; ' + nSchools + ' distinct school' + (nSchools === 1 ? '' : 's') + '.</p>'
-             + '<p style="font-size:12px;color:#999;margin:0 0 12px;">Seeded rows are placeholder chapter names standing in for pre-tracking users. They are not captured data \u2014 clear SEEDED_SCHOOLS in admin.html to remove them.</p>'
              + '<table><thead><tr><th>When</th><th>School / Chapter</th><th>Type</th>'
              + '<th>Name</th><th>Username</th><th>Email</th></tr></thead><tbody>';
     rows.forEach(function(r) {
       var when = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '\u2014';
-      var label = r.kind === 'account' ? 'Account' : (r.kind === 'seeded' ? 'Seeded' : 'School only');
-      var style = r.kind === 'seeded' ? ' style="opacity:0.6;"' : '';
-      html += '<tr' + style + '><td>' + escapeHtml(when) + '</td>'
+      var label = r.kind === 'account' ? 'Account' : 'School only';
+      html += '<tr><td>' + escapeHtml(when) + '</td>'
             + '<td><strong>' + escapeHtml(r.school || '\u2014') + '</strong></td>'
             + '<td>' + label + '</td>'
             + '<td>' + escapeHtml(r.name || '\u2014') + '</td>'
@@ -960,6 +943,7 @@ auth.onAuthStateChanged(function(user) {
   loadRequests();
   loadFeedback();
   loadSignups();
+  loadChapters();
 });
 
 document.getElementById('signout-btn').onclick = function() {
