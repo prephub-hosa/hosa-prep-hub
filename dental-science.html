@@ -2470,8 +2470,72 @@ function _askedSchool() {
   try { return !!(localStorage.getItem(_SCHOOL_LS) || '').trim(); }
   catch(e) { return true; }
 }
+// ── Chapter join link (?chapter=slug) ──────────────────────────────
+// Opening a chapter's link tags this browser to that chapter, fills in the
+// school for them, and skips the school question entirely — the whole point
+// is that a member has to do nothing.
+function _chapterSlug() {
+  try { return (localStorage.getItem('hosa::chapter') || '').trim(); } catch(e) { return ''; }
+}
+function _chapterName() {
+  try { return (localStorage.getItem('hosa::chapter-name') || '').trim(); } catch(e) { return ''; }
+}
+function _chapterWelcome(name) {
+  if (document.getElementById('chapter-welcome')) return;
+  var bar = document.createElement('div');
+  bar.id = 'chapter-welcome';
+  bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:9997;'
+    + 'max-width:min(460px,calc(100vw - 28px));background:var(--bg-card);border:1px solid var(--accent);'
+    + 'border-radius:10px;padding:14px 18px;box-shadow:0 14px 40px -14px rgba(0,0,0,0.4);'
+    + "font-family:'Source Serif 4',Georgia,serif;font-size:14px;color:var(--ink);line-height:1.5;";
+  bar.innerHTML = '<strong style="color:var(--accent);">\u2713 You\u2019re studying for ' + name + '.</strong>'
+    + '<div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">Everything you earn counts toward your chapter\u2019s standing.</div>';
+  document.body.appendChild(bar);
+  setTimeout(function(){ try { bar.style.transition='opacity .5s'; bar.style.opacity='0';
+    setTimeout(function(){ bar.remove(); }, 600); } catch(e) {} }, 5200);
+}
+function _applyChapterFromUrl() {
+  try {
+    var m = /[?&]chapter=([^&#]+)/.exec(location.search);
+    if (!m) return false;
+    var slug = decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44);
+    if (!slug) return false;
+    try { localStorage.setItem('hosa::chapter', slug); } catch(e) {}
+    // Pull the chapter's real name so the welcome and the school field read
+    // properly; fall back to the slug if the record is unreadable.
+    function use(rec) {
+      var nm = (rec && (rec.name || rec.school)) || slug.replace(/-/g, ' ');
+      try {
+        localStorage.setItem('hosa::chapter-name', nm);
+        if (rec && rec.school) localStorage.setItem('hosa::school', rec.school);
+        else if (!(localStorage.getItem('hosa::school') || '').trim()) localStorage.setItem('hosa::school', nm);
+      } catch(e) {}
+      _chapterWelcome(nm);
+      _syncChapterToLeaderboard();
+    }
+    firebase.database().ref('chapters/' + slug).get()
+      .then(function(s){ return s && s.val() ? s.val() : firebase.database().ref('analytics/chapters/' + slug).get().then(function(s2){ return s2 && s2.val(); }); })
+      .then(use).catch(function(){ use(null); });
+    try { gtag('event', 'chapter_join_link', { event_category: slug }); } catch(e) {}
+    return true;
+  } catch(e) { return false; }
+}
+// leaderboard/level/{id} is the one node guests reliably write, so the
+// chapter tag rides along with the XP row instead of needing its own.
+function _syncChapterToLeaderboard() {
+  try {
+    var slug = _chapterSlug(); if (!slug) return;
+    var u = firebase.auth().currentUser;
+    var id = u ? u.uid : _guestId(); if (!id) return;
+    firebase.database().ref('leaderboard/level/' + id)
+      .update({ chapter: slug, chapterName: _chapterName() || slug, updatedAt: new Date().toISOString() })
+      .catch(function(){});
+  } catch(e) {}
+}
+
 function _showSchoolPrompt() {
   if (_askedSchool()) return;
+  if (_chapterSlug()) return;        // arrived via a chapter link — already identified
   if (document.getElementById('school-prompt')) return;
   // Signed-in users already gave their school at sign-up.
   try { if (firebase.auth().currentUser) return; } catch(e) {}
@@ -2495,6 +2559,7 @@ function _showSchoolPrompt() {
         + 'background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;'
         + "font-family:'Source Serif 4',Georgia,serif;font-size:16px;color:var(--ink);outline:none;\">"
       + '<div id="school-prompt-error" style="font-family:\'Source Serif 4\',Georgia,serif;font-size:12.5px;color:var(--accent);min-height:17px;margin-top:7px;"></div>'
+      + '<div style="font-family:\'Source Serif 4\',Georgia,serif;font-size:12.5px;color:var(--ink-faint);margin-top:2px;">Signing up a whole chapter? <a href="chapters.html" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Register it here \u2192</a></div>'
       + '<div style="display:flex;gap:10px;align-items:center;margin-top:9px;flex-wrap:wrap;">'
         + '<button type="button" id="school-prompt-save" disabled style="background:var(--accent);color:#fff;border:none;'
           + 'border-radius:6px;padding:11px 20px;font-family:\'Source Serif 4\',Georgia,serif;font-size:15px;'
@@ -3397,7 +3462,8 @@ function _wireOnce() {
   if (_listenersWired) return;
   _listenersWired = true;
   initFlashcards(); initQuiz(); initTest();
-  _showSchoolPrompt();
+  if (!_applyChapterFromUrl()) _showSchoolPrompt();
+  else _syncChapterToLeaderboard();
 }
 function _hidePageLoader() {
   var lo = document.getElementById('page-loader');

@@ -1177,6 +1177,37 @@
    a table+bar ladder for level cost (>7 meaningful classes), and a
    hero figure + meter for the reader's own standing. Single series
    throughout, so one hue and no legend; values wear text tokens. */
+/* Chapter leaderboard */
+.ch-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.ch-title { font-family:'Fraunces',Georgia,serif; font-size:20px; font-weight:500; color:var(--ink); }
+.ch-sub { font-family:'Source Serif 4',Georgia,serif; font-size:13px; color:var(--ink-soft); }
+.ch-list { border:1px solid var(--rule); border-radius:11px; overflow:hidden; }
+.ch-row {
+  display:grid; grid-template-columns:46px 1fr 92px 70px; align-items:center; gap:12px;
+  padding:12px 16px; border-bottom:1px solid var(--rule);
+  font-family:'Source Serif 4',Georgia,serif; font-size:14px;
+}
+.ch-row:last-child { border-bottom:none; }
+.ch-row-head {
+  font-family:'Geist Mono',ui-monospace,monospace; font-size:10px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--ink-faint); background:var(--bg-card);
+}
+.ch-row-you { background:rgba(200,16,46,0.06); }
+.ch-rank { font-family:'Fraunces',Georgia,serif; font-size:16px; color:var(--ink); }
+.ch-name { font-weight:600; color:var(--ink); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ch-xp, .ch-mem { font-variant-numeric:tabular-nums; color:var(--ink-soft); text-align:right; }
+.ch-you-tag {
+  font-family:'Geist Mono',ui-monospace,monospace; font-size:9px; letter-spacing:0.1em;
+  color:var(--accent); margin-left:6px;
+}
+.ch-empty {
+  border:1px dashed var(--rule); border-radius:11px; padding:22px;
+  font-family:'Source Serif 4',Georgia,serif; font-size:14px; color:var(--ink-soft); line-height:1.6;
+}
+@media (max-width:560px) {
+  .ch-row { grid-template-columns:36px 1fr 72px 54px; gap:8px; padding:11px 12px; font-size:13px; }
+}
+
 .lv-section { margin-bottom: 56px; }
 .lv-h2 {
   font-family: 'Fraunces', Georgia, serif;
@@ -2357,6 +2388,10 @@ footer { display: none; }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="4" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="16" y="4" width="4" height="16"/></svg>
       Levels &amp; XP
     </button>
+    <a class="sb-item" href="chapters.html" style="text-decoration:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      For Chapters
+    </a>
   </div>
   <div class="sb-footer">
     <button id="theme-toggle">🌙 Dark mode</button>
@@ -2441,6 +2476,17 @@ footer { display: none; }
     <div class="tab-inner">
 
       <!-- Resume hero CTA — shown when user has due cards -->
+      <a href="chapters.html" id="chapter-cta" style="display:block;text-decoration:none;border:1px solid var(--accent);border-radius:12px;padding:20px 22px;margin-bottom:28px;background:var(--bg-card);">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1 1 300px;min-width:0;">
+            <div style="font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px;">For chapter officers &amp; advisors</div>
+            <div style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:500;color:var(--ink);line-height:1.3;margin-bottom:5px;">Bring your whole HOSA chapter</div>
+            <div style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;color:var(--ink-soft);line-height:1.55;">Get a join link for your chapter, a spot on the chapter leaderboard, and an officer dashboard. Free, and your members never need an account.</div>
+          </div>
+          <div style="flex:0 0 auto;background:var(--accent);color:#fff;border-radius:8px;padding:12px 20px;font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;white-space:nowrap;">Register your chapter →</div>
+        </div>
+      </a>
+
       <section id="resume-cta-section" style="display:none;margin-bottom:32px;"></section>
 
       <!-- Next-up recommendation — shown when user has studied some events but not others -->
@@ -4503,6 +4549,7 @@ footer { display: none; }
           <p class="page-subtitle">Climb the ranks by earning XP. The more you study, the higher you go.</p>
         </header>
 
+        <section id="lb-chapters-section" style="margin-bottom:34px;"></section>
         <section id="lb-podium-section" style="margin-bottom:24px;"></section>
         <section id="lb-you-section" style="margin-bottom:16px;"></section>
         <section id="lb-list-section"></section>
@@ -4636,8 +4683,72 @@ function _askedSchool() {
   try { return !!(localStorage.getItem(_SCHOOL_LS) || '').trim(); }
   catch(e) { return true; }
 }
+// ── Chapter join link (?chapter=slug) ──────────────────────────────
+// Opening a chapter's link tags this browser to that chapter, fills in the
+// school for them, and skips the school question entirely — the whole point
+// is that a member has to do nothing.
+function _chapterSlug() {
+  try { return (localStorage.getItem('hosa::chapter') || '').trim(); } catch(e) { return ''; }
+}
+function _chapterName() {
+  try { return (localStorage.getItem('hosa::chapter-name') || '').trim(); } catch(e) { return ''; }
+}
+function _chapterWelcome(name) {
+  if (document.getElementById('chapter-welcome')) return;
+  var bar = document.createElement('div');
+  bar.id = 'chapter-welcome';
+  bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:9997;'
+    + 'max-width:min(460px,calc(100vw - 28px));background:var(--bg-card);border:1px solid var(--accent);'
+    + 'border-radius:10px;padding:14px 18px;box-shadow:0 14px 40px -14px rgba(0,0,0,0.4);'
+    + "font-family:'Source Serif 4',Georgia,serif;font-size:14px;color:var(--ink);line-height:1.5;";
+  bar.innerHTML = '<strong style="color:var(--accent);">\u2713 You\u2019re studying for ' + name + '.</strong>'
+    + '<div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">Everything you earn counts toward your chapter\u2019s standing.</div>';
+  document.body.appendChild(bar);
+  setTimeout(function(){ try { bar.style.transition='opacity .5s'; bar.style.opacity='0';
+    setTimeout(function(){ bar.remove(); }, 600); } catch(e) {} }, 5200);
+}
+function _applyChapterFromUrl() {
+  try {
+    var m = /[?&]chapter=([^&#]+)/.exec(location.search);
+    if (!m) return false;
+    var slug = decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44);
+    if (!slug) return false;
+    try { localStorage.setItem('hosa::chapter', slug); } catch(e) {}
+    // Pull the chapter's real name so the welcome and the school field read
+    // properly; fall back to the slug if the record is unreadable.
+    function use(rec) {
+      var nm = (rec && (rec.name || rec.school)) || slug.replace(/-/g, ' ');
+      try {
+        localStorage.setItem('hosa::chapter-name', nm);
+        if (rec && rec.school) localStorage.setItem('hosa::school', rec.school);
+        else if (!(localStorage.getItem('hosa::school') || '').trim()) localStorage.setItem('hosa::school', nm);
+      } catch(e) {}
+      _chapterWelcome(nm);
+      _syncChapterToLeaderboard();
+    }
+    firebase.database().ref('chapters/' + slug).get()
+      .then(function(s){ return s && s.val() ? s.val() : firebase.database().ref('analytics/chapters/' + slug).get().then(function(s2){ return s2 && s2.val(); }); })
+      .then(use).catch(function(){ use(null); });
+    try { gtag('event', 'chapter_join_link', { event_category: slug }); } catch(e) {}
+    return true;
+  } catch(e) { return false; }
+}
+// leaderboard/level/{id} is the one node guests reliably write, so the
+// chapter tag rides along with the XP row instead of needing its own.
+function _syncChapterToLeaderboard() {
+  try {
+    var slug = _chapterSlug(); if (!slug) return;
+    var u = firebase.auth().currentUser;
+    var id = u ? u.uid : _guestId(); if (!id) return;
+    firebase.database().ref('leaderboard/level/' + id)
+      .update({ chapter: slug, chapterName: _chapterName() || slug, updatedAt: new Date().toISOString() })
+      .catch(function(){});
+  } catch(e) {}
+}
+
 function _showSchoolPrompt() {
   if (_askedSchool()) return;
+  if (_chapterSlug()) return;        // arrived via a chapter link — already identified
   if (document.getElementById('school-prompt')) return;
   // Signed-in users already gave their school at sign-up.
   try { if (firebase.auth().currentUser) return; } catch(e) {}
@@ -4661,6 +4772,7 @@ function _showSchoolPrompt() {
         + 'background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;'
         + "font-family:'Source Serif 4',Georgia,serif;font-size:16px;color:var(--ink);outline:none;\">"
       + '<div id="school-prompt-error" style="font-family:\'Source Serif 4\',Georgia,serif;font-size:12.5px;color:var(--accent);min-height:17px;margin-top:7px;"></div>'
+      + '<div style="font-family:\'Source Serif 4\',Georgia,serif;font-size:12.5px;color:var(--ink-faint);margin-top:2px;">Signing up a whole chapter? <a href="chapters.html" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Register it here \u2192</a></div>'
       + '<div style="display:flex;gap:10px;align-items:center;margin-top:9px;flex-wrap:wrap;">'
         + '<button type="button" id="school-prompt-save" disabled style="background:var(--accent);color:#fff;border:none;'
           + 'border-radius:6px;padding:11px 20px;font-family:\'Source Serif 4\',Georgia,serif;font-size:15px;'
@@ -4934,7 +5046,9 @@ auth.onAuthStateChanged(user => {
     // Nothing is gated for guests. On a visitor's first landing we ask one
     // question — their school — purely for outreach. No account required.
     showGuestMode();
-    if (location.hash !== '#signup') setTimeout(_showSchoolPrompt, 400);
+    if (!_applyChapterFromUrl()) {
+      if (location.hash !== '#signup') setTimeout(_showSchoolPrompt, 400);
+    } else { _syncChapterToLeaderboard(); }
   }
 });
 
@@ -10879,7 +10993,8 @@ window.hosaXPFlyup = function(el, amount) {
           var xp = parseInt(u.xp || 0, 10);
           if (xp <= 0) return;
           var name = u.name || 'Student';
-          out.push({ uid: uid, name: name, xp: xp, avatar: '👤' });
+          out.push({ uid: uid, name: name, xp: xp, avatar: '👤',
+                     chapter: u.chapter || '', chapterName: u.chapterName || '' });
         });
         FIREBASE_USERS = out;
         cb && cb();
@@ -10977,6 +11092,69 @@ window.hosaXPFlyup = function(el, amount) {
 
   function fmtNum(n) { return n.toLocaleString(); }
 
+  // ── Chapter leaderboard ────────────────────────────────────────
+  // Chapters are built from the same leaderboard/level rows the individual
+  // board already uses: a member tagged via a chapter link carries a
+  // `chapter` field on their row, so no extra writable node is needed.
+  function renderChapters() {
+    var section = document.getElementById('lb-chapters-section');
+    if (!section) return;
+    var mine = '';
+    try { mine = (localStorage.getItem('hosa::chapter') || '').trim(); } catch(e) {}
+
+    var groups = {};
+    var myId = currentUid() || guestId();
+    var meCounted = false;
+    FIREBASE_USERS.forEach(function(u) {
+      if (!u.chapter) return;
+      if (myId && u.uid === myId) meCounted = true;
+      var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0 });
+      g.xp += (u.xp || 0);
+      g.members += 1;
+      if (u.chapterName) g.name = u.chapterName;
+    });
+    // Our own XP may not have synced to leaderboard/level yet — fold it in so a
+    // member sees their studying move the chapter immediately.
+    if (mine && !meCounted) {
+      var myXp = getUserXP();
+      if (myXp > 0) {
+        var g = groups[mine] || (groups[mine] = { slug: mine, name: '', xp: 0, members: 0 });
+        g.xp += myXp; g.members += 1;
+      }
+    }
+    if (mine && groups[mine] && !groups[mine].name) {
+      var lname = '';
+      try { lname = (localStorage.getItem('hosa::chapter-name') || '').trim(); } catch(e) {}
+      groups[mine].name = lname || mine.replace(/-/g, ' ');
+    }
+    var rows = Object.keys(groups).map(function(k){ return groups[k]; });
+    rows.sort(function(a, b){ return b.xp - a.xp; });
+
+    var head = '<div class="ch-head"><div>'
+             + '<div class="ch-title">Chapter leaderboard</div>'
+             + '<div class="ch-sub">Every chapter ranked by the XP its members have earned.</div>'
+             + '</div><a href="chapters.html" style="font-family:\'Source Serif 4\',Georgia,serif;font-size:13.5px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;white-space:nowrap;">Register your chapter →</a></div>';
+
+    if (!rows.length) {
+      section.innerHTML = head + '<div class="ch-empty">No chapters yet \u2014 this board fills up as chapters register. '
+        + '<a href="chapters.html" style="color:var(--accent);">Put yours on it first</a> and you keep Founding Chapter status permanently.</div>';
+      return;
+    }
+    var html = head + '<div class="ch-list">'
+             + '<div class="ch-row ch-row-head"><span>Rank</span><span>Chapter</span><span class="ch-xp">Chapter XP</span><span class="ch-mem">Members</span></div>';
+    rows.slice(0, 25).forEach(function(r, i) {
+      var isMine = mine && r.slug === mine;
+      html += '<div class="ch-row' + (isMine ? ' ch-row-you' : '') + '">'
+            + '<span class="ch-rank">' + medalFor(i + 1) + '</span>'
+            + '<span class="ch-name">' + escHtml(r.name) + (isMine ? '<span class="ch-you-tag">YOURS</span>' : '') + '</span>'
+            + '<span class="ch-xp">' + fmtNum(r.xp) + '</span>'
+            + '<span class="ch-mem">' + fmtNum(r.members) + '</span>'
+            + '</div>';
+    });
+    html += '</div>';
+    section.innerHTML = html;
+  }
+
   function renderPodium(players) {
     var section = document.getElementById('lb-podium-section');
     if (!section) return;
@@ -11071,6 +11249,7 @@ window.hosaXPFlyup = function(el, amount) {
     renderPodium(players);
     renderYou(players);
     renderList(players);
+    renderChapters();
   }
 
   function refreshAndRender() {

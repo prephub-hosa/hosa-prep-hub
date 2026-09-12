@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
+<script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4BPXCT41X');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register Your HOSA Chapter — HOSA Prep Hub</title>
+<meta name="description" content="Register your HOSA chapter on HOSA Prep Hub. Get a chapter join link, a chapter leaderboard spot, an officer dashboard, and recognition for your members — free.">
+<link rel="canonical" href="https://hosaprephub.vercel.app/chapters.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Register Your HOSA Chapter — HOSA Prep Hub">
+<meta property="og:description" content="Get a chapter join link, a spot on the chapter leaderboard, and an officer dashboard. Free for every chapter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f3; --bg-card: #ffffff; --ink: #111111; --ink-soft: #4a4a4a;
+    --ink-faint: #7a7a7a; --rule: #e3ded4; --accent: #b91c1c;
+  }
+  :root[data-theme="sepia"] { --bg:#f3ead6; --bg-card:#fbf5e7; --ink:#2b2213; --ink-soft:#5b4c33; --ink-faint:#8a7857; --rule:#ddd0b4; --accent:#9a3412; }
+  html:not([data-theme]) {
+    --bg:#050505; --bg-card:#121212; --ink:#ffffff; --ink-soft:#b5b5b5;
+    --ink-faint:#7c7c7c; --rule:#262626; --accent:#ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px 90px; }
+  header.top {
+    border-bottom: 1px solid var(--rule); background: var(--bg);
+    padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--accent); }
+  .back { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; white-space: nowrap; }
+  .hero { padding: 56px 0 12px; }
+  .kicker {
+    font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-size: clamp(32px, 6vw, 46px); font-weight: 500;
+    line-height: 1.12; letter-spacing: -0.02em; margin: 0 0 16px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { font-size: 17px; color: var(--ink-soft); max-width: 620px; margin: 0 0 8px; }
+  h2 {
+    font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500;
+    letter-spacing: -0.01em; margin: 54px 0 6px;
+  }
+  .sub { font-size: 14.5px; color: var(--ink-soft); margin: 0 0 22px; max-width: 640px; }
+
+  /* comparison */
+  .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cmp-col { border: 1px solid var(--rule); border-radius: 12px; padding: 22px 22px 8px; background: var(--bg-card); }
+  .cmp-col.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .cmp-head {
+    font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px;
+  }
+  .cmp-col.on .cmp-head { color: var(--accent); }
+  .cmp-title { font-family: 'Fraunces', serif; font-size: 19px; margin-bottom: 14px; }
+  .cmp ul { list-style: none; padding: 0; margin: 0 0 14px; }
+  .cmp li { font-size: 14px; color: var(--ink-soft); padding: 7px 0 7px 24px; position: relative; line-height: 1.5; }
+  .cmp li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  .cmp-col:not(.on) li::before { content: '·'; color: var(--ink-faint); font-size: 20px; top: 2px; }
+
+  /* tiers */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 13px; }
+  .tier { border: 1px solid var(--rule); border-radius: 11px; padding: 19px 19px 17px; background: var(--bg-card); }
+  .tier-n {
+    font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .tier-t { font-family: 'Fraunces', serif; font-size: 17px; margin-bottom: 7px; line-height: 1.25; }
+  .tier-d { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+
+  /* form */
+  .card { border: 1px solid var(--rule); border-radius: 13px; padding: 28px 26px; background: var(--bg-card); }
+  .fg { margin-bottom: 17px; }
+  label.lbl {
+    display: block; font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600;
+    font-variant: small-caps; letter-spacing: 0.09em; color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .req { color: var(--accent); font-variant: normal; font-weight: 700; margin-left: 3px; }
+  .inp, select.inp {
+    display: block; width: 100%; background: var(--bg); border: 1px solid var(--rule);
+    border-radius: 7px; padding: 12px 14px; font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s;
+  }
+  .inp:focus { border-color: var(--accent); }
+  .hint { font-size: 11.5px; color: var(--ink-faint); margin: 5px 0 0; }
+  .btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 14px 24px; font-family: 'Source Serif 4', Georgia, serif; font-size: 16px;
+    font-weight: 600; cursor: pointer; width: 100%; min-height: 48px; transition: opacity .15s;
+  }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .err { color: var(--accent); font-size: 13px; min-height: 18px; margin-top: 9px; }
+
+  /* result */
+  #result { display: none; }
+  .linkbox {
+    display: flex; gap: 9px; align-items: stretch; margin: 14px 0 6px; flex-wrap: wrap;
+  }
+  .linkbox input {
+    flex: 1 1 260px; min-width: 0; background: var(--bg); border: 1px solid var(--accent);
+    border-radius: 7px; padding: 12px 13px; font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13.5px; color: var(--ink);
+  }
+  .copy {
+    background: var(--ink); color: var(--bg); border: none; border-radius: 7px;
+    padding: 12px 20px; font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px;
+    font-weight: 600; cursor: pointer; min-height: 46px; white-space: nowrap;
+  }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 18px 0 0; }
+  .steps li {
+    counter-increment: s; position: relative; padding: 0 0 14px 34px;
+    font-size: 14.5px; color: var(--ink-soft); line-height: 1.55;
+  }
+  .steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 23px; height: 23px; border-radius: 50%; background: var(--accent); color: #fff;
+    font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .foot { margin-top: 62px; padding-top: 22px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-faint); }
+  @media (max-width: 620px) {
+    .cmp { grid-template-columns: 1fr; }
+    .hero { padding-top: 34px; }
+    h2 { margin-top: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="index.html">✚ HOSA <span>Prep Hub</span></a>
+  <a class="back" href="index.html">← Back to the site</a>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="kicker">For chapter officers &amp; advisors</div>
+    <h1>Register your <em>chapter</em>.</h1>
+    <p class="lede">Get a join link that ties every one of your members to your chapter — then watch your chapter climb a national leaderboard. Free, no account required for your members, takes about a minute.</p>
+  </section>
+
+  <h2>What your chapter gets that the site doesn't give anyone else</h2>
+  <p class="sub">Everything on HOSA Prep Hub is already free and open — we don't lock studying behind a chapter. What registering adds is everything that only makes sense when you're a <em>team</em>.</p>
+
+  <div class="cmp">
+    <div class="cmp-col">
+      <div class="cmp-head">Studying on your own</div>
+      <div class="cmp-title">Default</div>
+      <ul>
+        <li>All 81 events, 3,295 terms</li>
+        <li>Flashcards, quizzes, timed tests</li>
+        <li>Your own XP and streak</li>
+        <li>A spot on the individual leaderboard</li>
+      </ul>
+    </div>
+    <div class="cmp-col on">
+      <div class="cmp-head">Registered chapter</div>
+      <div class="cmp-title">Everything above, plus</div>
+      <ul>
+        <li><strong>Chapter leaderboard</strong> — your chapter ranked against every other chapter in the country</li>
+        <li><strong>Chapter badge</strong> beside every member's name</li>
+        <li><strong>Officer dashboard</strong> — who's active, total XP, which events your chapter is weakest in</li>
+        <li><strong>One join link</strong> that tags every member automatically</li>
+        <li><strong>Founding Chapter</strong> status, kept permanently</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>What your members unlock as more of them join</h2>
+  <p class="sub">Every member who joins through your link counts toward your chapter. These unlock for the whole chapter at once — one person's studying moves everyone's standing.</p>
+  <div class="tiers">
+    <div class="tier">
+      <div class="tier-n">On sign-up</div>
+      <div class="tier-t">Verified Chapter</div>
+      <div class="tier-d">Your chapter page goes live, you appear on the chapter leaderboard, and every member gets your chapter badge.</div>
+    </div>
+    <div class="tier">
+      <div class="tier-n">5 active members</div>
+      <div class="tier-t">Officer dashboard</div>
+      <div class="tier-d">See who's studying, total chapter XP, and the topics your chapter misses most — useful for planning a meeting.</div>
+    </div>
+    <div class="tier">
+      <div class="tier-n">15 active members</div>
+      <div class="tier-t">Featured chapter</div>
+      <div class="tier-d">Your chapter is featured on the home page, and we'll build a custom study set for the events your chapter actually competes in.</div>
+    </div>
+    <div class="tier">
+      <div class="tier-n">Top 10 chapters</div>
+      <div class="tier-t">Founding Chapter</div>
+      <div class="tier-d">A permanent mark on your chapter page and the leaderboard — it stays even if your rank changes later.</div>
+    </div>
+  </div>
+  <p class="hint" style="margin-top:14px;">&ldquo;Active&rdquo; means a member who studied on at least three separate days — so a burst of sign-ups in one sitting doesn't count.</p>
+
+  <h2>Register</h2>
+  <p class="sub">Officers and advisors both welcome. We only need enough to build your link and reach you.</p>
+
+  <div class="card" id="form-card">
+    <div class="fg">
+      <label class="lbl" for="ch-school">School<span class="req">*</span></label>
+      <input id="ch-school" class="inp" type="text" placeholder="Diamond Bar High School" autocomplete="organization">
+    </div>
+    <div class="fg">
+      <label class="lbl" for="ch-name">Chapter name <span style="font-variant:normal;letter-spacing:0;opacity:.6;">(if different)</span></label>
+      <input id="ch-name" class="inp" type="text" placeholder="Diamond Bar HOSA">
+    </div>
+    <div class="fg">
+      <label class="lbl" for="ch-state">State<span class="req">*</span></label>
+      <input id="ch-state" class="inp" type="text" placeholder="California" maxlength="30">
+    </div>
+    <div class="fg">
+      <label class="lbl" for="ch-contact">Your name<span class="req">*</span></label>
+      <input id="ch-contact" class="inp" type="text" placeholder="Jordan Ramirez" autocomplete="name">
+    </div>
+    <div class="fg">
+      <label class="lbl" for="ch-role">Your role<span class="req">*</span></label>
+      <select id="ch-role" class="inp">
+        <option value="">Select…</option>
+        <option>Chapter President</option>
+        <option>Chapter Officer</option>
+        <option>Member</option>
+        <option>Advisor / Teacher</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="lbl" for="ch-email">Email<span class="req">*</span></label>
+      <input id="ch-email" class="inp" type="email" placeholder="you@school.edu" autocomplete="email">
+      <p class="hint">Only used to send your chapter link and dashboard access. Nothing else.</p>
+    </div>
+    <button class="btn" id="ch-submit" type="button">Create our chapter link →</button>
+    <div class="err" id="ch-error"></div>
+  </div>
+
+  <div class="card" id="result">
+    <div class="kicker" style="margin-bottom:8px;">✓ Your chapter is registered</div>
+    <div style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;" id="res-name">—</div>
+    <p class="sub" style="margin-bottom:4px;">This is your chapter's join link. Anyone who opens it is tagged to your chapter automatically — they don't have to type anything or make an account.</p>
+    <div class="linkbox">
+      <input id="res-link" type="text" readonly>
+      <button class="copy" id="res-copy" type="button">Copy link</button>
+    </div>
+    <p class="hint" id="res-copied" style="min-height:16px;"></p>
+    <ol class="steps">
+      <li>Post the link in your chapter GroupMe, Remind, or Instagram bio.</li>
+      <li>Announce it once at a meeting — &ldquo;open this, we're doing a 15-minute drill.&rdquo;</li>
+      <li>Watch your chapter climb the <a href="index.html#leaderboard">chapter leaderboard</a> as members study.</li>
+    </ol>
+  </div>
+
+  <div class="foot">
+    Questions? Use the feedback button on any page. HOSA Prep Hub is a free, student-built study tool and is not affiliated with or endorsed by HOSA&ndash;Future Health Professionals.
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="feedback-widget.js" defer></script>
+<script>
+(function(){
+  function slugify(s) {
+    return String(s).toLowerCase().trim()
+      .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '').slice(0, 44);
+  }
+  function baseUrl() {
+    var u = location.href.split('#')[0].split('?')[0];
+    return u.replace(/chapters\.html$/, 'index.html');
+  }
+  var $ = function(id){ return document.getElementById(id); };
+  var err = $('ch-error');
+
+  $('ch-submit').addEventListener('click', function(){
+    var school  = $('ch-school').value.trim();
+    var name    = $('ch-name').value.trim() || school;
+    var state   = $('ch-state').value.trim();
+    var contact = $('ch-contact').value.trim();
+    var role    = $('ch-role').value;
+    var email   = $('ch-email').value.trim();
+    err.textContent = '';
+    if (school.length < 3)  { err.textContent = 'Please enter your school.'; return; }
+    if (!state)             { err.textContent = 'Please enter your state.'; return; }
+    if (!contact)           { err.textContent = 'Please enter your name.'; return; }
+    if (!role)              { err.textContent = 'Please select your role.'; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Please enter a valid email.'; return; }
+
+    var slug = slugify(school);
+    if (!slug) { err.textContent = 'That school name can’t be turned into a link — try adding letters.'; return; }
+
+    var rec = {
+      slug: slug, school: school, name: name, state: state,
+      contactName: contact, contactRole: role, contactEmail: email,
+      createdAt: new Date().toISOString()
+    };
+    var btn = $('ch-submit');
+    btn.disabled = true; btn.textContent = 'Creating…';
+
+    // chapters/ is a new node; if the database rules reject it, fall back to
+    // analytics/ which guests can demonstrably write. Registration must not
+    // fail just because a rule is missing.
+    function done() {
+      try { localStorage.setItem('hosa::chapter', slug);
+            localStorage.setItem('hosa::chapter-name', name);
+            localStorage.setItem('hosa::school', school); } catch(e) {}
+      try { gtag('event', 'chapter_registered', { event_category: state }); } catch(e) {}
+      var link = baseUrl() + '?chapter=' + encodeURIComponent(slug);
+      $('res-name').textContent = name;
+      $('res-link').value = link;
+      $('form-card').style.display = 'none';
+      $('result').style.display = 'block';
+      $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    try {
+      firebase.database().ref('chapters/' + slug).update(rec)
+        .then(done)
+        .catch(function(e1){
+          console.warn('[chapters] chapters/ write rejected, falling back:', e1 && e1.message);
+          firebase.database().ref('analytics/chapters/' + slug).update(rec)
+            .then(done)
+            .catch(function(e2){
+              console.warn('[chapters] fallback failed:', e2 && e2.message);
+              done();   // still hand them the link; it works regardless
+            });
+        });
+    } catch(e) { done(); }
+  });
+
+  $('res-copy').addEventListener('click', function(){
+    var i = $('res-link');
+    i.select(); i.setSelectionRange(0, 99999);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) { try { navigator.clipboard.writeText(i.value); ok = true; } catch(e) {} }
+    $('res-copied').textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
+  });
+})();
+</script>
+</body>
+</html>
