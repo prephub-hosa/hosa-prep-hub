@@ -1177,41 +1177,98 @@
    a table+bar ladder for level cost (>7 meaningful classes), and a
    hero figure + meter for the reader's own standing. Single series
    throughout, so one hue and no legend; values wear text tokens. */
-/* Home: chapter call-to-action. Solid accent so it reads as the one
-   deliberate ask on an otherwise quiet page. */
+[data-theme="light"] #chapter-cta { --cc-rgb: 185, 28, 28; }
+/* Home: chapter call-to-action. A white card lit from behind by the
+   brand red — the one thing on the page that glows — rather than a
+   flat crimson slab. */
 #chapter-cta {
+  /* Glow channel, so the bloom tracks whichever crimson the theme uses. */
+  --cc-rgb: 239, 68, 68;
+  position: relative;
   display: block; text-decoration: none;
-  background: var(--accent); border-radius: 14px;
-  padding: 26px 28px; margin-bottom: 34px;
-  box-shadow: 0 10px 30px -12px rgba(185,28,28,0.45);
-  transition: transform .15s ease, box-shadow .15s ease;
+  /* White card, lit from within by two soft crimson blooms and from
+     behind by the halo in box-shadow. Painted as background layers
+     rather than a z-index:-1 pseudo, which the opaque card colour
+     would simply cover. */
+  background:
+    radial-gradient(52% 78% at 2% -8%,    rgba(var(--cc-rgb), 0.13), transparent 60%),
+    radial-gradient(48% 82% at 102% 108%, rgba(var(--cc-rgb), 0.10), transparent 58%),
+    var(--bg-card);
+  border: 1px solid rgba(var(--cc-rgb), 0.26);
+  border-radius: 18px;
+  padding: 28px 30px; margin-bottom: 34px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(17,17,17,0.04),
+    0 14px 44px -16px rgba(var(--cc-rgb), 0.45),
+    0 0 0 7px rgba(var(--cc-rgb), 0.06);
+  transition: transform .18s cubic-bezier(.2,0,0,1), box-shadow .28s ease, border-color .28s ease, background .28s ease;
 }
-#chapter-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 38px -12px rgba(185,28,28,0.55); }
-#chapter-cta .cc-inner { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+/* A crimson hairline down the leading edge anchors it to the brand. */
+#chapter-cta::after {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--accent), rgba(var(--cc-rgb), 0.25));
+}
+#chapter-cta:hover {
+  transform: translateY(-3px);
+  border-color: rgba(var(--cc-rgb), 0.5);
+  background:
+    radial-gradient(56% 84% at 2% -8%,    rgba(var(--cc-rgb), 0.19), transparent 62%),
+    radial-gradient(52% 88% at 102% 108%, rgba(var(--cc-rgb), 0.15), transparent 60%),
+    var(--bg-card);
+  box-shadow:
+    0 2px 4px rgba(17,17,17,0.05),
+    0 26px 64px -18px rgba(var(--cc-rgb), 0.6),
+    0 0 0 7px rgba(var(--cc-rgb), 0.10);
+}
+#chapter-cta .cc-inner { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
 #chapter-cta .cc-copy { flex: 1 1 320px; min-width: 0; }
 #chapter-cta .cc-kicker {
-  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10.5px;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255,255,255,0.82); margin-bottom: 9px;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 11px;
+}
+/* Small pulsing dot — the only motion on the card. */
+#chapter-cta .cc-kicker::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 0 rgba(var(--cc-rgb), 0.5);
+  animation: cc-pulse 2.6s ease-out infinite;
+}
+@keyframes cc-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--cc-rgb), 0.45); }
+  70%  { box-shadow: 0 0 0 7px rgba(var(--cc-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--cc-rgb), 0); }
 }
 #chapter-cta .cc-title {
-  font-family: 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 500;
-  color: #fff; line-height: 1.22; letter-spacing: -0.015em; margin-bottom: 8px;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 25px; font-weight: 700;
+  color: var(--ink); line-height: 1.2; letter-spacing: -0.032em; margin-bottom: 9px;
 }
 #chapter-cta .cc-sub {
-  font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px;
-  color: rgba(255,255,255,0.9); line-height: 1.6; max-width: 560px;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 14px;
+  color: var(--ink-soft); line-height: 1.6; max-width: 560px;
 }
 #chapter-cta .cc-btn {
-  flex: 0 0 auto; background: #fff; color: var(--accent);
-  border-radius: 9px; padding: 14px 24px;
-  font-family: 'Source Serif 4', Georgia, serif; font-size: 15.5px;
-  font-weight: 700; white-space: nowrap;
+  flex: 0 0 auto; background: var(--accent); color: #fff;
+  border-radius: 11px; padding: 14px 24px;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 14.5px;
+  font-weight: 650; letter-spacing: -0.01em; white-space: nowrap;
+  box-shadow: 0 2px 6px -1px rgba(var(--cc-rgb), 0.35), 0 10px 26px -10px rgba(var(--cc-rgb), 0.55);
+  transition: box-shadow .2s ease, transform .18s ease;
+}
+#chapter-cta:hover .cc-btn {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px -1px rgba(var(--cc-rgb), 0.42), 0 16px 34px -10px rgba(var(--cc-rgb), 0.68);
 }
 @media (max-width: 620px) {
-  #chapter-cta { padding: 22px 20px; }
-  #chapter-cta .cc-title { font-size: 22px; }
-  #chapter-cta .cc-btn { width: 100%; text-align: center; }
+  #chapter-cta { padding: 22px 20px; border-radius: 16px; margin-bottom: 26px; }
+  #chapter-cta .cc-inner { gap: 18px; }
+  #chapter-cta .cc-title { font-size: 21px; }
+  #chapter-cta .cc-sub { font-size: 13.5px; }
+  #chapter-cta .cc-btn { width: 100%; text-align: center; padding: 13px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #chapter-cta .cc-kicker::before { animation: none; }
 }
 
 /* Sidebar: the chapter entry is the one thing we want every member to find. */
@@ -2522,22 +2579,22 @@ footer { display: none; }
           <div class="home-hero-right">
             <div class="home-hero-stats">
               <div class="home-hero-stat">
-                <div class="home-hero-stat-icon">⚡</div>
+                <div class="home-hero-stat-icon" data-ic="level" aria-hidden="true"></div>
                 <div class="home-hero-stat-num" id="hh-level">1</div>
                 <div class="home-hero-stat-label">Level</div>
               </div>
               <div class="home-hero-stat">
-                <div class="home-hero-stat-icon">🔥</div>
+                <div class="home-hero-stat-icon" data-ic="streak" aria-hidden="true"></div>
                 <div class="home-hero-stat-num" id="hh-streak">0</div>
                 <div class="home-hero-stat-label">Day streak</div>
               </div>
               <div class="home-hero-stat">
-                <div class="home-hero-stat-icon">🏆</div>
+                <div class="home-hero-stat-icon" data-ic="mastered" aria-hidden="true"></div>
                 <div class="home-hero-stat-num" id="hh-mastered">0</div>
                 <div class="home-hero-stat-label">Mastered</div>
               </div>
               <div class="home-hero-stat">
-                <div class="home-hero-stat-icon">🃏</div>
+                <div class="home-hero-stat-icon" data-ic="cards" aria-hidden="true"></div>
                 <div class="home-hero-stat-num" id="hh-due">0</div>
                 <div class="home-hero-stat-label">Due today</div>
               </div>
@@ -2642,7 +2699,7 @@ footer { display: none; }
           <defs>
             <linearGradient id="dg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%"   stop-color="#ef4444"/>
-              <stop offset="100%" stop-color="#f97316"/>
+              <stop offset="100%" stop-color="#a01625"/>
             </linearGradient>
           </defs>
         </svg>
@@ -2806,22 +2863,22 @@ footer { display: none; }
         <h2 class="section-title">How it works</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
-            <div style="font-size:22px;margin-bottom:10px;">🃏</div>
+            <div class="hiw-icon" data-ic="cards" aria-hidden="true"></div>
             <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:6px;">Flashcards</div>
             <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">SM-2 spaced repetition. Rate each card Know it or Don't know it — the algorithm automatically schedules when to review each term again.</div>
           </div>
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
-            <div style="font-size:22px;margin-bottom:10px;">📝</div>
+            <div class="hiw-icon" data-ic="quiz" aria-hidden="true"></div>
             <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:6px;">Practice Quiz</div>
             <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">10-question multiple-choice sets with instant feedback. Jump straight into reviewing your misses when you're done.</div>
           </div>
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
-            <div style="font-size:22px;margin-bottom:10px;">⏱</div>
+            <div class="hiw-icon" data-ic="test" aria-hidden="true"></div>
             <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:6px;">Timed Test</div>
             <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">25 questions in 12 minutes — mirrors the actual HOSA exam pressure. Full category breakdown at the end.</div>
           </div>
           <div style="background:var(--bg-card);border:1px solid var(--rule);border-radius:10px;padding:20px;">
-            <div style="font-size:22px;margin-bottom:10px;">📊</div>
+            <div class="hiw-icon" data-ic="prog" aria-hidden="true"></div>
             <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:6px;">Progress Tracking</div>
             <div style="font-size:13px;color:var(--ink-soft);line-height:1.6">XP, levels, streaks, and mastery by term. See exactly which cards are due for review today.</div>
           </div>
@@ -10531,7 +10588,7 @@ window.hosaXPFlyup = function(el, amount) {
     }
 
     section.style.display = '';
-    var html = '<div class="dp-wrap"><div class="dp-header"><span class="dp-icon">🗺️</span><div><div class="dp-title">Today\'s Study Path</div><div class="dp-sub">Your prioritized plan for today</div></div></div><div class="dp-steps">';
+    var html = '<div class="dp-wrap"><div class="dp-header"><span class="dp-icon" data-ic="path" aria-hidden="true"></span><div><div class="dp-title">Today\'s Study Path</div><div class="dp-sub">Your prioritized plan for today</div></div></div><div class="dp-steps">';
 
     if (steps.length) {
       steps.forEach(function(s, i) {
