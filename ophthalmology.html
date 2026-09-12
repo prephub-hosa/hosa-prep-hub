@@ -1687,6 +1687,19 @@
 
   <!-- GUIDE VIEW -->
   <section class="view" id="view-guide">
+    <!-- Chapter perk: a printable study sheet of the whole deck. Real study
+         utility (students and advisors print these for meetings), and it is a
+         new feature, so nothing was taken away from anyone to create it. -->
+    <div id="print-sheet-panel" style="border:1px solid var(--accent);border-radius:11px;padding:20px 22px;margin-bottom:26px;background:var(--bg-card);">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1 1 260px;min-width:0;">
+          <div style="font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px;">Chapter perk</div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:500;color:var(--ink);margin-bottom:4px;">Printable study sheet</div>
+          <div id="print-sheet-desc" style="font-family:'Source Serif 4',Georgia,serif;font-size:13.5px;color:var(--ink-soft);line-height:1.55;">Every term and definition in this event, laid out for printing or saving as a PDF — for a meeting handout or studying offline.</div>
+        </div>
+        <div style="flex:0 0 auto;" id="print-sheet-action"></div>
+      </div>
+    </div>
     <div class="guide-layout">
       <div class="guide-panel">
         <div class="guide-panel-title">Competition Format</div>
@@ -2448,6 +2461,67 @@ function _askedSchool() {
   try { return !!(localStorage.getItem(_SCHOOL_LS) || '').trim(); }
   catch(e) { return true; }
 }
+// ── Printable study sheet (chapter perk) ───────────────────────────
+function _buildPrintSheet() {
+  var chapter = '';
+  try { chapter = (localStorage.getItem('hosa::chapter-name') || localStorage.getItem('hosa::chapter') || '').trim(); } catch(e) {}
+  // Page titles read "HOSA Prep Hub — Medical Terminology", so the event name
+  // is the last segment, not the first.
+  var parts = (document.title || '').split('\u2014');
+  var title = (parts[parts.length - 1] || 'HOSA Prep Hub').trim() || 'HOSA Prep Hub';
+  var rows = '';
+  try {
+    TERMS.forEach(function(t, i) {
+      rows += '<tr><td class="n">' + (i + 1) + '</td><td class="t">' + _esc(t.term) + '</td>'
+            + '<td class="d">' + _esc(t.meaning || '') + '</td></tr>';
+    });
+  } catch(e) {}
+  var w = window.open('', '_blank');
+  if (!w) { alert('Your browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _esc(title) + ' — Study Sheet</title>'
+    + '<style>'
+    + 'body{font-family:Georgia,"Times New Roman",serif;color:#111;margin:32px;line-height:1.45;}'
+    + 'h1{font-size:22px;margin:0 0 2px;}'
+    + '.meta{font-size:12px;color:#666;margin-bottom:18px;border-bottom:1px solid #ccc;padding-bottom:10px;}'
+    + 'table{width:100%;border-collapse:collapse;}'
+    + 'td{vertical-align:top;padding:7px 8px;border-bottom:1px solid #e5e5e5;font-size:12.5px;}'
+    + 'td.n{width:30px;color:#999;font-size:11px;}'
+    + 'td.t{width:26%;font-weight:bold;}'
+    + 'tr{page-break-inside:avoid;}'
+    + '@media print{body{margin:14mm;} .noprint{display:none;}}'
+    + '.noprint{margin-bottom:16px;}'
+    + '.noprint button{font:inherit;font-size:14px;padding:9px 18px;cursor:pointer;background:#b91c1c;color:#fff;border:none;border-radius:6px;}'
+    + '</style></head><body>'
+    + '<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'
+    + '<h1>' + _esc(title) + '</h1>'
+    + '<div class="meta">' + TERMS.length + ' terms'
+    + (chapter ? ' &middot; ' + _esc(chapter) : '')
+    + ' &middot; hosaprephub.com</div>'
+    + '<table>' + rows + '</table></body></html>');
+  w.document.close();
+  try { gtag('event', 'print_sheet', { event_category: DB_PATH }); } catch(e) {}
+}
+function _esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function _renderPrintSheetPanel() {
+  var slot = document.getElementById('print-sheet-action');
+  var desc = document.getElementById('print-sheet-desc');
+  if (!slot) return;
+  if (_chapterSlug()) {
+    slot.innerHTML = '<button type="button" id="print-sheet-btn" style="background:var(--accent);color:#fff;border:none;'
+      + "border-radius:8px;padding:12px 20px;font-family:'Source Serif 4',Georgia,serif;font-size:15px;"
+      + 'font-weight:600;cursor:pointer;min-height:44px;white-space:nowrap;">Open study sheet &rarr;</button>';
+    document.getElementById('print-sheet-btn').addEventListener('click', _buildPrintSheet);
+  } else {
+    slot.innerHTML = '<a href="chapters.html" style="display:inline-block;background:var(--accent);color:#fff;'
+      + "text-decoration:none;border-radius:8px;padding:12px 20px;font-family:'Source Serif 4',Georgia,serif;"
+      + 'font-size:15px;font-weight:600;white-space:nowrap;">Start a chapter to unlock &rarr;</a>';
+    if (desc) desc.innerHTML = 'Every term and definition in this event, laid out for printing or saving as a PDF. '
+      + 'Unlocked for anyone in a chapter &mdash; <strong>any member can start one</strong>, it takes a minute.';
+  }
+}
+
 // ── Chapter join link (?chapter=slug) ──────────────────────────────
 // Opening a chapter's link tags this browser to that chapter, fills in the
 // school for them, and skips the school question entirely — the whole point
@@ -3442,6 +3516,7 @@ function _wireOnce() {
   initFlashcards(); initQuiz(); initTest();
   if (!_applyChapterFromUrl()) _showSchoolPrompt();
   else _syncChapterToLeaderboard();
+  _renderPrintSheetPanel();
 }
 function _hidePageLoader() {
   var lo = document.getElementById('page-loader');
