@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
+<script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-S4BPXCT41X');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter Dashboard — HOSA Prep Hub</title>
+<meta name="description" content="Live dashboard for your HOSA chapter: members, chapter XP, national rank, and the events your chapter studies most.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#faf8f3; --bg-card:#fff; --ink:#111; --ink-soft:#4a4a4a; --ink-faint:#7a7a7a; --rule:#e3ded4; --accent:#b91c1c; }
+  :root[data-theme="sepia"] { --bg:#f3ead6; --bg-card:#fbf5e7; --ink:#2b2213; --ink-soft:#5b4c33; --ink-faint:#8a7857; --rule:#ddd0b4; --accent:#9a3412; }
+  html:not([data-theme]) { --bg:#050505; --bg-card:#121212; --ink:#fff; --ink-soft:#b5b5b5; --ink-faint:#7c7c7c; --rule:#262626; --accent:#ef4444; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Source Serif 4',Georgia,serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); }
+  header.top { border-bottom:1px solid var(--rule); padding:16px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand { font-family:'Fraunces',serif; font-size:17px; font-weight:500; color:var(--ink); text-decoration:none; }
+  .brand span { color:var(--accent); }
+  .back { font-size:13.5px; color:var(--ink-soft); text-decoration:none; white-space:nowrap; }
+  .wrap { max-width:900px; margin:0 auto; padding:0 22px 80px; }
+  .kicker { font-family:'Geist Mono',ui-monospace,monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  h1 { font-family:'Fraunces',serif; font-size:clamp(28px,5.5vw,40px); font-weight:500; line-height:1.15; letter-spacing:-0.02em; margin:0 0 8px; }
+  .lede { font-size:15.5px; color:var(--ink-soft); margin:0 0 28px; }
+  .hero { padding:46px 0 6px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:13px; margin-bottom:34px; }
+  .stat { border:1px solid var(--rule); border-radius:11px; padding:18px 20px; background:var(--bg-card); }
+  .stat-n { font-family:'Fraunces',serif; font-size:30px; font-weight:500; line-height:1; color:var(--ink); letter-spacing:-0.02em; }
+  .stat-l { font-family:'Geist Mono',ui-monospace,monospace; font-size:10px; letter-spacing:0.11em; text-transform:uppercase; color:var(--ink-faint); margin-top:8px; }
+  h2 { font-family:'Fraunces',serif; font-size:21px; font-weight:500; margin:38px 0 4px; }
+  .sub { font-size:13.5px; color:var(--ink-soft); margin:0 0 16px; }
+  .list { border:1px solid var(--rule); border-radius:11px; overflow:hidden; }
+  .row { display:grid; grid-template-columns:44px 1fr 92px; align-items:center; gap:12px; padding:11px 16px; border-bottom:1px solid var(--rule); font-size:14px; }
+  .row:last-child { border-bottom:none; }
+  .row-head { font-family:'Geist Mono',ui-monospace,monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); background:var(--bg-card); }
+  .row-me { background:rgba(185,28,28,0.06); }
+  .r-rank { font-family:'Fraunces',serif; font-size:15px; }
+  .r-xp { text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-soft); }
+  .me-tag { font-family:'Geist Mono',ui-monospace,monospace; font-size:9px; letter-spacing:0.1em; color:var(--accent); margin-left:6px; }
+  .linkbox { display:flex; gap:9px; margin:12px 0 4px; flex-wrap:wrap; }
+  .linkbox input { flex:1 1 260px; min-width:0; background:var(--bg); border:1px solid var(--accent); border-radius:7px; padding:11px 13px; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:var(--ink); }
+  .copy { background:var(--ink); color:var(--bg); border:none; border-radius:7px; padding:11px 20px; font-family:'Source Serif 4',Georgia,serif; font-size:14.5px; font-weight:600; cursor:pointer; min-height:44px; white-space:nowrap; }
+  .empty { border:1px dashed var(--rule); border-radius:11px; padding:22px; font-size:14px; color:var(--ink-soft); }
+  .foot { margin-top:54px; padding-top:20px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-faint); }
+  @media (max-width:560px){ .row{grid-template-columns:36px 1fr 74px;gap:8px;padding:11px 12px;font-size:13px;} }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">✚ HOSA <span>Prep Hub</span></a>
+  <a class="back" href="chapters.html">Register a chapter →</a>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <div class="kicker" id="ch-kicker">Chapter dashboard</div>
+    <h1 id="ch-name">Loading…</h1>
+    <p class="lede" id="ch-meta"></p>
+  </section>
+  <div class="stats" id="ch-stats"></div>
+  <div id="ch-link-wrap" style="display:none;">
+    <h2>Your chapter join link</h2>
+    <p class="sub">Anyone who opens this is added to your chapter automatically — no account, nothing to type.</p>
+    <div class="linkbox">
+      <input id="ch-link" type="text" readonly>
+      <button class="copy" id="ch-copy" type="button">Copy link</button>
+    </div>
+    <p class="sub" id="ch-copied" style="min-height:16px;"></p>
+  </div>
+  <h2>Members</h2>
+  <p class="sub" id="ch-members-sub">Everyone studying under your chapter, ranked by XP earned.</p>
+  <div id="ch-members"></div>
+  <div class="foot">
+    Anyone can start a chapter — you don't have to be an officer. <a href="chapters.html">Register one here</a>.
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="feedback-widget.js" defer></script>
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function num(n){ return (n||0).toLocaleString(); }
+  function xpLevel(xp){ return Math.floor(Math.sqrt(Math.max(0,xp)/50))+1; }
+
+  var m = /[?&]c=([^&#]+)/.exec(location.search);
+  var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,44) : '';
+  if (!slug) { try { slug = (localStorage.getItem('hosa::chapter')||'').trim(); } catch(e) {} }
+  var myId = '';
+  try { myId = localStorage.getItem('hosa-guest-id') || ''; } catch(e) {}
+
+  if (!slug) {
+    $('ch-name').textContent = 'No chapter yet';
+    $('ch-meta').innerHTML = 'You are not part of a chapter. <a href="chapters.html">Start one for your school</a> — it takes about a minute and anyone can do it.';
+    $('ch-members').innerHTML = '<div class="empty">Once your chapter exists, everyone who joins through its link shows up here.</div>';
+    return;
+  }
+
+  function rec(path){ return firebase.database().ref(path).get().then(function(s){ return s && s.val(); }).catch(function(){ return null; }); }
+
+  Promise.all([
+    rec('chapters/' + slug),
+    rec('analytics/chapters/' + slug),
+    rec('leaderboard/level')
+  ]).then(function(r){
+    var info = r[0] || r[1] || {};
+    var lb = r[2] || {};
+    var name = info.name || info.school || slug.replace(/-/g,' ');
+    document.title = name + ' — Chapter Dashboard';
+    $('ch-name').textContent = name;
+
+    // members of this chapter, and every chapter's total so we can show a rank
+    var members = [], totals = {};
+    Object.keys(lb).forEach(function(id){
+      var u = lb[id] || {};
+      var xp = parseInt(u.xp||0,10) || 0;
+      if (!u.chapter) return;
+      totals[u.chapter] = (totals[u.chapter]||0) + xp;
+      if (u.chapter === slug) members.push({ id:id, name:u.name||'Student', xp:xp });
+    });
+    members.sort(function(a,b){ return b.xp - a.xp; });
+    var chapterXp = totals[slug] || 0;
+    var ranked = Object.keys(totals).sort(function(a,b){ return totals[b]-totals[a]; });
+    var rank = ranked.indexOf(slug) + 1;
+
+    $('ch-meta').innerHTML = (info.state ? esc(info.state) + ' &middot; ' : '')
+      + (rank ? 'Ranked <strong>#' + rank + '</strong> of ' + ranked.length + ' chapters nationally' : 'Not yet ranked — earn some XP to appear');
+
+    $('ch-stats').innerHTML =
+        '<div class="stat"><div class="stat-n">' + num(members.length) + '</div><div class="stat-l">Members</div></div>'
+      + '<div class="stat"><div class="stat-n">' + num(chapterXp) + '</div><div class="stat-l">Chapter XP</div></div>'
+      + '<div class="stat"><div class="stat-n">' + (rank || '—') + '</div><div class="stat-l">National rank</div></div>'
+      + '<div class="stat"><div class="stat-n">' + xpLevel(chapterXp) + '</div><div class="stat-l">Chapter level</div></div>';
+
+    var base = location.href.split('#')[0].split('?')[0].replace(/chapter\.html$/, 'index.html');
+    $('ch-link').value = base + '?chapter=' + slug;
+    $('ch-link-wrap').style.display = '';
+
+    if (!members.length) {
+      $('ch-members').innerHTML = '<div class="empty">No members yet. Share the link above — the first person to open it shows up here.</div>';
+      return;
+    }
+    var html = '<div class="list"><div class="row row-head"><span>#</span><span>Member</span><span class="r-xp">XP</span></div>';
+    members.slice(0,50).forEach(function(p,i){
+      var me = myId && p.id === myId;
+      html += '<div class="row' + (me?' row-me':'') + '"><span class="r-rank">' + (i+1) + '</span>'
+            + '<span>' + esc(p.name) + (me?'<span class="me-tag">YOU</span>':'') + '</span>'
+            + '<span class="r-xp">' + num(p.xp) + '</span></div>';
+    });
+    $('ch-members').innerHTML = html + '</div>';
+  }).catch(function(){
+    $('ch-name').textContent = 'Could not load chapter';
+    $('ch-members').innerHTML = '<div class="empty">Try refreshing. If it keeps failing, use the feedback button.</div>';
+  });
+
+  $('ch-copy').addEventListener('click', function(){
+    var i = $('ch-link'); i.select(); i.setSelectionRange(0,99999);
+    var ok=false; try { ok = document.execCommand('copy'); } catch(e){}
+    if (navigator.clipboard) { try { navigator.clipboard.writeText(i.value); ok=true; } catch(e){} }
+    $('ch-copied').textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
+  });
+})();
+</script>
+</body>
+</html>

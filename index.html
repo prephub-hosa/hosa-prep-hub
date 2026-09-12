@@ -1214,7 +1214,7 @@
   #chapter-cta .cc-btn { width: 100%; text-align: center; }
 }
 
-/* Sidebar: the chapter entry is the one thing we want officers to find. */
+/* Sidebar: the chapter entry is the one thing we want every member to find. */
 .sb-item-chapter {
   text-decoration: none;
   color: var(--accent) !important;
@@ -2440,10 +2440,31 @@ footer { display: none; }
 
   <div class="sb-label">Chapters</div>
   <div class="sb-section">
-    <a class="sb-item sb-item-chapter" href="chapters.html">
+    <a class="sb-item sb-item-chapter" id="sb-chapter-link" href="chapters.html">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Register a Chapter
+      <span id="sb-chapter-label">Start a Chapter</span>
     </a>
+    <a class="sb-item" id="sb-chapter-dash" href="chapter.html" style="display:none;text-decoration:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Chapter Dashboard
+    </a>
+    <script>
+    /* Once you belong to a chapter, the nav should point at it rather than
+       asking you to start one you already have. */
+    (function(){
+      try {
+        var slug = (localStorage.getItem('hosa::chapter') || '').trim();
+        if (!slug) return;
+        var nm = (localStorage.getItem('hosa::chapter-name') || '').trim();
+        var lbl = document.getElementById('sb-chapter-label');
+        var link = document.getElementById('sb-chapter-link');
+        var dash = document.getElementById('sb-chapter-dash');
+        if (lbl) lbl.textContent = nm ? (nm.length > 20 ? nm.slice(0, 19) + '\u2026' : nm) : 'Your Chapter';
+        if (link) link.href = 'chapter.html?c=' + encodeURIComponent(slug);
+        if (dash) { dash.style.display = ''; dash.href = 'chapter.html?c=' + encodeURIComponent(slug); }
+      } catch(e) {}
+    })();
+    </script>
   </div>
   <div class="sb-footer">
     <button id="theme-toggle">🌙 Dark mode</button>
@@ -2531,9 +2552,9 @@ footer { display: none; }
       <a href="chapters.html" id="chapter-cta">
         <div class="cc-inner">
           <div class="cc-copy">
-            <div class="cc-kicker">For chapter officers &amp; advisors</div>
+            <div class="cc-kicker">Any member can start one &mdash; no officer role needed</div>
             <div class="cc-title">Bring your whole HOSA chapter</div>
-            <div class="cc-sub">One join link for every member, your chapter ranked on the national chapter leaderboard, and an officer dashboard. Free &mdash; and your members never need an account.</div>
+            <div class="cc-sub">You don't have to be an officer. Start your school's chapter and unlock printable study sheets, a live chapter dashboard and a spot on the national chapter leaderboard &mdash; for everyone who uses your link.</div>
           </div>
           <div class="cc-btn">Register your chapter &rarr;</div>
         </div>
