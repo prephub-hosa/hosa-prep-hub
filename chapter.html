@@ -225,8 +225,11 @@
     var rank = ranked.indexOf(slug) + 1;
 
     // Founding Chapter: earned by reaching the top 10, then kept for good.
-    var founding = !!info.founding;
-    if (!founding && rank && rank <= 10) {
+    // Same rule as the home board: the mark follows real membership, never a
+    // single browser's local state. members[] is built purely from
+    // leaderboard/level, so requiring it here keeps the two pages in step.
+    var founding = !!info.founding && members.length > 0;
+    if (!founding && rank && rank <= 10 && members.length > 0) {
       founding = true;
       try {
         firebase.database().ref('chapters/' + slug)
