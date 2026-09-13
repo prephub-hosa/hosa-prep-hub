@@ -74,6 +74,69 @@
   }
   .founding-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
   html:not([data-theme]) .founding-pill { color: #e3c766; }
+
+  /* ── Founder-only contact block ─────────────────────────────── */
+  .fc-contact {
+    margin-top: 22px;
+    padding: 20px 22px;
+    border: 1px solid rgba(185,28,28,0.25);
+    border-radius: 14px;
+    background:
+      radial-gradient(60% 90% at 0% 0%, rgba(185,28,28,0.07), transparent 62%),
+      var(--bg-card);
+  }
+  html:not([data-theme]) .fc-contact { border-color: rgba(239,68,68,0.28); }
+  .fc-contact-kicker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .fc-contact-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 6px;
+  }
+  .fc-contact-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 14px;
+  }
+  .fc-contact-mail {
+    display: inline-block;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 15px; font-weight: 600;
+    color: var(--accent); text-decoration: none;
+    padding: 10px 16px; border-radius: 9px;
+    border: 1px solid rgba(185,28,28,0.3);
+    background: rgba(185,28,28,0.06);
+    word-break: break-all;
+  }
+  .fc-contact-mail:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .fc-contact-note {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 12.5px; color: var(--ink-faint); margin: 12px 0 0;
+  }
+  .fc-contact-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fc-contact-row input {
+    flex: 1 1 220px; min-width: 0;
+    border: 1px solid var(--rule); border-radius: 8px;
+    padding: 11px 13px; font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px; background: var(--bg); color: var(--ink);
+  }
+  .fc-contact-row input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(185,28,28,0.14); }
+  .fc-contact-row button {
+    flex: 0 0 auto;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; padding: 11px 20px; cursor: pointer;
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px; font-weight: 600;
+  }
+  .fc-contact-row button:hover { filter: brightness(1.08); }
+  .fc-contact-err {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px; color: var(--accent); margin: 10px 0 0; min-height: 16px;
+  }
+  @media (max-width: 620px) {
+    .fc-contact { padding: 18px 16px; }
+    .fc-contact-row button { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -97,6 +160,8 @@
     </div>
     <p class="sub" id="ch-copied" style="min-height:16px;"></p>
   </div>
+  <div id="founder-contact" style="display:none;"></div>
+
   <h2>Members</h2>
   <p class="sub" id="ch-members-sub">Everyone studying under your chapter, ranked by XP earned.</p>
   <div id="ch-members"></div>
@@ -108,6 +173,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="chapter-contact.js"></script>
 <script src="feedback-widget.js" defer></script>
 <script>
 (function(){
@@ -183,6 +249,12 @@
       + '<div class="stat"><div class="stat-n">' + num(chapterXp) + '</div><div class="stat-l">Chapter XP</div></div>'
       + '<div class="stat"><div class="stat-n">' + (rank || '—') + '</div><div class="stat-l">National rank</div></div>'
       + '<div class="stat"><div class="stat-n">' + xpLevel(chapterXp) + '</div><div class="stat-l">Chapter level</div></div>';
+
+    // Founder-only: members who arrived through the join link never see this.
+    try {
+      window.HosaChapterContact.mount(document.getElementById('founder-contact'),
+        { slug: slug, name: name, record: info });
+    } catch(e) {}
 
     var base = location.href.split('#')[0].split('?')[0].replace(/chapter\.html$/, 'index.html');
     $('ch-link').value = base + '?chapter=' + slug;
