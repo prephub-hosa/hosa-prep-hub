@@ -151,6 +151,48 @@
     .fc-contact { padding: 18px 16px; }
     .fc-contact-row button { width: 100%; }
   }
+
+  /* ── Share kit ──────────────────────────────────────────────── */
+  .sk { margin-top: 22px; padding: 22px 24px; border: 1px solid var(--rule);
+        border-radius: 14px; background: var(--bg-card); }
+  .sk-kicker { font-family:'Geist Mono',ui-monospace,monospace; font-size:10px;
+               letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .sk-title { font-family:'Fraunces',Georgia,serif; font-size:21px; font-weight:500;
+              color:var(--ink); margin-bottom:6px; }
+  .sk-sub { font-family:'Source Serif 4',Georgia,serif; font-size:14px; line-height:1.6;
+            color:var(--ink-soft); margin:0 0 18px; }
+  .sk-step { display:flex; gap:14px; padding:16px 0; border-top:1px solid var(--rule); }
+  .sk-step:first-of-type { border-top:none; padding-top:4px; }
+  .sk-n { flex:0 0 26px; width:26px; height:26px; border-radius:50%;
+          background:var(--accent); color:#fff; display:flex; align-items:center;
+          justify-content:center; font-size:13px; font-weight:700;
+          font-family:'Inter',sans-serif; }
+  .sk-body { flex:1 1 auto; min-width:0; }
+  .sk-h { font-family:'Inter',sans-serif; font-size:15.5px; font-weight:700;
+          letter-spacing:-.02em; color:var(--ink); margin-bottom:4px; }
+  .sk-p { font-family:'Source Serif 4',Georgia,serif; font-size:13.5px; line-height:1.6;
+          color:var(--ink-soft); margin:0 0 12px; }
+  .sk-msg { white-space:pre-wrap; font-family:'Source Serif 4',Georgia,serif;
+            font-size:13.5px; line-height:1.6; color:var(--ink);
+            background:var(--bg); border:1px solid var(--rule); border-radius:10px;
+            padding:14px 15px; margin-bottom:12px; }
+  .sk-row { display:flex; gap:9px; flex-wrap:wrap; }
+  .sk-btn { background:var(--accent); color:#fff; border:none; border-radius:9px;
+            padding:11px 18px; cursor:pointer; font-family:'Source Serif 4',Georgia,serif;
+            font-size:14.5px; font-weight:600; }
+  .sk-btn:hover { filter:brightness(1.08); }
+  .sk-btn-ghost { background:transparent; color:var(--ink); border:1px solid var(--rule-strong,var(--rule)); }
+  .sk-btn-ghost:hover { border-color:var(--accent); color:var(--accent); filter:none; }
+  .sk-note { font-family:'Source Serif 4',Georgia,serif; font-size:12.5px;
+             color:var(--ink-faint); margin:10px 0 0; min-height:16px; }
+  .sk-qr-wrap { background:#fff; border:1px solid var(--rule); border-radius:12px;
+                padding:14px; display:inline-block; margin-bottom:12px; }
+  .sk-qr-wrap canvas { display:block; width:200px; height:200px; image-rendering:pixelated; }
+  @media (max-width:620px) {
+    .sk { padding:18px 16px; }
+    .sk-btn, .sk-btn-ghost { flex:1 1 auto; text-align:center; }
+    .sk-qr-wrap canvas { width:168px; height:168px; }
+  }
 </style>
 </head>
 <body>
@@ -174,6 +216,7 @@
     </div>
     <p class="sub" id="ch-copied" style="min-height:16px;"></p>
   </div>
+  <div id="share-kit" style="display:none;"></div>
   <div id="founder-contact" style="display:none;"></div>
 
   <h2>Members</h2>
@@ -187,6 +230,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="qr.js"></script>
+<script src="share-kit.js"></script>
 <script src="chapter-contact.js"></script>
 <script src="feedback-widget.js" defer></script>
 <script>
@@ -276,6 +321,13 @@
     var base = location.href.split('#')[0].split('?')[0].replace(/chapter\.html$/, 'index.html');
     $('ch-link').value = base + '?chapter=' + slug;
     $('ch-link-wrap').style.display = '';
+
+    // Mounted here, not earlier: ch-link is only filled in on the line above,
+    // and the kit hides itself when handed an empty link.
+    try {
+      window.HosaShareKit.mount(document.getElementById('share-kit'),
+        { slug: slug, name: name, link: $('ch-link').value });
+    } catch(e) {}
     // Reached via localStorage with a bare URL — put the slug in the address
     // bar so bookmarking or sharing this page actually works.
     try {
