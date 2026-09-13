@@ -10934,22 +10934,29 @@ window.hosaXPFlyup = function(el, amount) {
   // Real users fetched from Firebase. Uses the public leaderboard/level path
   // so signed-in users can see everyone else (the users/ path is per-user gated).
   var FIREBASE_USERS = [];
+  var CHAPTER_MEMBERS = [];
   function fetchFirebaseUsers(cb) {
     try {
       if (typeof firebase === 'undefined' || !firebase.database) { cb && cb(); return; }
       firebase.database().ref('leaderboard/level').once('value').then(function(snap) {
         var data = snap.val() || {};
         var out = [];
+        var tagged = [];
         Object.keys(data).forEach(function(uid) {
           var u = data[uid] || {};
           var xp = parseInt(u.xp || 0, 10);
+          var row = { uid: uid, name: u.name || 'Student', xp: xp, avatar: '👤',
+                      days: parseInt(u.days || 0, 10) || 0,
+                      chapter: u.chapter || '', chapterName: u.chapterName || '' };
+          // Chapter membership counts from the moment someone opens the join
+          // link; earning XP is a separate thing. The player board still hides
+          // anyone on zero.
+          if (row.chapter) tagged.push(row);
           if (xp <= 0) return;
-          var name = u.name || 'Student';
-          out.push({ uid: uid, name: name, xp: xp, avatar: '👤',
-                     days: parseInt(u.days || 0, 10) || 0,
-                     chapter: u.chapter || '', chapterName: u.chapterName || '' });
+          out.push(row);
         });
         FIREBASE_USERS = out;
+        CHAPTER_MEMBERS = tagged;
         cb && cb();
       }).catch(function() { cb && cb(); });
     } catch(e) { cb && cb(); }
@@ -11084,11 +11091,13 @@ window.hosaXPFlyup = function(el, amount) {
   // board already uses: a member tagged via a chapter link carries a
   // `chapter` field on their row, so no extra writable node is needed.
   var FOUNDING = {};
+  var CHAPTERS = {};
   function _loadFounding(cb) {
     try {
       firebase.database().ref('chapters').get().then(function(s) {
         var v = (s && s.val()) || {};
         Object.keys(v).forEach(function(k) {
+          CHAPTERS[k] = v[k] || {};
           if (v[k] && v[k].founding) FOUNDING[k] = true;
           if (v[k] && v[k].featured) FEATURED[k] = true;
         });
@@ -11152,7 +11161,14 @@ window.hosaXPFlyup = function(el, amount) {
     var groups = {};
     var myId = currentUid() || guestId();
     var meCounted = false;
-    FIREBASE_USERS.forEach(function(u) {
+    // Every registered chapter is on the board from sign-up, even at zero.
+    // An empty board is the worst possible advertisement for registering.
+    Object.keys(CHAPTERS).forEach(function(slug) {
+      var c = CHAPTERS[slug] || {};
+      groups[slug] = { slug: slug, name: c.name || c.school || slug.replace(/-/g, ' '),
+                       xp: 0, members: 0, active: 0 };
+    });
+    CHAPTER_MEMBERS.forEach(function(u) {
       if (!u.chapter) return;
       if (myId && u.uid === myId) meCounted = true;
       var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0, active: 0 });
@@ -11177,13 +11193,15 @@ window.hosaXPFlyup = function(el, amount) {
       groups[mine].name = lname || mine.replace(/-/g, ' ');
     }
     var rows = Object.keys(groups).map(function(k){ return groups[k]; });
-    rows.sort(function(a, b){ return b.xp - a.xp; });
+    rows.sort(function(a, b){
+      return (b.xp - a.xp) || (b.members - a.members) || String(a.name).localeCompare(String(b.name));
+    });
     // Founding Chapter: earned by reaching the top 10, then kept for good.
     // Written back to chapters/{slug} so the mark survives a rank slip,
     // a new device, and anyone else's view of the board.
     rows.forEach(function(r, i) {
       r.founding = !!FOUNDING[r.slug];
-      if (!r.founding && i < 10) { r.founding = true; _markFounding(r.slug); }
+      if (!r.founding && i < 10 && r.members > 0) { r.founding = true; _markFounding(r.slug); }
       r.featured = (r.active || 0) >= 15;
       if (r.featured && !FEATURED[r.slug]) { FEATURED[r.slug] = true; _markFeatured(r.slug, r.name, r.active); }
     });
