@@ -10935,6 +10935,7 @@ window.hosaXPFlyup = function(el, amount) {
   // so signed-in users can see everyone else (the users/ path is per-user gated).
   var FIREBASE_USERS = [];
   var CHAPTER_MEMBERS = [];
+  var LB_OK = false;
   function fetchFirebaseUsers(cb) {
     try {
       if (typeof firebase === 'undefined' || !firebase.database) { cb && cb(); return; }
@@ -10957,6 +10958,7 @@ window.hosaXPFlyup = function(el, amount) {
         });
         FIREBASE_USERS = out;
         CHAPTER_MEMBERS = tagged;
+        LB_OK = true;
         cb && cb();
       }).catch(function() { cb && cb(); });
     } catch(e) { cb && cb(); }
@@ -11092,6 +11094,7 @@ window.hosaXPFlyup = function(el, amount) {
   // `chapter` field on their row, so no extra writable node is needed.
   var FOUNDING = {};
   var CHAPTERS = {};
+  var CHAPTERS_OK = false;
   function _loadFounding(cb) {
     try {
       firebase.database().ref('chapters').get().then(function(s) {
@@ -11101,9 +11104,26 @@ window.hosaXPFlyup = function(el, amount) {
           if (v[k] && v[k].founding) FOUNDING[k] = true;
           if (v[k] && v[k].featured) FEATURED[k] = true;
         });
+        CHAPTERS_OK = true;
         cb && cb();
       }).catch(function() { cb && cb(); });
     } catch(e) { cb && cb(); }
+  }
+
+  // Clears a mark this client previously wrote from local state alone.
+  var _unmarkWrites = {};
+  function _unmarkFounding(slug) {
+    if (!slug || _unmarkWrites[slug]) return;
+    _unmarkWrites[slug] = true;
+    delete FOUNDING[slug];
+    try {
+      firebase.database().ref('chapters/' + slug)
+        .update({ founding: null, foundingAt: null })
+        .catch(function() {
+          firebase.database().ref('analytics/chapters/' + slug)
+            .update({ founding: null, foundingAt: null }).catch(function(){});
+        });
+    } catch(e) {}
   }
   var FEATURED = {};
   var _featuredWrites = {};
@@ -11166,14 +11186,15 @@ window.hosaXPFlyup = function(el, amount) {
     Object.keys(CHAPTERS).forEach(function(slug) {
       var c = CHAPTERS[slug] || {};
       groups[slug] = { slug: slug, name: c.name || c.school || slug.replace(/-/g, ' '),
-                       xp: 0, members: 0, active: 0 };
+                       xp: 0, members: 0, active: 0, confirmed: 0 };
     });
     CHAPTER_MEMBERS.forEach(function(u) {
       if (!u.chapter) return;
       if (myId && u.uid === myId) meCounted = true;
-      var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0, active: 0 });
+      var g = groups[u.chapter] || (groups[u.chapter] = { slug: u.chapter, name: u.chapterName || u.chapter, xp: 0, members: 0, active: 0, confirmed: 0 });
       g.xp += (u.xp || 0);
       g.members += 1;
+      g.confirmed += 1;
       if ((u.days || 0) >= 3) g.active += 1;
       if (u.chapterName) g.name = u.chapterName;
     });
@@ -11182,7 +11203,10 @@ window.hosaXPFlyup = function(el, amount) {
     if (mine && !meCounted) {
       var myXp = getUserXP();
       if (myXp > 0) {
-        var g = groups[mine] || (groups[mine] = { slug: mine, name: '', xp: 0, members: 0, active: 0 });
+        // Display only. This must never touch g.confirmed: nothing here has
+        // reached the server yet, and an unsynced browser must not be able to
+        // award a permanent badge.
+        var g = groups[mine] || (groups[mine] = { slug: mine, name: '', xp: 0, members: 0, active: 0, confirmed: 0 });
         g.xp += myXp; g.members += 1;
         if (activeDays() >= 3) g.active += 1;
       }
@@ -11199,10 +11223,18 @@ window.hosaXPFlyup = function(el, amount) {
     // Founding Chapter: earned by reaching the top 10, then kept for good.
     // Written back to chapters/{slug} so the mark survives a rank slip,
     // a new device, and anyone else's view of the board.
+    // Repairing a badge we wrongly awarded needs both fetches to have actually
+    // succeeded — otherwise an offline load would look like "every chapter has
+    // no members" and wipe legitimately earned marks.
+    var canReconcile = CHAPTERS_OK && LB_OK;
     rows.forEach(function(r, i) {
       r.founding = !!FOUNDING[r.slug];
-      if (!r.founding && i < 10 && r.members > 0) { r.founding = true; _markFounding(r.slug); }
-      r.featured = (r.active || 0) >= 15;
+      if (r.founding && canReconcile && (r.confirmed || 0) === 0) {
+        // Stamped by a browser's local state rather than by real membership.
+        r.founding = false; _unmarkFounding(r.slug);
+      }
+      if (!r.founding && i < 10 && (r.confirmed || 0) > 0) { r.founding = true; _markFounding(r.slug); }
+      r.featured = (r.active || 0) >= 15 && (r.confirmed || 0) >= 15;
       if (r.featured && !FEATURED[r.slug]) { FEATURED[r.slug] = true; _markFeatured(r.slug, r.name, r.active); }
     });
     _renderFeatured(rows);
