@@ -18,10 +18,12 @@
 
   function messageFor(chapterName, link) {
     return 'Hey ' + chapterName + ' — I set us up on HOSA Prep Hub. '
-      + 'It\'s free flashcards, quizzes and timed practice tests for every HOSA event.\n\n'
-      + 'Open this link and you\'re automatically on our chapter:\n' + link + '\n\n'
-      + 'No account, nothing to sign up for. Everything you study counts toward our '
-      + 'chapter on the national leaderboard.';
+      + 'Free flashcards, quizzes and timed tests for every HOSA event.\n\n'
+      + 'Open this link and you unlock two things the site doesn\'t give anyone else: '
+      + 'a readiness report that projects your exam score and tells you which categories '
+      + 'you\'re weakest in, and printable practice exams with answer keys.\n\n'
+      + link + '\n\n'
+      + 'No account, nothing to sign up for.';
   }
 
   /**
