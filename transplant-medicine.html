@@ -1301,12 +1301,50 @@
   /* ——— Test section base ——— */
   .test-intro { box-sizing: border-box; width: 100%; }
 
+
+  /* ── Chapter member tools ──────────────────────────────────── */
+  #member-tools { border:1px solid var(--accent); border-radius:12px; padding:22px 24px;
+                  margin-bottom:26px; background:var(--bg-card); }
+  .mt-kicker { font-family:'Geist Mono',ui-monospace,monospace; font-size:10px;
+               letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:7px; }
+  .mt-title { font-family:'Fraunces',Georgia,serif; font-size:21px; font-weight:500;
+              color:var(--ink); margin-bottom:5px; line-height:1.25; }
+  .mt-sub { font-family:'Source Serif 4',Georgia,serif; font-size:13.5px; line-height:1.6;
+            color:var(--ink-soft); margin:0 0 18px; }
+  .mt-tool { display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+             padding:16px 0; border-top:1px solid var(--rule); }
+  .mt-tool-main { flex:1 1 300px; min-width:0; }
+  .mt-tool-h { font-family:'Inter',sans-serif; font-size:15.5px; font-weight:700;
+               letter-spacing:-.02em; color:var(--ink); margin-bottom:4px; }
+  .mt-tool-p { font-family:'Source Serif 4',Georgia,serif; font-size:13.5px; line-height:1.6;
+               color:var(--ink-soft); margin:0; }
+  .mt-tool-act { flex:0 0 auto; }
+  .mt-btn { display:inline-block; background:var(--accent); color:#fff; border:none;
+            border-radius:9px; padding:12px 20px; cursor:pointer; text-decoration:none;
+            font-family:'Source Serif 4',Georgia,serif; font-size:14.5px; font-weight:600;
+            white-space:nowrap; min-height:44px; }
+  .mt-btn:hover { filter:brightness(1.08); }
+  .mt-btn-ghost { background:transparent; color:var(--ink); border:1px solid var(--rule-strong,var(--rule)); }
+  .mt-btn-ghost:hover { border-color:var(--accent); color:var(--accent); filter:none; }
+  .mt-score { margin-top:9px; font-family:'Geist Mono',ui-monospace,monospace; font-size:11.5px;
+              color:var(--ink-soft); }
+  .mt-score b { color:var(--accent); font-size:14px; }
+  .mt-score-empty { color:var(--ink-faint); }
+  .mt-foot { font-family:'Source Serif 4',Georgia,serif; font-size:12.5px; color:var(--ink-faint);
+             margin:16px 0 0; padding-top:14px; border-top:1px solid var(--rule); }
+  @media (max-width:620px) {
+    #member-tools { padding:18px 16px; }
+    .mt-tool { gap:12px; }
+    .mt-btn { width:100%; text-align:center; }
+    .mt-tool-act { flex:1 1 100%; }
+  }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="feedback-widget.js" defer></script>
+<script src="member-tools.js" defer></script>
 <script src="leaderboard.js" defer></script>
 <style id="enhancements-v2">
   html { scroll-behavior: smooth; }
@@ -1704,6 +1742,7 @@
     <!-- Chapter perk: a printable study sheet of the whole deck. Real study
          utility (students and advisors print these for meetings), and it is a
          new feature, so nothing was taken away from anyone to create it. -->
+    <div id="member-tools"></div>
     <div id="print-sheet-panel" style="border:1px solid var(--accent);border-radius:11px;padding:20px 22px;margin-bottom:26px;background:var(--bg-card);">
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         <div style="flex:1 1 260px;min-width:0;">
@@ -2533,7 +2572,7 @@ function _renderPrintSheetPanel() {
       + "text-decoration:none;border-radius:8px;padding:12px 20px;font-family:'Source Serif 4',Georgia,serif;"
       + 'font-size:15px;font-weight:600;white-space:nowrap;">Start a chapter to unlock &rarr;</a>';
     if (desc) desc.innerHTML = 'Every term and definition in this event, laid out for printing or saving as a PDF. '
-      + 'Unlocked for anyone in a chapter &mdash; <strong>any member can start one</strong>, it takes a minute.';
+      + 'One of three chapter-member tools &mdash; <strong>any member can unlock them</strong>, it takes a minute.';
   }
 }
 
