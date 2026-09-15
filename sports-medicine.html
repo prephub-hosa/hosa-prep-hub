@@ -1411,6 +1411,14 @@
     .mt-btn { width:100%; text-align:center; }
     .mt-tool-act { flex:1 1 100%; }
   }
+
+  .card-detail { font-family:'Source Serif 4',Georgia,serif; font-size:13px; line-height:1.55;
+                 color:var(--ink-soft); margin-top:12px; padding-top:11px;
+                 border-top:1px solid var(--rule); text-align:left; }
+  .card-detail-label { display:block; font-family:'Geist Mono',ui-monospace,monospace;
+                       font-size:9px; letter-spacing:.13em; text-transform:uppercase;
+                       color:var(--ink-faint); margin-bottom:5px; }
+  @media (max-width:620px){ .card-detail { font-size:12.5px; margin-top:10px; padding-top:9px; } }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1578,6 +1586,10 @@
             <span class="corner">Explanation</span>
             <span class="corner right" id="flash-cat-back"></span>
             <div class="definition" id="flash-back-def"></div>
+            <div class="card-detail" id="flash-back-detail" style="display:none">
+              <span class="card-detail-label">More detail</span>
+              <span id="flash-back-detail-text"></span>
+            </div>
             <div class="example" id="flash-back-ex">
               <span class="example-label">Example</span>
               <span id="flash-back-ex-text"></span>
@@ -1914,7 +1926,7 @@ const TERMS = [
   { term: "Concussion", type: "injury", category: "injuries", meaning: "A mild traumatic brain injury caused by a direct or indirect blow to the head that temporarily disrupts normal brain function.", example: "An athlete who appears dazed, reports headache and confusion after a collision is evaluated for concussion." },
   { term: "Contusion", type: "injury", category: "injuries", meaning: "A bruise resulting from a direct blow to soft tissue that damages underlying structures without breaking the skin; causes localized bleeding.", example: "A soccer player struck by the ball develops a quadriceps contusion with swelling and tenderness." },
   { term: "Tendinopathy", type: "injury", category: "injuries", meaning: "A chronic overuse injury of a tendon resulting in pain, swelling, and impaired function due to repetitive microtrauma and failed healing.", example: "A volleyball player with persistent posterior heel pain is diagnosed with Achilles tendinopathy." },
-  { term: "ACL Tear", type: "injury", category: "injuries", meaning: "A rupture of the anterior cruciate ligament, often occurring with a non-contact pivot or landing; causes knee instability and significant functional loss.", example: "A basketball player pivots, hears a pop, and cannot continue due to knee pain and swelling." },
+  { term: "ACL Tear", type: "injury", category: "injuries", meaning: "Rupture of the anterior cruciate ligament, causing knee instability.", detail: "Often happens on a non-contact pivot or landing, with significant loss of function.", example: "A basketball player pivots, hears a pop, and cannot continue due to knee pain and swelling." },
   { term: "Rotator Cuff Tear", type: "injury", category: "injuries", meaning: "Partial or complete rupture of one or more rotator cuff tendons, most commonly the supraspinatus; causes shoulder pain and weakness.", example: "A baseball pitcher with progressive shoulder pain and weakness during external rotation has a partial rotator cuff tear." },
   { term: "Medial Tibial Stress Syndrome", type: "injury", category: "injuries", meaning: "Also called shin splints; diffuse pain along the posteromedial border of the tibia from repetitive stress; common in runners and military recruits.", example: "A cross-country runner reports aching shin pain that improves with rest but returns immediately on running." },
   { term: "Plantar Fasciitis", type: "injury", category: "injuries", meaning: "Inflammation and degeneration of the plantar fascia at its calcaneal insertion; causes heel pain that is worst with the first steps in the morning.", example: "A distance runner complains of sharp plantar heel pain every morning for the past three weeks." },
@@ -1924,7 +1936,7 @@ const TERMS = [
 
   { term: "HOPS", type: "concept", category: "assessment", meaning: "A systematic framework for athletic injury evaluation: History, Observation, Palpation, and Special Tests.", example: "An athletic trainer uses HOPS to evaluate an ankle injury on the sideline." },
   { term: "Mechanism of Injury (MOI)", type: "concept", category: "assessment", meaning: "The specific forces or motions that produced the injury; understanding MOI guides diagnosis and predicts injury patterns.", example: "An inversion MOI at the ankle with the foot plantarflexed is consistent with an ATFL sprain." },
-  { term: "SAMPLE History", type: "concept", category: "assessment", meaning: "A framework for collecting patient history: Signs and Symptoms, Allergies, Medications, Past medical history, Last oral intake, Events leading to injury.", example: "SAMPLE history is used during sideline emergency assessment to guide treatment decisions." },
+  { term: "SAMPLE History", type: "concept", category: "assessment", meaning: "A history framework: Signs/symptoms, Allergies, Medications, Past history, Last intake, Events.", example: "SAMPLE history is used during sideline emergency assessment to guide treatment decisions." },
   { term: "Point of Maximal Tenderness", type: "concept", category: "assessment", meaning: "The specific location on palpation that elicits the greatest pain response; used to localize the injured structure.", example: "Point of maximal tenderness over the ATFL suggests an ankle sprain rather than a fracture." },
   { term: "Active Range of Motion (AROM)", type: "concept", category: "assessment", meaning: "The range through which a patient can move a joint using their own muscle strength, without assistance.", example: "Decreased AROM of shoulder abduction may indicate supraspinatus involvement." },
   { term: "Passive Range of Motion (PROM)", type: "concept", category: "assessment", meaning: "The range through which an examiner moves a joint without patient muscle activation; tests joint capsule and ligament integrity.", example: "Pain at end-range PROM suggests capsular or ligamentous involvement." },
@@ -1944,9 +1956,9 @@ const TERMS = [
   { term: "Rotator Cuff", type: "anatomy", category: "anatomy", meaning: "Four muscles (SITS: Supraspinatus, Infraspinatus, Teres minor, Subscapularis) forming a muscular cuff that stabilizes and rotates the shoulder.", example: "The supraspinatus is the most commonly torn rotator cuff muscle in overhead athletes." },
   { term: "Anterior Cruciate Ligament (ACL)", type: "anatomy", category: "anatomy", meaning: "A primary knee stabilizer running from the posterior femur to the anterior tibia; prevents anterior translation and rotational instability.", example: "Female athletes tear the ACL at two to eight times the rate of male athletes." },
   { term: "Achilles Tendon", type: "anatomy", category: "anatomy", meaning: "The largest and strongest tendon in the body, connecting the gastrocnemius and soleus to the calcaneus; rupture causes sudden loss of plantarflexion.", example: "A racket sport player reports a sudden pop at the heel and inability to push off." },
-  { term: "Plantar Fascia", type: "anatomy", category: "anatomy", meaning: "A thick band of connective tissue spanning the plantar surface of the foot from the calcaneal tubercle to the metatarsal heads; supports the longitudinal arch.", example: "Excessive pronation and tight calf muscles increase tension on the plantar fascia." },
+  { term: "Plantar Fascia", type: "anatomy", category: "anatomy", meaning: "The thick connective tissue band along the sole that supports the arch.", detail: "Runs from the calcaneal tubercle to the metatarsal heads.", example: "Excessive pronation and tight calf muscles increase tension on the plantar fascia." },
   { term: "Iliotibial (IT) Band", type: "anatomy", category: "anatomy", meaning: "A thick band of fascia running along the lateral thigh from the tensor fasciae latae to the lateral tibial tubercle; important for knee stabilization.", example: "IT band tightness is assessed with the Ober test in supine side-lying position." },
-  { term: "Epiphyseal Plate", type: "anatomy", category: "anatomy", meaning: "The cartilaginous growth plate near the ends of long bones in skeletally immature athletes; weaker than surrounding ligaments and vulnerable to injury.", example: "In young athletes, a ligament stress may cause a growth plate fracture rather than a ligament tear." },
+  { term: "Epiphyseal Plate", type: "anatomy", category: "anatomy", meaning: "The cartilage growth plate in a young athlete's long bones.", detail: "Weaker than the surrounding ligaments, so it is especially vulnerable to injury.", example: "In young athletes, a ligament stress may cause a growth plate fracture rather than a ligament tear." },
   { term: "Synovial Joint", type: "anatomy", category: "anatomy", meaning: "A freely movable joint enclosed in a fibrous capsule and lubricated by synovial fluid; most joints in the extremities are synovial joints.", example: "The knee, shoulder, hip, and ankle are all synovial joints." },
   { term: "Fascia", type: "anatomy", category: "anatomy", meaning: "A sheet of dense connective tissue that surrounds, separates, and supports muscles and organs throughout the body.", example: "Myofascial restrictions in the thoracolumbar fascia can contribute to lower back pain in athletes." },
 
@@ -1966,22 +1978,22 @@ const TERMS = [
   { term: "Phases of Healing", type: "concept", category: "rehabilitation", meaning: "Three overlapping stages of tissue repair: inflammatory (days 1 to 5), proliferative (days 5 to 21), and remodeling (weeks 3 through 2 years).", example: "Rehabilitation exercises progress in intensity and complexity through each phase of healing." },
   { term: "Inflammatory Phase", type: "concept", category: "rehabilitation", meaning: "The first phase of tissue healing characterized by vasodilation, edema, pain, warmth, and redness as the body removes damaged tissue.", example: "PRICE is most effective when applied during the first 24 to 72 hours of the inflammatory phase." },
   { term: "Proliferative Phase", type: "concept", category: "rehabilitation", meaning: "The second healing phase in which fibroblasts lay down new collagen, granulation tissue forms, and wound contraction begins.", example: "Early controlled loading during the proliferative phase promotes collagen fiber alignment." },
-  { term: "Remodeling Phase", type: "concept", category: "rehabilitation", meaning: "The final healing phase in which collagen cross-links mature and align along lines of stress; tissue gradually regains tensile strength over months to years.", example: "Full ligament remodeling after ACL reconstruction can take 12 to 24 months." },
-  { term: "Progressive Resistive Exercise (PRE)", type: "concept", category: "rehabilitation", meaning: "A rehabilitation strength training approach that systematically increases resistance as the athlete regains strength, to safely build muscular capacity.", example: "A patient progresses from body-weight squats to weighted squats during knee rehabilitation." },
+  { term: "Remodeling Phase", type: "concept", category: "rehabilitation", meaning: "The final healing phase, where collagen matures and aligns along lines of stress.", detail: "Tissue gradually regains tensile strength over months to years.", example: "Full ligament remodeling after ACL reconstruction can take 12 to 24 months." },
+  { term: "Progressive Resistive Exercise (PRE)", type: "concept", category: "rehabilitation", meaning: "Rehab strength training that steadily increases resistance as the athlete recovers.", detail: "Builds muscular capacity safely.", example: "A patient progresses from body-weight squats to weighted squats during knee rehabilitation." },
   { term: "Proprioceptive Training", type: "concept", category: "rehabilitation", meaning: "Exercises that challenge and restore the body's ability to sense joint position and movement, reducing the risk of re-injury after a sprain.", example: "Single-leg balance on a wobble board is a proprioceptive training exercise after ankle sprain." },
   { term: "Functional Progression", type: "concept", category: "rehabilitation", meaning: "A rehabilitation sequence that advances from basic controlled movements through increasingly sport-specific activities before return to full play.", example: "A soccer player progresses from walking to jogging, cutting, then full scrimmage over six weeks." },
   { term: "Return to Play (RTP)", type: "concept", category: "rehabilitation", meaning: "The clinical decision process that determines when an injured athlete is medically cleared and functionally ready to resume full competitive activity.", example: "An athlete must pass sport-specific functional testing and be symptom-free before RTP clearance." },
   { term: "Cross-Training", type: "concept", category: "rehabilitation", meaning: "Participation in alternative physical activities during injury recovery to maintain cardiovascular fitness while protecting the injured area.", example: "A runner with a tibial stress fracture may swim or cycle to maintain fitness during recovery." },
 
-  { term: "Heat Exhaustion", type: "condition", category: "conditions", meaning: "A heat-related illness presenting with heavy sweating, weakness, cool pale clammy skin, nausea, and dizziness; core temperature below 104 degrees Fahrenheit.", example: "A football player in full pads during summer practice collapses with a temperature of 102 degrees and is moved to shade for cooling." },
-  { term: "Heat Stroke", type: "condition", category: "conditions", meaning: "A life-threatening emergency with a core temperature above 104 degrees Fahrenheit accompanied by CNS dysfunction; skin may be hot and dry; requires immediate cooling.", example: "Exertional heat stroke is confirmed by rectal temperature; immediate cold water immersion is the treatment of choice." },
+  { term: "Heat Exhaustion", type: "condition", category: "conditions", meaning: "Heat illness with heavy sweating, weakness, cool clammy skin, nausea and dizziness.", detail: "Core temperature stays below 104°F.", example: "A football player in full pads during summer practice collapses with a temperature of 102 degrees and is moved to shade for cooling." },
+  { term: "Heat Stroke", type: "condition", category: "conditions", meaning: "A life-threatening emergency: core temperature above 104°F with CNS dysfunction.", detail: "Skin may be hot and dry. Requires immediate cooling.", example: "Exertional heat stroke is confirmed by rectal temperature; immediate cold water immersion is the treatment of choice." },
   { term: "Exertional Rhabdomyolysis", type: "condition", category: "conditions", meaning: "Breakdown of skeletal muscle from extreme exercise that releases myoglobin into the bloodstream, potentially causing acute kidney injury.", example: "Dark cola-colored urine in an athlete after extreme exertion is a warning sign of rhabdomyolysis." },
-  { term: "Exercise-Induced Bronchoconstriction", type: "condition", category: "conditions", meaning: "Narrowing of the airways triggered by vigorous exercise, causing coughing, wheezing, chest tightness, and shortness of breath during or after activity.", example: "A cross-country runner who coughs and wheezes for 30 minutes after races is evaluated for exercise-induced bronchoconstriction." },
-  { term: "Hyponatremia", type: "condition", category: "conditions", meaning: "Abnormally low blood sodium concentration caused by excessive water intake; common in endurance athletes; causes nausea, confusion, and in severe cases, seizures.", example: "A marathon runner who drinks only water and finishes with swollen hands and confusion may have hyponatremia." },
-  { term: "Sudden Cardiac Arrest (SCA)", type: "condition", category: "conditions", meaning: "Abrupt cessation of effective cardiac activity in an athlete; the most common cause in young athletes is hypertrophic cardiomyopathy; treated with CPR and AED.", example: "An AED is used immediately when a basketball player collapses and is found to be pulseless." },
+  { term: "Exercise-Induced Bronchoconstriction", type: "condition", category: "conditions", meaning: "Airway narrowing brought on by vigorous exercise.", detail: "Causes coughing, wheezing, chest tightness and breathlessness during or after activity.", example: "A cross-country runner who coughs and wheezes for 30 minutes after races is evaluated for exercise-induced bronchoconstriction." },
+  { term: "Hyponatremia", type: "condition", category: "conditions", meaning: "Dangerously low blood sodium, usually from drinking too much water.", detail: "Common in endurance athletes; causes nausea, confusion and, when severe, seizures.", example: "A marathon runner who drinks only water and finishes with swollen hands and confusion may have hyponatremia." },
+  { term: "Sudden Cardiac Arrest (SCA)", type: "condition", category: "conditions", meaning: "Abrupt loss of effective cardiac activity in an athlete.", detail: "Hypertrophic cardiomyopathy is the most common cause in the young. Treated with CPR and an AED.", example: "An AED is used immediately when a basketball player collapses and is found to be pulseless." },
   { term: "Hypertrophic Cardiomyopathy (HCM)", type: "condition", category: "conditions", meaning: "A genetic cardiac condition causing abnormal thickening of the ventricular wall; the most common cause of sudden cardiac death in athletes under 35.", example: "Pre-participation physical examinations aim to detect HCM before an athlete begins competitive sports." },
-  { term: "Overtraining Syndrome", type: "condition", category: "conditions", meaning: "A maladaptive response to excessive training without adequate recovery, characterized by decreased performance, persistent fatigue, mood disturbances, and increased injury risk.", example: "A swimmer who trains twice daily for months without rest days shows declining times and increasing fatigue." },
-  { term: "Female Athlete Triad", type: "condition", category: "conditions", meaning: "A syndrome in female athletes combining low energy availability, menstrual dysfunction, and low bone mineral density; increases fracture and long-term health risks.", example: "A gymnast with disordered eating, loss of her menstrual period, and a stress fracture exhibits all three components of the triad." },
+  { term: "Overtraining Syndrome", type: "condition", category: "conditions", meaning: "Too much training without enough recovery, causing performance to fall.", detail: "Marked by persistent fatigue, mood disturbance and increased injury risk.", example: "A swimmer who trains twice daily for months without rest days shows declining times and increasing fatigue." },
+  { term: "Female Athlete Triad", type: "condition", category: "conditions", meaning: "Low energy availability, menstrual dysfunction and low bone density together.", detail: "Raises fracture risk and has long-term health consequences.", example: "A gymnast with disordered eating, loss of her menstrual period, and a stress fracture exhibits all three components of the triad." },
 ];
 
 // ══════════════════════════════════════════════════════════════
@@ -2579,7 +2591,7 @@ const _MK_RULES = [
 const _MK_DEFAULT = 'High-yield concept — this term appears across multiple topic areas and is consistently tested in competitive HOSA events.';
 
 function _mkScore(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   let score = 0;
   _MK_RULES.forEach((r, i) => { if (r.patterns.test(haystack)) score += (10 - i); });
   score += Math.max(0, 5 - Math.floor((term.term || '').length / 8));
@@ -2587,7 +2599,7 @@ function _mkScore(term) {
 }
 
 function _mkWhyLabel(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   for (const r of _MK_RULES) { if (r.patterns.test(haystack)) return r.label; }
   return _MK_DEFAULT;
 }
@@ -2755,6 +2767,15 @@ function renderFlashcard() {
   $('#flash-front-term').textContent = card.term;
   $('#flash-back-def').innerHTML = linkifyDef(card.meaning, card.term);
   $('#flash-back-ex-text').innerHTML = linkifyDef(card.example, card.term);
+  // Longer clinical detail lives below the definition so the card front stays
+  // a short answer while nothing is lost from the deck.
+  var _dw = document.getElementById('flash-back-detail');
+  if (_dw) {
+    if (card.detail) {
+      document.getElementById('flash-back-detail-text').innerHTML = linkifyDef(card.detail, card.term);
+      _dw.style.display = '';
+    } else { _dw.style.display = 'none'; }
+  }
   // render mastery level indicator
   const levelEl = document.getElementById('flash-level');
   if (levelEl) {

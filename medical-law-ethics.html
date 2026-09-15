@@ -1411,6 +1411,14 @@
     .mt-btn { width:100%; text-align:center; }
     .mt-tool-act { flex:1 1 100%; }
   }
+
+  .card-detail { font-family:'Source Serif 4',Georgia,serif; font-size:13px; line-height:1.55;
+                 color:var(--ink-soft); margin-top:12px; padding-top:11px;
+                 border-top:1px solid var(--rule); text-align:left; }
+  .card-detail-label { display:block; font-family:'Geist Mono',ui-monospace,monospace;
+                       font-size:9px; letter-spacing:.13em; text-transform:uppercase;
+                       color:var(--ink-faint); margin-bottom:5px; }
+  @media (max-width:620px){ .card-detail { font-size:12.5px; margin-top:10px; padding-top:9px; } }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1578,6 +1586,10 @@
             <span class="corner">Explanation</span>
             <span class="corner right" id="flash-cat-back"></span>
             <div class="definition" id="flash-back-def"></div>
+            <div class="card-detail" id="flash-back-detail" style="display:none">
+              <span class="card-detail-label">More detail</span>
+              <span id="flash-back-detail-text"></span>
+            </div>
             <div class="example" id="flash-back-ex">
               <span class="example-label">Example</span>
               <span id="flash-back-ex-text"></span>
@@ -1967,7 +1979,7 @@ const TERMS = [
   { term: "Emancipated Minor", type: "concept", category: "patient-rights", meaning: "A person under 18 granted legal adult status who can consent to their own medical treatment.", example: "A 16-year-old who is married or enlisted in the military may be an emancipated minor." },
 
   { term: "End-of-Life Care", type: "concept", category: "bioethics", meaning: "Medical and supportive care in the final phase of life, focusing on comfort, dignity, and quality of life.", example: "Hospice care provides end-of-life support at home or in a facility." },
-  { term: "Palliative Care vs. Hospice", type: "concept", category: "bioethics", meaning: "Palliative: comfort-focused care alongside curative treatment at any stage. Hospice: comfort-only care when curative treatment is stopped (prognosis 6 months or less).", example: "Cancer patient receiving chemo + symptom management = palliative. Same patient stopping chemo = hospice." },
+  { term: "Palliative Care vs. Hospice", type: "concept", category: "bioethics", meaning: "Palliative care is comfort care at any stage; hospice is comfort-only care near the end of life.", detail: "Palliative can run alongside curative treatment. Hospice begins when curative treatment stops, with a prognosis of 6 months or less.", example: "Cancer patient receiving chemo + symptom management = palliative. Same patient stopping chemo = hospice." },
   { term: "Active vs. Passive Euthanasia", type: "concept", category: "bioethics", meaning: "Active: deliberately ending a patient's life (illegal in most US states). Passive: withdrawing life-sustaining treatment with consent (legal).", example: "Removing a ventilator per patient wishes = passive euthanasia. Lethal injection to end life = active euthanasia." },
   { term: "Physician-Assisted Suicide (PAS)", type: "concept", category: "bioethics", meaning: "A physician prescribes a lethal medication that a terminally ill patient self-administers; legal in some states as death with dignity.", example: "Oregon's Death with Dignity Act permits PAS for terminally ill patients with a 6-month prognosis." },
   { term: "Organ Donation Ethics", type: "concept", category: "bioethics", meaning: "Ethical principles governing organ procurement: informed consent, equitable allocation, and protecting donor rights.", example: "The Uniform Anatomical Gift Act allows individuals to designate donor status on a driver's license." },
@@ -2575,7 +2587,7 @@ const _MK_RULES = [
 const _MK_DEFAULT = 'High-yield concept — this term appears across multiple topic areas and is consistently tested in competitive HOSA events.';
 
 function _mkScore(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   let score = 0;
   _MK_RULES.forEach((r, i) => { if (r.patterns.test(haystack)) score += (10 - i); });
   score += Math.max(0, 5 - Math.floor((term.term || '').length / 8));
@@ -2583,7 +2595,7 @@ function _mkScore(term) {
 }
 
 function _mkWhyLabel(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   for (const r of _MK_RULES) { if (r.patterns.test(haystack)) return r.label; }
   return _MK_DEFAULT;
 }
@@ -2751,6 +2763,15 @@ function renderFlashcard() {
   $('#flash-front-term').textContent = card.term;
   $('#flash-back-def').innerHTML = linkifyDef(card.meaning, card.term);
   $('#flash-back-ex-text').innerHTML = linkifyDef(card.example, card.term);
+  // Longer clinical detail lives below the definition so the card front stays
+  // a short answer while nothing is lost from the deck.
+  var _dw = document.getElementById('flash-back-detail');
+  if (_dw) {
+    if (card.detail) {
+      document.getElementById('flash-back-detail-text').innerHTML = linkifyDef(card.detail, card.term);
+      _dw.style.display = '';
+    } else { _dw.style.display = 'none'; }
+  }
   // render mastery level indicator
   const levelEl = document.getElementById('flash-level');
   if (levelEl) {
