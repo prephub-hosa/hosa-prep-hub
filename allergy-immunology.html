@@ -1338,6 +1338,14 @@
     .mt-btn { width:100%; text-align:center; }
     .mt-tool-act { flex:1 1 100%; }
   }
+
+  .card-detail { font-family:'Source Serif 4',Georgia,serif; font-size:13px; line-height:1.55;
+                 color:var(--ink-soft); margin-top:12px; padding-top:11px;
+                 border-top:1px solid var(--rule); text-align:left; }
+  .card-detail-label { display:block; font-family:'Geist Mono',ui-monospace,monospace;
+                       font-size:9px; letter-spacing:.13em; text-transform:uppercase;
+                       color:var(--ink-faint); margin-bottom:5px; }
+  @media (max-width:620px){ .card-detail { font-size:12.5px; margin-top:10px; padding-top:9px; } }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1492,6 +1500,10 @@
             <span class="corner">Explanation</span>
             <span class="corner right" id="flash-cat-back"></span>
             <div class="definition" id="flash-back-def"></div>
+            <div class="card-detail" id="flash-back-detail" style="display:none">
+              <span class="card-detail-label">More detail</span>
+              <span id="flash-back-detail-text"></span>
+            </div>
             <div class="example" id="flash-back-ex">
               <span class="example-label">Example</span>
               <span id="flash-back-ex-text"></span>
@@ -1817,23 +1829,23 @@
 // ══════════════════════════════════════════════════════════════
 const TERMS = [
   // ── Hypersensitivity Reactions ───────────────────────────────
-  { term: "Hypersensitivity Reaction Types (Gell & Coombs)", type: "concept", category: "hypersensitivity", meaning: "Type I (immediate/IgE): anaphylaxis, allergic rhinitis, asthma — mast cell degranulation. Type II (cytotoxic/IgG): hemolytic anemia, Goodpasture. Type III (immune complex): serum sickness, SLE. Type IV (delayed/T-cell): contact dermatitis, TB skin test.", example: "The penicillin anaphylaxis was Type I (IgE-mediated); the contact dermatitis from nickel was Type IV (T-cell mediated) — different mechanisms, different timing." },
-  { term: "Anaphylaxis", type: "concept", category: "hypersensitivity", meaning: "Severe, life-threatening systemic allergic reaction. Triggers: foods (peanut, shellfish, tree nuts), drugs (penicillin, NSAIDs), insect venom, latex. Features: urticaria, angioedema, bronchospasm, hypotension. Treatment: epinephrine IM (thigh) FIRST — the only first-line drug; antihistamines and corticosteroids adjunctive.", example: "The patient's peanut-induced urticaria, wheezing, and BP of 70/40 was anaphylaxis — IM epinephrine 0.3 mg, supine positioning, and IV fluids were given immediately." },
-  { term: "Urticaria and Angioedema", type: "concept", category: "hypersensitivity", meaning: "Urticaria: transient pruritic wheals from mast cell histamine release; acute (<6 wk) usually allergic or infection-triggered; chronic (>6 wk) often idiopathic. Angioedema: deeper swelling including larynx — life-threatening. Hereditary angioedema (C1-inhibitor deficiency): bradykinin-mediated, no urticaria.", example: "The patient's recurrent urticaria for 3 months without identifiable trigger was chronic spontaneous urticaria; daily cetirizine + bilastine provided good control." },
+  { term: "Hypersensitivity Reaction Types (Gell & Coombs)", type: "concept", category: "hypersensitivity", meaning: "Four mechanisms of immune over-reaction: I IgE, II cytotoxic, III immune complex, IV delayed T-cell.", detail: "Type I (immediate/IgE): anaphylaxis, allergic rhinitis, asthma — mast cell degranulation. Type II (cytotoxic/IgG): hemolytic anemia, Goodpasture. Type III (immune complex): serum sickness, SLE. Type IV (delayed/T-cell): contact dermatitis, TB skin test.", example: "The penicillin anaphylaxis was Type I (IgE-mediated); the contact dermatitis from nickel was Type IV (T-cell mediated) — different mechanisms, different timing." },
+  { term: "Anaphylaxis", type: "concept", category: "hypersensitivity", meaning: "A severe, life-threatening systemic allergic reaction. Give IM epinephrine first.", detail: "Triggers: foods (peanut, shellfish, tree nuts), drugs (penicillin, NSAIDs), insect venom, latex. Features: urticaria, angioedema, bronchospasm, hypotension. Epinephrine IM (thigh) is the only first-line drug; antihistamines and corticosteroids are adjunctive.", example: "The patient's peanut-induced urticaria, wheezing, and BP of 70/40 was anaphylaxis — IM epinephrine 0.3 mg, supine positioning, and IV fluids were given immediately." },
+  { term: "Urticaria and Angioedema", type: "concept", category: "hypersensitivity", meaning: "Urticaria is itchy surface wheals; angioedema is deeper swelling that can involve the larynx.", detail: "Urticaria: transient pruritic wheals from mast cell histamine release; acute (<6 wk) usually allergic or infection-triggered, chronic (>6 wk) often idiopathic. Hereditary angioedema (C1-inhibitor deficiency) is bradykinin-mediated with no urticaria.", example: "The patient's recurrent urticaria for 3 months without identifiable trigger was chronic spontaneous urticaria; daily cetirizine + bilastine provided good control." },
 
   // ── Respiratory Allergy ──────────────────────────────────────
-  { term: "Allergic Asthma", type: "concept", category: "respiratory-allergy", meaning: "IgE-mediated bronchospasm triggered by allergens (dust mites, pet dander, pollen, mold). Allergy testing (skin prick or specific IgE) identifies triggers. Subcutaneous allergen immunotherapy (allergy shots) is disease-modifying for allergic asthma. Biologics (dupilumab, mepolizumab) for severe eosinophilic asthma.", example: "The asthmatic patient with positive cat-specific IgE, who worsened every time she visited friends with cats, was offered cat allergen immunotherapy to reduce sensitivity." },
-  { term: "Allergen Immunotherapy (Allergy Shots)", type: "concept", category: "respiratory-allergy", meaning: "Subcutaneous injections of increasing allergen doses → immune tolerance (shift from Th2 to Th1/Treg). 3–5 year course reduces symptoms, medication need, and risk of new sensitizations. Also sublingual (SLIT) tablets/drops. Anaphylaxis risk — must observe 20–30 min post-injection. Only disease-modifying allergy treatment.", example: "After 3 years of grass pollen immunotherapy, the patient's seasonal rhinitis was nearly eliminated — and her risk of developing asthma decreased." },
-  { term: "Eosinophilic Diseases", type: "concept", category: "respiratory-allergy", meaning: "Eosinophilic esophagitis (EoE): esophageal eosinophilia causing dysphagia/food impaction; treated with PPI, swallowed topical steroids, dietary elimination. Eosinophilic asthma: type 2 inflammation; biologic targets IL-5 (mepolizumab), IL-4/13 (dupilumab). Hypereosinophilic syndrome: end-organ damage from persistent eosinophilia.", example: "The teenage boy's dysphagia to solids and food impaction with esophageal eosinophilia >15 per HPF confirmed EoE; swallowed budesonide and milk elimination were started." },
+  { term: "Allergic Asthma", type: "concept", category: "respiratory-allergy", meaning: "IgE-mediated bronchospasm triggered by allergens such as dust mites, pet dander, pollen and mold.", detail: "Skin prick or specific IgE testing identifies triggers. Subcutaneous immunotherapy is disease-modifying. Biologics (dupilumab, mepolizumab) for severe eosinophilic asthma.", example: "The asthmatic patient with positive cat-specific IgE, who worsened every time she visited friends with cats, was offered cat allergen immunotherapy to reduce sensitivity." },
+  { term: "Allergen Immunotherapy (Allergy Shots)", type: "concept", category: "respiratory-allergy", meaning: "Escalating allergen doses that retrain the immune system toward tolerance — the only disease-modifying allergy treatment.", detail: "Shifts Th2 toward Th1/Treg. A 3–5 year course reduces symptoms, medication need, and new sensitizations. Also sublingual (SLIT) tablets or drops. Anaphylaxis risk means observing 20–30 min after injection.", example: "After 3 years of grass pollen immunotherapy, the patient's seasonal rhinitis was nearly eliminated — and her risk of developing asthma decreased." },
+  { term: "Eosinophilic Diseases", type: "concept", category: "respiratory-allergy", meaning: "Disorders driven by eosinophil infiltration, most often type 2 inflammation.", detail: "Eosinophilic esophagitis (EoE): esophageal eosinophilia causing dysphagia or food impaction; treated with PPI, swallowed topical steroids, dietary elimination. Eosinophilic asthma: biologics target IL-5 (mepolizumab) or IL-4/13 (dupilumab). Hypereosinophilic syndrome: end-organ damage from persistent eosinophilia.", example: "The teenage boy's dysphagia to solids and food impaction with esophageal eosinophilia >15 per HPF confirmed EoE; swallowed budesonide and milk elimination were started." },
 
   // ── Food & Drug Allergy ──────────────────────────────────────
-  { term: "Food Allergy", type: "concept", category: "food-drug-allergy", meaning: "IgE-mediated: immediate reaction within 2 hours of ingestion (urticaria, angioedema, anaphylaxis). Common allergens: peanut, tree nuts, milk, egg, wheat, soy, fish, shellfish (Big 9 in US). Diagnosis: SPT + specific IgE; oral food challenge gold standard. Management: strict avoidance + epinephrine auto-injector.", example: "The 3-year-old's facial swelling and vomiting within 15 minutes of eating cashews prompted skin prick testing — positive cashew-specific IgE confirmed tree nut allergy." },
-  { term: "Drug Allergy and Penicillin Allergy", type: "concept", category: "food-drug-allergy", meaning: "True IgE-mediated penicillin allergy in <1% of labeled patients; 80–90% of 'allergic' patients tolerate penicillin on challenge. Penicillin skin test followed by oral amoxicillin challenge is safe delabeling method. Cross-reactivity with cephalosporins is low (~1–2%). NSAIDs: often non-immunologic intolerance (aspirin exacerbated respiratory disease).", example: "The patient labeled 'penicillin-allergic' since childhood had a negative skin test and tolerated amoxicillin challenge — delabeled, allowing penicillin-class antibiotics for her infection." },
-  { term: "Alpha-Gal Syndrome", type: "concept", category: "food-drug-allergy", meaning: "Lone star tick bite sensitizes to alpha-galactose (alpha-gal) sugar on mammalian meat → delayed anaphylaxis 3–6 hours after eating red meat (beef, pork, lamb). Diagnosis: alpha-gal IgE test. Management: avoidance of mammalian meat, carry epinephrine. Can improve after avoiding tick bites.", example: "The hunter's recurrent anaphylaxis occurring 4 hours after red meat — never identified before — was diagnosed as alpha-gal syndrome after positive alpha-gal IgE testing." },
+  { term: "Food Allergy", type: "concept", category: "food-drug-allergy", meaning: "IgE-mediated reaction within 2 hours of eating — urticaria, angioedema, or anaphylaxis.", detail: "Common allergens: peanut, tree nuts, milk, egg, wheat, soy, fish, shellfish (the Big 9 in the US). Diagnosis: skin prick + specific IgE, with oral food challenge the gold standard. Management: strict avoidance plus an epinephrine auto-injector.", example: "The 3-year-old's facial swelling and vomiting within 15 minutes of eating cashews prompted skin prick testing — positive cashew-specific IgE confirmed tree nut allergy." },
+  { term: "Drug Allergy and Penicillin Allergy", type: "concept", category: "food-drug-allergy", meaning: "Most people labelled penicillin-allergic are not — under 1% have true IgE-mediated allergy.", detail: "80–90% of 'allergic' patients tolerate penicillin on challenge. Skin testing followed by oral amoxicillin challenge safely delabels. Cross-reactivity with cephalosporins is low (~1–2%). NSAID reactions are often non-immunologic intolerance (aspirin-exacerbated respiratory disease).", example: "The patient labeled 'penicillin-allergic' since childhood had a negative skin test and tolerated amoxicillin challenge — delabeled, allowing penicillin-class antibiotics for her infection." },
+  { term: "Alpha-Gal Syndrome", type: "concept", category: "food-drug-allergy", meaning: "A tick-bite allergy to mammalian meat causing delayed anaphylaxis 3–6 hours after eating it.", detail: "A lone star tick bite sensitizes to the alpha-galactose sugar in beef, pork and lamb. Diagnosis: alpha-gal IgE test. Management: avoid mammalian meat and carry epinephrine. Can improve once tick bites stop.", example: "The hunter's recurrent anaphylaxis occurring 4 hours after red meat — never identified before — was diagnosed as alpha-gal syndrome after positive alpha-gal IgE testing." },
 
   // ── Immune Deficiencies ──────────────────────────────────────
-  { term: "Primary Immunodeficiency Disorders", type: "concept", category: "immune-deficiency", meaning: "Antibody deficiencies (most common): X-linked agammaglobulinemia (no B cells, BTK mutation), Common Variable Immunodeficiency (low Ig, recurrent sinopulmonary infections). T-cell deficiencies: DiGeorge (thymic aplasia, 22q11 deletion). Combined: SCID (severe combined immunodeficiency — T and B cell deficiency).", example: "The toddler with recurrent pneumococcal pneumonia, otitis, and undetectable IgA, IgG, IgM with absent B cells was diagnosed with X-linked agammaglobulinemia; IVIG was started." },
-  { term: "Hereditary Angioedema (HAE)", type: "concept", category: "immune-deficiency", meaning: "Autosomal dominant C1-inhibitor deficiency → bradykinin accumulation → recurrent angioedema without urticaria (skin, GI, laryngeal). Triggers: trauma, stress, estrogen. Acute: C1-INH concentrate, icatibant (bradykinin receptor antagonist), or plasma. Prophylaxis: lanadelumab (anti-kallikrein biologic) or C1-INH infusions.", example: "The patient's recurrent abdominal pain and laryngeal edema without urticaria had undetectable C4 and low C1-INH — HAE; icatibant was prescribed for acute attacks." },
+  { term: "Primary Immunodeficiency Disorders", type: "concept", category: "immune-deficiency", meaning: "Inherited defects in immune cells causing recurrent infection; antibody deficiencies are the most common.", detail: "X-linked agammaglobulinemia (no B cells, BTK mutation) and Common Variable Immunodeficiency (low Ig, recurrent sinopulmonary infections). T-cell: DiGeorge (thymic aplasia, 22q11 deletion). Combined: SCID (T and B cell deficiency).", example: "The toddler with recurrent pneumococcal pneumonia, otitis, and undetectable IgA, IgG, IgM with absent B cells was diagnosed with X-linked agammaglobulinemia; IVIG was started." },
+  { term: "Hereditary Angioedema (HAE)", type: "concept", category: "immune-deficiency", meaning: "Autosomal dominant C1-inhibitor deficiency causing recurrent angioedema without urticaria.", detail: "Bradykinin accumulation drives skin, GI and laryngeal swelling. Triggers: trauma, stress, estrogen. Acute: C1-INH concentrate, icatibant, or plasma. Prophylaxis: lanadelumab or C1-INH infusions.", example: "The patient's recurrent abdominal pain and laryngeal edema without urticaria had undetectable C4 and low C1-INH — HAE; icatibant was prescribed for acute attacks." },
 ];
 
 // ══════════════════════════════════════════════════════════════
@@ -2297,6 +2309,7 @@ function renderFlashcard() {
     document.getElementById('flash-front-term').textContent = 'No cards in this filter.';
     document.getElementById('flash-back-def').textContent = '';
     document.getElementById('flash-back-ex-text').textContent = '';
+    var _dw0 = document.getElementById('flash-back-detail'); if (_dw0) _dw0.style.display = 'none';
     return;
   }
   const idx = ((state.flash.index % deck.length) + deck.length) % deck.length;
@@ -2310,6 +2323,15 @@ function renderFlashcard() {
   document.getElementById('flash-front-term').textContent = card.term;
   document.getElementById('flash-back-def').innerHTML = linkifyDef(card.meaning, card.term);
   document.getElementById('flash-back-ex-text').innerHTML = linkifyDef(card.example, card.term);
+  // Longer clinical detail lives below the definition so the card front stays
+  // a short answer while nothing is lost from the deck.
+  var _dw = document.getElementById('flash-back-detail');
+  if (_dw) {
+    if (card.detail) {
+      document.getElementById('flash-back-detail-text').innerHTML = linkifyDef(card.detail, card.term);
+      _dw.style.display = '';
+    } else { _dw.style.display = 'none'; }
+  }
   document.getElementById('flash-cat-front').textContent = categoryLabel(card.category);
   document.getElementById('flash-cat-back').textContent = categoryLabel(card.category);
   document.getElementById('flash-progress').textContent = `${pad(idx + 1)} / ${pad(deck.length)}`;
@@ -2876,7 +2898,7 @@ const _MK_RULES = [
 const _MK_DEFAULT = 'High-yield concept — this term appears across multiple topic areas and is consistently tested in competitive HOSA events.';
 
 function _mkScore(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   let score = 0;
   _MK_RULES.forEach((r, i) => { if (r.patterns.test(haystack)) score += (10 - i); });
   // Boost shorter, crisper terms (they tend to be primary vocab)
@@ -2885,7 +2907,7 @@ function _mkScore(term) {
 }
 
 function _mkWhyLabel(term) {
-  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.example || '')).toLowerCase();
+  const haystack = ((term.term || '') + ' ' + (term.meaning || '') + ' ' + (term.detail || '') + ' ' + (term.example || '')).toLowerCase();
   for (const r of _MK_RULES) { if (r.patterns.test(haystack)) return r.label; }
   return _MK_DEFAULT;
 }
