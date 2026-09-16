@@ -13,6 +13,12 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b91c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HOSA Prep">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>HOSA Prep Hub — A Study Companion for HOSA Competitors</title>
 <meta name="description" content="Free HOSA study tool: spaced-repetition flashcards, quizzes and timed tests for 81 events — Medical Terminology, Pathophysiology, Pharmacology and more.">
 <link rel="canonical" href="https://hosaprephub.vercel.app/">
@@ -1449,6 +1455,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="pwa.js" defer></script>
+<script src="reminder.js" defer></script>
 <script src="feedback-widget.js" defer></script>
 <style id="enhancements-v2">
   html { scroll-behavior: smooth; }
@@ -2699,6 +2707,8 @@ footer { display: none; }
 
       <!-- Daily study path — shown for active users with due cards -->
       <section id="daily-path-section" style="margin-bottom:24px;display:none;"></section>
+      <section id="pwa-install-slot" style="margin-bottom:24px;display:none;"></section>
+      <section id="reminder-slot" style="margin-bottom:24px;display:none;"></section>
 
       <!-- Exam countdown — shown for active users who set a date -->
       <section id="exam-countdown-section" style="display:none;margin-bottom:24px;"></section>
@@ -11538,6 +11548,31 @@ window.hosaXPFlyup = function(el, amount) {
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+</script>
+
+<script id="reminder-mount-js">
+(function(){
+  function hasStudied() {
+    try {
+      if ((parseInt(localStorage.getItem('hosa::xp') || '0', 10) || 0) > 0) return true;
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('hosa::') !== 0 || k.indexOf('::', 6) !== -1) continue;
+        var d = null;
+        try { d = JSON.parse(localStorage.getItem(k)); } catch (e) { continue; }
+        if (d && d.studied && d.studied.length) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function mount() {
+    var host = document.getElementById('reminder-slot');
+    if (!host || !window.HosaReminder || !hasStudied()) return;
+    window.HosaReminder.mount(host);
+  }
+  if (document.readyState !== 'loading') setTimeout(mount, 700);
+  else document.addEventListener('DOMContentLoaded', function(){ setTimeout(mount, 700); });
 })();
 </script>
 </body>

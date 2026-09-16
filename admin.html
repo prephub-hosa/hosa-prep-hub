@@ -5,6 +5,12 @@
 <script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b91c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HOSA Prep">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>HOSA Prep Hub — Admin</title>
 <style>
   /* ── Dark mode default ── */
@@ -222,6 +228,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="pwa.js" defer></script>
 <script>
 // ─── Set your admin email here ───────────────────────────────────────────────
 var ADMIN_EMAIL = 'tylerkim1215@gmail.com';
