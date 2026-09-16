@@ -124,7 +124,9 @@
     } catch (_) {}
     return results.sort((a, b) => b.due - a.due);
   }
-  window.hosaDueToday = getDueToday;
+  // due.js owns this; keep the local version only as a fallback for any
+  // page that loads engage.js without it.
+  if (typeof window.hosaDueToday !== 'function') window.hosaDueToday = getDueToday;
 
   /* ─── Achievement check ───────────────────────────────────── */
   function getPomodoroSessions() {

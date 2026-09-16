@@ -1448,6 +1448,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="due.js"></script>
 <script src="feedback-widget.js" defer></script>
 <style id="enhancements-v2">
   html { scroll-behavior: smooth; }
@@ -5351,8 +5352,12 @@ function friendlyError(code) {
   }
   var BADGE_HTML = '<span class="card-studied-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="badge-text">Studied</span></span>';
   var anyStudied = 0, totalMastered = 0;
-  // v29: check due cards for today
-  var _nowMs = Date.now();
+  // Cards due today, keyed by slug — one lookup for every card on the page.
+  var _dueBySlug = {};
+  try {
+    ((typeof hosaDueByEvent === 'function') ? hosaDueByEvent() : [])
+      .forEach(function(e){ _dueBySlug[e.slug] = e.due; });
+  } catch(e) {}
   cardData.forEach(function(c){
     var slug = slugFromHref(c.el.getAttribute('href'));
     if (!slug) return;
@@ -5383,12 +5388,8 @@ function friendlyError(code) {
       if (!c.el.querySelector('.v29-card-badge')) {
         var badgeEl = document.createElement('span');
         badgeEl.className = 'v29-card-badge';
-        // Check for due cards
-        var dueCount = 0;
-        try {
-          var cardsData = JSON.parse(localStorage.getItem('hosa::' + slug + '::cards') || '{}');
-          Object.values(cardsData).forEach(function(card){ if(card.due && card.due <= _nowMs) dueCount++; });
-        } catch(e){}
+        // Cards due for this event, from the same source as the hero (due.js).
+        var dueCount = (_dueBySlug[slug] || 0);
 
         if (dueCount > 0) {
           badgeEl.className += ' v29-badge-due';
@@ -6016,18 +6017,16 @@ function friendlyError(code) {
       if (hhLevel) hhLevel.textContent = lvl;
       if (hhStreak) hhStreak.textContent = streak > 0 ? streak : 0;
       if (hhMastered) hhMastered.textContent = totalMastered.toLocaleString();
-      // Due count from localStorage
+      // Due count — shared with the resume card and the nav badge (due.js),
+      // so the hero can no longer say 0 while the card below says 12.
       try {
-        var _now = Date.now();
-        var _dueCount = 0;
-        var _keys = Object.keys(localStorage);
-        _keys.forEach(function(k){
-          if(k.indexOf('::cards')!==-1){try{var d=JSON.parse(localStorage.getItem(k)||'{}');Object.values(d).forEach(function(c){if(c.due&&c.due<=_now)_dueCount++;});}catch(e){}}
-        });
+        var _dueEvents = (typeof hosaDueByEvent === 'function') ? hosaDueByEvent() : [];
+        var _dueCount  = _dueEvents.reduce(function(s, e){ return s + e.due; }, 0);
         if (hhDue) hhDue.textContent = _dueCount;
         if (_dueCount > 0) {
           var heroCta = document.getElementById('home-hero-cta-btn');
-          if (heroCta) heroCta.textContent = 'Review ' + _dueCount + ' Due Cards →';
+          // The click handler already routes to the top due event (topDueSlug).
+          if (heroCta) heroCta.textContent = 'Review ' + _dueCount + ' due card' + (_dueCount === 1 ? '' : 's') + ' →';
         }
       } catch(e){}
       // Hero greeting
@@ -7161,8 +7160,12 @@ function friendlyError(code) {
 
 // ── Quick Actions strip ───────────────────────────────────────
 (function() {
+  // The quick-actions strip was never added to the markup, and this function
+  // used to bail out on that missing element before reaching the code below
+  // that wires the hero buttons — so the biggest button on the home page,
+  // "Continue Studying", did nothing at all when pressed. The strip is now
+  // optional; the hero wiring is not.
   var section = document.getElementById('quick-actions-section');
-  if (!section) return;
 
   function topDueSlug() {
     if (typeof window.hosaDueToday !== 'function') return null;
@@ -7170,22 +7173,45 @@ function friendlyError(code) {
     return due.length ? due[0].slug : null;
   }
 
+  // Nothing due is not a dead end: send them back to whatever they studied
+  // last, where there are still new terms to introduce.
+  function lastStudiedSlug() {
+    var best = null, bestDate = '';
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('hosa::') !== 0 || k.indexOf('::', 6) !== -1) continue;
+        var d = null;
+        try { d = JSON.parse(localStorage.getItem(k)); } catch (e) { continue; }
+        if (!d || !d.lastStudyDate) continue;
+        if (d.lastStudyDate > bestDate) { bestDate = d.lastStudyDate; best = k.slice(6); }
+      }
+    } catch (e) {}
+    return best;
+  }
+
+  function goStudy() {
+    var slug = topDueSlug() || lastStudiedSlug();
+    if (slug) { window.location.href = slug + '.html'; return; }
+    if (typeof switchTab === 'function') switchTab('events');
+    else if (typeof window._showToast === 'function') window._showToast('Pick any event to start studying.', 'success');
+  }
+
   function init() {
-    section.style.display = '';
-    // Also wire hero CTA buttons to the same action system
+    if (section) section.style.display = '';
+    // Hero CTA buttons — wired whether or not the quick-actions strip exists.
     document.querySelectorAll('.home-hero-cta[data-action], .home-hero-cta-sec[data-action]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var act = btn.getAttribute('data-action');
         if (act === 'due') {
-          var slug = topDueSlug();
-          if (slug) window.location.href = slug + '.html';
-          else if (typeof window._showToast === 'function') window._showToast('No cards due today — pick any event to keep studying.', 'success');
+          goStudy();
         } else if (act === 'surprise') {
           if (typeof switchTab === 'function') switchTab('events');
           setTimeout(function(){ if (typeof window.__hosaSurpriseMe === 'function') window.__hosaSurpriseMe(); }, 80);
         }
       });
     });
+    if (!section) return;
     section.querySelectorAll('.qa-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
         var act = btn.getAttribute('data-action');
@@ -7198,9 +7224,7 @@ function friendlyError(code) {
             else { var sb = document.getElementById('btn-surprise'); if (sb) sb.click(); }
           }, 80);
         } else if (act === 'due') {
-          var slug = topDueSlug();
-          if (slug) window.location.href = slug + '.html';
-          else if (typeof window._showToast === 'function') window._showToast('No cards due today — pick any event to keep studying.', 'success');
+          goStudy();
         } else if (act === 'library') {
           if (typeof switchTab === 'function') switchTab('library');
         } else if (act === 'quickreview') {
@@ -10604,7 +10628,7 @@ window.hosaXPFlyup = function(el, amount) {
         var label = s.due > 0 ? s.due + ' card' + (s.due !== 1 ? 's' : '') + ' due' : 'Explore';
         html += '<a href="' + s.slug + '.html" class="dp-step">' +
           '<div class="dp-step-num">' + (i + 1) + '</div>' +
-          '<div class="dp-step-body"><div class="dp-step-title">' + escHtml(s.title || s.slug) + '</div><div class="dp-step-sub">' + label + '</div></div>' +
+          '<div class="dp-step-body"><div class="dp-step-title">' + escHtml(s.name || s.title || s.slug) + '</div><div class="dp-step-sub">' + label + '</div></div>' +
           '<div class="dp-arrow">→</div>' +
         '</a>';
       });
