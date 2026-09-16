@@ -24,26 +24,34 @@
   ];
 
   // Total term count per subject — used to scale dummy mastery and to display "X / total"
+  // Total term count per event, generated from the pages themselves.
+  // This used to be hand-maintained and had drifted: 31 events were missing,
+  // and a missing event falls back to "mastered / studied", which shows 100%
+  // progress as soon as you master the handful of cards you have seen.
   var TOTAL_TERMS = {
-    'medical-terminology':216, 'pathophysiology':147, 'nutrition':127, 'biochemistry':112,
-    'anatomy-physiology':96, 'pharmacology':72, 'medical-math':75, 'medical-law-ethics':69,
-    'human-growth-development':78, 'behavioral-health':77, 'clinical-nursing':87,
-    'public-health':80, 'sports-medicine':73, 'biomedical-lab-science':68, 'biotechnology':80,
-    'emergency-medical-science':69, 'physical-therapy':72, 'dental-science':67,
-    'veterinary-science':68, 'epidemiology':58, 'phlebotomy':60,
-    'medical-assisting':51, 'radiologic-science':43,
-    'medical-microbiology':56, 'pharmacy-science':47,
-    'forensic-science':38, 'occupational-therapy':34,
-    'optometry':30, 'genetics':33, 'health-informatics':28, 'respiratory-therapy':30,
-    'nursing-assisting':27, 'cardiovascular-science':30, 'endocrinology':24, 'neurology':25,
-    'oncology':26, 'immunology':27, 'hematology':26, 'dermatology':25,
-    'gastroenterology':26, 'surgical-technology':25,
-    'nephrology':19, 'obstetrics-gynecology':21, 'pediatrics':20, 'geriatrics':18,
-    'infectious-disease':17, 'rheumatology':17, 'otolaryngology':18, 'urology':18,
-    'sleep-medicine':15, 'pain-management':18, 'trauma-critical-care':19,
-    'speech-language-pathology':21, 'audiology':22, 'healthcare-systems':20,
-    'psychiatry':15, 'neonatology':13, 'physical-medicine-rehabilitation':12,
-    'allergy-immunology':11, 'global-health':12
+    'addiction-medicine':64, 'allergy-immunology':11, 'anatomy-physiology':96, 'anesthesiology':12,
+    'audiology':22, 'behavioral-health':77, 'biochemistry':112, 'biomedical-lab-science':68,
+    'biostatistics-research':68, 'biotechnology':80, 'cardiovascular-science':30, 'cell-biology-histology':76,
+    'clinical-genetics':25, 'clinical-nursing':87, 'cpr-first-aid':68, 'dental-science':67,
+    'dermatology':25, 'disaster-preparedness':66, 'emergency-medical-science':69, 'endocrinology':24,
+    'epidemiology':58, 'exercise-physiology':66, 'forensic-science':37, 'gastroenterology':26,
+    'genetics':33, 'geriatric-psychiatry':29, 'geriatrics':18, 'global-health':12,
+    'health-equity':24, 'health-informatics':28, 'healthcare-systems':20, 'hematology':26,
+    'hepatology':13, 'human-growth-development':78, 'immunology':27, 'infectious-disease':17,
+    'interventional-cardiology':33, 'job-seeking-skills':62, 'medical-assisting':50, 'medical-coding-billing':71,
+    'medical-law-ethics':69, 'medical-math':75, 'medical-microbiology':55, 'medical-spelling':56,
+    'medical-terminology':216, 'neonatology':13, 'nephrology':19, 'neurology':25,
+    'nursing-assisting':27, 'nutrition':127, 'obstetrics-gynecology':21, 'occupational-health-safety':66,
+    'occupational-therapy':33, 'oncology':26, 'ophthalmology':33, 'optometry':30,
+    'orthopedics':42, 'otolaryngology':18, 'pain-management':18, 'palliative-care':12,
+    'parliamentary-procedure':68, 'pathophysiology':147, 'patient-safety':12, 'pediatric-emergency':12,
+    'pediatrics':20, 'perioperative-care':23, 'pharmacology':72, 'pharmacy-science':46,
+    'phlebotomy':60, 'physical-medicine-rehabilitation':12, 'physical-therapy':72, 'prehospital-ems':12,
+    'psychiatry':15, 'public-health':80, 'pulmonology':12, 'radiologic-science':42,
+    'reproductive-health':12, 'respiratory-therapy':30, 'rheumatology':17, 'sleep-medicine':15,
+    'speech-language-pathology':21, 'sports-medicine':73, 'surgical-technology':25, 'toxicology':12,
+    'transplant-medicine':34, 'trauma-critical-care':19, 'urology':18, 'vascular-medicine':12,
+    'veterinary-science':68, 'wilderness-medicine':21, 'wound-care':32
   };
   window.TOTAL_TERMS = TOTAL_TERMS;
 

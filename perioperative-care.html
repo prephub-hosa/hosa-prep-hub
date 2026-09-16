@@ -13,6 +13,12 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b91c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HOSA Prep">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Perioperative Care — HOSA Prep Hub</title>
 <meta name="description" content="Perioperative Care practice for HOSA competitors: spaced-repetition flashcards, 10-question quizzes and timed tests. Free, no account needed.">
 <link rel="canonical" href="https://hosaprephub.vercel.app/perioperative-care.html">
@@ -1351,6 +1357,9 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="due.js"></script>
+<script src="pwa.js" defer></script>
+<script src="reminder.js" defer></script>
 <script src="feedback-widget.js" defer></script>
 <script src="member-tools.js" defer></script>
 <script src="leaderboard.js" defer></script>
@@ -1543,6 +1552,7 @@
           <button class="btn primary" id="sc-more">Study 20 more →</button>
           <button class="btn" id="sc-quiz">Take a quiz →</button>
         </div>
+        <div id="sc-reminder" class="rm-compact" style="display:none;margin-top:18px;text-align:left"></div>
         <a href="index.html" style="display:inline-block;margin-top:16px;font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--ink-faint);text-decoration:none;letter-spacing:0.02em;">← Browse all events</a>
       </div>
     </div>
@@ -2233,6 +2243,12 @@ function showSessionComplete() {
     if (_dueTom > 0) _parts.push(_dueTom + ' due tomorrow');
     if (_due4  > 0)  _parts.push(_due4  + ' due within 4 days');
     if (_later > 0)  _parts.push(_later + ' well spaced');
+    // The end of a session is the one moment a student knows exactly what
+    // they will owe tomorrow — so that is where the reminder belongs.
+    try {
+      var _rmHost = document.getElementById('sc-reminder');
+      if (_rmHost && window.HosaReminder) window.HosaReminder.mount(_rmHost);
+    } catch (e) {}
     const _schedEl = document.getElementById('sc-srs-schedule');
     if (_schedEl && _parts.length) _schedEl.textContent = _parts.join(' · ');
   } catch(e) {}

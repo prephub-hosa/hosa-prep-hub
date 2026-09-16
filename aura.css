@@ -7501,3 +7501,186 @@ nav.tabs button.active:hover { background: var(--grad-cta) !important; }
   .fc-card { padding: 18px 18px; }
   .fc-name { font-size: 18px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Add-to-home-screen card
+   Shown on the home page to someone who has already studied — never
+   to a first-time visitor, who has no reason yet to want the icon.
+   ═══════════════════════════════════════════════════════════════ */
+.pwa-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 44px 18px 18px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg, 16px);
+  background: var(--bg-card);
+  box-shadow: var(--sh-1, 0 1px 2px rgba(17,17,17,.05));
+}
+.pwa-icon {
+  flex: 0 0 auto;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #c8202f, #8c1220);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+}
+.pwa-body { flex: 1 1 auto; min-width: 0; }
+.pwa-title {
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.pwa-sub {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.pwa-sub strong { color: var(--ink); font-weight: 600; }
+.pwa-btn {
+  margin-top: 12px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--grad-cta, #c2182b);
+  color: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pwa-btn:hover { filter: brightness(1.06); }
+.pwa-x {
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 30px; height: 30px;
+  border: 0; border-radius: 50%;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pwa-x:hover { background: var(--highlight); color: var(--ink); }
+
+@media (max-width: 420px) {
+  .pwa-card { padding: 16px 40px 16px 14px; gap: 12px; }
+  .pwa-icon { width: 36px; height: 36px; font-size: 19px; }
+}
+@media (max-width: 380px) {
+  .rm-day { font-size: 0.74rem; padding: 8px 1px; }
+  .rm-days { gap: 4px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Study reminder — day picker + calendar download
+   ═══════════════════════════════════════════════════════════════ */
+.rm-card {
+  padding: 20px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg, 16px);
+  background: var(--bg-card);
+  box-shadow: var(--sh-1, 0 1px 2px rgba(17,17,17,.05));
+}
+.rm-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 7px;
+}
+.rm-title {
+  font-weight: 600;
+  font-size: 1.12rem;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+.rm-sub {
+  margin: 0 0 15px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.rm-days {
+  /* Seven equal columns: the week reads as a week, and nothing reflows
+     into a stretched second row at phone width. */
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 14px;
+}
+.rm-day {
+  min-width: 0;
+  padding: 9px 2px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.rm-day:hover { border-color: var(--accent); color: var(--ink); }
+.rm-day.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.rm-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+.rm-field {
+  flex: 1 1 130px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  background: transparent;
+}
+.rm-field > span { flex: 0 0 auto; font-weight: 600; }
+.rm-field input, .rm-field select {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0;
+}
+.rm-field input:focus, .rm-field select:focus { outline: none; }
+.rm-btn {
+  width: 100%;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--grad-cta, #c2182b);
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.rm-btn:hover { filter: brightness(1.06); }
+.rm-note {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  min-height: 1em;
+}
+/* Compact variant for the end-of-session card */
+.rm-compact .rm-card { padding: 16px; }
+.rm-compact .rm-sub { margin-bottom: 12px; font-size: 0.84rem; }
