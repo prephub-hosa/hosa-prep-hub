@@ -657,13 +657,18 @@
     })(0);
   }
 
+  // Looking a chapter up must never join you to it.
+  //
+  // This wrote hosa::chapter on every hit, which is the same key the join
+  // link sets — so typing a school name into the search box silently tagged
+  // your device to someone else's chapter, and from there the home page
+  // pushed it onto your leaderboard row. Searching is a read. Only the join
+  // link and registering can put you in a chapter.
   function lookUp(slug, thenShow, onMissing, rawQuery) {
     findChapter(rawQuery || slug, function (rec, searched) {
       if (!rec) { onMissing && onMissing(searched !== false); return; }
       var s = _cleanSlug(rec.slug || slug);
       var n = rec.name || rec.school || s.replace(/-/g, ' ');
-      try { localStorage.setItem('hosa::chapter', s);
-            localStorage.setItem('hosa::chapter-name', n); } catch (e) {}
       thenShow(s, n, rec);
     });
   }

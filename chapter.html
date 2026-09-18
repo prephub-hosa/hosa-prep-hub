@@ -238,6 +238,7 @@
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
+<script src="chapter-seed.js"></script>
 <script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="qr.js"></script>
@@ -290,6 +291,14 @@
     });
     members.sort(function(a,b){ return b.xp - a.xp; });
     var chapterXp = totals[slug] || 0;
+    // Rank against the same set the home board shows, seeds included, so the
+    // two pages never disagree about "#N of M".
+    try {
+      if (window.HosaChapterSeed) {
+        var seeded = window.HosaChapterSeed.totals();
+        Object.keys(seeded).forEach(function(k){ if (!(k in totals)) totals[k] = seeded[k]; });
+      }
+    } catch(e) {}
     var ranked = Object.keys(totals).sort(function(a,b){ return totals[b]-totals[a]; });
     var rank = ranked.indexOf(slug) + 1;
 

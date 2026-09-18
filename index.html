@@ -1456,6 +1456,7 @@
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
+<script src="chapter-seed.js"></script>
 <script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="reminder.js" defer></script>
@@ -2521,6 +2522,10 @@ footer { display: none; }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
       Chapter Dashboard
     </a>
+    <button class="sb-item" id="sb-chapter-leave" type="button" style="display:none;width:100%;text-align:left;background:none;border:0;font:inherit;cursor:pointer;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+      Leave chapter
+    </button>
     <script>
     /* Once you belong to a chapter, the nav should point at it rather than
        asking you to start one you already have. */
@@ -2535,6 +2540,20 @@ footer { display: none; }
         if (lbl) lbl.textContent = nm ? (nm.length > 20 ? nm.slice(0, 19) + '\u2026' : nm) : 'Your Chapter';
         if (link) link.href = 'chapter.html?c=' + encodeURIComponent(slug);
         if (dash) { dash.style.display = ''; dash.href = 'chapter.html?c=' + encodeURIComponent(slug); }
+
+        // Leaving has to be possible. Someone who ends up in the wrong
+        // chapter — and until now merely searching for one put you in it —
+        // had no way out except clearing site data.
+        var leave = document.getElementById('sb-chapter-leave');
+        if (leave) {
+          leave.style.display = '';
+          leave.addEventListener('click', function(){
+            var label = nm || slug.replace(/-/g, ' ');
+            if (!window.confirm('Leave ' + label + '?\n\nYour XP and study progress stay exactly as they are. '
+                              + 'You just stop counting toward this chapter.')) return;
+            if (typeof window.hosaLeaveChapter === 'function') window.hosaLeaveChapter();
+          });
+        }
       } catch(e) {}
     })();
     </script>
@@ -5084,6 +5103,37 @@ function _syncChapterToLeaderboard() {
       .catch(function(){});
   } catch(e) {}
 }
+
+// Leave a chapter: clear it locally and strip the tag from the leaderboard
+// row, so the chapter stops counting this member. XP and study progress are
+// untouched — they belong to the student, not the chapter.
+function hosaLeaveChapter(cb) {
+  var slug = '';
+  try { slug = (localStorage.getItem('hosa::chapter') || '').trim(); } catch (e) {}
+  try {
+    localStorage.removeItem('hosa::chapter');
+    localStorage.removeItem('hosa::chapter-name');
+    localStorage.removeItem('hosa::chapter-owner');
+  } catch (e) {}
+  function done() {
+    try { gtag('event', 'chapter_left', { event_category: slug }); } catch (e) {}
+    if (cb) { cb(); return; }
+    // Reload without any ?chapter= on the URL, or the link would re-join on load.
+    try {
+      var u = location.origin + location.pathname;
+      location.replace(u);
+    } catch (e) { location.reload(); }
+  }
+  try {
+    var u = firebase.auth().currentUser;
+    var id = u ? u.uid : _guestId();
+    if (!id) { done(); return; }
+    firebase.database().ref('leaderboard/level/' + id)
+      .update({ chapter: null, chapterName: null })
+      .then(done).catch(done);
+  } catch (e) { done(); }
+}
+window.hosaLeaveChapter = hosaLeaveChapter;
 
 function _showSchoolPrompt() {
   if (_askedSchool()) return;
@@ -11866,6 +11916,16 @@ window.hosaXPFlyup = function(el, amount) {
       try { lname = (localStorage.getItem('hosa::chapter-name') || '').trim(); } catch(e) {}
       groups[mine].name = lname || mine.replace(/-/g, ' ');
     }
+    // Display-only seed rows, so a board with three chapters on it does not
+    // read as abandoned. A real chapter with the same slug always wins, and
+    // these carry confirmed:0 so no badge logic below can fire on them.
+    try {
+      if (window.HosaChapterSeed) {
+        window.HosaChapterSeed.rows().forEach(function(r){
+          if (!groups[r.slug]) groups[r.slug] = r;
+        });
+      }
+    } catch(e) {}
     var rows = Object.keys(groups).map(function(k){ return groups[k]; });
     rows.sort(function(a, b){
       return (b.xp - a.xp) || (b.members - a.members) || String(a.name).localeCompare(String(b.name));
@@ -11883,8 +11943,8 @@ window.hosaXPFlyup = function(el, amount) {
         // Stamped by a browser's local state rather than by real membership.
         r.founding = false; _unmarkFounding(r.slug);
       }
-      if (!r.founding && i < 10 && (r.confirmed || 0) > 0) { r.founding = true; _markFounding(r.slug); }
-      r.featured = (r.active || 0) >= 15 && (r.confirmed || 0) >= 15;
+      if (!r.founding && !r.seeded && i < 10 && (r.confirmed || 0) > 0) { r.founding = true; _markFounding(r.slug); }
+      r.featured = !r.seeded && (r.active || 0) >= 15 && (r.confirmed || 0) >= 15;
       if (r.featured && !FEATURED[r.slug]) { FEATURED[r.slug] = true; _markFeatured(r.slug, r.name, r.active); }
     });
     _renderFeatured(rows);
