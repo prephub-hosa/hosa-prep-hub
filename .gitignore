@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+# Test screenshots and scratch output — these belong in the scratchpad, not the repo.
+admin-rename.png
+admin-link.png
+join-qr.png
+sample.ics

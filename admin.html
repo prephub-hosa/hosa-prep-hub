@@ -50,7 +50,13 @@
   h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
   .badge { background: var(--ink); color: var(--bg); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; font-family: monospace; }
   .empty { color: var(--ink-soft); font-size: 14px; padding: 16px 0; }
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  /* The join link is long; keep it on one line and let the table scroll. */
+  td .join-link { white-space: nowrap; font-size: 11px; }
+  td .row-btn { margin-top: 5px; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border);
+                border-radius: 5px; background: var(--bg); color: var(--ink-soft); cursor: pointer; }
+  td .row-btn:hover { background: var(--surface); color: var(--ink); }
   th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); padding: 9px 12px; background: var(--surface); border: 1px solid var(--border); }
   td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); }
   tr:hover td { background: var(--surface); }
@@ -228,6 +234,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="chapter-link.js"></script>
+<script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script>
 // ─── Set your admin email here ───────────────────────────────────────────────
@@ -293,12 +301,16 @@ function loadChapters() {
     var html = '<p style="font-size:13px;color:#666;margin:0 0 12px;"><strong>' + rows.length + '</strong> chapter'
              + (rows.length === 1 ? '' : 's') + ' &middot; <strong>' + totalMembers + '</strong> tagged member'
              + (totalMembers === 1 ? '' : 's') + '.</p>'
-             + '<table><thead><tr><th>Chapter</th><th>State</th><th>Members</th><th>Active</th><th>Chapter XP</th>'
+             + '<div class="tbl-scroll"><table><thead><tr><th>Chapter</th><th>State</th><th>Members</th><th>Active</th><th>Chapter XP</th>'
              + '<th>Status</th><th>Contact</th><th>Email</th><th>Join link</th></tr></thead><tbody>';
     rows.forEach(function(r) {
-      var link = 'index.html?chapter=' + r.slug;
-      html += '<tr><td><strong>' + escapeHtml(r.name) + '</strong>'
-            + (r.registered ? '' : ' <span style="color:#999;font-size:11px;">(untagged)</span>') + '</td>'
+      // Absolute, so it can be copied straight out of this table into an email.
+      var link = window.HosaChapterLink.joinUrl(r.slug);
+      html += '<tr data-slug="' + escapeHtml(r.slug) + '"><td>'
+            + '<strong class="ch-name">' + escapeHtml(r.name) + '</strong>'
+            + (r.registered ? '' : ' <span style="color:#999;font-size:11px;">(untagged)</span>')
+            + '<br><button type="button" class="ch-rename row-btn" data-slug="' + escapeHtml(r.slug) + '">Rename</button>'
+            + '<div style="color:#bbb;font-size:10px;margin-top:3px;">' + escapeHtml(r.slug) + '</div></td>'
             + '<td>' + escapeHtml(r.state || '\u2014') + '</td>'
             + '<td>' + r.members + '</td>'
             + '<td>' + r.active + '<span style="color:#999;font-size:11px;"> / 15</span></td>'
@@ -310,10 +322,67 @@ function loadChapters() {
             + '</td>'
             + '<td>' + escapeHtml(r.contact || '\u2014') + (r.role ? '<br><span style="color:#999;font-size:11px;">' + escapeHtml(r.role) + '</span>' : '') + '</td>'
             + '<td><code>' + escapeHtml(r.email || '\u2014') + '</code></td>'
-            + '<td><code style="font-size:11px;">' + escapeHtml(link) + '</code></td></tr>';
+            + '<td><code class="join-link">' + escapeHtml(link) + '</code>'
+            +   '<br><button type="button" class="ch-copy row-btn" data-link="' + escapeHtml(link) + '">Copy link</button></td></tr>';
     });
-    html += '</tbody></table>';
+    html += '</tbody></table></div>';
     el.innerHTML = html;
+
+    // ── Rename a chapter ──────────────────────────────────────────
+    // A founder registered with the chapter named "HOSA", which no member
+    // would ever think to search for. The name is display-only — the slug,
+    // and therefore every join link already handed out, is left untouched.
+    el.querySelectorAll('.ch-rename').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slug = btn.getAttribute('data-slug');
+        var cell = btn.closest('td');
+        var current = cell.querySelector('.ch-name').textContent.trim();
+        var next = window.prompt('Chapter name for "' + slug + '"\n\n'
+                               + 'This is the name members see and search for. '
+                               + 'Join links are unaffected.', current);
+        if (next === null) return;
+        next = next.trim();
+        if (!next) { alert('Name cannot be empty.'); return; }
+        if (next === current) return;
+        btn.disabled = true; btn.textContent = 'Saving\u2026';
+        // Written to both nodes: registration falls back to analytics/chapters
+        // when the rules reject chapters/, so the record can live in either.
+        Promise.allSettled([
+          db.ref('chapters/' + slug).update({ name: next, school: next }),
+          db.ref('analytics/chapters/' + slug).update({ name: next, school: next })
+        ]).then(function(res) {
+          var okAny = res.some(function(x){ return x.status === 'fulfilled'; });
+          if (okAny) {
+            cell.querySelector('.ch-name').textContent = next;
+            btn.textContent = 'Renamed \u2713';
+            setTimeout(function(){ btn.disabled = false; btn.textContent = 'Rename'; }, 1600);
+          } else {
+            btn.disabled = false; btn.textContent = 'Rename';
+            alert('Could not save. The database rules may be blocking writes to chapters/.');
+          }
+        });
+      });
+    });
+
+    // ── Copy a join link ──────────────────────────────────────────
+    el.querySelectorAll('.ch-copy').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var link = btn.getAttribute('data-link');
+        var done = function() {
+          btn.textContent = 'Copied \u2713';
+          setTimeout(function(){ btn.textContent = 'Copy link'; }, 1600);
+        };
+        try {
+          if (navigator.clipboard) { navigator.clipboard.writeText(link).then(done).catch(done); return; }
+        } catch(e) {}
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = link; ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+          document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+          document.body.removeChild(ta); done();
+        } catch(e) {}
+      });
+    });
   }).catch(function() {
     document.getElementById('chapter-body').innerHTML = '<p class="empty">Could not load chapters.</p>';
   });

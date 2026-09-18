@@ -237,6 +237,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="chapter-link.js"></script>
+<script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="qr.js"></script>
 <script src="share-kit.js"></script>
@@ -326,8 +328,7 @@
         { slug: slug, name: name, record: info });
     } catch(e) {}
 
-    var base = location.href.split('#')[0].split('?')[0].replace(/chapter\.html$/, 'index.html');
-    $('ch-link').value = base + '?chapter=' + slug;
+    $('ch-link').value = window.HosaChapterLink.joinUrl(slug);
     $('ch-link-wrap').style.display = '';
 
     // Mounted here, not earlier: ch-link is only filled in on the line above,

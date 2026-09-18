@@ -1455,6 +1455,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="chapter-link.js"></script>
+<script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="reminder.js" defer></script>
 <script src="feedback-widget.js" defer></script>
@@ -5262,6 +5264,10 @@ function showGuestMode() {
 
 auth.onAuthStateChanged(user => {
   if (authLoadingEl) authLoadingEl.style.display = 'none';
+  // A join link has to work whoever opens it. This used to live only on the
+  // guest branch below, so a student who was already signed in followed a
+  // perfectly good link and was never tagged to the chapter.
+  if (user) _applyChapterFromUrl();
   if (user) {
     if (userEmailEl) userEmailEl.textContent = user.email;
     // Display name: prefer the username chosen at signup, fall back to email prefix.
