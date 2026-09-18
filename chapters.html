@@ -431,9 +431,9 @@
   <div class="card" id="lookup" style="display:none;">
     <div class="kicker" style="margin-bottom:8px;">Already registered?</div>
     <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px;">Get your links back</div>
-    <p class="sub">Type your school or the chapter name &mdash; part of it is enough. We'll show your join link and dashboard again. Nothing is created here; this only looks up what already exists.</p>
+    <p class="sub">Type your school or the chapter name &mdash; part of it is enough. If you still have your join link, pasting that works too. We'll show your links again. Nothing is created here; this only looks up what already exists.</p>
     <div class="fg" style="margin-top:14px;">
-      <label class="lbl" for="lk-school">School or chapter name</label>
+      <label class="lbl" for="lk-school">School, chapter name, or your join link</label>
       <input id="lk-school" class="inp" type="text" placeholder="Haas Hall Academy" autocomplete="organization">
     </div>
     <button class="btn" id="lk-submit" type="button">Find my chapter →</button>
@@ -523,65 +523,149 @@
     $(noteId).textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
   }
 
-  // Search the registry by name, not only by exact key.
+  // Finding a chapter again, without assuming any one read will work.
   //
-  // This used to slugify whatever you typed and look up that one key, so a
-  // chapter stored at "haas-hall-academy-rogers" was unreachable unless you
-  // typed the school exactly as it was first entered — the town on the end
-  // included. Founders who registered months ago do not remember that. Now
-  // the exact key is tried first, and on a miss we scan the registry and
-  // match on name, school or slug.
+  // The first version of this scanned the chapters/ registry and matched on
+  // name. That worked against a stub and failed on the live site, because a
+  // signed-out visitor cannot necessarily list that node — reading one known
+  // key is a different permission from enumerating the parent, and this page
+  // never authenticates at all. When the listing was refused the code said
+  // "No chapter registered under that name yet", which is a claim it had no
+  // evidence for.
+  //
+  // So: try every source we might be allowed to read, stop at the first hit,
+  // and keep track of whether any of them actually answered. If none did, say
+  // that plainly instead of declaring the chapter does not exist.
   function _norm(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 
-  function _scanFor(query, cb) {
-    var want = _norm(query);
-    if (!want) { cb(null); return; }
-    function scan(path, next) {
-      firebase.database().ref(path).get().then(function(snap) {
-        var all = (snap && snap.val()) || null;
-        if (!all) { next(); return; }
-        var exact = null, starts = null, partial = null;
-        Object.keys(all).forEach(function(key) {
-          var rec = all[key]; if (!rec) return;
-          var slug = rec.slug || key;
-          [rec.name, rec.school, slug].forEach(function(field) {
-            var have = _norm(field);
-            if (!have) return;
-            if (have === want) exact = exact || Object.assign({ slug: slug }, rec);
-            else if (have.indexOf(want) === 0 || want.indexOf(have) === 0)
-              starts = starts || Object.assign({ slug: slug }, rec);
-            else if (have.indexOf(want) !== -1 || want.indexOf(have) !== -1)
-              partial = partial || Object.assign({ slug: slug }, rec);
-          });
+  function _cleanSlug(v) {
+    return String(v || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44);
+  }
+
+  // A founder who still has their link should never be blocked on search.
+  // Pull the slug straight out of a pasted join or dashboard URL.
+  function _slugFromPastedLink(v) {
+    var m = /[?&](?:chapter|c)=([^&#\s]+)/.exec(String(v || ''));
+    if (!m) return '';
+    try { return _cleanSlug(decodeURIComponent(m[1])); } catch (e) { return _cleanSlug(m[1]); }
+  }
+
+  // once('value') is what the admin page uses and is the better-supported
+  // compat call; .get() is the fallback. Either can be refused, and a refusal
+  // must be distinguishable from an empty result.
+  function _readNode(path, cb) {
+    var settled = false;
+    function finish(val, ok) { if (settled) return; settled = true; cb(val, ok); }
+    // Never leave the button spinning on a read that never comes back.
+    setTimeout(function(){ finish(null, false); }, 6000);
+    try {
+      firebase.database().ref(path).once('value')
+        .then(function (snap) { finish((snap && snap.val()) || null, true); })
+        .catch(function (e1) {
+          try {
+            firebase.database().ref(path).get()
+              .then(function (snap) { finish((snap && snap.val()) || null, true); })
+              .catch(function (e2) {
+                // Say which node was refused. Guessing at this from the outside
+                // is what made the first version of this search ship broken.
+                console.warn('[chapters] cannot read /' + path + ':', (e2 && e2.message) || (e1 && e1.message));
+                finish(null, false);
+              });
+          } catch (e) { finish(null, false); }
         });
-        var hit = exact || starts || partial;
-        if (hit) cb(hit); else next();
-      }).catch(next);
-    }
-    scan('chapters', function(){ scan('analytics/chapters', function(){ cb(null); }); });
+    } catch (e) { finish(null, false); }
+  }
+
+  function _matchIn(records, want) {
+    var exact = null, starts = null, partial = null;
+    Object.keys(records || {}).forEach(function (key) {
+      var rec = records[key]; if (!rec) return;
+      var slug = _cleanSlug(rec.slug || key); if (!slug) return;
+      [rec.name, rec.school, rec.chapterName, slug].forEach(function (field) {
+        var have = _norm(field);
+        if (!have) return;
+        var hit = Object.assign({ slug: slug }, rec);
+        if (have === want) exact = exact || hit;
+        else if (have.indexOf(want) === 0 || want.indexOf(have) === 0) starts = starts || hit;
+        else if (have.indexOf(want) !== -1 || want.indexOf(have) !== -1) partial = partial || hit;
+      });
+    });
+    return exact || starts || partial;
+  }
+
+  // Members tagged through a join link carry chapter + chapterName on their
+  // leaderboard row. That node is read by the public board on the home page,
+  // so it is reachable even when the registry is not.
+  function _chaptersFromLeaderboard(rows) {
+    var out = {};
+    Object.keys(rows || {}).forEach(function (id) {
+      var r = rows[id];
+      if (!r || !r.chapter) return;
+      var slug = _cleanSlug(r.chapter); if (!slug) return;
+      if (!out[slug]) out[slug] = { slug: slug, name: r.chapterName || slug.replace(/-/g, ' ') };
+    });
+    return out;
+  }
+
+  /**
+   * Look a chapter up by anything the founder might type.
+   * cb(record) on success, cb(null, searched) otherwise — `searched` is false
+   * when every source refused us, so the caller can word the message honestly.
+   */
+  function findChapter(query, cb) {
+    var want = _norm(query);
+    var pasted = _slugFromPastedLink(query);
+    var guess = pasted || _cleanSlug(slugify(query));
+    var searched = false;
+
+    var steps = [
+      // Single known keys first — this read works even when listing does not.
+      function (next) { if (!guess) return next();
+        _readNode('chapters/' + guess, function (v, ok) {
+          if (ok) searched = true;
+          if (v) return cb(Object.assign({ slug: guess }, v));
+          next();
+        }); },
+      function (next) { if (!guess) return next();
+        _readNode('analytics/chapters/' + guess, function (v, ok) {
+          if (ok) searched = true;
+          if (v) return cb(Object.assign({ slug: guess }, v));
+          next();
+        }); },
+      // Then the registries, if we are allowed to enumerate them.
+      function (next) { if (!want) return next();
+        _readNode('chapters', function (v, ok) {
+          if (ok && v) { searched = true; var hit = _matchIn(v, want); if (hit) return cb(hit); }
+          next();
+        }); },
+      function (next) { if (!want) return next();
+        _readNode('analytics/chapters', function (v, ok) {
+          if (ok && v) { searched = true; var hit = _matchIn(v, want); if (hit) return cb(hit); }
+          next();
+        }); },
+      // Last resort: the leaderboard, which carries chapter names on member rows.
+      function (next) { if (!want) return next();
+        _readNode('leaderboard/level', function (v, ok) {
+          if (ok && v) { searched = true; var hit = _matchIn(_chaptersFromLeaderboard(v), want); if (hit) return cb(hit); }
+          next();
+        }); }
+    ];
+
+    (function run(i) {
+      if (i >= steps.length) { cb(null, searched); return; }
+      steps[i](function () { run(i + 1); });
+    })(0);
   }
 
   function lookUp(slug, thenShow, onMissing, rawQuery) {
-    function got(rec) {
-      if (!rec) {
-        // Nothing at that exact key — try to match the words they typed.
-        _scanFor(rawQuery || slug, function(found) {
-          if (!found) { onMissing && onMissing(); return; }
-          got(found);
-        });
-        return;
-      }
-      var s = rec.slug || slug;
+    findChapter(rawQuery || slug, function (rec, searched) {
+      if (!rec) { onMissing && onMissing(searched !== false); return; }
+      var s = _cleanSlug(rec.slug || slug);
       var n = rec.name || rec.school || s.replace(/-/g, ' ');
       try { localStorage.setItem('hosa::chapter', s);
-            localStorage.setItem('hosa::chapter-name', n); } catch(e) {}
+            localStorage.setItem('hosa::chapter-name', n); } catch (e) {}
       thenShow(s, n, rec);
-    }
-    try {
-      firebase.database().ref('chapters/' + slug).get()
-        .then(function(s){ return (s && s.val()) || firebase.database().ref('analytics/chapters/' + slug).get().then(function(s2){ return s2 && s2.val(); }); })
-        .then(got).catch(function(){ got(null); });
-    } catch(e) { got(null); }
+    });
   }
 
   // ── Coming back to this page ──────────────────────────────────────
@@ -606,14 +690,17 @@
     var v = $('lk-school').value.trim();
     var e = $('lk-error');
     e.textContent = '';
-    if (v.length < 3) { e.textContent = 'Please enter your school.'; return; }
+    if (v.length < 3) { e.textContent = 'Please enter your school, chapter name, or join link.'; return; }
     var slug = slugify(v);
     var btn = $('lk-submit');
     btn.disabled = true; btn.textContent = 'Looking\u2026';
-    // Hand the scan the words they actually typed, not just the slug.
-    lookUp(slug, function(s, n, r){ showChapter(s, n, true, r); }, function(){
+    // Hand the search the words they actually typed, not just the slug.
+    lookUp(slug, function(s, n, r){ showChapter(s, n, true, r); }, function(searched){
       btn.disabled = false; btn.textContent = 'Find my chapter \u2192';
-      e.textContent = 'No chapter registered under that name yet. Check the spelling, or register it below.';
+      // Only claim the chapter does not exist if we were actually able to look.
+      e.textContent = searched
+        ? 'No chapter found under that name. Try a shorter version of the school name, paste your join link, or register it below.'
+        : "Couldn't reach the chapter directory just now. Paste your join link or dashboard link above instead, or try again in a moment.";
     }, v);
   });
 
