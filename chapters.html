@@ -431,10 +431,10 @@
   <div class="card" id="lookup" style="display:none;">
     <div class="kicker" style="margin-bottom:8px;">Already registered?</div>
     <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px;">Get your links back</div>
-    <p class="sub">Type the school you registered and we'll show your join link and dashboard again. Nothing is created — this only looks up what already exists.</p>
+    <p class="sub">Type your school or the chapter name &mdash; part of it is enough. We'll show your join link and dashboard again. Nothing is created here; this only looks up what already exists.</p>
     <div class="fg" style="margin-top:14px;">
-      <label class="lbl" for="lk-school">School</label>
-      <input id="lk-school" class="inp" type="text" placeholder="Brewer high school" autocomplete="organization">
+      <label class="lbl" for="lk-school">School or chapter name</label>
+      <input id="lk-school" class="inp" type="text" placeholder="Haas Hall Academy" autocomplete="organization">
     </div>
     <button class="btn" id="lk-submit" type="button">Find my chapter →</button>
     <div class="err" id="lk-error"></div>
@@ -450,6 +450,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
+<script src="chapter-link.js"></script>
+<script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="feedback-widget.js" defer></script>
 <script src="qr.js"></script>
@@ -462,19 +464,13 @@
       .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '').slice(0, 44);
   }
-  function baseUrl() {
-    var u = location.href.split('#')[0].split('?')[0];
-    return u.replace(/chapters\.html$/, 'index.html');
-  }
+  // Links come from chapter-link.js so they are absolute and do not depend
+  // on whether this page was reached as /chapters or /chapters.html.
   var $ = function(id){ return document.getElementById(id); };
   var err = $('ch-error');
 
-  function dashUrl(slug) {
-    return baseUrl().replace(/index\.html$/, 'chapter.html') + '?c=' + encodeURIComponent(slug);
-  }
-  function joinUrl(slug) {
-    return baseUrl() + '?chapter=' + encodeURIComponent(slug);
-  }
+  function dashUrl(slug) { return window.HosaChapterLink.dashUrl(slug); }
+  function joinUrl(slug) { return window.HosaChapterLink.joinUrl(slug); }
 
   // One renderer for both paths: a fresh registration, and someone coming
   // back later for links they no longer have.
@@ -527,18 +523,65 @@
     $(noteId).textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
   }
 
-  function lookUp(slug, thenShow, onMissing) {
+  // Search the registry by name, not only by exact key.
+  //
+  // This used to slugify whatever you typed and look up that one key, so a
+  // chapter stored at "haas-hall-academy-rogers" was unreachable unless you
+  // typed the school exactly as it was first entered — the town on the end
+  // included. Founders who registered months ago do not remember that. Now
+  // the exact key is tried first, and on a miss we scan the registry and
+  // match on name, school or slug.
+  function _norm(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+
+  function _scanFor(query, cb) {
+    var want = _norm(query);
+    if (!want) { cb(null); return; }
+    function scan(path, next) {
+      firebase.database().ref(path).get().then(function(snap) {
+        var all = (snap && snap.val()) || null;
+        if (!all) { next(); return; }
+        var exact = null, starts = null, partial = null;
+        Object.keys(all).forEach(function(key) {
+          var rec = all[key]; if (!rec) return;
+          var slug = rec.slug || key;
+          [rec.name, rec.school, slug].forEach(function(field) {
+            var have = _norm(field);
+            if (!have) return;
+            if (have === want) exact = exact || Object.assign({ slug: slug }, rec);
+            else if (have.indexOf(want) === 0 || want.indexOf(have) === 0)
+              starts = starts || Object.assign({ slug: slug }, rec);
+            else if (have.indexOf(want) !== -1 || want.indexOf(have) !== -1)
+              partial = partial || Object.assign({ slug: slug }, rec);
+          });
+        });
+        var hit = exact || starts || partial;
+        if (hit) cb(hit); else next();
+      }).catch(next);
+    }
+    scan('chapters', function(){ scan('analytics/chapters', function(){ cb(null); }); });
+  }
+
+  function lookUp(slug, thenShow, onMissing, rawQuery) {
     function got(rec) {
-      if (!rec) { onMissing && onMissing(); return; }
-      try { localStorage.setItem('hosa::chapter', rec.slug || slug);
-            localStorage.setItem('hosa::chapter-name', rec.name || rec.school || slug); } catch(e) {}
-      thenShow(rec.slug || slug, rec.name || rec.school || slug, rec);
+      if (!rec) {
+        // Nothing at that exact key — try to match the words they typed.
+        _scanFor(rawQuery || slug, function(found) {
+          if (!found) { onMissing && onMissing(); return; }
+          got(found);
+        });
+        return;
+      }
+      var s = rec.slug || slug;
+      var n = rec.name || rec.school || s.replace(/-/g, ' ');
+      try { localStorage.setItem('hosa::chapter', s);
+            localStorage.setItem('hosa::chapter-name', n); } catch(e) {}
+      thenShow(s, n, rec);
     }
     try {
       firebase.database().ref('chapters/' + slug).get()
         .then(function(s){ return (s && s.val()) || firebase.database().ref('analytics/chapters/' + slug).get().then(function(s2){ return s2 && s2.val(); }); })
-        .then(got).catch(function(){ onMissing && onMissing(); });
-    } catch(e) { onMissing && onMissing(); }
+        .then(got).catch(function(){ got(null); });
+    } catch(e) { got(null); }
   }
 
   // ── Coming back to this page ──────────────────────────────────────
@@ -567,10 +610,11 @@
     var slug = slugify(v);
     var btn = $('lk-submit');
     btn.disabled = true; btn.textContent = 'Looking\u2026';
+    // Hand the scan the words they actually typed, not just the slug.
     lookUp(slug, function(s, n, r){ showChapter(s, n, true, r); }, function(){
       btn.disabled = false; btn.textContent = 'Find my chapter \u2192';
       e.textContent = 'No chapter registered under that name yet. Check the spelling, or register it below.';
-    });
+    }, v);
   });
 
   $('res-register-other').addEventListener('click', function(ev){
