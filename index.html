@@ -1457,6 +1457,9 @@
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
 <script src="chapter-seed.js"></script>
+<script src="sets.js"></script>
+<script src="learn.js"></script>
+<script src="sets-ui.js" defer></script>
 <script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script src="reminder.js" defer></script>
@@ -2491,6 +2494,10 @@ footer { display: none; }
     <button class="sb-item" data-tab="events">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Browse All Events
+    </button>
+    <button class="sb-item" data-tab="sets">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="15" height="12" rx="2"/><path d="M6 4h13a2 2 0 0 1 2 2v10"/></svg>
+      Study Sets
     </button>
   </div>
   <div class="sb-label">Info</div>
@@ -4667,6 +4674,15 @@ footer { display: none; }
     </div><!-- /tab-inner -->
     </div><!-- /tab-events -->
 
+    <!-- ══ STUDY SETS TAB ══ -->
+    <!-- Rendered entirely by sets-ui.js; the shell is here so the tab
+         router has a pane to switch to. -->
+    <div class="tab-pane" id="tab-sets">
+    <div class="tab-inner">
+      <div id="sets-root"></div>
+    </div><!-- /tab-inner -->
+    </div><!-- /tab-sets -->
+
     <!-- ══ LIBRARY TAB ══ -->
     <div class="tab-pane" id="tab-library">
     <div class="tab-inner">
@@ -6676,6 +6692,10 @@ function friendlyError(code) {
   <button class="bn-item" data-tab="events">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     Events
+  </button>
+  <button class="bn-item" data-tab="sets">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="15" height="12" rx="2"/><path d="M6 4h13a2 2 0 0 1 2 2v10"/></svg>
+    Sets
   </button>
   <button class="bn-item" data-tab="library">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
