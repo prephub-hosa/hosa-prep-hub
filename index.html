@@ -1459,6 +1459,7 @@
 <script src="chapter-link.js"></script>
 <script src="chapter-seed.js"></script>
 <script src="progress.js"></script>
+<script src="review-plan.js"></script>
 <script src="sets.js"></script>
 <script src="learn.js"></script>
 <script src="sets-ui.js" defer></script>
@@ -5424,6 +5425,9 @@ auth.onAuthStateChanged(user => {
       if (window.HosaProgress) {
         window.HosaProgress.sync(user.uid, function(res) {
           if (!res) return;   // offline: leave the device as it was
+          // Spread the backlog before anything counts it, or the badge
+          // shows a number no one could clear in a sitting.
+          try { if (window.HosaReviewPlan) window.HosaReviewPlan.run(user.uid); } catch(_e) {}
           try { if (window.__hosaRenderProgress) window.__hosaRenderProgress(); } catch(_e) {}
           try { if (window.__hosaRefreshDue) window.__hosaRefreshDue(); } catch(_e) {}
           try { if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard(); } catch(_e) {}
@@ -6701,6 +6705,15 @@ function friendlyError(code) {
     var emptyEl = document.getElementById('library-empty');
     if (emptyEl) emptyEl.style.display = 'block';
   }
+
+  // A guest's rows are already here at load, so their backlog needs
+  // spreading too — signed-in students get this from the sync callback,
+  // once their rows have actually arrived.
+  try {
+    if (window.HosaReviewPlan && !(window.firebase && firebase.auth && firebase.auth().currentUser)) {
+      window.HosaReviewPlan.run(null);
+    }
+  } catch(e) {}
 
   // The due badge and the resume card read the same rows, so anything that
   // redraws this surface should redraw those too. One entry point, or they
