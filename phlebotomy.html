@@ -1985,6 +1985,15 @@ function saveProgress() {
     lastStudyDate: state.progress.lastStudyDate || null,
     lastFilter:    state.flash.filter || 'all',
   };
+  // A save to the account replaces the whole record. If the read never came
+  // back — offline, a slow auth handshake, a rules error — then what is in
+  // memory is an empty deck rather than this student's work, and writing it
+  // would destroy the lot the moment they flip one card. Keep it on the
+  // device instead; the next successful sign-in merges it back up.
+  if (user && !_progressLoaded) {
+    try { localStorage.setItem('hosa::' + DB_PATH, JSON.stringify(data)); } catch (e) {}
+    return;
+  }
   if (user) {
     // Encode term-keyed maps, and never let a save failure escape into the
     // caller — a throw here used to freeze the timed test mid-question.
@@ -2034,6 +2043,12 @@ function _mergeQuizzes(local, remote) {
   return out;
 }
 
+// True once a load has actually come back — successfully, even if it came
+// back empty. Saving to the account is a full overwrite, so this is the
+// difference between "this student has no progress" and "we could not
+// read it", which look identical in memory and are not remotely the same.
+let _progressLoaded = false;
+
 async function loadProgress(uid) {
   try {
     if (uid) {
@@ -2066,6 +2081,7 @@ async function loadProgress(uid) {
         state.progress.lastFilter    = data.lastFilter    || 'all';
       }
     }
+    _progressLoaded = true;
   } catch(e) { console.warn('Could not load progress:', e); }
 }
 

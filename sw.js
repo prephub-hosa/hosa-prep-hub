@@ -40,6 +40,7 @@ const SHELL = [
   'engage.js',
   'leaderboard.js',
   'feedback-widget.js',
+  'progress.js',
   'sets.js',
   'learn.js',
   'sets-ui.js',
