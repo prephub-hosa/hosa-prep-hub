@@ -1457,6 +1457,7 @@
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
 <script src="chapter-seed.js"></script>
+<script src="progress.js"></script>
 <script src="sets.js"></script>
 <script src="learn.js"></script>
 <script src="sets-ui.js" defer></script>
@@ -5353,6 +5354,8 @@ auth.onAuthStateChanged(user => {
         try { localStorage.setItem('hosa-lb-name',  un); } catch(_e) {}
         try { localStorage.setItem('hosa::username', un); } catch(_e) {}
         if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard();
+        // The hero greeting already rendered with the fallback name.
+        if (window.__hosaRenderProgress) window.__hosaRenderProgress();
       }).catch(function(){});
     } catch(_e) {}
     const pill = document.getElementById('topbar-user-pill');
@@ -5399,12 +5402,37 @@ auth.onAuthStateChanged(user => {
         try { localStorage.setItem('hosa::last-uid', user.uid); } catch(_e) {}
         // Reset the level-up checkpoint so the celebration doesn't fire from
         // the XP swap on account switch
-        try { localStorage.setItem('hosa::chk-lvl', String(Math.floor(Math.sqrt(useXP / 50)) + 1)); } catch(_e) {}
+        var _lvlNow = Math.floor(Math.sqrt(useXP / 50)) + 1;
+        try { localStorage.setItem('hosa::chk-lvl', String(_lvlNow)); } catch(_e) {}
+        // The checker keeps its own copy in a closure, so the write above is
+        // not enough on its own.
+        try { if (window.__hosaResetLevelCheck) window.__hosaResetLevelCheck(_lvlNow); } catch(_e) {}
         _syncXP();
         if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard();
       }).catch(function(){ _syncXP(); });
       if (!window._hosaXPSyncInterval) {
         window._hosaXPSyncInterval = setInterval(_syncXP, 8000);
+      }
+    } catch(e) {}
+
+    // Bring this account's study progress onto this device. Until it lands,
+    // the page is showing whatever the device happened to hold, which on a
+    // new machine is nothing at all — Level 1, 0 mastered, 0 due, for a
+    // student who has been studying for weeks.
+    try {
+      if (window.HosaProgress) {
+        window.HosaProgress.sync(user.uid, function(res) {
+          if (!res) return;   // offline: leave the device as it was
+          try { if (window.__hosaRenderProgress) window.__hosaRenderProgress(); } catch(_e) {}
+          try { if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard(); } catch(_e) {}
+        });
+      }
+    } catch(e) {}
+    try {
+      if (window.HosaSets && window.HosaSets.syncAccount) {
+        window.HosaSets.syncAccount(user.uid, function() {
+          try { if (window.HosaSetsUI) window.HosaSetsUI.render(); } catch(_e) {}
+        });
       }
     } catch(e) {}
     try { gtag('config', 'G-S4BPXCT41X', {user_id: user.uid}); } catch(e) {}
@@ -5483,6 +5511,13 @@ if (btnCloseAuth) btnCloseAuth.addEventListener('click', function(){
 var btnSignout = document.getElementById('btn-signout');
 if (btnSignout) btnSignout.addEventListener('click', function(){
   if (firebase.auth().currentUser) {
+    // Leave nothing of this account behind. On a shared school computer the
+    // next person to open the site is a guest, and the mirrored rows would
+    // otherwise show them someone else's progress — and upload it into
+    // whichever account signs in next.
+    try { if (window.HosaProgress) window.HosaProgress.clearMirror(); } catch(_e) {}
+    try { if (window.HosaSets && window.HosaSets.signOut) window.HosaSets.signOut(); } catch(_e) {}
+    try { localStorage.removeItem('hosa::last-uid'); } catch(_e) {}
     auth.signOut().then(function(){ if (authGateEl) authGateEl.style.display = 'flex'; });
   } else {
     if (authGateEl) authGateEl.style.display = 'flex';
@@ -6262,6 +6297,13 @@ function friendlyError(code) {
     {slug:'wound-care',name:'Wound Care'},
   ];
 
+  // Everything below reads the hosa::<slug> rows to work out level,
+  // mastered, streak, due today, the greeting and the library. For a
+  // signed-in student those rows arrive from Firebase after this script
+  // has already run, so it has to be callable a second time rather than
+  // being a one-shot at load. progress.js calls it once the account's
+  // progress has been merged in.
+  function renderProgressSurface() {
   var studied = [];
   ALL_EVENTS.forEach(function(ev){
     try {
@@ -6634,6 +6676,9 @@ function friendlyError(code) {
     var emptyEl = document.getElementById('library-empty');
     if (emptyEl) emptyEl.style.display = 'block';
   }
+  }
+  window.__hosaRenderProgress = renderProgressSurface;
+  renderProgressSurface();
 
   // Fix onboarding "browse" button target (now scrolls to events tab)
   var onboardFinish = document.getElementById('onboard-finish');
@@ -9795,6 +9840,14 @@ window.hosaXPFlyup = function(el, amount) {
     var _chkStored = parseInt(localStorage.getItem('hosa::chk-lvl') || '-1', 10);
     if (_chkStored > 0) _lastLevel = _chkStored;
   } catch(e) {}
+  // Signing in on a new device raises XP from 0 to whatever the account
+  // already had. That is not a level-up, and popping "Level 3!" over a hero
+  // still reading "LEVEL 1" is how the mismatch got noticed in the first
+  // place. The sync re-baselines the checker instead of celebrating.
+  window.__hosaResetLevelCheck = function(lvl) {
+    _lastLevel = lvl;
+    try { localStorage.setItem('hosa::chk-lvl', String(lvl)); } catch(e) {}
+  };
   function check() {
     try {
       var xp = parseInt(localStorage.getItem('hosa::xp') || '0', 10);

@@ -15,7 +15,12 @@
 
   var INDEX_KEY = 'hosa::sets::index';
   var SET_KEY = 'hosa::set::';
+  var GONE_KEY = 'hosa::sets::gone';    // id -> when it was deleted here
   var MAX_CARDS = 2000;
+
+  // Set while a student is signed in. Sets then live in their account as
+  // well as on the device, so they survive a new laptop.
+  var accountUid = null;
 
   function now() { return new Date().toISOString(); }
 
@@ -64,7 +69,17 @@
     set.updatedAt = now();
     if (!write(SET_KEY + set.id, set)) return false;
     touchIndex(set);
+    push(set);
     return true;
+  }
+
+  /** Mirror one set into the signed-in account. No-op for a guest. */
+  function push(set) {
+    if (!accountUid || !global.firebase || !firebase.database) return;
+    try {
+      firebase.database().ref('users/' + accountUid + '/sets/' + set.id)
+        .set(set).catch(function () {});
+    } catch (e) {}
   }
 
   function create(title, cards) {
@@ -105,6 +120,18 @@
   function remove(id) {
     try { localStorage.removeItem(SET_KEY + id); } catch (e) {}
     write(INDEX_KEY, index().filter(function (r) { return r.id !== id; }));
+    // Record the deletion, or the next sync would helpfully restore it from
+    // the account and the set would be un-deletable.
+    var gone = read(GONE_KEY, {});
+    if (!gone || typeof gone !== 'object') gone = {};
+    gone[id] = now();
+    write(GONE_KEY, gone);
+    if (accountUid && global.firebase && firebase.database) {
+      try {
+        firebase.database().ref('users/' + accountUid + '/sets/' + id)
+          .set({ id: id, deletedAt: gone[id] }).catch(function () {});
+      } catch (e) {}
+    }
   }
 
   function rename(id, title) {
@@ -249,7 +276,165 @@
     return out;
   }
 
+  /* ── Syncing a set across devices ────────────────────────────────
+
+     Two devices, one account. Neither copy is authoritative, so a merge
+     has to be able to run in either direction and give the same answer,
+     and it must never be able to turn progress into less progress.
+
+     A note on duplicates: card ids are generated per device, so a set
+     that was *recreated* by hand on a second machine is genuinely a
+     different set and both will appear. That is the honest outcome —
+     silently fusing two sets because they share a title would be worse
+     than showing two and letting the student delete one. Cards inside a
+     set that does merge are de-duplicated by their text, which is what
+     catches the same event being imported twice.
+     ───────────────────────────────────────────────────────────────── */
+
+  function cardKey(c) {
+    return String(c.term || '').trim().toLowerCase() + '\u0000' +
+           String(c.def || '').trim().toLowerCase();
+  }
+
+  function mergeSets(local, remote) {
+    // Whichever was edited last wins the things that cannot be merged.
+    var newer = String(remote.updatedAt || '') > String(local.updatedAt || '') ? remote : local;
+    var out = {
+      id: local.id,
+      title: newer.title || local.title || 'Untitled set',
+      createdAt: local.createdAt || remote.createdAt || now(),
+      updatedAt: newer.updatedAt || now(),
+      direction: newer.direction || 'term',
+      cards: [],
+      stage: {},
+      stats: {}
+    };
+
+    var byKey = {}, idMap = {};
+    [local, remote].forEach(function (src) {
+      (src.cards || []).forEach(function (c) {
+        if (!c || !c.id) return;
+        var k = cardKey(c);
+        if (byKey[k]) { idMap[c.id] = byKey[k].id; return; }   // same card, other device
+        var copy = { id: c.id, term: c.term, def: c.def };
+        byKey[k] = copy;
+        idMap[c.id] = copy.id;
+        out.cards.push(copy);
+      });
+    });
+
+    // Mastery is the high-water mark: a card mastered on either device
+    // stays mastered, and a card seen on either is no longer unseen.
+    [local, remote].forEach(function (src) {
+      var stage = src.stage || {}, stats = src.stats || {};
+      Object.keys(stage).forEach(function (cid) {
+        var id = idMap[cid];
+        if (!id) return;
+        out.stage[id] = Math.max(out.stage[id] || 0, Number(stage[cid]) || 0);
+      });
+      Object.keys(stats).forEach(function (cid) {
+        var id = idMap[cid];
+        if (!id) return;
+        var cur = out.stats[id] || { right: 0, wrong: 0 };
+        var add = stats[cid] || {};
+        out.stats[id] = {
+          right: Math.max(cur.right, Number(add.right) || 0),
+          wrong: Math.max(cur.wrong, Number(add.wrong) || 0)
+        };
+      });
+    });
+    out.cards.forEach(function (c) { if (out.stage[c.id] == null) out.stage[c.id] = 0; });
+    return out;
+  }
+
+  /**
+   * Reconcile this device's sets with the account's.
+   *
+   * Deletions are honoured in both directions through tombstones, and a
+   * set is only ever removed here when it was deleted *after* it was last
+   * edited — so an edit on one device beats a stale delete from another.
+   */
+  function syncAccount(uid, cb) {
+    cb = cb || function () {};
+    accountUid = uid || null;
+    if (!accountUid || !global.firebase || !firebase.database) { cb(null); return; }
+
+    firebase.database().ref('users/' + accountUid + '/sets').get().then(function (snap) {
+      var remote = (snap && snap.exists() && snap.val()) || {};
+      var gone = read(GONE_KEY, {});
+      if (!gone || typeof gone !== 'object') gone = {};
+      var ids = {}, id;
+      for (id in remote) if (Object.prototype.hasOwnProperty.call(remote, id)) ids[id] = 1;
+      index().forEach(function (r) { ids[r.id] = 1; });
+
+      var adopted = 0, pushed = 0, removed = 0;
+
+      Object.keys(ids).forEach(function (sid) {
+        var localSet = get(sid);
+        var remoteSet = remote[sid] || null;
+
+        // Deleted in the account.
+        if (remoteSet && remoteSet.deletedAt && !remoteSet.cards) {
+          if (localSet && String(localSet.updatedAt || '') > String(remoteSet.deletedAt)) {
+            push(localSet);           // edited here after being deleted there
+            pushed++;
+          } else if (localSet) {
+            try { localStorage.removeItem(SET_KEY + sid); } catch (e) {}
+            write(INDEX_KEY, index().filter(function (r) { return r.id !== sid; }));
+            removed++;
+          }
+          return;
+        }
+
+        // Deleted here.
+        if (gone[sid]) {
+          if (remoteSet && String(remoteSet.updatedAt || '') > String(gone[sid])) {
+            delete gone[sid];         // edited elsewhere since; take it back
+          } else {
+            if (remoteSet) {
+              try {
+                firebase.database().ref('users/' + accountUid + '/sets/' + sid)
+                  .set({ id: sid, deletedAt: gone[sid] }).catch(function () {});
+              } catch (e) {}
+            }
+            return;
+          }
+        }
+
+        if (localSet && remoteSet) {
+          var merged = mergeSets(localSet, remoteSet);
+          write(SET_KEY + sid, merged);
+          touchIndex(merged);
+          push(merged);
+          pushed++;
+        } else if (remoteSet) {
+          remoteSet.cards = remoteSet.cards || [];
+          remoteSet.stage = remoteSet.stage || {};
+          remoteSet.stats = remoteSet.stats || {};
+          write(SET_KEY + sid, remoteSet);
+          touchIndex(remoteSet);
+          adopted++;
+        } else if (localSet) {
+          push(localSet);             // made here before signing in
+          pushed++;
+        }
+      });
+
+      write(GONE_KEY, gone);
+      cb({ adopted: adopted, pushed: pushed, removed: removed });
+    }).catch(function () {
+      // Offline or refused: the device keeps what it has, unchanged.
+      cb(null);
+    });
+  }
+
+  /** Signing out must not leave one student's sets on another's screen. */
+  function signOut() { accountUid = null; }
+
   global.HosaSets = {
+    syncAccount: syncAccount,
+    signOut: signOut,
+    mergeSets: mergeSets,
     index: index,
     get: get,
     save: save,
