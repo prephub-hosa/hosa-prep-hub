@@ -278,8 +278,26 @@
            Object.keys(merged.srData || {}).length > Object.keys(remote.srData || {}).length;
   }
 
+  /**
+   * Write one event's row to the account, encoding the term-keyed maps on
+   * the way out. Used by the review planner so a backlog is spread the
+   * same way on every device.
+   */
+  function pushEvent(uid, slug, row) {
+    if (!uid || !row || !global.firebase || !firebase.database) return;
+    try {
+      firebase.database().ref('users/' + uid + '/progress/' + slug).set(
+        Object.assign({}, row, {
+          srLevels: mapKeys(row.srLevels, encKey),
+          srData:   mapKeys(row.srData, encKey)
+        })
+      ).catch(function () {});
+    } catch (e) {}
+  }
+
   global.HosaProgress = {
     sync: sync,
+    pushEvent: pushEvent,
     clearMirror: clearMirror,
     mergeEvent: mergeEvent,
     mergeSrData: mergeSrData,

@@ -41,6 +41,7 @@ const SHELL = [
   'terms.js',
   'feedback-widget.js',
   'progress.js',
+  'review-plan.js',
   'sets.js',
   'learn.js',
   'sets-ui.js',
