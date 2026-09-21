@@ -1454,6 +1454,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="terms.js"></script>
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
 <script src="chapter-seed.js"></script>
@@ -5424,6 +5425,7 @@ auth.onAuthStateChanged(user => {
         window.HosaProgress.sync(user.uid, function(res) {
           if (!res) return;   // offline: leave the device as it was
           try { if (window.__hosaRenderProgress) window.__hosaRenderProgress(); } catch(_e) {}
+          try { if (window.__hosaRefreshDue) window.__hosaRefreshDue(); } catch(_e) {}
           try { if (window.__hosaRenderLeaderboard) window.__hosaRenderLeaderboard(); } catch(_e) {}
         });
       }
@@ -6304,6 +6306,20 @@ function friendlyError(code) {
   // being a one-shot at load. progress.js calls it once the account's
   // progress has been merged in.
   function renderProgressSurface() {
+  // This runs at load and again when the account's progress arrives from
+  // Firebase. Every grid below appends, so without clearing them first the
+  // second pass shows each event twice — which is exactly what happened:
+  // a library listing "Anatomy & Physiology" twice, and a "Continue
+  // studying" section stacked on top of itself.
+  ['jbi-row', 'recents-grid', 'library-grid'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+  var _oldYourEvents = document.getElementById('your-events-section');
+  if (_oldYourEvents && _oldYourEvents.parentNode) {
+    _oldYourEvents.parentNode.removeChild(_oldYourEvents);
+  }
+
   var studied = [];
   ALL_EVENTS.forEach(function(ev){
     try {
@@ -6562,8 +6578,9 @@ function friendlyError(code) {
     if (jbiSection && jbiRow) {
       jbiSection.style.display = 'block';
       studied.slice(0, 4).forEach(function(ev){
-        var totalTerms = Math.max(ev.studied, 1);
-        var pct = Math.min(100, Math.round(ev.mastered / totalTerms * 100));
+        // Same correction as the library: a share of the whole event.
+        var pct = window.hosaMasteryPct ? window.hosaMasteryPct(ev.slug, ev.mastered) : null;
+        if (pct === null) pct = Math.min(100, Math.round(ev.mastered / Math.max(ev.studied, 1) * 100));
         var card = document.createElement('a');
         card.className = 'jbi-card';
         card.href = ev.slug + '.html';
@@ -6630,15 +6647,21 @@ function friendlyError(code) {
     if (libGrid) {
       if (libEmpty) libEmpty.style.display = 'none';
       studied.forEach(function(ev){
-        var totalTerms = Math.max(ev.studied, 1);
-        var pct = Math.min(100, Math.round(ev.mastered / totalTerms * 100));
+        // Against the event's real card count. Dividing by the number seen
+        // reported "100% done" to anyone who had mastered the four cards
+        // they had looked at, on an event with ninety-six.
+        var pct = window.hosaMasteryPct ? window.hosaMasteryPct(ev.slug, ev.mastered) : null;
+        var totalTerms = window.hosaTotalTerms ? window.hosaTotalTerms(ev.slug) : 0;
+        if (pct === null) pct = Math.min(100, Math.round(ev.mastered / Math.max(ev.studied, 1) * 100));
         var card = document.createElement('a');
         card.className = 'lib-card';
         card.href = ev.slug + '.html';
         card.innerHTML =
           '<div class="lib-card-title">' + ev.name + '</div>' +
           '<div class="lib-progress-track"><div class="lib-progress-fill" style="width:' + pct + '%"></div></div>' +
-          '<div class="lib-meta">' + ev.mastered + ' mastered · ' + ev.studied + ' seen · ' + pct + '% done</div>';
+          '<div class="lib-meta">' + ev.mastered + ' mastered · ' +
+            (totalTerms ? ev.mastered + ' of ' + totalTerms + ' cards · ' : ev.studied + ' seen · ') +
+            pct + '%</div>';
         libGrid.appendChild(card);
       });
     }
@@ -6656,7 +6679,9 @@ function friendlyError(code) {
       var yourRow = document.getElementById('your-events-row');
       if (yourRow) {
         studied.slice(0, 4).forEach(function(ev){
-          var pct = Math.min(100, Math.round(ev.mastered / Math.max(ev.studied, 1) * 100));
+          var pct = (window.hosaMasteryPct && window.hosaMasteryPct(ev.slug, ev.mastered) !== null)
+            ? window.hosaMasteryPct(ev.slug, ev.mastered)
+            : Math.min(100, Math.round(ev.mastered / Math.max(ev.studied, 1) * 100));
           var card = document.createElement('a');
           card.className = 'jbi-card';
           card.href = ev.slug + '.html';
@@ -6676,6 +6701,12 @@ function friendlyError(code) {
     var emptyEl = document.getElementById('library-empty');
     if (emptyEl) emptyEl.style.display = 'block';
   }
+
+  // The due badge and the resume card read the same rows, so anything that
+  // redraws this surface should redraw those too. One entry point, or they
+  // drift apart again — which is how the badge came to sit at a stale count
+  // while the library beneath it showed something else.
+  try { if (typeof window.__hosaRefreshDue === 'function') window.__hosaRefreshDue(); } catch(e) {}
   }
   window.__hosaRenderProgress = renderProgressSurface;
   renderProgressSurface();
@@ -6693,7 +6724,6 @@ function friendlyError(code) {
 })();
 </script>
 
-<script src="leaderboard.js"></script>
 <script src="engage.js" defer></script>
 
 <!-- ── Keyboard shortcuts overlay ── -->
@@ -7347,6 +7377,11 @@ function friendlyError(code) {
       updateDueBadge();
     }
   }
+  // Both of these read the hosa::<slug> rows, which for a signed-in student
+  // do not exist yet when this first runs — so the due badge and the resume
+  // card were blank until the next page load. The sync calls this once the
+  // account's progress has landed.
+  window.__hosaRefreshDue = run;
 
   // engage.js is deferred — poll briefly until it exposes hosaDueToday
   var tries = 0;
