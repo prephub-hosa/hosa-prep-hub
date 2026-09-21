@@ -38,7 +38,7 @@ const SHELL = [
   'aura.js?v=7',
   'due.js',
   'engage.js',
-  'leaderboard.js',
+  'terms.js',
   'feedback-widget.js',
   'progress.js',
   'sets.js',
