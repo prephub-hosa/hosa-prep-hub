@@ -25,16 +25,16 @@
    Bump CACHE to invalidate everything.
    ═════════════════════════════════════════════════════════════════ */
 // Bumped to v2 to evict the stale css/js the old strategy left behind.
-const CACHE = 'hosa-v2';
+const CACHE = 'hosa-v3';
 
 // The shell needed to render any page. Event pages are cached on visit.
 // These must match the URLs the pages actually request, query string and
-// all — 'aura.css' and 'aura.css?v=38' are two different cache keys, and
+// all — 'aura.css' and 'aura.css?v=39' are two different cache keys, and
 // precaching the wrong one silently achieves nothing.
 const SHELL = [
   './',
   'index.html',
-  'aura.css?v=38',
+  'aura.css?v=39',
   'aura.js?v=7',
   'due.js',
   'engage.js',
@@ -42,6 +42,7 @@ const SHELL = [
   'feedback-widget.js',
   'progress.js',
   'review-plan.js',
+  'home-extras.js',
   'sets.js',
   'learn.js',
   'sets-ui.js',
