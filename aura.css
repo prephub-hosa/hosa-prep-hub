@@ -4,7 +4,14 @@
    ═════════════════════════════════════════════════════════════════ */
 
 /* ── Fonts ─────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+/* Inter and Geist Mono used to be pulled in here with @import. That is the
+   slowest way to load a font that the platform offers: the browser has to
+   fetch and parse all 284 KB of this file before it even learns the request
+   exists, then make two more hops for the CSS and the font files — and the
+   <link rel=preconnect> in the document head cannot help, because the
+   origin is not known until the parse finishes. Inter is the interface
+   font, so the whole UI waited on that chain. They are requested from the
+   document head now, in the same call as the other three families. */
 
 /* ── Color tokens — Black / Crimson / White ─────────────────────── */
 /* Dark default. Crimson used sparingly for accent only.
@@ -8124,3 +8131,29 @@ nav.tabs button.active:hover { background: var(--grad-cta) !important; }
   .ln-opt { min-height: 48px; }
   .ed-del { width: 34px; height: 34px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SKIP LINK
+   Hidden until focused. Without it a keyboard or screen-reader user had
+   to walk the entire sidebar before reaching the page on every visit.
+   ═══════════════════════════════════════════════════════════════════ */
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -60px;
+  z-index: 10000;
+  padding: 10px 18px;
+  border-radius: 0 0 10px 10px;
+  background: var(--grad-cta);
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px; font-weight: 600;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+

@@ -4,6 +4,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
 <script>try{if(!localStorage.getItem("hosa-theme-default-light")){localStorage.setItem("hosa-theme-default-light","1");if(localStorage.getItem("hosa-theme")==="dark")localStorage.removeItem("hosa-theme");}var t=localStorage.getItem("hosa-theme")||"light";if(t!=="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <!-- Google Analytics -->
+<!-- Requested before the scripts: first paint waits on this file and
+     nothing else, so it should not be queueing behind them. -->
+<link rel="stylesheet" href="aura.css?v=39">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -36,7 +39,7 @@
 <meta name="twitter:image" content="https://hosaprephub.vercel.app/og-card.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #161411;
@@ -1475,7 +1478,6 @@
   /* Do NOT touch flashcards */
   .flashcard, .flashcard *, .face, .face * { animation: none; }
 </style>
-<link rel="stylesheet" href="aura.css?v=38">
 <script defer src="aura.js?v=7"></script>
 <script src="engage.js" defer></script>
 </head>
