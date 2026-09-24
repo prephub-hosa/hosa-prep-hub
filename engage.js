@@ -549,6 +549,11 @@
   /* ─── Homepage: due-today widget ──────────────────────────── */
   function renderDueToday() {
     const section = document.getElementById('due-today-section');
+    // Retired on the home page. It was the fourth place on one screen
+    // telling a student how many cards were due; the hero button already
+    // takes them to the right event. Kept hidden rather than deleted so a
+    // cached older index.html that still has the section stays tidy.
+    if (section) { section.style.display = 'none'; return; }
     if (!section) return;
     const due    = getDueToday();
     const stats  = globalStats();
