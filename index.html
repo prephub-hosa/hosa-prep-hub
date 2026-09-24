@@ -9,7 +9,7 @@
      throttled connection it queued behind fourteen of them, did not arrive
      for 4.9 s, and the page stayed blank for exactly that long. Asking for
      it first takes a quarter off first paint. -->
-<link rel="stylesheet" href="aura.css?v=39">
+<link rel="stylesheet" href="aura.css?v=40">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4BPXCT41X"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -2696,15 +2696,17 @@ footer { display: none; }
 
     <div class="tab-inner">
 
-      <!-- Resume hero CTA — shown when user has due cards -->
+      <!-- Start-a-chapter card. It used to lead with "Find out if you're
+           actually ready" and a paragraph about readiness reports, so nobody
+           could tell it was about starting a chapter. -->
       <a href="chapters.html" id="chapter-cta">
         <div class="cc-inner">
           <div class="cc-copy">
-            <div class="cc-kicker">Any member can start one &mdash; no officer role needed</div>
-            <div class="cc-title">Find out if you're actually ready</div>
-            <div class="cc-sub">Unlock the Exam Readiness Report &mdash; a projected score from your own recall history, your weakest categories named, and exactly how many terms stand between you and 90% &mdash; plus printable practice exams with answer keys. For you and everyone who uses your link. Any member can register.</div>
+            <div class="cc-kicker">For HOSA chapters &middot; Free</div>
+            <div class="cc-title">Start your chapter on HOSA Prep Hub</div>
+            <div class="cc-sub">One link for your whole chapter, a chapter leaderboard, and printable practice exams.</div>
           </div>
-          <div class="cc-btn">Register your chapter &rarr;</div>
+          <div class="cc-btn">Start a chapter &rarr;</div>
         </div>
       </a>
 
@@ -6523,9 +6525,8 @@ function friendlyError(code) {
         var _dueCount  = _dueEvents.reduce(function(s, e){ return s + e.due; }, 0);
         if (hhDue) hhDue.textContent = _dueCount;
         if (_dueCount > 0) {
-          var heroCta = document.getElementById('home-hero-cta-btn');
-          // The click handler already routes to the top due event (topDueSlug).
-          if (heroCta) heroCta.textContent = 'Review ' + _dueCount + ' due card' + (_dueCount === 1 ? '' : 's') + ' →';
+          // The button keeps its own label. It still takes you to the event
+          // with the most cards due, but it does not nag you with the count.
         }
       } catch(e){}
       // Hero greeting
@@ -7391,43 +7392,17 @@ function friendlyError(code) {
 // ── Resume CTA + sidebar/bottom-nav due-cards badge ──────────
 (function() {
   function renderResumeCta() {
+    // Retired: a third copy of "N cards due" on one screen, styled like a
+    // popup. The hero button already takes you to the same place.
     var section = document.getElementById('resume-cta-section');
-    if (!section || typeof window.hosaDueToday !== 'function') return;
-    var due = window.hosaDueToday();
-    if (!due.length) { section.style.display = 'none'; return; }
-    var top = due[0];
-    var moreCount = due.length - 1;
-    var moreText = moreCount > 0
-      ? ' · ' + moreCount + ' other event' + (moreCount === 1 ? '' : 's') + ' also due'
-      : '';
-    section.innerHTML =
-      '<a href="' + top.slug + '.html" class="resume-cta-card">' +
-        '<div class="resume-cta-eyebrow">⚡ Resume now</div>' +
-        '<div class="resume-cta-row">' +
-          '<div class="resume-cta-body">' +
-            '<div class="resume-cta-title">' + top.name + '</div>' +
-            '<div class="resume-cta-sub"><strong>' + top.due + '</strong> card' + (top.due === 1 ? '' : 's') + ' due today' + moreText + '</div>' +
-          '</div>' +
-          '<div class="resume-cta-action">Continue<span class="resume-cta-arrow">→</span></div>' +
-        '</div>' +
-      '</a>';
-    section.style.display = '';
+    if (section) { section.style.display = 'none'; section.innerHTML = ''; }
   }
 
   function updateDueBadge() {
-    if (typeof window.hosaDueToday !== 'function') return;
-    var due = window.hosaDueToday();
-    var total = due.reduce(function(s, e) { return s + e.due; }, 0);
-    document.querySelectorAll('[data-tab="library"]').forEach(function(el) {
-      var existing = el.querySelector('.nav-due-badge');
-      if (existing) existing.remove();
-      if (total > 0) {
-        var badge = document.createElement('span');
-        badge.className = 'nav-due-badge';
-        badge.textContent = total > 99 ? '99+' : String(total);
-        el.appendChild(badge);
-      }
-    });
+    // Your Library never carries a badge. A count on a nav item reads as
+    // unread notifications, and a review queue is not that. Clear any a
+    // cached older script may have left behind, and add none.
+    document.querySelectorAll('.nav-due-badge').forEach(function(b) { b.remove(); });
   }
 
   function run() {
@@ -8397,33 +8372,14 @@ function friendlyError(code) {
   </div>
 </div>
 
-<script>
-/* home-extras.js carries the term pool, the games, search and the
-   leaderboard — none of which the first screen needs. "defer" was not
-   enough: a deferred script still downloads straight away and competes
-   with the HTML and the stylesheet for the same few hundred Kbps, which
-   is exactly the bandwidth first paint is waiting on.
-
-   So it is fetched once the critical resources are in — or the instant
-   anyone touches the page, so someone who goes straight for a game is
-   never left waiting on a timer. Everything inside it already guards on
-   readyState, so arriving late is what it was written for. */
-(function () {
-  var started = false;
-  function load() {
-    if (started) return;
-    started = true;
-    var el = document.createElement('script');
-    el.src = 'home-extras.js';
-    document.body.appendChild(el);
-  }
-  if (document.readyState === 'complete') setTimeout(load, 1);
-  else window.addEventListener('load', load);
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
-    window.addEventListener(evt, load, { once: true, capture: true, passive: true });
-  });
-})();
-</script>
+<!-- The games, search, the Daily Challenge, the Hall of Fame and the
+     leaderboard renderer. Kept out of the document so the HTML stays small,
+     but loaded as an ordinary deferred script: it runs before
+     DOMContentLoaded, exactly when the inline copy used to. Fetching it
+     after the load event instead saved ~50 ms and left every one of those
+     features silently dead until it arrived — on a slow link, still
+     undefined after readyState was already "complete". -->
+<script src="home-extras.js" defer></script>
 
 
 <script id="levels-explainer">

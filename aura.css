@@ -6213,9 +6213,12 @@ nav.tabs button:active {
    21. DAILY CHALLENGE & MOCK EXAM — unified card polish
    ══════════════════════════════════════════════════════════════════ */
 
+/* These wrappers are transparent — the cards inside carry their own radius
+   and shadow. Clipping the wrapper did nothing you could see except cut
+   the left stem off the "D" in DAILY CHALLENGE and crop the inner card's
+   shadow along its edges. */
 .dc-wrap, .mfe-wrap {
-  border-radius: 18px !important;
-  overflow: hidden;
+  overflow: visible;
 }
 .dc-card, .mfe-card {
   border-radius: 14px !important;
