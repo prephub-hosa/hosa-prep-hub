@@ -140,6 +140,12 @@
   <p class="subtitle" id="admin-email-label"></p>
 
   <!-- ANALYTICS -->
+  <section id="section-chats">
+    <h2>Chapter chats <span class="badge" id="chat-count">…</span></h2>
+    <p style="font-size:13px;color:#666;margin:0 0 12px;">Every chapter, most recent conversation first. Open one to talk in the chapter room, or privately with its founder.</p>
+    <div id="chat-inbox"></div>
+  </section>
+
   <section id="section-chapters">
     <h2>Chapters <span class="badge" id="chapter-count">0</span></h2>
     <p style="font-size:13px;color:#666;margin:-6px 0 14px;">Chapters registered through chapters.html, with members tagged via their join link.</p>
@@ -235,6 +241,8 @@
 <script src="firebase-config.js"></script>
 <script src="due.js"></script>
 <script src="chapter-link.js"></script>
+<script src="chapter-chat.js"></script>
+<script src="chat-admin.js"></script>
 <script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script>
@@ -310,6 +318,7 @@ function loadChapters() {
             + '<strong class="ch-name">' + escapeHtml(r.name) + '</strong>'
             + (r.registered ? '' : ' <span style="color:#999;font-size:11px;">(untagged)</span>')
             + '<br><button type="button" class="ch-rename row-btn" data-slug="' + escapeHtml(r.slug) + '">Rename</button>'
+            + ' <button type="button" class="ch-chat row-btn" data-slug="' + escapeHtml(r.slug) + '">Chat</button>'
             + '<div style="color:#bbb;font-size:10px;margin-top:3px;">' + escapeHtml(r.slug) + '</div></td>'
             + '<td>' + escapeHtml(r.state || '\u2014') + '</td>'
             + '<td>' + r.members + '</td>'
@@ -327,6 +336,12 @@ function loadChapters() {
     });
     html += '</tbody></table></div>';
     el.innerHTML = html;
+
+    el.querySelectorAll('.ch-chat').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (window.HosaChatAdmin) window.HosaChatAdmin.openChapter(btn.getAttribute('data-slug'));
+      });
+    });
 
     // ── Rename a chapter ──────────────────────────────────────────
     // A founder registered with the chapter named "HOSA", which no member
@@ -1019,6 +1034,13 @@ function loadUsage() {
 
 auth.onAuthStateChanged(function(user) {
   document.getElementById('loading').style.display = 'none';
+  // Reset every state first. Signing in after landing here used to leave the
+  // full-screen "You must be signed in" message sitting over the dashboard.
+  ['not-auth', 'not-admin'].forEach(function(id) {
+    var e = document.getElementById(id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById('app').style.display = 'none';
   if (!user) {
     document.getElementById('not-auth').style.display = 'flex';
     return;
@@ -1036,6 +1058,9 @@ auth.onAuthStateChanged(function(user) {
   loadFeedback();
   loadSignups();
   loadChapters();
+  if (window.HosaChatAdmin) {
+    window.HosaChatAdmin.mountInbox(document.getElementById('chat-inbox'), document.getElementById('chat-count'));
+  }
 });
 
 document.getElementById('signout-btn').onclick = function() {

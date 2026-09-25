@@ -5139,6 +5139,7 @@ function _applyChapterFromUrl() {
     var slug = decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44);
     if (!slug) return false;
     try { localStorage.setItem('hosa::chapter', slug); } catch(e) {}
+    try { if (window.__hosaChatRefresh) window.__hosaChatRefresh(); } catch(e) {}
     // Pull the chapter's real name so the welcome and the school field read
     // properly; fall back to the slug if the record is unreadable.
     function use(rec) {
@@ -8380,6 +8381,23 @@ function friendlyError(code) {
      features silently dead until it arrived — on a slow link, still
      undefined after readyState was already "complete". -->
 <script src="home-extras.js" defer></script>
+<script src="chapter-chat.js" defer></script>
+<script>
+/* Chapter chat: a small button bottom-left for anyone in a chapter. It
+   stays hidden until the database rules for chat are live, so shipping
+   this before they are published shows nothing rather than a broken chat. */
+document.addEventListener('DOMContentLoaded', function () {
+  if (!window.HosaChat) return;
+  window.HosaChat.mountLauncher({
+    onSignIn: function () {
+      var g = document.getElementById('auth-gate');
+      if (g) g.style.display = 'flex';
+      var t = document.getElementById('tab-signin');
+      if (t) t.click();
+    }
+  });
+});
+</script>
 
 
 <script id="levels-explainer">
