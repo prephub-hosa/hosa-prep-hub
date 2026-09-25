@@ -224,6 +224,11 @@
   </div>
   <div id="share-kit" style="display:none;"></div>
   <div id="founder-contact" style="display:none;"></div>
+  <section id="chapter-chat-card" style="display:none;margin:28px 0;">
+    <h2 style="margin:0 0 4px;">Chapter chat</h2>
+    <p class="sub" style="margin:0 0 12px;">Talk with your members here. Founders also get a private line to the person who runs HOSA Prep Hub.</p>
+    <div id="chapter-chat" class="hc-inline"></div>
+  </section>
 
   <h2>Members</h2>
   <p class="sub" id="ch-members-sub">Everyone studying under your chapter, ranked by XP earned.</p>
@@ -244,6 +249,7 @@
 <script src="qr.js"></script>
 <script src="share-kit.js"></script>
 <script src="chapter-contact.js"></script>
+<script src="chapter-chat.js"></script>
 <script src="feedback-widget.js" defer></script>
 <script>
 (function(){
@@ -376,6 +382,30 @@
     var ok=false; try { ok = document.execCommand('copy'); } catch(e){}
     if (navigator.clipboard) { try { navigator.clipboard.writeText(i.value); ok=true; } catch(e){} }
     $('ch-copied').textContent = ok ? 'Copied to clipboard.' : 'Select the link above and copy it.';
+  });
+})();
+</script>
+<script>
+/* The chat for the chapter this dashboard is showing. The panel handles
+   sign-in and membership itself; the database rules decide what anyone
+   can actually read. */
+(function () {
+  var m = /[?&]c=([^&#]+)/.exec(location.search);
+  var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '') : '';
+  var card = document.getElementById('chapter-chat-card');
+  if (!slug || !card || !window.HosaChat || !window.firebase) return;
+  firebase.auth().onAuthStateChanged(function (u) {
+    // Only for people who are signed in; a visitor browsing someone else's
+    // dashboard has nothing to do here.
+    if (!u) { card.style.display = 'none'; return; }
+    window.HosaChat.owners(slug).then(function () {
+      card.style.display = '';
+      if (!card._chat) {
+        var name = (document.getElementById('ch-name') || {}).textContent || slug.replace(/-/g, ' ');
+        card._chat = window.HosaChat.mountPanel(document.getElementById('chapter-chat'),
+          { slug: slug, chapterName: name === 'Loading…' ? slug.replace(/-/g, ' ') : name });
+      }
+    }, function () { card.style.display = 'none'; });
   });
 })();
 </script>

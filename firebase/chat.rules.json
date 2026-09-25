@@ -1,0 +1,74 @@
+{
+  "chat": {
+    ".read": "(auth != null && auth.token.email === 'tylerkim1215@gmail.com')",
+    "$slug": {
+      ".validate": "$slug.matches(/^[a-z0-9-]{1,44}$/)",
+      "room": {
+        ".read": "(auth != null && root.child('leaderboard/level/' + auth.uid + '/chapter').val() === $slug) || (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')",
+        "$msg": {
+          ".write": "(!data.exists() && newData.exists() && (auth != null && root.child('leaderboard/level/' + auth.uid + '/chapter').val() === $slug) || (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')) || (data.exists() && !newData.exists() && (data.child('uid').val() === auth.uid || (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')))",
+          ".validate": "newData.hasChildren(['uid', 'name', 'text', 'ts', 'role']) && newData.child('uid').val() === auth.uid && ((newData.child('role').val() === 'member' && (auth != null && root.child('leaderboard/level/' + auth.uid + '/chapter').val() === $slug)) || (newData.child('role').val() === 'founder' && (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true)) || (newData.child('role').val() === 'admin' && (auth != null && auth.token.email === 'tylerkim1215@gmail.com'))) && newData.child('ts').val() === now && newData.parent().parent().child('lastPost/' + auth.uid).val() === now && (!root.child('chat/' + $slug + '/lastPost/' + auth.uid).exists() || root.child('chat/' + $slug + '/lastPost/' + auth.uid).val() <= now - 1500)",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+          },
+          "text": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 500"
+          },
+          "ts": {
+            ".validate": "newData.isNumber()"
+          },
+          "role": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "team": {
+        ".read": "(auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')",
+        "$msg": {
+          ".write": "(!data.exists() && newData.exists() && (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')) || (data.exists() && !newData.exists() && (data.child('uid').val() === auth.uid || (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true) || (auth != null && auth.token.email === 'tylerkim1215@gmail.com')))",
+          ".validate": "newData.hasChildren(['uid', 'name', 'text', 'ts', 'role']) && newData.child('uid').val() === auth.uid && ((newData.child('role').val() === 'founder' && (auth != null && root.child('chat/' + $slug + '/owners/' + auth.uid).val() === true)) || (newData.child('role').val() === 'admin' && (auth != null && auth.token.email === 'tylerkim1215@gmail.com'))) && newData.child('ts').val() === now && newData.parent().parent().child('lastPost/' + auth.uid).val() === now && (!root.child('chat/' + $slug + '/lastPost/' + auth.uid).exists() || root.child('chat/' + $slug + '/lastPost/' + auth.uid).val() <= now - 1500)",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+          },
+          "text": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 500"
+          },
+          "ts": {
+            ".validate": "newData.isNumber()"
+          },
+          "role": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "owners": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "(auth != null && auth.token.email === 'tylerkim1215@gmail.com') || (auth != null && auth.uid === $uid && !data.parent().exists() && newData.val() === true && ((auth.token.email != null && root.child('chapters/' + $slug + '/contactEmail').isString() && auth.token.email.toLowerCase() === root.child('chapters/' + $slug + '/contactEmail').val().toLowerCase()) || (auth.token.email != null && root.child('analytics/chapters/' + $slug + '/contactEmail').isString() && auth.token.email.toLowerCase() === root.child('analytics/chapters/' + $slug + '/contactEmail').val().toLowerCase())))",
+          ".validate": "newData.isBoolean()"
+        }
+      },
+      "lastPost": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.val() === now"
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
+    }
+  }
+}
