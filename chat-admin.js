@@ -232,6 +232,43 @@
     injectCss();
     host.innerHTML = '<p class="empty">Loading chats…</p>';
     var dir = {}, chat = {}, denied = false;
+    var HC = global.HosaChat;
+
+    // "Notify me" above the list: a notification for every message from a
+    // founder or member while this page is open, even in a background tab.
+    var bell = HC && HC.bellButton && HC.bellButton();
+    if (bell && host.parentNode) {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'display:flex;justify-content:flex-end;margin:0 0 8px;';
+      bar.appendChild(bell);
+      host.parentNode.insertBefore(bar, host);
+    }
+
+    // Messages already here when the page loaded are history; anything that
+    // arrives after is announced.
+    var heard = null;
+    function announceNew() {
+      var fresh = [];
+      var now = {};
+      Object.keys(chat).forEach(function (slug) {
+        ['room', 'team'].forEach(function (t) {
+          var msgs = ((chat[slug] || {})[t]) || {};
+          Object.keys(msgs).forEach(function (k) {
+            var id = slug + '/' + t + '/' + k;
+            now[id] = true;
+            var m = msgs[k];
+            if (heard && !heard[id] && m && m.role !== 'admin') fresh.push({ slug: slug, thread: t, m: m });
+          });
+        });
+      });
+      heard = now;
+      fresh.forEach(function (f) {
+        if (HC.isViewing && HC.isViewing(f.slug, f.thread)) return;
+        var d = dir[f.slug] || { slug: f.slug, name: f.slug.replace(/-/g, ' '), record: {}, members: [] };
+        HC.announce(f.m, (f.thread === 'team' ? '\uD83D\uDD12 ' : '') + d.name, location.href,
+          function () { showDrawer(d, f.thread, render); });
+      });
+    }
 
     function latest(slug) {
       var best = null;
@@ -290,6 +327,7 @@
       });
       var nUnread = slugs.filter(unread).length;
       if (countEl) countEl.textContent = slugs.length + (nUnread ? ' · ' + nUnread + ' unread' : '');
+      if (HC && HC.titleCount) HC.titleCount(nUnread);
       if (!slugs.length) { host.innerHTML = '<p class="empty">No chapters yet.</p>'; return; }
       var h = '<div class="ci-list">';
       slugs.forEach(function (slug) {
@@ -321,7 +359,7 @@
 
     loadDirectory().then(function (d) {
       dir = d;
-      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; linkFounders(); render(); },
+      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; linkFounders(); announceNew(); render(); },
         function () { denied = true; render(); });
     }, function () { host.innerHTML = '<p class="empty">Could not load chapters.</p>'; });
   }

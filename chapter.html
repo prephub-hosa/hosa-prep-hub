@@ -191,6 +191,26 @@
   .sk-btn-ghost:hover { border-color:var(--accent); color:var(--accent); filter:none; }
   .sk-note { font-family:'Source Serif 4',Georgia,serif; font-size:12.5px;
              color:var(--ink-faint); margin:10px 0 0; min-height:16px; }
+  /* Dashboard | Chat */
+  .ch-tabs { display:flex; gap:4px; border-bottom:1px solid var(--rule); margin:0 0 26px; position:sticky; top:0; z-index:5; background:var(--bg); }
+  .ch-tab { position:relative; border:0; background:none; color:var(--ink-soft); cursor:pointer;
+            font-family:'Inter',system-ui,sans-serif; font-size:14.5px; font-weight:600;
+            padding:12px 16px 11px; border-bottom:2px solid transparent; margin-bottom:-1px;
+            display:inline-flex; align-items:center; gap:7px; }
+  .ch-tab:hover { color:var(--ink); }
+  .ch-tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); }
+  .ch-tab:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; border-radius:6px; }
+  .ch-count { min-width:19px; height:19px; padding:0 6px; border-radius:999px; background:var(--accent); color:#fff;
+              font:700 11px/19px 'Inter',system-ui,sans-serif; text-align:center; }
+  .ch-count[hidden] { display:none; }
+  #tab-chat .hc-inline { height:calc(100vh - 150px); height:calc(100dvh - 150px); min-height:420px; max-height:760px; }
+  #tab-chat .chat-sub { font-size:13.5px; color:var(--ink-soft); margin:0 0 12px; }
+  @media (max-width:620px) {
+    /* The Feedback button would sit on top of the message box. */
+    body.on-chat #fb-fab { display:none !important; }
+    .ch-tab { flex:1; justify-content:center; }
+    #tab-chat .hc-inline { height:calc(100dvh - 120px); min-height:360px; }
+  }
   .sk-qr-wrap { background:#fff; border:1px solid var(--rule); border-radius:12px;
                 padding:14px; display:inline-block; margin-bottom:12px; }
   .sk-qr-wrap canvas { display:block; width:200px; height:200px; image-rendering:pixelated; }
@@ -212,6 +232,15 @@
     <h1 id="ch-name">Loading…</h1>
     <p class="lede" id="ch-meta"></p>
   </section>
+  <div class="ch-tabs" id="ch-tabs" role="tablist" aria-label="Chapter" style="display:none;">
+    <button class="ch-tab" id="tabbtn-dash" role="tab" type="button" aria-selected="true" aria-controls="tab-dash">Dashboard</button>
+    <button class="ch-tab" id="tabbtn-chat" role="tab" type="button" aria-selected="false" aria-controls="tab-chat">Chat <span class="ch-count" id="chat-count" hidden></span></button>
+  </div>
+  <section id="tab-chat" role="tabpanel" aria-labelledby="tabbtn-chat" hidden>
+    <p class="chat-sub">Talk with your chapter. Founders also get a private line to the person who runs HOSA Prep Hub.</p>
+    <div id="chapter-chat" class="hc-inline"></div>
+  </section>
+  <div id="tab-dash" role="tabpanel" aria-labelledby="tabbtn-dash">
   <div class="stats" id="ch-stats"></div>
   <div id="ch-link-wrap" style="display:none;">
     <h2>Your chapter join link</h2>
@@ -224,17 +253,13 @@
   </div>
   <div id="share-kit" style="display:none;"></div>
   <div id="founder-contact" style="display:none;"></div>
-  <section id="chapter-chat-card" style="display:none;margin:28px 0;">
-    <h2 style="margin:0 0 4px;">Chapter chat</h2>
-    <p class="sub" style="margin:0 0 12px;">Talk with your members here. Founders also get a private line to the person who runs HOSA Prep Hub.</p>
-    <div id="chapter-chat" class="hc-inline"></div>
-  </section>
 
   <h2>Members</h2>
   <p class="sub" id="ch-members-sub">Everyone studying under your chapter, ranked by XP earned.</p>
   <div id="ch-members"></div>
   <div class="foot">
     Anyone can start a chapter — you don't have to be an officer. <a href="chapters.html">Register one here</a>.
+  </div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -386,26 +411,92 @@
 })();
 </script>
 <script>
-/* The chat for the chapter this dashboard is showing. The panel handles
-   sign-in and membership itself; the database rules decide what anyone
-   can actually read. */
+/* Dashboard | Chat. The chat tab is its own page-sized view, with an
+   unread count on the tab, a toast when a message lands while you are on
+   the dashboard, and (if you allow it) a system notification when this
+   page is in a background tab. #chat in the address opens it directly. */
 (function () {
   var m = /[?&]c=([^&#]+)/.exec(location.search);
-  var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '') : '';
-  var card = document.getElementById('chapter-chat-card');
-  if (!slug || !card || !window.HosaChat || !window.firebase) return;
+  var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44) : '';
+  if (!slug) { try { slug = (localStorage.getItem('hosa::chapter') || '').trim(); } catch (e) {} }
+  var bar = document.getElementById('ch-tabs');
+  if (!slug || !bar || !window.HosaChat || !window.firebase) return;
+  var dashBtn = document.getElementById('tabbtn-dash'), chatBtn = document.getElementById('tabbtn-chat');
+  var dash = document.getElementById('tab-dash'), chat = document.getElementById('tab-chat');
+  var countEl = document.getElementById('chat-count');
+  var panel = null, stopWatch = null, current = 'dash';
+
+  function chapterName() {
+    var n = (document.getElementById('ch-name') || {}).textContent || '';
+    return n && n !== 'Loading\u2026' && n !== 'Loading…' ? n : slug.replace(/-/g, ' ');
+  }
+  function show(which, fromHash) {
+    current = which;
+    var isChat = which === 'chat';
+    dash.hidden = isChat; chat.hidden = !isChat;
+    dashBtn.setAttribute('aria-selected', String(!isChat));
+    chatBtn.setAttribute('aria-selected', String(isChat));
+    if (isChat && !panel) {
+      panel = window.HosaChat.mountPanel(document.getElementById('chapter-chat'), {
+        slug: slug, chapterName: chapterName(),
+        onSignIn: function () {
+          try { sessionStorage.setItem('hosa-after-signin', location.pathname + location.search + '#chat'); } catch (e) {}
+          location.href = 'index.html#signin';
+        }
+      });
+    }
+    if (isChat && panel) { panel.seen(); panel.focus(); window.HosaChat.dismissToast(); }
+    document.body.classList.toggle('on-chat', isChat);
+    if (!fromHash) {
+      var url = location.pathname + location.search + (isChat ? '#chat' : '');
+      try { history.replaceState(null, '', url); } catch (e) {}
+    }
+    if (isChat) window.scrollTo({ top: bar.offsetTop, behavior: 'auto' });
+  }
+  function setCount(n) {
+    countEl.hidden = !(n > 0);
+    countEl.textContent = n > 99 ? '99+' : String(n);
+    chatBtn.setAttribute('aria-label', n > 0 ? 'Chat, ' + n + ' unread' : 'Chat');
+    window.HosaChat.titleCount(n);
+  }
+  function tabKeys(e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var next = current === 'chat' ? dashBtn : chatBtn;
+    next.focus(); next.click();
+  }
+  // Opening straight on #chat can beat the dashboard to the chapter's name.
+  var nameEl = document.getElementById('ch-name');
+  if (nameEl && window.MutationObserver) new MutationObserver(function () {
+    if (panel && panel.rename) panel.rename(chapterName());
+  }).observe(nameEl, { childList: true, characterData: true, subtree: true });
+  dashBtn.addEventListener('click', function () { show('dash'); });
+  chatBtn.addEventListener('click', function () { show('chat'); });
+  bar.addEventListener('keydown', tabKeys);
+  window.addEventListener('hashchange', function () { show(location.hash === '#chat' ? 'chat' : 'dash', true); });
+
+  function reveal() {
+    bar.style.display = '';
+    if (location.hash === '#chat') show('chat', true);
+  }
   firebase.auth().onAuthStateChanged(function (u) {
-    // Only for people who are signed in; a visitor browsing someone else's
-    // dashboard has nothing to do here.
-    if (!u) { card.style.display = 'none'; return; }
+    if (stopWatch) { stopWatch(); stopWatch = null; }
+    setCount(0);
+    if (!u) { reveal(); return; }           // the chat tab asks them to sign in
+    // Signed in: only once the chat rules answer, so a site without them
+    // shows no Chat tab at all.
     window.HosaChat.owners(slug).then(function () {
-      card.style.display = '';
-      if (!card._chat) {
-        var name = (document.getElementById('ch-name') || {}).textContent || slug.replace(/-/g, ' ');
-        card._chat = window.HosaChat.mountPanel(document.getElementById('chapter-chat'),
-          { slug: slug, chapterName: name === 'Loading…' ? slug.replace(/-/g, ' ') : name });
-      }
-    }, function () { card.style.display = 'none'; });
+      reveal();
+      stopWatch = window.HosaChat.watch(slug, {
+        onCount: setCount,
+        onNew: function (msg) {
+          window.HosaChat.announce(msg, chapterName(), location.origin + location.pathname + location.search + '#chat',
+            function () { show('chat'); });
+        }
+      });
+    }, function () {
+      bar.style.display = 'none';
+      if (current === 'chat') show('dash');
+    });
   });
 })();
 </script>
