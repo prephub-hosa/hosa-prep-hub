@@ -38,7 +38,7 @@
     '.ci-row:hover{border-color:#c2182b}',
     '.ci-main{flex:1;min-width:0}',
     '.ci-name{font-weight:700;display:flex;align-items:center;gap:8px}',
-    '.ci-dot{width:8px;height:8px;border-radius:50%;background:#dc2626;flex:none}',
+    '.ci-dot{min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:#dc2626;color:#fff;font:700 11px/19px Inter,system-ui,sans-serif;text-align:center;flex:none}',
     '.ci-sub{font-size:12.5px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.ci-tag{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;white-space:nowrap}',
     '.ci-tag.ok{background:#fdf3d6;border:1px solid #e6c766;color:#8a6100}',
@@ -232,44 +232,6 @@
     injectCss();
     host.innerHTML = '<p class="empty">Loading chats…</p>';
     var dir = {}, chat = {}, denied = false;
-    var HC = global.HosaChat;
-
-    // "Notify me" above the list: a notification for every message from a
-    // founder or member while this page is open, even in a background tab.
-    var bell = HC && HC.bellButton && HC.bellButton();
-    if (bell && host.parentNode) {
-      var bar = document.createElement('div');
-      bar.style.cssText = 'display:flex;justify-content:flex-end;margin:0 0 8px;';
-      bar.appendChild(bell);
-      host.parentNode.insertBefore(bar, host);
-    }
-
-    // Messages already here when the page loaded are history; anything that
-    // arrives after is announced.
-    var heard = null;
-    function announceNew() {
-      var fresh = [];
-      var now = {};
-      Object.keys(chat).forEach(function (slug) {
-        ['room', 'team'].forEach(function (t) {
-          var msgs = ((chat[slug] || {})[t]) || {};
-          Object.keys(msgs).forEach(function (k) {
-            var id = slug + '/' + t + '/' + k;
-            now[id] = true;
-            var m = msgs[k];
-            if (heard && !heard[id] && m && m.role !== 'admin') fresh.push({ slug: slug, thread: t, m: m });
-          });
-        });
-      });
-      heard = now;
-      fresh.forEach(function (f) {
-        if (HC.isViewing && HC.isViewing(f.slug, f.thread)) return;
-        var d = dir[f.slug] || { slug: f.slug, name: f.slug.replace(/-/g, ' '), record: {}, members: [] };
-        HC.announce(f.m, (f.thread === 'team' ? '\uD83D\uDD12 ' : '') + d.name, location.href,
-          function () { showDrawer(d, f.thread, render); });
-      });
-    }
-
     function latest(slug) {
       var best = null;
       ['room', 'team'].forEach(function (t) {
@@ -281,14 +243,17 @@
       });
       return best;
     }
+    /** Unread messages from founders and members in a chapter. */
     function unread(slug) {
-      return ['room', 'team'].some(function (t) {
+      var n = 0;
+      ['room', 'team'].forEach(function (t) {
         var msgs = ((chat[slug] || {})[t]) || {};
-        return Object.keys(msgs).some(function (k) {
+        Object.keys(msgs).forEach(function (k) {
           var m = msgs[k];
-          return m && m.ts > seen(slug, t) && m.role !== 'admin';
+          if (m && m.ts > seen(slug, t) && m.role !== 'admin') n++;
         });
       });
+      return n;
     }
 
     // Every chapter should have a founder. Where the registrant has an account
@@ -327,7 +292,6 @@
       });
       var nUnread = slugs.filter(unread).length;
       if (countEl) countEl.textContent = slugs.length + (nUnread ? ' · ' + nUnread + ' unread' : '');
-      if (HC && HC.titleCount) HC.titleCount(nUnread);
       if (!slugs.length) { host.innerHTML = '<p class="empty">No chapters yet.</p>'; return; }
       var h = '<div class="ci-list">';
       slugs.forEach(function (slug) {
@@ -339,7 +303,7 @@
             ? '<span class="ci-tag none" title="Linked automatically once they sign up">' + esc(d.record.contactName) + ' hasn\u2019t signed up</span>'
             : '<span class="ci-tag none">No founder yet</span>';
         h += '<button type="button" class="ci-row" data-slug="' + esc(slug) + '" data-thread="' + (l ? l.thread : 'team') + '">'
-           + '<div class="ci-main"><div class="ci-name">' + (unread(slug) ? '<span class="ci-dot" aria-label="unread"></span>' : '')
+           + '<div class="ci-main"><div class="ci-name">' + (unread(slug) ? '<span class="ci-dot" aria-label="' + unread(slug) + ' unread">' + (unread(slug) > 99 ? '99+' : unread(slug)) + '</span>' : '')
            + esc(d.name) + ' ' + tag + '</div>'
            + '<div class="ci-sub">' + (l
                 ? (l.thread === 'team' ? '🔒 ' : '') + esc(l.role === 'admin' ? 'You' : l.name) + ': ' + esc(l.text)
@@ -359,7 +323,7 @@
 
     loadDirectory().then(function (d) {
       dir = d;
-      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; linkFounders(); announceNew(); render(); },
+      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; linkFounders(); render(); },
         function () { denied = true; render(); });
     }, function () { host.innerHTML = '<p class="empty">Could not load chapters.</p>'; });
   }
