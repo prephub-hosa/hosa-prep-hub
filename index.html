@@ -5686,6 +5686,29 @@ if (formSignup) formSignup.addEventListener('submit', async e => {
   window.addEventListener('hashchange', function() {
     if (location.hash === '#signup') openSignup();
   });
+  // index.html#signin — from the chapter page's Chat tab. Only while signed
+  // out; someone already signed in has nothing to do here.
+  function openSignin() {
+    var gate = document.getElementById('auth-gate');
+    var tab  = document.getElementById('tab-signin');
+    if (!gate || !tab) return;
+    gate.style.display = 'flex';
+    tab.click();
+  }
+  if (location.hash === '#signin') {
+    // Where to go once signed in: set by the page that sent them here, and
+    // only ever a page on this site.
+    var back = '';
+    try { back = sessionStorage.getItem('hosa-after-signin') || ''; } catch(e) {}
+    if (!/^\/[^\/\\]/.test(back)) back = '';
+    auth.onAuthStateChanged(function(u) {
+      if (!u && location.hash === '#signin') setTimeout(openSignin, 0);
+      if (u && back) {
+        try { sessionStorage.removeItem('hosa-after-signin'); } catch(e) {}
+        location.href = back;
+      }
+    });
+  }
 })();
 
 function friendlyError(code) {

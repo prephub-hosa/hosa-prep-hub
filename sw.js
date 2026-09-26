@@ -145,3 +145,19 @@ self.addEventListener('fetch', event => {
     );
   }
 });
+
+// A chat notification: focus the tab it came from if it is still open,
+// otherwise open the chat it points at. Only ever a page on this site.
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  let target;
+  try { target = new URL((event.notification.data || {}).url || './', self.location.href); } catch (e) { target = null; }
+  if (!target || target.origin !== self.location.origin) target = new URL('./', self.location.href);
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const same = list.find(c => { try { const u = new URL(c.url); return u.pathname === target.pathname && u.search === target.search; } catch (e) { return false; } });
+      if (same) return same.focus().then(c => (c && target.hash && c.navigate) ? c.navigate(target.href).catch(() => c) : c);
+      return self.clients.openWindow(target.href);
+    })
+  );
+});
