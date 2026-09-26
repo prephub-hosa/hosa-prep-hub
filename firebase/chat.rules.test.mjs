@@ -140,6 +140,18 @@ await allow('(alice posts)', m.p);
 await allow('the founder can delete a member\'s message', remove(ref(who.fran(), 'chat/' + SLUG + '/room/' + m.key)));
 await allow('the founder posts in the room as founder', post(who.fran(), SLUG, 'room', 'fran', { role: 'founder' }).p);
 await sleep(1600);
+m = post(who.alice(), SLUG, 'room', 'alice');
+await allow('(alice posts again)', m.p);
+await sleep(1600);
+// Overwriting a message in place is an edit, and nobody may edit — not the
+// founder, not the admin. An operator-precedence slip once let both through.
+await deny ('the founder cannot overwrite a member\'s message', update(ref(who.fran(), 'chat/' + SLUG), {
+  ['room/' + m.key]: { uid: 'fran', name: 'x', text: 'rewritten', ts: serverTimestamp(), role: 'founder' },
+  ['lastPost/fran']: serverTimestamp() }));
+await deny ('the admin cannot overwrite it either', update(ref(who.admin(), 'chat/' + SLUG), {
+  ['room/' + m.key]: { uid: 'tyler', name: 'x', text: 'rewritten', ts: serverTimestamp(), role: 'admin' },
+  ['lastPost/tyler']: serverTimestamp() }));
+await sleep(1600);
 await deny ('a founder of one chapter has no power in another',
   post(who.fran(), OTHER, 'room', 'fran', { role: 'founder' }).p);
 
@@ -155,6 +167,13 @@ await deny ('…and not as the admin',               post(who.fran(), SLUG, 'tea
 await allow('the admin reads it',      get(ref(who.admin(), 'chat/' + SLUG + '/team')));
 await allow('the admin writes in it as admin', post(who.admin(), SLUG, 'team', 'tyler', { role: 'admin' }).p);
 await deny ('another chapter\'s founder cannot read it', get(ref(who.otto(), 'chat/' + SLUG + '/team')));
+await sleep(1600);
+const tm = post(who.fran(), SLUG, 'team', 'fran', { role: 'founder' });
+await allow('(fran posts on the founder line)', tm.p);
+await sleep(1600);
+await deny ('the admin cannot overwrite the founder\'s message on the private line', update(ref(who.admin(), 'chat/' + SLUG), {
+  ['team/' + tm.key]: { uid: 'tyler', name: 'x', text: 'rewritten', ts: serverTimestamp(), role: 'admin' },
+  ['lastPost/tyler']: serverTimestamp() }));
 
 /* ── Rate-limit stamp itself ─────────────────────────────────────── */
 await deny ('you cannot touch someone else\'s rate-limit stamp',
