@@ -39,7 +39,10 @@ def message_rules(can_read, can_post, allowed_roles):
         "$msg": {
             ".write": " || ".join([
                 # post: only a brand new message, only as yourself (validated below)
-                "(!data.exists() && newData.exists() && %s)" % can_post,
+                # can_post is an OR of several checks; without its own brackets
+                # "&&" binds tighter and a founder or admin could overwrite an
+                # existing message. Keep the parentheses.
+                "(!data.exists() && newData.exists() && (%s))" % can_post,
                 # delete: your own, or anything if you run the chapter or the site
                 "(data.exists() && !newData.exists() && (data.child('uid').val() === auth.uid || %s || %s))" % (is_owner, is_admin),
                 # there is deliberately no third case: nobody can edit a message
