@@ -64,11 +64,53 @@
     document.head.appendChild(s);
   }
 
+  function norm(v) { return String(v || '').trim().toLowerCase().replace(/\s+/g, ' '); }
+
+  /** Every account we know an email or full name for: email → uid, uid → name. */
+  function accountIndex(users, outreach, schools) {
+    var byEmail = {}, nameOf = {};
+    function add(uid, email, name) {
+      if (!uid || typeof uid !== 'string') return;
+      if (email && !byEmail[norm(email)]) byEmail[norm(email)] = uid;
+      if (name && !nameOf[uid]) nameOf[uid] = String(name);
+    }
+    Object.keys(users || {}).forEach(function (uid) {
+      var u = users[uid] || {}, p = u.profile || {};
+      add(uid, u.email, p.name);
+      add(uid, p.email, p.name);
+    });
+    [outreach, schools].forEach(function (store) {
+      Object.keys(store || {}).forEach(function (k) { var o = store[k] || {}; add(o.uid, o.email); });
+    });
+    return { byEmail: byEmail, nameOf: nameOf };
+  }
+
+  /**
+   * The account that registered a chapter: the one signed up with the email
+   * on the registration, or failing that the one chapter member whose account
+   * name is the registrant's name. Null when neither is certain.
+   */
+  function findFounder(d, accounts) {
+    var rec = d.record || {};
+    var uid = rec.contactEmail && accounts.byEmail[norm(rec.contactEmail)];
+    if (uid) { d.founderName = accounts.nameOf[uid] || rec.contactName || ''; return uid; }
+    var want = norm(rec.contactName);
+    if (!want) return null;
+    var hits = d.members.filter(function (m) {
+      return norm(accounts.nameOf[m.uid]) === want || norm(m.name) === want;
+    });
+    if (hits.length !== 1) return null;
+    d.founderName = accounts.nameOf[hits[0].uid] || hits[0].name;
+    return hits[0].uid;
+  }
+
   /** Chapter names, founder contact details and the member roster. */
   function loadDirectory() {
     function val(p) { return db().ref(p).once('value').then(function (s) { return s.val() || {}; }, function () { return {}; }); }
-    return Promise.all([val('chapters'), val('analytics/chapters'), val('leaderboard/level')]).then(function (r) {
+    return Promise.all([val('chapters'), val('analytics/chapters'), val('leaderboard/level'),
+                        val('users'), val('outreach'), val('analytics/schools')]).then(function (r) {
       var dir = {};
+      var accounts = accountIndex(r[3], r[4], r[5]);
       [r[0], r[1]].forEach(function (store) {
         Object.keys(store).forEach(function (slug) {
           if (!dir[slug]) dir[slug] = { slug: slug, record: store[slug] || {}, members: [] };
@@ -84,6 +126,7 @@
         var rec = dir[slug].record || {};
         dir[slug].name = rec.name || rec.school || slug.replace(/-/g, ' ');
         dir[slug].members.sort(function (a, b) { return b.xp - a.xp; });
+        dir[slug].founderUid = findFounder(dir[slug], accounts);
       });
       return dir;
     });
@@ -127,13 +170,14 @@
       var h = '<h3>Founder</h3>';
       if (ids.length) {
         ids.forEach(function (id) {
-          h += '<div class="cd-owner"><strong>' + esc((byUid[id] || {}).name || id) + '</strong>'
+          h += '<div class="cd-owner"><strong>' + esc((byUid[id] || {}).name || (id === entry.founderUid && entry.founderName) || rec.contactName || id) + '</strong>'
              + '<button type="button" data-remove="' + esc(id) + '">Remove</button></div>';
         });
       } else {
-        h += '<div class="cd-muted">No verified founder yet'
-           + (rec.contactEmail ? ' — they are verified automatically if they sign in with <code>' + esc(rec.contactEmail) + '</code>.' : '.')
-           + '</div>';
+        h += '<div class="cd-muted">' + (rec.contactName ? esc(rec.contactName) + ' registered this chapter but has' : 'The founder has')
+           + ' no account on the site yet'
+           + (rec.contactEmail ? ' under <code>' + esc(rec.contactEmail) + '</code>. They are linked automatically the moment they sign up with it' : '')
+           + '. You can also make a member founder below.</div>';
       }
       var others = entry.members.filter(function (m) { return ids.indexOf(m.uid) === -1; });
       if (others.length) {
@@ -153,7 +197,9 @@
         b.addEventListener('click', function () {
           var id = b.getAttribute('data-remove');
           if (!global.confirm('Remove ' + ((byUid[id] || {}).name || id) + ' as founder? They lose the private line to you.')) return;
-          ownersRef.child(id).remove().catch(function (e) { alert('Could not remove: ' + (e && e.message)); });
+          // false rather than deleted: it records that you took the role away,
+          // so the automatic founder link below does not hand it straight back.
+          ownersRef.child(id).set(false).catch(function (e) { alert('Could not remove: ' + (e && e.message)); });
         });
       });
       var assign = founder.querySelector('[data-assign]');
@@ -208,6 +254,23 @@
       });
     }
 
+    // Every chapter should have a founder. Where the registrant has an account
+    // and nobody holds the role yet, give it to them. Only the admin can make
+    // this write, so it happens whenever this page is open.
+    var tried = {};
+    function linkFounders() {
+      Object.keys(dir).forEach(function (slug) {
+        var d = dir[slug], owners = ((chat[slug] || {}).owners) || {};
+        if (!d.founderUid || tried[slug]) return;
+        if (Object.keys(owners).some(function (k) { return owners[k] === true; })) return;
+        if (owners[d.founderUid] === false) return;   // you removed them on purpose
+        tried[slug] = true;
+        db().ref('chat/' + slug + '/owners/' + d.founderUid).set(true).catch(function (e) {
+          console.warn('[chat-admin] could not link founder for ' + slug + ':', e && e.message);
+        });
+      });
+    }
+
     function render() {
       if (denied) {
         host.innerHTML = '<div class="ci-banner"><strong>Chat is built but switched off.</strong> '
@@ -233,9 +296,13 @@
         var d = dir[slug], l = latest(slug);
         var owners = ((chat[slug] || {}).owners) || {};
         var hasFounder = Object.keys(owners).some(function (k) { return owners[k] === true; });
+        var tag = hasFounder ? '<span class="ci-tag ok">Founder linked</span>'
+          : (d.record && d.record.contactName)
+            ? '<span class="ci-tag none" title="Linked automatically once they sign up">' + esc(d.record.contactName) + ' hasn\u2019t signed up</span>'
+            : '<span class="ci-tag none">No founder yet</span>';
         h += '<button type="button" class="ci-row" data-slug="' + esc(slug) + '" data-thread="' + (l ? l.thread : 'team') + '">'
            + '<div class="ci-main"><div class="ci-name">' + (unread(slug) ? '<span class="ci-dot" aria-label="unread"></span>' : '')
-           + esc(d.name) + ' <span class="ci-tag ' + (hasFounder ? 'ok">Founder verified' : 'none">No founder yet') + '</span></div>'
+           + esc(d.name) + ' ' + tag + '</div>'
            + '<div class="ci-sub">' + (l
                 ? (l.thread === 'team' ? '🔒 ' : '') + esc(l.role === 'admin' ? 'You' : l.name) + ': ' + esc(l.text)
                 : d.members.length + ' member' + (d.members.length === 1 ? '' : 's') + ' · no messages yet')
@@ -254,7 +321,7 @@
 
     loadDirectory().then(function (d) {
       dir = d;
-      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; render(); },
+      db().ref('chat').on('value', function (s) { chat = s.val() || {}; denied = false; linkFounders(); render(); },
         function () { denied = true; render(); });
     }, function () { host.innerHTML = '<p class="empty">Could not load chapters.</p>'; });
   }
