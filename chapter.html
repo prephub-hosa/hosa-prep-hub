@@ -200,7 +200,7 @@
   .ch-tab:hover { color:var(--ink); }
   .ch-tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); }
   .ch-tab:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; border-radius:6px; }
-  .ch-count { min-width:19px; height:19px; padding:0 6px; border-radius:999px; background:var(--accent); color:#fff;
+  .ch-count { min-width:19px; height:19px; padding:0 6px; border-radius:999px; background:#dc2626; color:#fff;
               font:700 11px/19px 'Inter',system-ui,sans-serif; text-align:center; }
   .ch-count[hidden] { display:none; }
   #tab-chat .hc-inline { height:calc(100vh - 150px); height:calc(100dvh - 150px); min-height:420px; max-height:760px; }
@@ -411,10 +411,9 @@
 })();
 </script>
 <script>
-/* Dashboard | Chat. The chat tab is its own page-sized view, with an
-   unread count on the tab, a toast when a message lands while you are on
-   the dashboard, and (if you allow it) a system notification when this
-   page is in a background tab. #chat in the address opens it directly. */
+/* Dashboard | Chat. The chat tab is its own page-sized view, with a red
+   number on the tab for unread messages. #chat in the address opens it
+   directly — the sidebar's Chapter Chat link goes there. */
 (function () {
   var m = /[?&]c=([^&#]+)/.exec(location.search);
   var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44) : '';
@@ -445,7 +444,7 @@
         }
       });
     }
-    if (isChat && panel) { panel.seen(); panel.focus(); window.HosaChat.dismissToast(); }
+    if (isChat && panel) { panel.seen(); panel.focus(); }
     document.body.classList.toggle('on-chat', isChat);
     if (!fromHash) {
       var url = location.pathname + location.search + (isChat ? '#chat' : '');
@@ -457,7 +456,6 @@
     countEl.hidden = !(n > 0);
     countEl.textContent = n > 99 ? '99+' : String(n);
     chatBtn.setAttribute('aria-label', n > 0 ? 'Chat, ' + n + ' unread' : 'Chat');
-    window.HosaChat.titleCount(n);
   }
   function tabKeys(e) {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
@@ -486,13 +484,7 @@
     // shows no Chat tab at all.
     window.HosaChat.owners(slug).then(function () {
       reveal();
-      stopWatch = window.HosaChat.watch(slug, {
-        onCount: setCount,
-        onNew: function (msg) {
-          window.HosaChat.announce(msg, chapterName(), location.origin + location.pathname + location.search + '#chat',
-            function () { show('chat'); });
-        }
-      });
+      stopWatch = window.HosaChat.watch(slug, { onCount: setCount });
     }, function () {
       bar.style.display = 'none';
       if (current === 'chat') show('dash');

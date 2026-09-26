@@ -207,28 +207,10 @@
     '.hc-gate{margin:auto;text-align:center;padding:24px;display:flex;flex-direction:column;gap:12px;align-items:center;color:var(--ink-soft,#666);font-size:13.5px}',
     '.hc-gate button{border:0;border-radius:10px;background:var(--grad-cta,#c2182b);color:#fff;font:600 14px Inter,system-ui,sans-serif;padding:10px 16px;cursor:pointer}',
     '.hc-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--accent,#ef4444);box-shadow:0 0 0 2px var(--bg,#fff)}',
-    /* The launcher: small, bottom-left, clear of the sidebar and the
-       Feedback / timer buttons that own the bottom-right corner. */
-    '.hc-launch{position:fixed;left:264px;bottom:24px;z-index:9990;display:flex;align-items:center;gap:8px;border:1px solid var(--rule-strong,rgba(0,0,0,.12));background:var(--bg-card,#fff);color:var(--ink,#1a1a1a);border-radius:999px;padding:9px 15px 9px 12px;font:600 13.5px Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px -10px rgba(0,0,0,.35)}',
-    '.hc-launch:hover{border-color:var(--accent,#c2182b)}',
-    '.hc-launch .hc-dot{top:4px;right:6px}',
-    '.hc-launch{overflow:visible}',
-    '.hc-pop{position:fixed;left:264px;bottom:78px;z-index:9999;width:360px;height:min(520px,calc(100vh - 110px))}',
-    '.hc-pop .hc-panel{height:100%}',
-    '@media (max-width:768px){.hc-launch{left:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));padding:10px 12px}.hc-launch .hc-lbl{display:none}',
-    '.hc-pop{left:0;right:0;bottom:0;width:auto;height:82vh}.hc-pop .hc-panel{border-radius:16px 16px 0 0}}',
     '.hc-inline{height:460px}',
-    '.hc-bell{border:1px solid var(--rule-strong,rgba(0,0,0,.12));background:none;color:var(--ink-soft,#666);border-radius:999px;padding:4px 10px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}',
-    '.hc-bell:hover{border-color:var(--accent,#c2182b);color:var(--ink,#1a1a1a)}',
-    '.hc-bell.on{background:var(--accent-soft,rgba(239,68,68,.12));border-color:var(--accent,#c2182b);color:var(--ink,#1a1a1a)}',
     '.hc-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--accent,#dc2626);color:#fff;font:700 11px/18px Inter,system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px var(--bg,#fff)}',
-    '.hc-toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10000;display:flex;gap:10px;align-items:flex-start;width:min(380px,calc(100vw - 28px));background:var(--bg-card,#fff);color:var(--ink,#1a1a1a);border:1px solid var(--rule-strong,rgba(0,0,0,.12));border-left:4px solid var(--accent,#c2182b);border-radius:12px;padding:11px 12px;box-shadow:0 18px 40px -14px rgba(0,0,0,.4);font:14px/1.4 Inter,system-ui,sans-serif;cursor:pointer;animation:hcIn .18s ease-out}',
-    '.hc-toast b{display:block;font-size:13px}',
-    '.hc-toast span{display:block;color:var(--ink-soft,#555);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}',
-    '.hc-toast .hc-tx{margin-left:auto;border:0;background:none;color:var(--ink-faint,#999);font-size:18px;line-height:1;cursor:pointer;padding:0 2px}',
-    '@keyframes hcIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}',
-    '@media (prefers-reduced-motion:reduce){.hc-toast{animation:none}}',
-    '@media print{.hc-launch,.hc-pop,.hc-toast{display:none}}'
+    /* The red number on the sidebar link. */
+    '.hc-count-badge{margin-left:auto;min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:#dc2626;color:#fff;font:700 11px/19px Inter,system-ui,sans-serif;text-align:center}'
   ].join('\n');
   function injectCss() {
     if (document.getElementById('hc-css')) return;
@@ -238,113 +220,12 @@
     document.head.appendChild(s);
   }
 
-  /* ── Notifications ──────────────────────────────────────────────── */
-
-  // There is no server, so nothing can reach a phone with the site closed.
-  // What we can do: while any page of the site is open — even in a
-  // background tab — show a system notification (if you allowed them) and
-  // an in-page toast, and keep an unread count in the tab title.
-  var NOTIFY_KEY = 'hosa::chat-notify';
-  var notify = {
-    supported: function () { return 'Notification' in global; },
-    permission: function () { return notify.supported() ? global.Notification.permission : 'denied'; },
-    enabled: function () { return notify.permission() === 'granted' && ls(NOTIFY_KEY) === '1'; },
-    /** Must run from a click: browsers only show the prompt on a gesture. */
-    enable: function () {
-      if (!notify.supported()) return Promise.resolve(false);
-      var ask = global.Notification.permission === 'granted'
-        ? Promise.resolve('granted')
-        : new Promise(function (res) {
-            var r = global.Notification.requestPermission(res);   // older Safari takes a callback
-            if (r && r.then) r.then(res);
-          });
-      return ask.then(function (p) { if (p === 'granted') lsSet(NOTIFY_KEY, '1'); fireBell(); return p === 'granted'; });
-    },
-    disable: function () { lsSet(NOTIFY_KEY, '0'); fireBell(); },
-    /** A system notification. Uses the service worker where there is one —
-        Android Chrome refuses `new Notification()` outright. */
-    show: function (title, body, url, tag) {
-      if (!notify.enabled()) return;
-      var o = { body: body, tag: tag || 'hosa-chat', renotify: true, icon: 'apple-touch-icon.png', badge: 'apple-touch-icon.png', data: { url: url } };
-      var sw = global.navigator && global.navigator.serviceWorker;
-      var viaPage = function () {
-        try {
-          var n = new global.Notification(title, o);
-          n.onclick = function () { try { global.focus(); } catch (e) {} if (url && url !== location.href) location.href = url; n.close(); };
-        } catch (e) {}
-      };
-      if (sw && sw.getRegistration) {
-        sw.getRegistration().then(function (r) { if (r && r.showNotification) r.showNotification(title, o).catch(viaPage); else viaPage(); }, viaPage);
-      } else viaPage();
-    }
-  };
-  function fireBell() { try { global.dispatchEvent(new CustomEvent('hosa-chat-bell')); } catch (e) {} }
-
-  /** The "Notify me" toggle shown in every chat panel. */
-  function bellButton() {
-    if (!notify.supported()) return null;
-    var b = el('button', 'hc-bell');
-    b.type = 'button';
-    function paint() {
-      var p = notify.permission(), on = notify.enabled();
-      b.classList.toggle('on', on);
-      b.textContent = on ? '\uD83D\uDD14 On' : '\uD83D\uDD14 Notify me';
-      b.title = p === 'denied'
-        ? 'Notifications are blocked for this site in your browser settings.'
-        : on ? 'You get a notification for new messages while the site is open. Click to turn off.'
-             : 'Get a notification when someone messages, while the site is open in a tab.';
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    }
-    b.addEventListener('click', function () {
-      if (notify.enabled()) { notify.disable(); return; }
-      if (notify.permission() === 'denied') {
-        alert('Notifications are blocked for this site. Allow them in your browser\u2019s site settings, then click again.');
-        return;
-      }
-      notify.enable();
-    });
-    global.addEventListener('hosa-chat-bell', paint);
-    paint();
-    return b;
-  }
-
-  /** A small in-page card for a new message. Click runs `onOpen`. */
-  var toastEl = null, toastTimer = null;
-  function toast(title, body, onOpen) {
-    injectCss();
-    if (toastEl) toastEl.remove();
-    clearTimeout(toastTimer);
-    var t = el('div', 'hc-toast');
-    t.setAttribute('role', 'status');
-    var txt = el('div');
-    txt.appendChild(el('b', null, title));
-    txt.appendChild(el('span', null, body));
-    t.appendChild(txt);
-    var x = el('button', 'hc-tx', '\u00D7');
-    x.type = 'button';
-    x.setAttribute('aria-label', 'Dismiss');
-    x.addEventListener('click', function (e) { e.stopPropagation(); t.remove(); });
-    t.appendChild(x);
-    t.addEventListener('click', function () { t.remove(); if (onOpen) onOpen(); });
-    document.body.appendChild(t);
-    toastEl = t;
-    toastTimer = setTimeout(function () { if (t.isConnected) t.remove(); }, 8000);
-  }
-
-  function dismissToast() { if (toastEl) { toastEl.remove(); toastEl = null; } clearTimeout(toastTimer); }
-
-  /** "(3) Title" while there is something unread. */
-  var baseTitle = null;
-  function titleCount(n) {
-    if (baseTitle === null) baseTitle = document.title.replace(/^\(\d+\+?\)\s*/, '');
-    document.title = (n > 0 ? '(' + (n > 99 ? '99+' : n) + ') ' : '') + baseTitle;
-  }
+  /* ── Unread counts ────────────────────────────────────────────── */
 
   /**
-   * Keep count of unread messages in a chapter's chat and announce new ones.
-   *   onCount(n)             — unread total, whenever it changes
-   *   onNew(msg, threadName) — a message that arrived after we started
-   *                            listening, from someone else, not on screen
+   * Keep count of unread messages in a chapter's chat — for the red number
+   * on the sidebar link and the Chat tab. Nothing pops up; it is a count.
+   *   onCount(n) — unread total, whenever it changes
    * Returns a stop function.
    */
   function watch(slug, opts) {
@@ -379,17 +260,13 @@
     function listen(t) {
       if (threadStops[t]) return;
       msgs[t] = {};
-      var q = db().ref('chat/' + slug + '/' + t).limitToLast(PAGE), loaded = false;
+      var q = db().ref('chat/' + slug + '/' + t).limitToLast(PAGE);
       var add = q.on('child_added', function (s) {
         var m = s.val() || {};
         msgs[t][s.key] = { uid: m.uid, ts: +m.ts || 0 };
-        if (loaded && m.uid !== uid && !isViewing(slug, t) && opts.onNew) opts.onNew(m, t);
         count();
       }, function () {});
       var rm = q.on('child_removed', function (s) { delete msgs[t][s.key]; count(); }, function () {});
-      // Existing messages arrive as child_added before this resolves; only
-      // what comes after it is news.
-      q.once('value').then(function () { loaded = true; }, function () {});
       threadStops[t] = function () { q.off('child_added', add); q.off('child_removed', rm); };
     }
 
@@ -424,16 +301,6 @@
     };
   }
 
-  /** Announce a message: toast on the page, system notification if allowed. */
-  function announce(m, chapterName, url, onOpen) {
-    var who = m.role === 'admin' ? 'HOSA Prep Hub' : clip(m.name, MAX_NAME) || 'Someone';
-    var body = clip(m.text, 140);
-    toast(who + ' \u00B7 ' + chapterName, body, onOpen);
-    // The toast covers someone looking at the page; the system notification
-    // is for when they are in another tab or app.
-    if (document.hidden) notify.show(who + ' \u00B7 ' + chapterName, body, url, 'hosa-chat-' + cleanSlug(chapterName));
-  }
-
   /* ── The panel ──────────────────────────────────────────────────── */
 
   /**
@@ -466,8 +333,6 @@
     var head = el('div', 'hc-head');
     var titleEl = el('div', 'hc-title', chapterName);
     head.appendChild(titleEl);
-    var bell = bellButton();
-    if (bell) head.appendChild(bell);
     if (opts.onClose) {
       var x = el('button', 'hc-close', '×');
       x.type = 'button';
@@ -711,105 +576,53 @@
     };
   }
 
-  /* ── The floating launcher (home page) ──────────────────────────── */
+  /* ── The sidebar link (home page) ───────────────────────────────── */
 
   /**
-   * A small "Chapter chat" button, bottom-left, for anyone in a chapter.
-   * Stays out of the way entirely until the database rules are live —
-   * a chat button that only ever says "not available" is worse than none.
+   * "Chapter Chat" in the sidebar's Chapters section, pointing at the chat
+   * tab of your chapter's page, with a red number for unread messages.
+   * Hidden when you are in no chapter, and — once signed in — until the
+   * database rules for chat are live.
    */
-  function mountLauncher(opts) {
-    opts = opts || {};
-    if (!ready()) return;
+  function mountSidebarLink(link) {
+    if (!link || !ready()) return;
     injectCss();
-    var btn = null, pop = null, panel = null, stopWatch = null, watching = '';
+    var stopWatch = null, watching = '';
+    var label = link.getAttribute('aria-label') || 'Chapter Chat';
 
-    function slugNow() { return cleanSlug(opts.slug || ls('hosa::chapter')); }
-    function nameNow() { return opts.chapterName || ls('hosa::chapter-name') || slugNow().replace(/-/g, ' '); }
-
-    function close() {
-      if (panel) { panel.destroy(); panel = null; }
-      if (pop) { pop.remove(); pop = null; }
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-    }
-    function openPanel() {
-      if (pop) { close(); return; }
-      pop = el('div', 'hc-pop');
-      pop.setAttribute('role', 'dialog');
-      pop.setAttribute('aria-label', 'Chapter chat');
-      document.body.appendChild(pop);
-      btn.setAttribute('aria-expanded', 'true');
-      dismissToast();
-      panel = mountPanel(pop, {
-        slug: slugNow(), chapterName: nameNow(), onClose: close, onSignIn: opts.onSignIn
-      });
-    }
     function setCount(n) {
-      if (!btn) return;
-      var d = btn.querySelector('.hc-badge');
-      if (n > 0 && !d) { d = el('span', 'hc-badge'); d.setAttribute('aria-hidden', 'true'); btn.appendChild(d); }
-      if (d) { if (n > 0) d.textContent = n > 99 ? '99+' : String(n); else d.remove(); }
-      btn.setAttribute('aria-label', n > 0 ? 'Chapter chat — ' + n + ' unread' : 'Chapter chat');
-      titleCount(n);
+      var b = link.querySelector('.hc-count-badge');
+      if (n > 0 && !b) { b = el('span', 'hc-count-badge'); b.setAttribute('aria-hidden', 'true'); link.appendChild(b); }
+      if (b) { if (n > 0) b.textContent = n > 99 ? '99+' : String(n); else b.remove(); }
+      link.setAttribute('aria-label', n > 0 ? label + ', ' + n + ' unread' : label);
     }
     function watchNow(slug) {
       if (watching === slug) return;
       if (stopWatch) { stopWatch(); stopWatch = null; }
       watching = slug;
       setCount(0);
-      if (!slug) return;
-      stopWatch = watch(slug, {
-        onCount: setCount,
-        onNew: function (m) {
-          announce(m, nameNow(), location.href, function () { if (!pop) openPanel(); });
-        }
-      });
+      if (slug) stopWatch = watch(slug, { onCount: setCount });
     }
-
     function render() {
-      var slug = slugNow();
-      if (!slug) { if (btn) { btn.remove(); btn = null; } close(); watchNow(''); return; }
-      if (!btn) {
-        btn = el('button', 'hc-launch');
-        btn.type = 'button';
-        btn.setAttribute('aria-haspopup', 'dialog');
-        btn.setAttribute('aria-expanded', 'false');
-        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
-          + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
-        btn.appendChild(el('span', 'hc-lbl', 'Chapter chat'));
-        btn.addEventListener('click', openPanel);
-        btn.style.display = 'none';
-        document.body.appendChild(btn);
-      }
-      var u = me();
-      // Signed out: still show it — the panel asks them to sign in, which is
-      // the point. Signed in: only once the rules answer, so a site whose
-      // rules have not been published shows no chat button at all.
-      if (!u) { btn.style.display = ''; watchNow(''); return; }
-      owners(slug).then(function () { btn.style.display = ''; watchNow(slug); },
-                        function () { btn.style.display = 'none'; watchNow(''); });
+      var slug = cleanSlug(ls('hosa::chapter'));
+      if (!slug) { link.style.display = 'none'; watchNow(''); return; }
+      link.href = 'chapter.html?c=' + encodeURIComponent(slug) + '#chat';
+      if (!me()) { link.style.display = ''; watchNow(''); return; }
+      owners(slug).then(function () { link.style.display = ''; watchNow(slug); },
+                        function () { link.style.display = 'none'; watchNow(''); });
     }
-
-    global.firebase.auth().onAuthStateChanged(function () { close(); render(); });
-    // Joining or leaving a chapter elsewhere on the page.
+    global.firebase.auth().onAuthStateChanged(render);
     global.addEventListener('storage', function (e) { if (e.key === 'hosa::chapter') render(); });
     global.__hosaChatRefresh = render;
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pop) close(); });
     render();
   }
 
   global.HosaChat = {
     mountPanel: mountPanel,
-    mountLauncher: mountLauncher,
+    mountSidebarLink: mountSidebarLink,
     owners: owners,
     Thread: Thread,
     watch: watch,
-    announce: announce,
-    notify: notify,
-    bellButton: bellButton,
-    toast: toast,
-    dismissToast: dismissToast,
-    titleCount: titleCount,
     markSeen: markSeen,
     isViewing: isViewing
   };
