@@ -11,14 +11,17 @@
      ⭐ Rate the site          → your Study Wrapped story card,
                                  +500 XP, Supporter badge
      🏅 Report a competition  → +1,000 XP, Medalist/Competitor badge,
-                                 your result card, a spot on the Wall
+                                 your result card
      📣 Chapter shout-out      → a printable Chapter Impact Report
-        (founders)               and your chapter on the Wall
+        (founders)
 
    For the site: every one of those is evidence — reviews, placements,
    chapters vouching for it — stored under proof/ with rules that tie
-   each to a signed-in account, stamp it with server time, and let only
-   the admin approve it for the public Wall of Wins.
+   each to a signed-in account and stamp it with server time. Only the
+   admin page reads them back.
+
+   Nothing loads until the tab is opened: most visitors never open it,
+   and more than half of them are on phones.
 
    Nothing here renders HTML from what someone typed.
    ═════════════════════════════════════════════════════════════════ */
@@ -260,6 +263,10 @@
     return cv;
   }
 
+  function canShareFiles() {
+    try { return !!(navigator.canShare && navigator.canShare({ files: [new File([''], 'x.png', { type: 'image/png' })] })); } catch (e) { return false; }
+  }
+
   /** Save the card, or hand it to the phone's share sheet. */
   function deliver(cv, filename, share) {
     return new Promise(function (resolve) {
@@ -331,43 +338,34 @@
     '.rw-stars{display:flex;gap:4px}',
     '.rw-stars button{border:0;background:none;font-size:34px;line-height:1;cursor:pointer;color:#d1d5db;padding:0 2px}',
     '.rw-stars button.on{color:#f5b50a}',
-    '.rw-check{display:flex!important;grid-template-columns:none!important;align-items:center;gap:8px!important;font-weight:500!important}',
-    '.rw-check input{width:auto}',
     '.rw-err{color:#dc2626;font-size:13px;min-height:16px}',
     '.rw-modal{position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}',
     '.rw-dlg{background:var(--bg-card);color:var(--ink);border-radius:18px;width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}',
     '.rw-dlg h3{margin:0 0 4px;font:800 22px Inter,system-ui,sans-serif}',
     '.rw-dlg .x{float:right;border:0;background:none;font-size:24px;cursor:pointer;color:var(--ink-soft)}',
-    '.rw-prize{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start;margin-top:14px}',
-    '.rw-prize img{width:150px;border-radius:12px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}',
+    '.rw-prize{display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;margin-top:14px}',
+    '.rw-card-col .rw-actions{margin-top:10px;flex-direction:column}',
+    '.rw-card-col .rw-btn{width:100%}',
+    '.rw-prize img{width:170px;display:block;border-radius:12px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}',
     '.rw-got{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14.5px}',
     '.rw-got b{color:#16a34a}',
     '.rw-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}',
-    '.rw-wall{columns:3 260px;column-gap:14px}',
-    '.rw-quote{break-inside:avoid;margin:0 0 14px;background:var(--bg-card);border:1px solid var(--rule);border-radius:14px;padding:14px 16px}',
-    '.rw-quote .st{color:#f5b50a;letter-spacing:2px;font-size:15px}',
-    '.rw-quote p{margin:6px 0 8px;font-size:14.5px;color:var(--ink);line-height:1.5}',
-    '.rw-quote .by{font-size:12.5px;color:var(--ink-soft)}',
-    '.rw-quote.win{border-color:rgba(245,197,66,.55);background:linear-gradient(135deg,rgba(245,197,66,.12),var(--bg-card))}',
-    '.rw-quote.ch{border-color:rgba(239,68,68,.35)}',
-    '.rw-numbers{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}',
-    '.rw-numbers div{flex:1 1 150px;border-radius:12px;padding:12px 14px;background:var(--highlight,rgba(127,127,127,.08))}',
-    '.rw-numbers b{display:block;font:800 24px Inter,system-ui,sans-serif;color:var(--ink)}',
-    '.rw-numbers span{font-size:12px;color:var(--ink-soft)}',
     '.rw-badge{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 7px;border-radius:999px;font:700 10px Inter,system-ui,sans-serif;vertical-align:middle;white-space:nowrap}',
     '.rw-badge.supporter{background:rgba(245,181,10,.18);color:#a16207}',
     '.rw-badge.medalist{background:linear-gradient(90deg,#f5c542,#e0995e);color:#3b2400}',
     '.rw-badge.competitor{background:rgba(239,68,68,.14);color:#b91c1c}',
     '@media (max-width:820px){.rw-earn{grid-template-columns:1fr}.rw-proof{grid-template-columns:1fr}}',
     '@media (max-width:560px){.rw-q{display:none}.rw-table{font-size:13px}.rw-table td,.rw-table th{padding:8px 4px}}',
-    '@media (max-width:480px){.rw-prize{grid-template-columns:1fr}.rw-prize img{width:60%;margin:0 auto;display:block}.rw-row{grid-template-columns:1fr}.rw-big{font-size:46px}}'
+    // iOS zooms the page into any field under 16px; keep phones at 16.
+    '@media (max-width:820px){.rw-form input,.rw-form select,.rw-form textarea{font-size:16px}.rw-btn{min-height:44px}}',
+    '@media (max-width:480px){.rw-prize{grid-template-columns:1fr}.rw-prize img{width:52%;margin:0 auto}.rw-row{grid-template-columns:1fr}.rw-big{font-size:46px}}'
   ].join('\n');
   function injectCss() {
     if (document.getElementById('rw-css')) return;
     var s = document.createElement('style'); s.id = 'rw-css'; s.textContent = CSS; document.head.appendChild(s);
   }
 
-  /** The little pill used on the leaderboard and the Wall. */
+  /** The little pill used on the leaderboard. */
   function badgeHtml(badges) {
     badges = badges || {};
     var h = '';
@@ -383,7 +381,7 @@
   function mount(root) {
     if (!root) return;
     injectCss();
-    var state = { user: null, review: null, results: {}, founder: false, shout: null, live: null, wall: null };
+    var state = { user: null, review: null, results: {}, founder: false, shout: null, live: null };
 
     function signIn() {
       var g = document.getElementById('auth-gate'); if (g) g.style.display = 'flex';
@@ -458,7 +456,7 @@
         done: nRes ? nRes + ' reported' : '',
         get: ['<b>+' + XP_RESULT + ' XP</b> on your first result',
               '<b>🏅 Medalist</b> badge for a top-3 finish (🎖 Competitor otherwise) on the leaderboard',
-              '<b>Your result card</b> to post, and a spot on the <b>Wall of Wins</b>'],
+              '<b>Your result card</b> — a story-sized image of your placement to post'],
         buttons: gate || '<button class="rw-btn" data-act="result">' + (nRes ? 'Add another result' : 'Report &amp; unlock →') + '</button>'
           + (nRes ? '<button class="rw-btn ghost" data-act="resultcard">Get my result card</button>' : '')
       });
@@ -468,8 +466,7 @@
           id: 'chapter', title: '📣 Chapter shout-out', time: '20 sec',
           ask: 'For founders: one or two sentences on how ' + esc(ch.name || 'your chapter') + ' uses the site.',
           done: state.shout ? 'Unlocked' : '',
-          get: ['<b>Chapter Impact Report</b> — a printable one-pager for your advisor: members, who is active, chapter XP, national rank, top studiers',
-                'Your chapter <b>featured on the Wall of Wins</b>'],
+          get: ['<b>Chapter Impact Report</b> — a printable one-pager for your advisor: members, who is active, chapter XP, national rank, top studiers'],
           buttons: state.shout ? '<a class="rw-btn" style="text-align:center;text-decoration:none" href="chapter-report.html?c=' + encodeURIComponent(ch.slug) + '" target="_blank" rel="noopener">Open the Impact Report</a><button class="rw-btn ghost" data-act="shout">Edit shout-out</button>'
                                : '<button class="rw-btn" data-act="shout">Write it &amp; unlock →</button>'
         });
@@ -477,47 +474,11 @@
         h += offer({
           id: 'chapter', title: '📣 Chapter shout-out', time: '20 sec',
           ask: 'For chapter founders. ' + (ch.slug ? 'Your founder can unlock this for ' + esc(ch.name || 'your chapter') + '.' : 'Start a chapter for your school to unlock it.'),
-          get: ['<b>Chapter Impact Report</b> — a printable one-pager for your advisor',
-                'Your chapter <b>featured on the Wall of Wins</b>'],
+          get: ['<b>Chapter Impact Report</b> — a printable one-pager for your advisor: members, who is active, chapter XP, national rank'],
           buttons: ch.slug ? '' : '<a class="rw-btn ghost" style="text-align:center;text-decoration:none" href="chapters.html">Start a chapter</a>'
         });
       }
       return h + '</div>';
-    }
-
-    /* The Wall of Wins */
-    function wallHtml() {
-      var w = state.wall;
-      var h = '<h2 class="rw-h">Wall of Wins</h2><p class="rw-sub">Real students, real results — every one tied to an account and checked before it shows here.</p>';
-      if (!w) return h + '<div class="rw-empty">Loading…</div>';
-      var st = w.stats;
-      if (st && st.accounts) {
-        h += '<div class="rw-numbers">'
-          + '<div><b>' + num(st.accounts) + '</b><span>students with an account</span></div>'
-          + (st.questions ? '<div><b>' + num(st.questions) + '</b><span>practice questions answered</span></div>' : '')
-          + (st.gainPts ? '<div><b>+' + st.gainPts + ' pts</b><span>average quiz improvement</span></div>' : '')
-          + (st.chapters ? '<div><b>' + num(st.chapters) + '</b><span>chapters</span></div>' : '')
-          + '</div>';
-      }
-      var items = [];
-      Object.keys(w.results || {}).forEach(function (uid) {
-        Object.keys(w.results[uid] || {}).forEach(function (rid) {
-          var r = w.results[uid][rid];
-          if (r && r.approved && r.public !== false) items.push({ ts: r.ts, html: '<div class="rw-quote win"><div class="st">' + (r.place && r.place <= 3 ? ['', '🥇', '🥈', '🥉'][r.place] : '🎖') + ' ' + esc(r.place ? ordinal(r.place) + ' place' : 'Competed') + '</div>'
-            + '<p><b>' + esc(r.event) + '</b> · ' + esc(LEVEL_SHORT[r.level] || '') + ' ' + esc(r.year) + '</p><div class="by">' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + '</div></div>' });
-        });
-      });
-      Object.keys(w.chapters || {}).forEach(function (slug) {
-        var c = w.chapters[slug];
-        if (c && c.approved) items.push({ ts: c.ts, html: '<div class="rw-quote ch"><div class="st" style="color:var(--accent)">📣 Chapter</div><p>“' + esc(c.text) + '”</p><div class="by">' + esc(c.name) + ', founder · ' + esc(c.chapter || slug.replace(/-/g, ' ')) + '</div></div>' });
-      });
-      Object.keys(w.reviews || {}).forEach(function (uid) {
-        var r = w.reviews[uid];
-        if (r && r.approved && r.public !== false) items.push({ ts: r.ts, html: '<div class="rw-quote"><div class="st">' + '★★★★★'.slice(0, r.stars) + '<span style="color:#d1d5db">' + '★★★★★'.slice(r.stars) + '</span></div><p>“' + esc(r.text) + '”</p><div class="by">' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + '</div></div>' });
-      });
-      items.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
-      if (!items.length) return h + '<div class="rw-card rw-empty">The first wins go up here soon. Yours could be one of them.</div>';
-      return h + '<div class="rw-wall">' + items.slice(0, 30).map(function (i) { return i.html; }).join('') + '</div>';
     }
 
     function render() {
@@ -530,7 +491,7 @@
       if (state.live === false) {
         h += '<div class="rw-card rw-empty" style="margin-top:24px">Rewards are switching on shortly — check back soon.</div>';
       } else {
-        h += offersHtml() + wallHtml();
+        h += offersHtml();
       }
       root.innerHTML = h + '</div>';
     }
@@ -553,11 +514,10 @@
       return { close: close, el: d };
     }
     function field(label, html) { return '<label>' + label + html + '</label>'; }
-    function commonFields(nameVal, publicVal) {
+    function commonFields(nameVal) {
       var ch = chapter();
       return '<div class="rw-row">' + field('Name to show', '<input name="name" maxlength="40" required value="' + esc(nameVal) + '">')
-        + field('Chapter', '<input name="chapter" maxlength="80" value="' + esc(ch.name) + '" placeholder="Optional">') + '</div>'
-        + (publicVal === null ? '' : '<label class="rw-check"><input type="checkbox" name="public"' + (publicVal !== false ? ' checked' : '') + '> Show it on the Wall of Wins</label>');
+        + field('Chapter', '<input name="chapter" maxlength="80" value="' + esc(ch.name) + '" placeholder="Optional">') + '</div>';
     }
 
     function reviewForm() {
@@ -566,7 +526,7 @@
       var stars = r.stars || 0;
       f.innerHTML = '<div class="rw-stars" role="radiogroup" aria-label="Stars">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-s="' + n + '" aria-label="' + n + ' star' + (n > 1 ? 's' : '') + '">★</button>'; }).join('') + '</div>'
         + field('One sentence — how has it helped?', '<textarea name="text" maxlength="280" required placeholder="e.g. Went from guessing to 90% on pathophysiology quizzes in two weeks.">' + esc(r.text || '') + '</textarea>')
-        + commonFields(r.name || displayName(), r.public)
+        + commonFields(r.name || displayName())
         + '<div class="rw-err"></div><button class="rw-btn" type="submit">' + (state.review ? 'Save' : 'Submit &amp; unlock my rewards') + '</button>';
       function paint() { f.querySelectorAll('.rw-stars button').forEach(function (b) { b.classList.toggle('on', +b.dataset.s <= stars); b.setAttribute('aria-checked', String(+b.dataset.s === stars)); }); }
       f.querySelectorAll('.rw-stars button').forEach(function (b) { b.addEventListener('click', function () { stars = +b.dataset.s; paint(); }); });
@@ -581,7 +541,7 @@
         var btn = f.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Saving…';
         var ch = chapter();
         var rec = { stars: stars, text: text, name: name, chapter: clip(f.chapter.value, 80), chapterSlug: ch.slug.replace(/[^a-z0-9-]/g, '').slice(0, 44),
-                    public: !!f.public.checked, ts: global.firebase.database.ServerValue.TIMESTAMP };
+                    ts: global.firebase.database.ServerValue.TIMESTAMP };
         var first = !state.review;
         db().ref('proof/reviews/' + state.user.uid).set(rec).then(function () {
           state.review = rec;
@@ -606,7 +566,7 @@
         + field('Event', '<input name="event" list="rw-evlist" maxlength="80" required placeholder="e.g. Pathophysiology"><datalist id="rw-evlist">' + evs.map(function (n) { return '<option value="' + esc(n) + '">'; }).join('') + '</datalist>')
         + field('How did you place?', '<select name="place"><option value="1">1st place</option><option value="2">2nd place</option><option value="3">3rd place</option>'
           + [4, 5, 6, 7, 8, 9, 10].map(function (n) { return '<option value="' + n + '">' + ordinal(n) + ' place</option>'; }).join('') + '<option value="0" selected>Competed — didn’t place</option></select>')
-        + commonFields(displayName(), true)
+        + commonFields(displayName())
         + '<div class="rw-err"></div><button class="rw-btn" type="submit">Submit &amp; unlock</button>';
       var m = modal('Report a competition result', 'Placing or not — every result counts. First one earns +' + XP_RESULT + ' XP.', f);
       f.addEventListener('submit', function (e) {
@@ -618,7 +578,7 @@
         var ch = chapter();
         var rec = { level: f.level.value, event: ev, place: +f.place.value, year: +f.year.value, name: name,
                     chapter: clip(f.chapter.value, 80), chapterSlug: ch.slug.replace(/[^a-z0-9-]/g, '').slice(0, 44),
-                    public: !!f.public.checked, ts: global.firebase.database.ServerValue.TIMESTAMP };
+                    ts: global.firebase.database.ServerValue.TIMESTAMP };
         var ref = db().ref('proof/results/' + state.user.uid).push();
         ref.set(rec).then(function () {
           state.results[ref.key] = rec;
@@ -637,9 +597,9 @@
       var s0 = state.shout || {}, ch = chapter();
       var f = document.createElement('form'); f.className = 'rw-form';
       f.innerHTML = field('How does ' + esc(ch.name || 'your chapter') + ' use HOSA Prep Hub?', '<textarea name="text" maxlength="400" required placeholder="e.g. We run a 10-minute quiz race at every meeting and our members study the events they signed up for.">' + esc(s0.text || '') + '</textarea>')
-        + commonFields(s0.name || displayName(), null)
+        + commonFields(s0.name || displayName())
         + '<div class="rw-err"></div><button class="rw-btn" type="submit">' + (state.shout ? 'Save' : 'Submit &amp; unlock the report') + '</button>';
-      var m = modal('Chapter shout-out', 'Unlocks your Chapter Impact Report and features your chapter on the Wall of Wins.', f);
+      var m = modal('Chapter shout-out', 'Unlocks your printable Chapter Impact Report.', f);
       f.addEventListener('submit', function (e) {
         e.preventDefault();
         var err = f.querySelector('.rw-err'), text = clip(f.text.value, 400), name = clip(f.name.value, 40);
@@ -666,27 +626,31 @@
       var cv = null, file = 'hosa-prep-hub.png', items = [];
       if (kind === 'review') {
         cv = drawWrapped(s); file = 'my-hosa-study-wrapped.png';
-        items = ['Your <b>Study Wrapped</b> card — below, ready to post',
+        items = ['Your <b>Study Wrapped</b> card, ready to post',
                  gotXP ? '<b>+' + XP_REVIEW + ' XP</b> — you are now Level ' + xpLevel(parseInt(ls('hosa::xp') || '0', 10)) : 'Your XP bonus was already claimed',
                  '<b>✦ Supporter</b> badge on the leaderboard'];
       } else if (kind === 'result') {
         cv = drawResult(result, s); file = 'my-hosa-result.png';
-        items = ['Your <b>result card</b> — below, ready to post',
+        items = ['Your <b>result card</b>, ready to post',
                  gotXP ? '<b>+' + XP_RESULT + ' XP</b> — you are now Level ' + xpLevel(parseInt(ls('hosa::xp') || '0', 10)) : 'XP was paid on your first result',
-                 '<b>' + (result.place >= 1 && result.place <= 3 ? '🏅 Medalist' : '🎖 Competitor') + '</b> badge on the leaderboard',
-                 'A spot on the <b>Wall of Wins</b> once it is checked'];
+                 '<b>' + (result.place >= 1 && result.place <= 3 ? '🏅 Medalist' : '🎖 Competitor') + '</b> badge on the leaderboard'];
       } else {
         var ch = chapter();
-        items = ['Your <b>Chapter Impact Report</b> is ready', 'Your chapter joins the <b>Wall of Wins</b> once it is checked'];
+        items = ['Your <b>Chapter Impact Report</b> is ready to open and print'];
         body.innerHTML = '<ul class="rw-got">' + items.map(function (i) { return '<li>✔ ' + i + '</li>'; }).join('') + '</ul>'
           + '<div class="rw-actions"><a class="rw-btn" style="text-decoration:none" href="chapter-report.html?c=' + encodeURIComponent(ch.slug) + '" target="_blank" rel="noopener">Open the Impact Report</a></div>';
         modal('Unlocked 🎉', 'Thanks for vouching for HOSA Prep Hub.', body);
         return;
       }
       var url = cv.toDataURL('image/png');
-      body.innerHTML = '<div class="rw-prize"><img alt="Your card"><ul class="rw-got">' + items.map(function (i) { return '<li>✔ ' + i + '</li>'; }).join('') + '</ul></div>'
-        + '<div class="rw-actions"><button class="rw-btn" type="button" data-save>Save image</button>'
-        + (navigator.canShare ? '<button class="rw-btn ghost" type="button" data-share>Share…</button>' : '') + '</div>';
+      // The buttons sit right under the card, not at the bottom of the window:
+      // on a phone the site's "Level up" notice slides in over the bottom.
+      // Phones get the share sheet first — it is how you save to Photos or
+      // post to a story. A plain download is the fallback everywhere.
+      body.innerHTML = '<div class="rw-prize"><div class="rw-card-col"><img alt="Your card">'
+        + '<div class="rw-actions">' + (canShareFiles() ? '<button class="rw-btn" type="button" data-share>Share or save to Photos</button><button class="rw-btn ghost" type="button" data-save>Download</button>'
+                                                        : '<button class="rw-btn" type="button" data-save>Save image</button>') + '</div></div>'
+        + '<ul class="rw-got">' + items.map(function (i) { return '<li>✔ ' + i + '</li>'; }).join('') + '</ul></div>';
       body.querySelector('img').src = url;
       body.querySelector('[data-save]').addEventListener('click', function () { deliver(cv, file, false); });
       var sh = body.querySelector('[data-share]');
@@ -712,18 +676,16 @@
       }
     });
 
-    function loadWall() {
-      function val(p) { return db().ref(p).get().then(function (s) { return s.val(); }); }
-      return Promise.all([val('proof/reviews'), val('proof/results'), val('proof/chapters'), val('proof/stats').catch(function () { return null; })])
-        .then(function (r) { state.live = true; state.wall = { reviews: r[0] || {}, results: r[1] || {}, chapters: r[2] || {}, stats: r[3] }; },
-              function () { state.live = false; });
-    }
+    /** Only your own records — a handful of small reads, and the first one
+        doubles as the check that the rules for rewards are live. */
     function loadMine(u) {
       state.review = null; state.results = {}; state.founder = false; state.shout = null;
-      if (!u) return Promise.resolve();
+      var live = db().ref('proof/reviews/' + (u ? u.uid : '_')).get()
+        .then(function (s) { state.live = true; if (u) state.review = s.val(); }, function () { state.live = false; });
+      if (!u) return live;
       var ch = chapter();
       return Promise.all([
-        db().ref('proof/reviews/' + u.uid).get().then(function (s) { state.review = s.val(); }, function () {}),
+        live,
         db().ref('proof/results/' + u.uid).get().then(function (s) { state.results = s.val() || {}; }, function () {}),
         ch.slug ? db().ref('chat/' + ch.slug + '/owners/' + u.uid).get().then(function (s) { state.founder = s.val() === true; }, function () {}) : null,
         ch.slug ? db().ref('proof/chapters/' + ch.slug).get().then(function (s) { state.shout = s.val(); }, function () {}) : null
@@ -731,13 +693,20 @@
     }
 
     var loadedFor = undefined;
+    function open() {
+      var pane = document.getElementById('tab-rewards');
+      return !pane || pane.classList.contains('active');
+    }
     function refresh() {
+      if (!open()) return;                       // nothing to do until someone looks
       var u = me();
       state.user = u;
       render();
       if (!global.firebase || !global.firebase.database) return;
       var key = u ? u.uid : '';
-      Promise.all([loadWall(), loadedFor === key ? null : loadMine(u)]).then(function () { loadedFor = key; render(); });
+      if (loadedFor === key) return;
+      loadedFor = key;
+      loadMine(u).then(function () { if (key === (me() ? me().uid : '')) render(); });
     }
     global.firebase.auth().onAuthStateChanged(function () { loadedFor = undefined; refresh(); });
     // Numbers move as they study; redraw whenever the tab is opened.

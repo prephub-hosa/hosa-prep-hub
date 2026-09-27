@@ -8,15 +8,14 @@
      · learning    — students who took 3+ quizzes in an event, their
                      first try against their recent average
      · chapters    — registered, in how many states, active this month
-     · voices      — reviews and competition results, with approval
+     · voices      — reviews and competition results
 
    Computed from data the site already stores (every account's quiz
    history, the leaderboard, guest summaries), so it covers everyone
    from day one, not just people who arrived after this was built.
 
    Opening the page saves today's numbers to proof/snapshots — the
-   growth record — and publishes the headline figures to proof/stats
-   for the Wall of Wins.
+   growth record.
 
    Counts are labelled for what they are: accounts are people who
    signed in; guests are browsers, and one student on two devices is
@@ -199,9 +198,8 @@
                    gainPts: o.pairs >= 5 ? pct(o.recentAvg - o.firstAvg) : null, at: Date.now() };
       data.snapshots[today()] = snap;
       db().ref('proof/snapshots/' + today()).set(snap).catch(function () {});
-      db().ref('proof/stats').set({ accounts: o.accounts, questions: o.questions + o.gQuestions,
-        gainPts: o.pairs >= 5 && o.recentAvg > o.firstAvg ? pct(o.recentAvg - o.firstAvg) : null,
-        chapters: o.chapters, updated: Date.now() }).catch(function () {});
+      // The public Wall is gone; clear the numbers it used to show.
+      db().ref('proof/stats').remove().catch(function () {});
     }
 
     function stat(big, small, hi) { return '<div class="im-stat' + (hi ? ' hi' : '') + '"><b>' + big + '</b><span>' + small + '</span></div>'; }
@@ -210,7 +208,7 @@
       var h = '';
       if (!data.live) {
         h += '<div class="im-box im-rules" style="border-color:#f59e0b;background:rgba(245,158,11,.08)"><h3>Rewards are built but switched off</h3>'
-          + '<p style="font-size:13.5px;margin:0 0 8px">Reviews, competition results and the Wall of Wins need one more rules block, pasted exactly like the chat one: Firebase console → Realtime Database → Rules, click at the end of the <code>"rules": {</code> line, press Enter, paste, Publish. Then reload this page.</p>'
+          + '<p style="font-size:13.5px;margin:0 0 8px">Reviews and competition results need one more rules block, pasted exactly like the chat one: Firebase console → Realtime Database → Rules, click at the end of the <code>"rules": {</code> line, press Enter, paste, Publish. Then reload this page.</p>'
           + '<textarea readonly id="im-rules-text">Loading…</textarea><div style="margin-top:6px"><button class="im-btn ok" id="im-rules-copy">Copy rules</button></div></div>';
       }
       h += '<div class="im-grid">'
@@ -239,7 +237,7 @@
           + '</tbody></table></div></div>';
       }
 
-      h += '<div class="im-box"><h3>Reviews, results and chapter shout-outs</h3><p style="font-size:12.5px;color:var(--ink-soft,#666);margin:0 0 4px">Approve to show on the public Wall of Wins. The student got their reward the moment they submitted.</p>' + modList() + '</div>';
+      h += '<div class="im-box"><h3>Reviews, results and chapter shout-outs</h3><p style="font-size:12.5px;color:var(--ink-soft,#666);margin:0 0 4px">Only you see these. Delete anything that is spam — the student keeps their reward.</p>' + modList() + '</div>';
       host.innerHTML = h;
 
       var copy = document.getElementById('im-copy');
@@ -266,34 +264,31 @@
       var items = [];
       var rv = data.reviews || {}, rs = data.results || {}, sh = data.shouts || {};
       Object.keys(rv).forEach(function (uid) { var r = rv[uid] || {};
-        items.push({ ts: r.ts, approved: r.approved, path: 'proof/reviews/' + uid,
-          html: '<p>' + '★★★★★'.slice(0, r.stars || 0) + ' “' + esc(r.text) + '”</p><small>' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + (r.public === false ? ' · asked not to be shown' : '') + '</small>' }); });
+        items.push({ ts: r.ts, path: 'proof/reviews/' + uid,
+          html: '<p>' + '★★★★★'.slice(0, r.stars || 0) + ' “' + esc(r.text) + '”</p><small>' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + '</small>' }); });
       Object.keys(rs).forEach(function (uid) { Object.keys(rs[uid] || {}).forEach(function (k) { var r = rs[uid][k] || {};
-        items.push({ ts: r.ts, approved: r.approved, path: 'proof/results/' + uid + '/' + k,
-          html: '<p>🏅 ' + (r.place ? r.place + (['th', 'st', 'nd', 'rd'][r.place] || 'th') + ' place' : 'Competed') + ' — ' + esc(r.event) + ' (' + esc(r.level) + ' ' + esc(r.year) + ')</p><small>' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + (r.public === false ? ' · asked not to be shown' : '') + '</small>' }); }); });
+        items.push({ ts: r.ts, path: 'proof/results/' + uid + '/' + k,
+          html: '<p>🏅 ' + (r.place ? r.place + (['th', 'st', 'nd', 'rd'][r.place] || 'th') + ' place' : 'Competed') + ' — ' + esc(r.event) + ' (' + esc(r.level) + ' ' + esc(r.year) + ')</p><small>' + esc(r.name) + (r.chapter ? ' · ' + esc(r.chapter) : '') + '</small>' }); }); });
       Object.keys(sh).forEach(function (slug) { var r = sh[slug] || {};
-        items.push({ ts: r.ts, approved: r.approved, path: 'proof/chapters/' + slug,
+        items.push({ ts: r.ts, path: 'proof/chapters/' + slug,
           html: '<p>📣 “' + esc(r.text) + '”</p><small>' + esc(r.name) + ', founder · ' + esc(r.chapter || slug) + '</small>' }); });
       if (!items.length) return '<p class="empty" style="margin:8px 0 0">Nothing yet. Students see the offers on the Rewards tab.</p>';
-      items.sort(function (a, b) { return (!!a.approved - !!b.approved) || (b.ts || 0) - (a.ts || 0); });
+      items.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
       return items.map(function (i) {
-        return '<div class="im-item"><div>' + i.html + (i.approved ? '<span class="im-tag ok">On the Wall</span>' : '<span class="im-tag">Waiting</span>') + '</div><div class="im-acts">'
-          + (i.approved ? '<button class="im-btn" data-mod="hide" data-path="' + esc(i.path) + '">Hide</button>' : '<button class="im-btn ok" data-mod="approve" data-path="' + esc(i.path) + '">Approve</button>')
+        return '<div class="im-item"><div>' + i.html + '</div><div class="im-acts">'
           + '<button class="im-btn bad" data-mod="delete" data-path="' + esc(i.path) + '">Delete</button></div></div>';
       }).join('');
     }
 
-    function moderate(act, path, o) {
-      var p = act === 'delete' ? (confirm('Delete this for good? (The student keeps their reward.)') ? db().ref(path).remove() : null)
-            : db().ref(path + '/approved').set(act === 'approve' ? true : null);
-      if (!p) return;
+    function moderate(act, path) {
+      if (act !== 'delete' || !confirm('Delete this for good? (The student keeps their reward.)')) return;
+      var p = db().ref(path).remove();
       p.then(function () {
         // Reflect it locally and redraw.
         var parts = path.split('/'), store = parts[1] === 'reviews' ? data.reviews : parts[1] === 'results' ? data.results : data.shouts;
         var node = store, i;
         for (i = 2; i < parts.length - 1; i++) node = node[parts[i]] || {};
-        if (act === 'delete') delete node[parts[parts.length - 1]];
-        else node[parts[parts.length - 1]].approved = act === 'approve' ? true : undefined;
+        delete node[parts[parts.length - 1]];
         render(compute(data));
       }, function (e) { alert('Could not update: ' + (e && e.message)); });
     }
