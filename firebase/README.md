@@ -79,7 +79,7 @@ regenerated rules.
 `chat.rules.test.mjs` runs 54 checks against Firebase's real rules engine in
 the local emulator. See the comment at the top of that file for how to run it.
 
-## Rewards (reviews, competition results, Wall of Wins)
+## Rewards (reviews, competition results, chapter shout-outs)
 
 The Rewards tab stores its proof under `proof/`. Until its rules are
 published, students still see their improvement, the offers wait, and the
@@ -92,8 +92,8 @@ admin page's Impact section shows the block to paste with a Copy button.
 
 What the rules guarantee: every review and result belongs to a signed-in
 account and is stamped with server time; only the chapter's founder can post
-its shout-out; only the admin can approve anything, and an author's edit
-clears the approval; snapshots are admin-only.
+its shout-out; snapshots are admin-only. Only the admin page reads the
+records back.
 
 Regenerate with `python3 firebase/build-proof-rules.py`; tests are in
 `proof.rules.test.mjs` (43 checks, each confirmed to fail when its rule is removed).

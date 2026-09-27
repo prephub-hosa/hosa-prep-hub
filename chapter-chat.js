@@ -208,6 +208,8 @@
     '.hc-gate button{border:0;border-radius:10px;background:var(--grad-cta,#c2182b);color:#fff;font:600 14px Inter,system-ui,sans-serif;padding:10px 16px;cursor:pointer}',
     '.hc-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--accent,#ef4444);box-shadow:0 0 0 2px var(--bg,#fff)}',
     '.hc-inline{height:460px}',
+    // iOS zooms the whole page into a field under 16px the moment you tap it.
+    '@media (max-width:820px){.hc-input{font-size:16px}}',
     '.hc-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--accent,#dc2626);color:#fff;font:700 11px/18px Inter,system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px var(--bg,#fff)}',
     /* The red number on the sidebar link. */
     '.hc-count-badge{margin-left:auto;min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:#dc2626;color:#fff;font:700 11px/19px Inter,system-ui,sans-serif;text-align:center}'
