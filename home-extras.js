@@ -3431,7 +3431,8 @@ window.hosaXPFlyup = function(el, amount) {
           var xp = parseInt(u.xp || 0, 10);
           var row = { uid: uid, name: u.name || 'Student', xp: xp, avatar: '👤',
                       days: parseInt(u.days || 0, 10) || 0,
-                      chapter: u.chapter || '', chapterName: u.chapterName || '' };
+                      chapter: u.chapter || '', chapterName: u.chapterName || '',
+                      badges: (u.badges && typeof u.badges === 'object') ? u.badges : null };
           // Chapter membership counts from the moment someone opens the join
           // link; earning XP is a separate thing. The player board still hides
           // anyone on zero.
@@ -3529,7 +3530,7 @@ window.hosaXPFlyup = function(el, amount) {
       // Same-name safety net for rows written under an id we no longer hold.
       if (myName && (u.name || '').trim().toLowerCase() === myName) return;
       players.push({ name: u.name, xp: u.xp, level: xpLevel(u.xp), avatar: u.avatar || '👤', isYou: false, isFake: false,
-                     chapter: u.chapter || '', chapterName: u.chapterName || '' });
+                     chapter: u.chapter || '', chapterName: u.chapterName || '', badges: u.badges });
     });
     var userXP = getUserXP();
     var myChapter = '', myChapterName = '';
@@ -3542,7 +3543,8 @@ window.hosaXPFlyup = function(el, amount) {
       isYou: true,
       isFake: false,
       chapter: myChapter,
-      chapterName: myChapterName
+      chapterName: myChapterName,
+      badges: (window.HosaProof && window.HosaProof.myBadges()) || null
     });
     players.sort(function(a, b) { return b.xp - a.xp; });
     players.forEach(function(p, i) { p.rank = i + 1; });
@@ -3760,6 +3762,11 @@ window.hosaXPFlyup = function(el, amount) {
     section.innerHTML = html;
   }
 
+  // Supporter / Medalist / Competitor, earned on the Rewards tab.
+  function _rwBadges(p) {
+    try { return (p && p.badges && window.HosaProof) ? window.HosaProof.badgeHtml(p.badges) : ''; } catch (e) { return ''; }
+  }
+
   function renderPodium(players) {
     var section = document.getElementById('lb-podium-section');
     if (!section) return;
@@ -3774,7 +3781,7 @@ window.hosaXPFlyup = function(el, amount) {
       html += '<div class="lb-podium-slot lb-podium-' + rank + (p.isYou ? ' lb-you' : '') + '">' +
         '<div class="lb-podium-medal">' + medalFor(rank) + '</div>' +
         '<div class="lb-podium-avatar">' + p.avatar + '</div>' +
-        '<div class="lb-podium-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + '</div>' +
+        '<div class="lb-podium-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + _rwBadges(p) + '</div>' +
         '<div class="lb-podium-level">Level ' + p.level + '</div>' +
         '<div class="lb-podium-xp">' + fmtNum(p.xp) + ' XP</div>' +
       '</div>';
@@ -3808,7 +3815,7 @@ window.hosaXPFlyup = function(el, amount) {
         '<div class="lb-you-head">' +
           '<div class="lb-you-rank">' + medalFor(you.rank) + '</div>' +
           '<div class="lb-you-info">' +
-            '<div class="lb-you-name">' + escHtml(you.name) + ' <span class="lb-you-tag">YOU</span></div>' +
+            '<div class="lb-you-name">' + escHtml(you.name) + ' <span class="lb-you-tag">YOU</span>' + _rwBadges(you) + '</div>' +
             '<div class="lb-you-sub">Level ' + lvl + ' · ' + fmtNum(you.xp) + ' XP</div>' +
           '</div>' +
           '<div class="lb-you-percentile">Rank ' + you.rank + ' / ' + players.length + '</div>' +
@@ -3838,7 +3845,7 @@ window.hosaXPFlyup = function(el, amount) {
         '<span class="lb-row-player">' +
           '<span class="lb-row-avatar">' + p.avatar + '</span>' +
           '<span class="lb-row-info">' +
-            '<span class="lb-row-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + '</span>' +
+            '<span class="lb-row-name">' + escHtml(p.name) + (p.isYou ? ' <span class="lb-you-tag">YOU</span>' : '') + _rwBadges(p) + '</span>' +
             chapterBadge(p) +
           '</span>' +
         '</span>' +

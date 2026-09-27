@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✚</text></svg>">
+<title>Chapter Impact Report — HOSA Prep Hub</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f4f4f5; --paper:#fff; --ink:#111; --soft:#555; --faint:#8a8a8a; --rule:rgba(17,17,17,.1); --accent:#b91c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .bar { max-width:860px; margin:0 auto; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .bar a { color:var(--soft); text-decoration:none; font-size:14px; }
+  .print { border:0; border-radius:10px; background:var(--accent); color:#fff; font:700 14px Inter,system-ui,sans-serif; padding:10px 16px; cursor:pointer; }
+  .paper { max-width:860px; margin:0 auto 40px; background:var(--paper); border-radius:14px; padding:44px 48px; box-shadow:0 20px 60px -30px rgba(0,0,0,.35); }
+  .kick { font:600 11px 'Geist Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  h1 { font-family:Fraunces,Georgia,serif; font-weight:500; font-size:40px; line-height:1.1; margin:8px 0 6px; letter-spacing:-.02em; }
+  .meta { color:var(--soft); font-size:14px; margin:0 0 28px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+  .stat { border:1px solid var(--rule); border-radius:12px; padding:16px; }
+  .stat b { display:block; font:800 30px/1.05 Inter,system-ui,sans-serif; letter-spacing:-.02em; }
+  .stat span { font-size:12px; color:var(--soft); }
+  h2 { font-family:Fraunces,Georgia,serif; font-weight:500; font-size:21px; margin:26px 0 10px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; font:600 10.5px 'Geist Mono',ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); border-bottom:1px solid var(--rule); padding:8px 6px; }
+  td { border-bottom:1px solid var(--rule); padding:9px 6px; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .quote { border-left:4px solid var(--accent); background:#fafafa; padding:14px 18px; border-radius:0 10px 10px 0; font-family:Fraunces,Georgia,serif; font-size:17px; line-height:1.5; }
+  .quote small { display:block; margin-top:8px; font:500 13px Inter,system-ui,sans-serif; color:var(--soft); }
+  .lv { display:flex; gap:6px; align-items:flex-end; height:120px; padding:6px 0; }
+  .lv div { flex:1; background:linear-gradient(180deg,#ef4444,#b91c1c); border-radius:6px 6px 0 0; min-height:3px; position:relative; }
+  .lv div span { position:absolute; bottom:-22px; left:0; right:0; text-align:center; font-size:11px; color:var(--soft); }
+  .lv div em { position:absolute; top:-18px; left:0; right:0; text-align:center; font-style:normal; font-size:11px; font-weight:700; }
+  .foot { margin-top:34px; padding-top:14px; border-top:1px solid var(--rule); font-size:12px; color:var(--faint); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .locked { max-width:560px; margin:60px auto; background:var(--paper); border-radius:14px; padding:32px; text-align:center; }
+  .locked a { color:var(--accent); font-weight:700; }
+  @media (max-width:700px) { .paper { padding:26px 20px; } .grid { grid-template-columns:1fr 1fr; } h1 { font-size:30px; } }
+  @media print {
+    body { background:#fff; }
+    .bar { display:none; }
+    .paper { box-shadow:none; margin:0; max-width:none; padding:0; }
+    .stat, .quote { break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="bar"><a href="index.html">✚ HOSA Prep Hub</a><button class="print" id="print" type="button" style="display:none">Print / save as PDF</button></div>
+<div id="root"><div class="locked">Loading your report…</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+/* A one-page report a founder can hand their advisor. Everything on it is
+   read from the public leaderboard, and only real chapters are ranked — the
+   demonstration chapters the home board shows are left out, because this
+   page gets printed and shown to adults. Unlocked by the founder's chapter
+   shout-out on the Rewards tab. */
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function num(n) { return (Math.round(n) || 0).toLocaleString(); }
+  function xpLevel(xp) { return Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1; }
+  function ordinal(n) { var t = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (t[(v - 20) % 10] || t[v] || t[0]); }
+  var m = /[?&]c=([^&#]+)/.exec(location.search);
+  var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44) : '';
+  if (!slug) { try { slug = (localStorage.getItem('hosa::chapter') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44); } catch (e) {} }
+  if (!slug) {
+    $('root').innerHTML = '<div class="locked"><h1 style="font-size:28px">Chapter Impact Report</h1>'
+      + '<p>A one-page report a chapter founder can print for their advisor: members, who is active, chapter XP, national rank and top studiers.</p>'
+      + '<p>Founders unlock it with a twenty-second shout-out on the <a href="index.html">Rewards tab</a>. No chapter yet? <a href="chapters.html">Start one for your school</a>.</p></div>';
+    return;
+  }
+  function get(p) { return firebase.database().ref(p).get().then(function (s) { return s.val(); }, function () { return null; }); }
+  // Never sit on "Loading" forever if the database does not answer.
+  var slow = setTimeout(function () {
+    if (/Loading/.test($('root').textContent)) $('root').innerHTML = '<div class="locked">This is taking longer than it should. Check your connection and refresh.</div>';
+  }, 20000);
+
+  Promise.all([get('chapters/' + slug), get('analytics/chapters/' + slug), get('leaderboard/level'), get('proof/chapters/' + slug), get('chapters'), get('analytics/chapters')])
+    .then(function (r) {
+      clearTimeout(slow);
+      var info = r[0] || r[1] || {}, lb = r[2] || {}, shout = r[3];
+      var name = info.name || info.school || slug.replace(/-/g, ' ');
+      document.title = name + ' — Chapter Impact Report';
+      if (!shout) {
+        $('root').innerHTML = '<div class="locked"><h1 style="font-size:28px">Unlock this report</h1><p>The Chapter Impact Report for <b>' + esc(name)
+          + '</b> unlocks when the chapter’s founder posts a quick shout-out on the <a href="index.html">Rewards tab</a>. It takes about twenty seconds.</p></div>';
+        return;
+      }
+      var real = {};
+      Object.keys(r[4] || {}).forEach(function (k) { real[k] = 1; });
+      Object.keys(r[5] || {}).forEach(function (k) { real[k] = 1; });
+      real[slug] = 1;
+      // Every registered chapter is in the ranking, including ones with no
+      // members yet, so "of N chapters" is the real count.
+      var members = [], totals = {}, now = Date.now(), DAY = 864e5;
+      Object.keys(real).forEach(function (k) { totals[k] = 0; });
+      Object.keys(lb).forEach(function (id) {
+        var u = lb[id] || {};
+        if (!u.chapter || !real[u.chapter]) return;
+        var xp = parseInt(u.xp || 0, 10) || 0;
+        totals[u.chapter] = (totals[u.chapter] || 0) + xp;
+        if (u.chapter !== slug) return;
+        var t = Date.parse(u.updatedAt || '') || 0;
+        members.push({ name: u.name || 'Student', xp: xp, level: xpLevel(xp), seen: t });
+      });
+      members.sort(function (a, b) { return b.xp - a.xp; });
+      var ranked = Object.keys(totals).sort(function (a, b) { return totals[b] - totals[a]; });
+      var rank = ranked.indexOf(slug) + 1;
+      var xpTotal = totals[slug] || 0;
+      var active30 = members.filter(function (x) { return x.seen && now - x.seen < 30 * DAY; }).length;
+      var active7 = members.filter(function (x) { return x.seen && now - x.seen < 7 * DAY; }).length;
+      var studying = members.filter(function (x) { return x.xp > 0; }).length;
+      var buckets = [[1, 1], [2, 3], [4, 6], [7, 10], [11, 999]].map(function (b) {
+        return { label: b[1] === 999 ? 'Lv ' + b[0] + '+' : b[0] === b[1] ? 'Lv ' + b[0] : 'Lv ' + b[0] + '–' + b[1],
+                 n: members.filter(function (x) { return x.level >= b[0] && x.level <= b[1]; }).length };
+      });
+      var maxB = Math.max.apply(null, buckets.map(function (b) { return b.n; }).concat([1]));
+      var date = new Date().toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
+
+      var h = '<div class="paper">'
+        + '<div class="kick">Chapter Impact Report</div>'
+        + '<h1>' + esc(name) + '</h1>'
+        + '<p class="meta">' + esc(info.state || '') + (info.state ? ' · ' : '') + 'HOSA Prep Hub · generated ' + esc(date) + '</p>'
+        + '<div class="grid">'
+        + '<div class="stat"><b>' + num(members.length) + '</b><span>members on the site</span></div>'
+        + '<div class="stat"><b>' + num(active30) + '</b><span>active in the last 30 days</span></div>'
+        + '<div class="stat"><b>' + num(xpTotal) + '</b><span>chapter XP earned</span></div>'
+        + '<div class="stat"><b>' + (rank ? ordinal(rank) : '—') + '</b><span>of ' + ranked.length + ' chapters nationally</span></div>'
+        + '</div>'
+        + '<div class="quote">“' + esc(shout.text) + '”<small>— ' + esc(shout.name) + ', chapter founder</small></div>'
+        + '<h2>Engagement</h2><table><tbody>'
+        + '<tr><td>Members who have studied (earned XP)</td><td class="n">' + num(studying) + ' of ' + num(members.length) + '</td></tr>'
+        + '<tr><td>Active in the last 7 days</td><td class="n">' + num(active7) + '</td></tr>'
+        + '<tr><td>Active in the last 30 days</td><td class="n">' + num(active30) + '</td></tr>'
+        + '<tr><td>Average XP per studying member</td><td class="n">' + num(studying ? xpTotal / studying : 0) + '</td></tr>'
+        + '</tbody></table>'
+        + '<h2>Where members are</h2><div class="lv">' + buckets.map(function (b) {
+            return '<div style="height:' + Math.round(100 * b.n / maxB) + '%"><em>' + b.n + '</em><span>' + b.label + '</span></div>';
+          }).join('') + '</div><div style="height:22px"></div>'
+        + '<h2>Top studiers</h2><table><thead><tr><th>#</th><th>Member</th><th style="text-align:right">Level</th><th style="text-align:right">XP</th></tr></thead><tbody>'
+        + (members.slice(0, 10).map(function (x, i) {
+            return '<tr><td>' + (i + 1) + '</td><td>' + esc(x.name) + '</td><td class="n">' + x.level + '</td><td class="n">' + num(x.xp) + '</td></tr>';
+          }).join('') || '<tr><td colspan="4">No members yet — share the chapter link.</td></tr>')
+        + '</tbody></table>'
+        + '<div class="foot"><span>Figures come from members’ HOSA Prep Hub accounts and the chapter join link. “Active” means the member opened the site in that window.</span><span>hosaprephub.vercel.app</span></div>'
+        + '</div>';
+      $('root').innerHTML = h;
+      $('print').style.display = '';
+    });
+  $('print').addEventListener('click', function () { window.print(); });
+})();
+</script>
+</body>
+</html>
