@@ -69,7 +69,13 @@
   function ordinal(n) { var t = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (t[(v - 20) % 10] || t[v] || t[0]); }
   var m = /[?&]c=([^&#]+)/.exec(location.search);
   var slug = m ? decodeURIComponent(m[1]).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44) : '';
-  if (!slug) { $('root').innerHTML = '<div class="locked">No chapter given. Open this from the Rewards tab.</div>'; return; }
+  if (!slug) { try { slug = (localStorage.getItem('hosa::chapter') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 44); } catch (e) {} }
+  if (!slug) {
+    $('root').innerHTML = '<div class="locked"><h1 style="font-size:28px">Chapter Impact Report</h1>'
+      + '<p>A one-page report a chapter founder can print for their advisor: members, who is active, chapter XP, national rank and top studiers.</p>'
+      + '<p>Founders unlock it with a twenty-second shout-out on the <a href="index.html">Rewards tab</a>. No chapter yet? <a href="chapters.html">Start one for your school</a>.</p></div>';
+    return;
+  }
   function get(p) { return firebase.database().ref(p).get().then(function (s) { return s.val(); }, function () { return null; }); }
   // Never sit on "Loading" forever if the database does not answer.
   var slow = setTimeout(function () {
