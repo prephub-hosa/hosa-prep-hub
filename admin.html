@@ -139,6 +139,12 @@
   <h1>✢ Admin Dashboard <button class="signout" id="signout-btn">Sign out</button></h1>
   <p class="subtitle" id="admin-email-label"></p>
 
+  <section id="section-impact">
+    <h2>Impact <span class="badge">proof</span></h2>
+    <p style="font-size:13px;color:#666;margin:0 0 4px;">Retention, learning gains, chapters and student voices — the numbers that show the site works. Ready to copy into an application.</p>
+    <div id="impact-root"></div>
+  </section>
+
   <!-- ANALYTICS -->
   <section id="section-chats">
     <h2>Chapter chats <span class="badge" id="chat-count">…</span></h2>
@@ -243,6 +249,7 @@
 <script src="chapter-link.js"></script>
 <script src="chapter-chat.js"></script>
 <script src="chat-admin.js"></script>
+<script src="impact-admin.js"></script>
 <script>try{window.HosaChapterLink.rescueMisdirectedJoin();}catch(e){}</script>
 <script src="pwa.js" defer></script>
 <script>
@@ -1058,6 +1065,7 @@ auth.onAuthStateChanged(function(user) {
   loadFeedback();
   loadSignups();
   loadChapters();
+  if (window.HosaImpact) window.HosaImpact.mount(document.getElementById('impact-root'));
   if (window.HosaChatAdmin) {
     window.HosaChatAdmin.mountInbox(document.getElementById('chat-inbox'), document.getElementById('chat-count'));
   }
