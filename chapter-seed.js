@@ -18,29 +18,31 @@
 (function (global) {
   'use strict';
 
-  // XP is kept modest and the spread is wide, so a small real chapter
-  // lands mid-table rather than bottom.
+  // The top seed sits well clear of the strongest real chapter, so a real
+  // chapter can be #2 and still have something to chase, and the rest are
+  // spread on a curve so most real chapters land among seeds rather than
+  // alone at the top. Raise these as real chapters grow.
   var SEED = [
-    { name: 'Ridgeview HOSA',               xp: 142, members: 14 },
-    { name: 'Northgate Health Sciences',    xp: 118, members: 11 },
-    { name: 'Silver Creek HOSA',            xp:  96, members: 10 },
-    { name: 'Fairmont Health Academy',      xp:  77, members:  8 },
-    { name: 'Lakeshore HOSA',               xp:  58, members:  7 },
-    { name: 'Westbrook Medical Academy',    xp:  41, members:  6 },
-    { name: 'Cedar Park HOSA',              xp:  28, members:  5 },
-    { name: 'Stonebridge Health Sciences',  xp:  25, members:  5 },
-    { name: 'Maple Grove HOSA',             xp:  22, members:  4 },
-    { name: 'Brookfield Health Academy',    xp:  19, members:  4 },
-    { name: 'Ironwood HOSA',                xp:  16, members:  3 },
-    { name: 'Clearwater Health Sciences',   xp:  14, members:  3 },
-    { name: 'Summit Ridge HOSA',            xp:  12, members:  3 },
-    { name: 'Harborview Health Academy',    xp:  10, members:  2 },
-    { name: 'Pinecrest HOSA',               xp:   8, members:  2 },
-    { name: 'Glenwood Health Sciences',     xp:   7, members:  2 },
-    { name: 'Aspen Valley HOSA',            xp:   5, members:  2 },
-    { name: 'Redwood Park HOSA',            xp:   4, members:  1 },
-    { name: 'Kingsley Health Academy',      xp:   3, members:  1 },
-    { name: 'Fox Hollow HOSA',              xp:   2, members:  1 }
+    { name: 'Ridgeview HOSA',               xp: 30240, members: 41 },
+    { name: 'Northgate Health Sciences',    xp: 12860, members: 27 },
+    { name: 'Silver Creek HOSA',            xp:  9415, members: 22 },
+    { name: 'Fairmont Health Academy',      xp:  6980, members: 19 },
+    { name: 'Lakeshore HOSA',               xp:  4730, members: 16 },
+    { name: 'Westbrook Medical Academy',    xp:  3390, members: 14 },
+    { name: 'Cedar Park HOSA',              xp:  2510, members: 12 },
+    { name: 'Stonebridge Health Sciences',  xp:  1940, members: 11 },
+    { name: 'Maple Grove HOSA',             xp:  1420, members:  9 },
+    { name: 'Brookfield Health Academy',    xp:  1075, members:  8 },
+    { name: 'Ironwood HOSA',                xp:   860, members:  7 },
+    { name: 'Clearwater Health Sciences',   xp:   640, members:  6 },
+    { name: 'Summit Ridge HOSA',            xp:   515, members:  5 },
+    { name: 'Harborview Health Academy',    xp:   390, members:  5 },
+    { name: 'Pinecrest HOSA',               xp:   285, members:  4 },
+    { name: 'Glenwood Health Sciences',     xp:   210, members:  3 },
+    { name: 'Aspen Valley HOSA',            xp:   160, members:  3 },
+    { name: 'Redwood Park HOSA',            xp:   115, members:  2 },
+    { name: 'Kingsley Health Academy',      xp:    70, members:  2 },
+    { name: 'Fox Hollow HOSA',              xp:    40, members:  1 }
   ];
 
   function slugify(s) {
