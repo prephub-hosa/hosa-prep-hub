@@ -300,7 +300,8 @@
         '<span class="fc-count">' + (deck.i + 1) + ' / ' + deck.order.length + '</span>' +
         '<button class="sets-btn sets-btn-sm" data-act="fc-flip-side">' +
           (deck.flipped ? 'Definition first' : 'Term first') + '</button>' +
-        '<button class="sets-btn sets-btn-sm" data-act="fc-shuffle">Shuffle</button>' +
+        '<button class="sets-btn sets-btn-sm" data-act="fc-shuffle" aria-pressed="' + (deck.shuffled ? 'true' : 'false') + '">' +
+          (deck.shuffled ? 'In order' : 'Shuffle') + '</button>' +
       '</div>' +
       '<div class="fc-card' + (deck.shown ? ' is-back' : '') + '" id="fc-card" tabindex="0" role="button" ' +
            'aria-label="Flashcard — press space to flip">' +
@@ -318,8 +319,10 @@
   }
 
   function startCards(set) {
-    deck = { order: L.shuffle(set.cards.filter(function (c) { return c.term || c.def; })),
-             i: 0, shown: false, flipped: set.direction === 'def' };
+    // Cards come up in the order they were added. Shuffle is a choice.
+    deck = { order: set.cards.filter(function (c) { return c.term || c.def; }),
+             i: 0, shown: false, flipped: set.direction === 'def', shuffled: false };
+    deck.inOrder = deck.order.slice();
     go('cards');
   }
 
@@ -715,8 +718,10 @@
       case 'fc-flip-side':
         deck.flipped = !deck.flipped; deck.shown = false; render(); break;
       case 'fc-shuffle':
-        deck.order = L.shuffle(deck.order); deck.i = 0; deck.shown = false; render();
-        toast('Shuffled.', 'info');
+        deck.shuffled = !deck.shuffled;
+        deck.order = deck.shuffled ? L.shuffle(deck.inOrder) : deck.inOrder.slice();
+        deck.i = 0; deck.shown = false; render();
+        toast(deck.shuffled ? 'Shuffled.' : 'Back in order.', 'info');
         break;
       case 'fc-prev':
         if (deck.i > 0) { deck.i--; deck.shown = false; render(); } break;
