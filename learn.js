@@ -8,10 +8,11 @@
      2  written answer passed           -> mastered, drops out of rotation
 
    A wrong answer knocks a card back a stage, so nothing graduates on a
-   lucky guess. Because written questions only appear for stage-1 cards,
-   they start showing up naturally once the first few cards stick —
-   roughly one in every seven questions, which is the rhythm asked for.
-   A round is seven questions.
+   lucky guess. A round is seven questions, and from the second round on
+   it aims for three written ones (students asked for more than the one
+   it used to give): stage-1 cards first, then cards already answered
+   once but not yet passed. A card nobody has seen yet is never a written
+   question — you cannot type what you have never been shown.
 
    ── Grading written answers without a server ──────────────────────
 
@@ -49,6 +50,7 @@
   'use strict';
 
   var ROUND_SIZE = 7;
+  var WRITTEN_PER_ROUND = 3;
 
   var STOPWORDS = {};
   ('a an the of to in and or is are was were be been being that which with for on at by from as it its this these those ' +
@@ -440,35 +442,40 @@
     });
     if (!pool.length) return [];
 
+    var stats = set.stats || {};
     var written = [], choice = [];
     pool.forEach(function (c) {
       ((stage[c.id] || 0) >= 1 ? written : choice).push(c);
     });
 
     // Written answers need something to grade against.
-    written = written.filter(function (c) { return answerSide(c, dir).trim(); });
+    var gradable = function (c) { return !!answerSide(c, dir).trim(); };
+    written = written.filter(gradable);
+    // Seen before (answered at least once) but not yet past multiple
+    // choice — mostly misses, whose right answer was shown afterwards.
+    var seen = choice.filter(function (c) {
+      var st = stats[c.id];
+      return st && (st.right + st.wrong) > 0 && gradable(c);
+    });
 
-    // Early on almost nothing has passed its multiple choice, so a round of
-    // seven carries about one written question — the rhythm Quizlet has.
-    // As cards pass, written takes over; once every remaining card is at
-    // stage 1 the whole round is written, or nothing would ever finish.
+    // Aim for three written questions a round. As cards pass, written
+    // takes over; once every remaining card is at stage 1 the whole round
+    // is written, or nothing would ever finish.
     var share = written.length / pool.length;
-    var wantWritten = Math.min(written.length, Math.max(1, Math.round(share * size)));
+    var want = Math.max(WRITTEN_PER_ROUND, Math.round(share * size));
 
-    var picked = [];
-    // Take written first so cards that are close to mastered finish.
-    shuffle(written).slice(0, wantWritten).forEach(function (c) {
-      picked.push({ card: c, type: 'written' });
-    });
-    shuffle(choice).forEach(function (c) {
-      if (picked.length < size) picked.push({ card: c, type: 'choice' });
-    });
+    var picked = [], used = {};
+    function take(list, n, type) {
+      shuffle(list).forEach(function (c) {
+        if (n > 0 && picked.length < size && !used[c.id]) { picked.push({ card: c, type: type }); used[c.id] = 1; n--; }
+      });
+    }
+    // Cards close to mastered first, then seen ones to make up the three.
+    take(written, want, 'written');
+    take(seen, want - picked.length, 'written');
+    take(choice, size, 'choice');
     // Still short — top up with more written ones rather than ending early.
-    shuffle(written).forEach(function (c) {
-      if (picked.length < size && !picked.some(function (q) { return q.card.id === c.id; })) {
-        picked.push({ card: c, type: 'written' });
-      }
-    });
+    take(written, size, 'written');
 
     return shuffle(picked).map(function (q) {
       var out = {
@@ -533,6 +540,7 @@
 
   global.HosaLearn = {
     ROUND_SIZE: ROUND_SIZE,
+    WRITTEN_PER_ROUND: WRITTEN_PER_ROUND,
     normalize: normalize,
     tokens: tokens,
     stem: stem,

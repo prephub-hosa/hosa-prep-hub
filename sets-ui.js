@@ -372,7 +372,7 @@
             '<span class="ln-meter-label">' + p.mastered + ' of ' + p.total + ' mastered</span>' +
           '</div>' +
           '<ul class="ln-legend">' +
-            '<li><span class="sd-stage sd-stage-0">Not started</span> asked as multiple choice</li>' +
+            '<li><span class="sd-stage sd-stage-0">Not started</span> multiple choice, or written after a miss</li>' +
             '<li><span class="sd-stage sd-stage-1">Learning</span> asked as a written answer</li>' +
             '<li><span class="sd-stage sd-stage-2">Mastered</span> out of rotation</li>' +
           '</ul>' +
