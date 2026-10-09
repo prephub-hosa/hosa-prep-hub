@@ -2987,6 +2987,11 @@ function renderMustKnow() {
       </div>`;
     }).join('');
     // Jump button handler
+    // Bound once and kept: it used to be { once: true }, so after the first
+    // click (anywhere in the list) every other "Study this card" went dead
+    // until the page was reloaded.
+    if (list.__mkBound) return;
+    list.__mkBound = true;
     list.addEventListener('click', e => {
       const btn = e.target.closest('.mk-jump');
       if (!btn) return;
@@ -3002,7 +3007,7 @@ function renderMustKnow() {
       renderFlashcard();
       document.getElementById('mk-body')?.classList.remove('open');
       document.getElementById('mk-toggle')?.classList.remove('open');
-    }, { once: true });
+    });
   } catch(e) {}
 }
 
